@@ -1,0 +1,24 @@
+.welcome {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 5rem);
+
+  &__greeting {
+    text-transform: uppercase;
+    margin: 0 auto;
+  }
+
+  &__btn-holder {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.btn-start {
+  font-size: 1.8rem;
+  width: 15rem;
+  height: 5rem;
+  cursor: pointer;
+  margin: 0 auto;
+}
