@@ -1,62 +1,67 @@
-import React, { useEffect, useState } from "react";
-// import housePng from "../../img/house.png";
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators, compose } from "redux";
+import { fetchBuildings, buildingClicked } from "../../actions/actions";
+import withApiService from "../../hoc/with-api-service.js";
 
 import "./gameplay-page.scss";
+import BuildingItem from "../../components/building-item/building-item";
 
-const GameplayPage = () => {
-  // const [houseImg, setHouseImg] = useState(null);
-  const [houses, setHouses] = useState([]);
-
-  useEffect(() => {
-    // const img = new Image();
-    // img.src = housePng;
-    // img.onload = () => {
-    //   setHouseImg(img);
-    // };
-    setHouses([
-      {
-        id: 1,
-        type: "TAVERN",
-        position: { x: 3, y: 2 },
-      },
-      {
-        id: 2,
-        type: "GUILD",
-        position: { x: 6, y: 5 },
-      },
-    ]);
-  }, []);
-
-  const clickHandler = (e) => {
-    e.preventDefault();
-    const id = e.target.getAttribute("id");
-    console.log(id);
-  };
-
+const GameplayPage = ({ buildings, onBuildingClicked }) => {
   return (
     <div className="gameplay">
       <div className="gameplay__world">
-        {houses.map((house) => {
-          const gridPosition = {
-            gridRow: `${house.position.y}`,
-            gridColumn: `${house.position.x}`,
-          };
-          return (
-            <div
-              className="house"
-              style={gridPosition}
-              key={house.id}
-              onClick={clickHandler}
-            >
-              <div className="house--img" id={`house__${house.id}`}>
-                <div className="house--name">{house.type}</div>
-              </div>
-            </div>
-          );
-        })}
+        {buildings.map((building) => (
+          <div key={building.id}>
+            <BuildingItem
+              building={building}
+              onBuildingClicked={() => onBuildingClicked(building)}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
 };
 
-export default GameplayPage;
+class GameplayPageContainer extends Component {
+  componentDidMount() {
+    this.props.fetchBuildings();
+  }
+
+  render() {
+    const { buildings, loading, onBuildingClicked } = this.props;
+
+    if (loading) {
+      return <div>LOADING ...</div>;
+    }
+
+    return (
+      <GameplayPage
+        buildings={buildings}
+        onBuildingClicked={onBuildingClicked}
+      />
+    );
+  }
+}
+
+const mapStateToProps = ({ buildings, loading }) => {
+  return { buildings, loading };
+};
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const { apiService } = ownProps;
+
+  return bindActionCreators(
+    {
+      fetchBuildings: fetchBuildings(apiService),
+      onBuildingClicked: buildingClicked,
+    },
+    dispatch
+  );
+};
+
+export default compose(
+  withApiService(),
+  connect(mapStateToProps, mapDispatchToProps)
+)(GameplayPageContainer);
