@@ -1,6 +1,8 @@
+@import "../../utils/variables.scss";
+
 .header {
   font-size: 2rem;
-  height: 5rem;
+  height: $header_height;
   background-color: #777;
   border-bottom: 1px solid #f4f2f2;
 

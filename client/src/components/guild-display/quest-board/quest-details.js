@@ -1,0 +1,73 @@
+import React from "react";
+import { connect } from "react-redux";
+import { heroDismissedFromQuest } from "../../../actions/actions.js";
+import { convertDuration } from "../../../utils/utils.js";
+import "./quest-details.scss";
+
+const QuestDetails = ({
+  quest,
+  heroesAssignedToQuest,
+  acceptQuest,
+  heroDismissedFromQuest,
+  closeDetails,
+}) => {
+  const dismissHero = (hero) => {
+    heroDismissedFromQuest(hero);
+  };
+
+  const assignedRender =
+    heroesAssignedToQuest?.length > 0 ? (
+      heroesAssignedToQuest.map((hero) => {
+        const shortName =
+          hero.name.length > 10 ? `${hero.name.substring(0, 7)}...` : hero.name;
+
+        return (
+          <div className="quest-details__assigned-heroes__hero" key={hero.id}>
+            <div
+              className={`quest-details__assigned-heroes__hero--${hero.class}`}
+            ></div>
+            <div className="quest-details__assigned-heroes__hero-name">
+              {shortName}
+            </div>
+            <button
+              onClick={() => {
+                dismissHero(hero);
+              }}
+              className="quest-details__assigned-heroes__hero-dismiss"
+            ></button>
+          </div>
+        );
+      })
+    ) : (
+      <div></div>
+    );
+
+  return (
+    <div className="quest-details">
+      <button
+        className="quest-details__btn--close"
+        onClick={closeDetails}
+      ></button>
+      <div className="quest-details__title">{quest.title}</div>
+      <div className="quest-details__level">Ур. {quest.level}</div>
+      <div className="quest-details__description">{quest.description}</div>
+      <div className="quest-details__duration">
+        время: {convertDuration(quest.duration)}
+      </div>
+      <div className="quest-details__tribute">награда: {quest.tribute}</div>
+      <div className="quest-details__assigned-heroes">{assignedRender}</div>
+    </div>
+  );
+};
+
+const mapStateToProps = ({ heroesAssignedToQuest }) => {
+  return { heroesAssignedToQuest };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  heroDismissedFromQuest: (hero) => {
+    dispatch(heroDismissedFromQuest(hero));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(QuestDetails);

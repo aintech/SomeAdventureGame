@@ -1,0 +1,20 @@
+@import "../../utils/variables.scss";
+
+.guild-display {
+  display: block;
+  width: $gameplay_width;
+  height: $gameplay_height;
+  background-image: url("../../img/guild-display/guild.svg");
+  z-index: 1010;
+
+  &__btn--close {
+    float: right;
+    margin: 1rem;
+    width: calc(84px / #{$gameplay_scale});
+    height: calc(84px / #{$gameplay_scale});
+    background-image: url("../../img/guild-display/guild-btn_dismiss_hero.svg");
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,6 @@
+$header_height: 3rem;
+
+$gameplay_scale: 1.4;
+
+$gameplay_width: calc(1520px / #{$gameplay_scale});
+$gameplay_height: calc(855px / #{$gameplay_scale});

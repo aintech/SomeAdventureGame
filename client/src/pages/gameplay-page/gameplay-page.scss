@@ -1,13 +1,14 @@
+@import "../../utils/variables.scss";
+
 .gameplay {
   display: block;
-  width: calc(152rem / 1.4);
-  height: calc(85.5rem / 1.4);
-  background-color: #fddca5;
+  width: $gameplay_width;
+  height: $gameplay_height;
 
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -45%);
+  transform: translate(-50%, -47.5%);
 
   background-image: url(../../img/Village.jpg);
   background-size: cover;
@@ -16,7 +17,7 @@
     &__btn--building {
       position: absolute;
       background-size: inherit;
-      cursor: crosshair;
+      cursor: pointer;
 
       &-tavern {
         background-image: url(../../img/tavern_btn.svg);

@@ -1,0 +1,21 @@
+@import "../../utils/variables.scss";
+@import "../../utils/mixins.scss";
+
+.building-details {
+  height: $gameplay_height;
+  width: $gameplay_width;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba($color: black, $alpha: 0.8);
+  z-index: 1000;
+
+  &__content {
+    @include absoluteCenter;
+    width: 70%;
+    box-shadow: 0 2rem 4rem rgba($color: black, $alpha: 0.2);
+    border-radius: 3px;
+    display: table;
+    overflow: hidden;
+  }
+}

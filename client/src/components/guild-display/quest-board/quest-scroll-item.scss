@@ -1,0 +1,40 @@
+@import "../../../utils/variables.scss";
+
+.quest-scroll-item {
+  display: block;
+  position: absolute;
+  width: calc(190px / #{$gameplay_scale});
+  height: calc(126px / #{$gameplay_scale});
+  background-image: url("../../../img/guild-display/guild-quest_scroll.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  cursor: pointer;
+
+  & > * {
+    position: inherit;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 2rem;
+    text-transform: uppercase;
+    color: white;
+  }
+
+  &__level {
+    top: 3px;
+    left: calc(136px / #{$gameplay_scale});
+  }
+
+  &__duration {
+    top: calc(42px / #{$gameplay_scale});
+    left: calc(50px / #{$gameplay_scale});
+  }
+
+  &__tribute {
+    top: calc(76px / #{$gameplay_scale});
+    left: calc(50px / #{$gameplay_scale});
+  }
+
+  &:hover {
+    margin-top: -5px;
+  }
+}

@@ -6,8 +6,9 @@ import withApiService from "../../hoc/with-api-service.js";
 
 import "./gameplay-page.scss";
 import BuildingItem from "../../components/building-item/building-item";
+import BuildingDetails from "../../components/building-details/building-details";
 
-const GameplayPage = ({ buildings, onBuildingClicked }) => {
+const GameplayPage = ({ buildings, onBuildingClicked, chosenBuilding }) => {
   return (
     <div className="gameplay">
       <div className="gameplay__world">
@@ -19,6 +20,8 @@ const GameplayPage = ({ buildings, onBuildingClicked }) => {
             />
           </div>
         ))}
+
+        <BuildingDetails chosenBuilding={chosenBuilding} />
       </div>
     </div>
   );
@@ -30,9 +33,9 @@ class GameplayPageContainer extends Component {
   }
 
   render() {
-    const { buildings, loading, onBuildingClicked } = this.props;
+    const { buildings, onBuildingClicked, chosenBuilding } = this.props;
 
-    if (loading) {
+    if (!buildings) {
       return <div>LOADING ...</div>;
     }
 
@@ -40,13 +43,14 @@ class GameplayPageContainer extends Component {
       <GameplayPage
         buildings={buildings}
         onBuildingClicked={onBuildingClicked}
+        chosenBuilding={chosenBuilding}
       />
     );
   }
 }
 
-const mapStateToProps = ({ buildings, loading }) => {
-  return { buildings, loading };
+const mapStateToProps = ({ buildings, chosenBuilding }) => {
+  return { buildings, chosenBuilding };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
