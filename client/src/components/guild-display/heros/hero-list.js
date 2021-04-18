@@ -4,7 +4,12 @@ import HeroItem from "./hero-item";
 import { heroAssignedToQuest } from "../../../actions/actions.js";
 import "./hero-list.scss";
 
-const HeroList = ({ heroes, chosenQuest, heroAssignedToQuest }) => {
+const HeroList = ({
+  heroes,
+  chosenQuest,
+  heroAssignedToQuest,
+  heroesAssignedToQuest,
+}) => {
   const assignToQuest = (hero) => {
     heroAssignedToQuest(hero);
   };
@@ -12,6 +17,9 @@ const HeroList = ({ heroes, chosenQuest, heroAssignedToQuest }) => {
   return (
     <div className="hero-list">
       {heroes.map((hero, index) => {
+        const isAssigned =
+          heroesAssignedToQuest?.findIndex((h) => h.id === hero.id) > -1;
+
         return (
           <div key={hero.id}>
             <HeroItem
@@ -21,6 +29,7 @@ const HeroList = ({ heroes, chosenQuest, heroAssignedToQuest }) => {
               onAssignToQuest={() => {
                 assignToQuest(hero);
               }}
+              isAssigned={isAssigned}
             />
           </div>
         );

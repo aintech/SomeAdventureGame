@@ -1,14 +1,15 @@
-@import "../../../utils/variables.scss";
+@import "../../../utils/functions.scss";
 
 .quest-details {
   position: absolute;
-  width: calc(700px / #{$gameplay_scale});
-  height: calc(600px / #{$gameplay_scale});
-  top: calc(140px / #{$gameplay_scale});
-  left: calc(140px / #{$gameplay_scale});
-  background-image: url("../../../img/guild-display/guild-quest_scroll_maxed.svg");
+  width: to-gameplay-scale(700px);
+  height: to-gameplay-scale(600px);
+  top: 15%;
+  left: 11%;
+  background-image: url(../../../img/guild-display/guild-quest_scroll_maxed.svg);
   background-repeat: no-repeat;
   background-size: contain;
+  cursor: default;
 
   display: grid;
   grid-template-rows: 80px 40px 140px 40px 60px;
@@ -24,10 +25,27 @@
     width: 50px;
     height: 50px;
     right: 20px;
-    background-image: url("../../../img/guild-display/guild-btn_dismiss_hero.svg");
+    background-image: url(../../../img/guild-display/guild-btn_dismiss_hero.svg);
     border: none;
+    outline: none;
     background-color: transparent;
     cursor: pointer;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  &__btn--accept {
+    position: inherit;
+    right: 25px;
+    bottom: 0;
+    width: to-gameplay-scale(104px);
+    height: to-gameplay-scale(154px);
+    background-image: url(../../../img/guild-display/guild-btn_accept_quest.svg);
+    border: none;
+    outline: none;
+    background-color: transparent;
   }
 
   &__title {
@@ -74,13 +92,12 @@
     grid-column: 1 /-1;
 
     display: grid;
-    // grid-template-rows: repeat(4, fr);
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: 25px repeat(5, 1fr);
     gap: 10px;
 
     &__hero {
-      width: calc(80px / #{$gameplay_scale});
-      height: calc(80px / #{$gameplay_scale});
+      width: to-gameplay-scale(80px);
+      height: to-gameplay-scale(80px);
       display: block;
       justify-self: center;
 
@@ -90,13 +107,13 @@
 
       &--warrior {
         height: inherit;
-        background-image: url("../../../img/guild-display/guild-hero_icon_warrior.svg");
+        background-image: url(../../../img/guild-display/guild-hero_icon_warrior.svg);
         background-repeat: no-repeat;
         background-size: contain;
       }
       &--wizard {
         height: inherit;
-        background-image: url("../../../img/guild-display/guild-hero_icon_wizard.svg");
+        background-image: url(../../../img/guild-display/guild-hero_icon_wizard.svg);
         background-repeat: no-repeat;
         background-size: contain;
       }
@@ -111,9 +128,9 @@
         position: relative;
         top: -120%;
         left: 65%;
-        width: calc(40px / #{$gameplay_scale});
-        height: calc(40px / #{$gameplay_scale});
-        background-image: url("../../../img/guild-display/guild-btn_dismiss_hero.svg");
+        width: to-gameplay-scale(40px);
+        height: to-gameplay-scale(40px);
+        background-image: url(../../../img/guild-display/guild-btn_dismiss_hero.svg);
         background-repeat: no-repeat;
         background-size: contain;
         border: none;

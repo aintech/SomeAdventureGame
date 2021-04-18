@@ -6,6 +6,7 @@ import {
   questScrollChoosed,
   questScrollClosed,
 } from "../../../actions/actions.js";
+import "./quest-scroll-list.scss";
 
 const QuestScrollList = ({
   quests,

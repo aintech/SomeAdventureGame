@@ -1,18 +1,25 @@
 import React from "react";
-import { scaleToGameplay } from "../../../utils/utils.js";
 import "./hero-item.scss";
 
-const HeroItem = ({ hero, index, chosenQuest, onAssignToQuest }) => {
-  const top = `${scaleToGameplay(index * 115 + 80)}px`;
-
-  const classDisplay = hero.class === "warrior" ? "Воин" : "Волшебник";
+const HeroItem = ({
+  hero,
+  index,
+  chosenQuest,
+  onAssignToQuest,
+  isAssigned,
+}) => {
+  const classDesc = hero.class === "warrior" ? "Воин" : "Маг";
 
   const assignBtnStyle = {
-    display: chosenQuest ? "block" : "none",
+    display: chosenQuest && !isAssigned ? "block" : "none",
+  };
+
+  const style = {
+    opacity: isAssigned ? 0.5 : 1,
   };
 
   return (
-    <div className="hero-item" style={{ top: top }}>
+    <div className="hero-item" style={style}>
       <button
         className="hero-item__btn--assign"
         style={assignBtnStyle}
@@ -20,11 +27,11 @@ const HeroItem = ({ hero, index, chosenQuest, onAssignToQuest }) => {
       ></button>
       <div className={`hero-item__portrait--${hero.class}`}></div>
       <div className="hero-item__class-level">
-        {classDisplay} {hero.level} ур.
+        {classDesc} <br></br> {hero.level} ур.
       </div>
       <div className="hero-item__name">{hero.name}</div>
-      <div className="hero-item__power">Сила: {hero.power}</div>
-      <div className="hero-item__health">HP: {hero.health}</div>
+      <div className="hero-item__power">{hero.power}</div>
+      <div className="hero-item__health">{hero.health}</div>
     </div>
   );
 };

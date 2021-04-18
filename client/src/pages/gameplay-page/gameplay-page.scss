@@ -12,36 +12,4 @@
 
   background-image: url(../../img/Village.jpg);
   background-size: cover;
-
-  &__world {
-    &__btn--building {
-      position: absolute;
-      background-size: inherit;
-      cursor: pointer;
-
-      &-tavern {
-        background-image: url(../../img/tavern_btn.svg);
-        background-size: 100%;
-        width: 90px;
-        height: 90px;
-        opacity: 0;
-
-        &:hover {
-          opacity: 0.3;
-        }
-      }
-
-      &-guild {
-        background-image: url(../../img/guild_btn.svg);
-        background-size: 100%;
-        width: 120px;
-        height: 120px;
-        opacity: 0;
-
-        &:hover {
-          opacity: 0.3;
-        }
-      }
-    }
-  }
 }

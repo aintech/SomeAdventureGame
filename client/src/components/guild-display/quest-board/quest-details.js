@@ -15,6 +15,17 @@ const QuestDetails = ({
     heroDismissedFromQuest(hero);
   };
 
+  const acceptBtnStyle =
+    heroesAssignedToQuest?.length === 0
+      ? {
+          opacity: 0.5,
+          cursor: "default",
+        }
+      : {
+          opacity: 1,
+          cursor: "pointer",
+        };
+
   const assignedRender =
     heroesAssignedToQuest?.length > 0 ? (
       heroesAssignedToQuest.map((hero) => {
@@ -56,6 +67,11 @@ const QuestDetails = ({
       </div>
       <div className="quest-details__tribute">награда: {quest.tribute}</div>
       <div className="quest-details__assigned-heroes">{assignedRender}</div>
+      <button
+        className="quest-details__btn--accept"
+        onClick={acceptQuest}
+        style={acceptBtnStyle}
+      ></button>
     </div>
   );
 };

@@ -1,0 +1,5 @@
+@import "./variables.scss";
+
+@function to-gameplay-scale($value) {
+  @return $value / #{$gameplay_scale};
+}

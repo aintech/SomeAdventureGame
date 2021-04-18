@@ -3,12 +3,10 @@ export default class ApiService {
     {
       id: 1,
       type: "tavern",
-      position: { x: 587, y: 237 },
     },
     {
       id: 2,
       type: "guild",
-      position: { x: 656, y: 156 },
     },
   ];
 
@@ -102,8 +100,8 @@ export default class ApiService {
       name: "Ratta de curra",
       class: "warrior",
       level: 17,
-      health: 185,
-      power: 65,
+      health: 95,
+      power: 45,
       embarkedOnQuest: null,
     },
     {

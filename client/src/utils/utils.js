@@ -12,8 +12,8 @@ const convertDuration = (duration) => {
   return `${padding(min, 2)}:${padding(sec, 2)}`;
 };
 
-const scaleToGameplay = (value) => {
+const toGameplayScale = (value) => {
   return value / 1.4;
 };
 
-export { convertDuration, scaleToGameplay };
+export { convertDuration, toGameplayScale };

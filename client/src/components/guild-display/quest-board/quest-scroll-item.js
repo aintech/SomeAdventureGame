@@ -6,67 +6,50 @@ const random = (range) => {
   return Math.random() * range * (Math.random() > 0.5 ? -1 : 1);
 };
 
-const storePose = (index, questId, x, y, rotation) => {
+const storeRotation = (index, questId, rotation) => {
   sessionStorage.setItem(
-    `some-adventure-game--quest-pose-${index}`,
-    JSON.stringify({
-      questId: questId,
-      x,
-      y,
-      rotation,
-    })
+    `some-adventure-game--quest-scroll-${index}`,
+    JSON.stringify({ questId, rotation })
   );
 };
 
-const getStoredPose = (index, questId) => {
-  const storedPose = sessionStorage.getItem(
-    `some-adventure-game--quest-pose-${index}`
+const getStoredRotation = (index, questId) => {
+  const storedRotation = sessionStorage.getItem(
+    `some-adventure-game--quest-scroll-${index}`
   );
-
-  let x = 0;
-  let y = 0;
   let rotation = 0;
 
-  if (storedPose) {
-    const parsed = JSON.parse(storedPose);
+  if (storedRotation) {
+    const parsed = JSON.parse(storedRotation);
     if (Number.parseInt(parsed.questId) !== questId) {
-      storePose(index, questId, x, y, rotation);
+      storeRotation(index, questId, rotation);
     } else {
-      x = parsed.x;
-      y = parsed.y;
       rotation = parsed.rotation;
     }
   } else {
-    x = 120 + (index % 3) * 160 + random(14);
-    y = 200 + Math.floor(index / 3) * 130 + random(8);
     rotation = random(15);
-    storePose(index, questId, x, y, rotation);
+    storeRotation(index, questId, rotation);
   }
 
-  return { x, y, rotation };
+  return { rotation };
 };
 
 const QuestScrollItem = ({ quest, index, onClickQuestScroll }) => {
-  const { x, y, rotation } = getStoredPose(index, quest.id);
-
-  const posStyle = {
-    left: x,
-    top: y,
-    transform: `rotate(${rotation}deg)`,
-  };
+  const { rotation } = getStoredRotation(index, quest.id);
+  const style = { transform: `rotate(${rotation}deg)` };
 
   return (
     <div
       className="quest-scroll-item"
-      style={posStyle}
+      style={style}
       onClick={onClickQuestScroll}
     >
+      <span className="quest-scroll-item__title">{quest.title}</span>
       <span className="quest-scroll-item__level">{quest.level}</span>
       <span className="quest-scroll-item__duration">
         {convertDuration(quest.duration)}
       </span>
       <span className="quest-scroll-item__tribute">{quest.tribute}</span>
-      {quest.title}
     </div>
   );
 };

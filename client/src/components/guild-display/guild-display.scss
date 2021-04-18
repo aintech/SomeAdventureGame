@@ -4,17 +4,24 @@
   display: block;
   width: $gameplay_width;
   height: $gameplay_height;
-  background-image: url("../../img/guild-display/guild.svg");
+  background-image: url(../../img/guild-display/guild-quest_board.svg);
   z-index: 1010;
 
   &__btn--close {
     float: right;
-    margin: 1rem;
+    margin-right: 4rem;
+    margin-top: 1rem;
     width: calc(84px / #{$gameplay_scale});
     height: calc(84px / #{$gameplay_scale});
-    background-image: url("../../img/guild-display/guild-btn_dismiss_hero.svg");
+    background-image: url(../../img/guild-display/guild-btn_dismiss_hero.svg);
     border: none;
+    outline: none;
     background-color: transparent;
     cursor: pointer;
+    z-index: inherit;
+
+    &:hover {
+      transform: scale(1.1);
+    }
   }
 }
