@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
-import { fetchBuildings, buildingClicked } from "../../actions/actions";
-import withApiService from "../../hoc/with-api-service.js";
-
-import "./gameplay-page.scss";
-import BuildingItem from "../../components/building-item/building-item";
+import { buildingClicked, fetchBuildings } from "../../actions/actions";
 import BuildingDetails from "../../components/building-details/building-details";
+import BuildingItem from "../../components/building-item/building-item";
+import QuestProgressListContainer from "../../components/quest-progress/quest-progress-list/quest-progress-list.js";
+import QuestRewardContainer from "../../components/quest-reward/quest-reward.js";
+import withApiService from "../../hoc/with-api-service.js";
+import "./gameplay-page.scss";
 
 const GameplayPage = ({ buildings, onBuildingClicked, chosenBuilding }) => {
   return (
@@ -22,6 +23,12 @@ const GameplayPage = ({ buildings, onBuildingClicked, chosenBuilding }) => {
         ))}
 
         <BuildingDetails chosenBuilding={chosenBuilding} />
+      </div>
+      <div>
+        <QuestRewardContainer />
+      </div>
+      <div className="gameplay__quest-progress">
+        <QuestProgressListContainer />
       </div>
     </div>
   );

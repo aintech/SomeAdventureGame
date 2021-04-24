@@ -1,5 +1,4 @@
 import React from "react";
-import { convertDuration } from "../../../utils/utils.js";
 import "./quest-scroll-item.scss";
 
 const random = (range) => {
@@ -46,10 +45,13 @@ const QuestScrollItem = ({ quest, index, onClickQuestScroll }) => {
     >
       <span className="quest-scroll-item__title">{quest.title}</span>
       <span className="quest-scroll-item__level">{quest.level}</span>
-      <span className="quest-scroll-item__duration">
+      {/*
+        <span className="quest-scroll-item__duration">
         {convertDuration(quest.duration)}
-      </span>
-      <span className="quest-scroll-item__tribute">{quest.tribute}</span>
+        </span>
+        <span className="quest-scroll-item__tribute">{quest.tribute}</span>
+        <span className="quest-scroll-item__experience">{quest.experience}</span>
+        */}
     </div>
   );
 };

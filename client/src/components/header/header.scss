@@ -1,4 +1,5 @@
 @import "../../utils/variables.scss";
+@import "../../utils/functions.scss";
 
 .header {
   font-size: 2rem;
@@ -7,5 +8,37 @@
   border-bottom: 1px solid #f4f2f2;
 
   display: flex;
-  align-items: center;
+  justify-content: space-between;
+
+  &__title {
+    color: lavender;
+    margin-left: 10px;
+  }
+
+  &__resources {
+    color: khaki;
+    &-fame {
+      display: inline-block;
+      transform: translateY(-20%);
+      margin-right: 30px;
+      &--img {
+        display: inline-block;
+        width: to_gameplay_scale(40px);
+        height: to_gameplay_scale(40px);
+        background-image: url(../../img/header/header-fame.svg);
+      }
+    }
+
+    &-gold {
+      display: inline-block;
+      transform: translateY(-20%);
+      margin-right: 10px;
+      &--img {
+        display: inline-block;
+        width: to_gameplay_scale(40px);
+        height: to_gameplay_scale(40px);
+        background-image: url(../../img/header/header-gold.svg);
+      }
+    }
+  }
 }

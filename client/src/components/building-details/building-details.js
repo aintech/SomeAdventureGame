@@ -6,12 +6,11 @@ import GuildDisplay from "../guild-display/guild-display";
 import "./building-details.scss";
 
 const BuildingDetails = ({ chosenBuilding, buildingClicked }) => {
-  let display = <div></div>;
-
   if (!chosenBuilding) {
-    return display;
+    return null;
   }
 
+  let display;
   switch (chosenBuilding.type) {
     case "tavern":
       display = <div>TAVERN WILL BE HERE</div>;
@@ -22,7 +21,7 @@ const BuildingDetails = ({ chosenBuilding, buildingClicked }) => {
       break;
 
     default:
-      display = <div></div>;
+      display = null;
       break;
   }
 

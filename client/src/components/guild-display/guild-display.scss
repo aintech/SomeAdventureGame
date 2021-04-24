@@ -1,4 +1,5 @@
 @import "../../utils/variables.scss";
+@import "../../utils/functions.scss";
 
 .guild-display {
   display: block;
@@ -11,17 +12,47 @@
     float: right;
     margin-right: 4rem;
     margin-top: 1rem;
-    width: calc(84px / #{$gameplay_scale});
-    height: calc(84px / #{$gameplay_scale});
+    width: to-gameplay-scale(84px);
+    height: to-gameplay-scale(84px);
     background-image: url(../../img/guild-display/guild-btn_dismiss_hero.svg);
     border: none;
     outline: none;
     background-color: transparent;
-    cursor: pointer;
     z-index: inherit;
+    cursor: pointer;
 
     &:hover {
       transform: scale(1.1);
+    }
+  }
+
+  @mixin pageBtn {
+    position: absolute;
+    top: to-gameplay-scale(700px);
+    width: to-gameplay-scale(260px);
+    height: to-gameplay-scale(38px);
+    background-image: url(../../img/guild-display/guild-scroll_hero.svg);
+    border: none;
+    outline: none;
+    background-color: transparent;
+  }
+
+  &__btn--previous {
+    @include pageBtn;
+    left: to-gameplay-scale(900px);
+
+    &:hover {
+      background-image: url(../../img/guild-display/guild-btn_scroll_hero_hover.svg);
+    }
+  }
+
+  &__btn--next {
+    @include pageBtn;
+    left: to-gameplay-scale(1160px);
+    transform: scale(-1);
+
+    &:hover {
+      background-image: url(../../img/guild-display/guild-btn_scroll_hero_hover.svg);
     }
   }
 }

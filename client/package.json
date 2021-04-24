@@ -18,7 +18,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "start-fox": "BROWSER=firefox react-scripts start",
+    "fox": "BROWSER=firefox react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

@@ -15,6 +15,10 @@ const QuestDetails = ({
     heroDismissedFromQuest(hero);
   };
 
+  const onAcceptQuest = () => {
+    acceptQuest(quest, heroesAssignedToQuest);
+  };
+
   const acceptBtnStyle =
     heroesAssignedToQuest?.length === 0
       ? {
@@ -61,15 +65,22 @@ const QuestDetails = ({
       ></button>
       <div className="quest-details__title">{quest.title}</div>
       <div className="quest-details__level">Ур. {quest.level}</div>
-      <div className="quest-details__description">{quest.description}</div>
-      <div className="quest-details__duration">
-        время: {convertDuration(quest.duration)}
+      <div className="quest-details__description">
+        {quest.description.replace(":tribute", quest.tribute)}
       </div>
-      <div className="quest-details__tribute">награда: {quest.tribute}</div>
+      <div className="quest-details__duration">
+        {convertDuration(quest.duration)}
+      </div>
+      <div className="quest-details__tribute">
+        Доля гильдии {Math.floor(quest.tribute * 0.5)} монет (50%)
+      </div>
+      <div className="quest-details__experience">
+        Опыт героям {quest.experience} очков
+      </div>
       <div className="quest-details__assigned-heroes">{assignedRender}</div>
       <button
         className="quest-details__btn--accept"
-        onClick={acceptQuest}
+        onClick={onAcceptQuest}
         style={acceptBtnStyle}
       ></button>
     </div>

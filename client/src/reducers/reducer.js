@@ -1,14 +1,32 @@
 const intialState = {
+  gold: 0,
+  fame: 0,
   buildings: [],
   quests: [],
   heroes: [],
   chosenBuilding: null,
   chosenQuest: null,
   heroesAssignedToQuest: [],
+  embarkedQuests: [],
+  collectingQuestReward: null,
 };
 
 const reducer = (state = intialState, action) => {
   switch (action.type) {
+    case "FETCH_GAME_STATS_REQUEST":
+      return {
+        ...state,
+        gold: 0,
+        fame: 0,
+      };
+
+    case "FETCH_GAME_STATS_SUCCESS":
+      return {
+        ...state,
+        gold: action.payload.gold,
+        fame: action.payload.fame,
+      };
+
     case "FETCH_BUILDINGS_REQUEST":
       return {
         ...state,
@@ -51,6 +69,18 @@ const reducer = (state = intialState, action) => {
         heroes: action.payload,
       };
 
+    case "FETCH_EMBARKED_QUESTS_REQUEST":
+      return {
+        ...state,
+        embarkedQuests: [],
+      };
+
+    case "FETCH_EMBARKED_QUESTS_SUCCESS":
+      return {
+        ...state,
+        embarkedQuests: action.payload,
+      };
+
     case "QUEST_SCROLL_CHOOSED":
       return {
         ...state,
@@ -79,6 +109,39 @@ const reducer = (state = intialState, action) => {
         heroesAssignedToQuest: [
           ...state.heroesAssignedToQuest.slice(0, idx),
           ...state.heroesAssignedToQuest.slice(idx + 1),
+        ],
+      };
+
+    case "HEROES_EMBARKED_ON_QUEST":
+      const { quest, heroesAssignedToQuest } = action.payload;
+      return {
+        ...state,
+        chosenQuest: null,
+        heroesAssignedToQuest: [],
+        embarkedQuests: [
+          ...state.embarkedQuests,
+          { key: quest, value: heroesAssignedToQuest },
+        ],
+      };
+
+    case "COLLECTING_QUEST_REWARD":
+      return {
+        ...state,
+        collectingQuestReward: action.payload,
+      };
+
+    case "QUEST_REWARD_COLLECTED":
+      const embIdx = state.embarkedQuests.findIndex(
+        (emb) => emb.key.id === action.payload.questId
+      );
+      return {
+        ...state,
+        gold: action.payload.gold,
+        fame: action.payload.fame,
+        collectingQuestReward: null,
+        embarkedQuests: [
+          ...state.embarkedQuests.slice(0, embIdx),
+          ...state.embarkedQuests.slice(embIdx + 1),
         ],
       };
 

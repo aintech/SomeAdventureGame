@@ -12,9 +12,14 @@
   cursor: default;
 
   display: grid;
-  grid-template-rows: 80px 40px 140px 40px 60px;
+  grid-template-rows:
+    to-gameplay-scale(100px)
+    to-gameplay-scale(20px)
+    to-gameplay-scale(290px)
+    to-gameplay-scale(40px)
+    to-gameplay-scale(60px);
   grid-template-columns: repeat(2, 1fr);
-  row-gap: 10px;
+  row-gap: to-gameplay-scale(15px);
 
   & > * {
     grid-column: 1/ -1;
@@ -22,9 +27,9 @@
 
   &__btn--close {
     position: inherit;
-    width: 50px;
-    height: 50px;
-    right: 20px;
+    width: to-gameplay-scale(70px);
+    height: to-gameplay-scale(70px);
+    right: to-gameplay-scale(30px);
     background-image: url(../../../img/guild-display/guild-btn_dismiss_hero.svg);
     border: none;
     outline: none;
@@ -38,7 +43,7 @@
 
   &__btn--accept {
     position: inherit;
-    right: 25px;
+    right: to-gameplay-scale(40px);
     bottom: 0;
     width: to-gameplay-scale(104px);
     height: to-gameplay-scale(154px);
@@ -49,7 +54,7 @@
   }
 
   &__title {
-    font-size: 2.5rem;
+    font-size: to-gameplay-scale(3.5rem);
     text-transform: uppercase;
     grid-row: 2;
     align-self: center;
@@ -57,40 +62,49 @@
   }
 
   &__description {
-    font-size: 1.8rem;
+    font-size: to-gameplay-scale(2.6rem);
     grid-row: 3;
-    margin-left: 40px;
-    margin-right: 40px;
+    margin-left: to-gameplay-scale(60px);
+    margin-right: to-gameplay-scale(60px);
   }
 
   &__level {
-    font-size: 4rem;
-    position: inherit;
-    top: 20px;
-    left: 40px;
+    font-size: to-gameplay-scale(5rem);
+    grid-row: 1;
+    grid-column: 1;
+    align-self: center;
+    justify-self: center;
+    margin-top: to-gameplay-scale(40px);
+    margin-left: -20px;
   }
 
   &__duration {
     text-transform: uppercase;
-    font-size: 2.2rem;
-    grid-row: 4;
+    font-size: to-gameplay-scale(5rem);
+    grid-row: 1;
+    grid-column: 2;
     align-self: center;
-    margin-left: 40px;
+    justify-self: center;
+    margin-top: to-gameplay-scale(40px);
   }
 
   &__tribute {
-    text-transform: uppercase;
-    font-size: 2.2rem;
+    font-size: to-gameplay-scale(3rem);
     grid-row: 4;
-    grid-column: 2;
-    align-self: center;
-    margin-left: 20px;
+    grid-column: 1/3;
+    margin-left: to-gameplay-scale(60px);
+  }
+
+  &__experience {
+    font-size: to-gameplay-scale(3rem);
+    grid-row: 5;
+    grid-column: 1/3;
+    margin-left: to-gameplay-scale(60px);
   }
 
   &__assigned-heroes {
-    grid-row: 5;
+    grid-row: 6;
     grid-column: 1 /-1;
-
     display: grid;
     grid-template-columns: 25px repeat(5, 1fr);
     gap: 10px;

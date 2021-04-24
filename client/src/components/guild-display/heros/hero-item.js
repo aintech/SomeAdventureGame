@@ -3,10 +3,10 @@ import "./hero-item.scss";
 
 const HeroItem = ({
   hero,
-  index,
   chosenQuest,
   onAssignToQuest,
   isAssigned,
+  reward,
 }) => {
   const classDesc = hero.class === "warrior" ? "Воин" : "Маг";
 
@@ -16,6 +16,10 @@ const HeroItem = ({
 
   const style = {
     opacity: isAssigned ? 0.5 : 1,
+  };
+
+  const rewardStyle = {
+    display: reward ? "block" : "none",
   };
 
   return (
@@ -32,6 +36,13 @@ const HeroItem = ({
       <div className="hero-item__name">{hero.name}</div>
       <div className="hero-item__power">{hero.power}</div>
       <div className="hero-item__health">{hero.health}</div>
+      <div className="hero-item__gold">{hero.gold}</div>
+      <div className="hero-item__reward--gold" style={rewardStyle}>
+        {reward?.gold}
+      </div>
+      <div className="hero-item__reward--experience" style={rewardStyle}>
+        {reward?.experience}
+      </div>
     </div>
   );
 };
