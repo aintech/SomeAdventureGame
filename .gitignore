@@ -2,14 +2,15 @@
 
 node_modules
 
-memos.txt
-
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Design ideas
+# Some memos and inserts for DB
+memos.txt
+inserts.txt
 
+# Design ideas
 1d68b9f97a02e08898f0d65113e00b3b.png
 7a2515e7c0580d9aab75bac795e8d0b4.jpg
 ac9152f8cea0c4c5e8f3cf8efb24a425.jpg

@@ -2,7 +2,7 @@ import React from "react";
 import "./hero-item.scss";
 
 const HeroItem = ({ hero, chosenQuest, onAssignToQuest, enabled, reward }) => {
-  const classDesc = hero.class === "warrior" ? "Воин" : "Маг";
+  const classDesc = hero.type === "warrior" ? "Воин" : "Маг";
 
   const assignBtnStyle = {
     display: chosenQuest && enabled ? "block" : "none",
@@ -23,7 +23,7 @@ const HeroItem = ({ hero, chosenQuest, onAssignToQuest, enabled, reward }) => {
         style={assignBtnStyle}
         onClick={onAssignToQuest}
       ></button>
-      <div className={`hero-item__portrait--${hero.class}`}></div>
+      <div className={`hero-item__portrait--${hero.type}`}></div>
       <div className="hero-item__class-level">
         {classDesc} <br></br> {hero.level} ур.
       </div>

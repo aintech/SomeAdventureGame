@@ -8,15 +8,27 @@
   border-bottom: 1px solid #f4f2f2;
 
   display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
 
   &__title {
     color: lavender;
     margin-left: 10px;
+    margin-right: auto;
   }
 
   &__btn-logout {
-    transform: translateY(-20%);
+    height: $header_height;
+    width: 8%;
+    display: inline-block;
+    cursor: pointer;
+    color: blanchedalmond;
+    background-color: burlywood;
+    border: none;
+    outline: none;
+
+    &:hover {
+      background-color: chocolate;
+    }
   }
 
   &__resources {
@@ -36,7 +48,7 @@
     &-gold {
       display: inline-block;
       transform: translateY(-20%);
-      margin-right: 10px;
+      margin-right: 30px;
       &--img {
         display: inline-block;
         width: to_gameplay_scale(40px);

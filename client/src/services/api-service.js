@@ -1,6 +1,7 @@
 import buildings from "./dumb-data/buildings.js";
 import heroes from "./dumb-data/heroes.js";
 import quests from "./dumb-data/quests.js";
+import { getHeroes } from "./heroes-service.js";
 
 export default class ApiService {
   constructor() {
@@ -35,12 +36,8 @@ export default class ApiService {
     });
   }
 
-  getHeroes() {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(heroes);
-      }, 100);
-    });
+  getHeroes(auth) {
+    return getHeroes(auth.userId, auth.token);
   }
 
   getEmbarkedQuests() {

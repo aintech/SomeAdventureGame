@@ -24,8 +24,8 @@ const Header = ({ gold, fame, fetchGameStats, isAuthenticated, logout }) => {
         <div className="header__resources-fame">Слава: {fame}</div>
         <div className="header__resources-gold--img"></div>
         <div className="header__resources-gold">Золото: {gold}</div>
-        {isAuthenticated ? logoutBtn : null}
       </div>
+      {isAuthenticated ? logoutBtn : null}
     </header>
   );
 };

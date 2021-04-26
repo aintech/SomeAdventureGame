@@ -1,3 +1,6 @@
+import jwt from "jsonwebtoken";
+import config from "config";
+
 const AuthMiddleware = (req, res, next) => {
   if (req.method === "OPTIONS") {
     return next;

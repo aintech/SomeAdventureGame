@@ -131,9 +131,9 @@ const fetchQuests = (apiService) => () => (dispatch) => {
   apiService.getQuests().then((data) => dispatch(questsLoaded(data)));
 };
 
-const fetchHeroes = (apiService) => () => (dispatch) => {
+const fetchHeroes = (apiService) => (auth) => (dispatch) => {
   dispatch(heroesRequested);
-  apiService.getHeroes().then((data) => dispatch(heroesLoaded(data)));
+  apiService.getHeroes(auth).then((data) => dispatch(heroesLoaded(data)));
 };
 
 const fetchEmbarkedQuests = (apiService) => () => (dispatch) => {

@@ -1,35 +1,17 @@
-export default class AuthService {
-  async request(url, method = "GET", body = null, headers = {}) {
-    let loading = false;
-    let error = null;
+import sendHttp from "./send-http";
 
-    try {
-      if (body) {
-        body = JSON.stringify(body);
-        headers["Content-Type"] = "application/json";
-      }
+const baseUrl = "/api/auth";
 
-      const response = await fetch(url, {
-        method,
-        body,
-        headers,
-      });
+const register = async (form) => {
+  return await sendHttp(`${baseUrl}/register`, "POST", {
+    ...form,
+  });
+};
 
-      const data = await response.json();
+const login = async (form) => {
+  return await sendHttp(`${baseUrl}/login`, "POST", {
+    ...form,
+  });
+};
 
-      if (!response.ok) {
-        throw new Error(
-          data.message || "Server is overloaded, try again later please!"
-        );
-      }
-
-      loading = false;
-
-      return data;
-    } catch (e) {
-      loading = false;
-      error = e.message;
-      throw e;
-    }
-  }
-}
+export { register, login };

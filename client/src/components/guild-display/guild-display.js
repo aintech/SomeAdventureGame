@@ -6,6 +6,7 @@ import {
   fetchQuests,
   questScrollClosed,
 } from "../../actions/actions";
+import AuthContext from "../../contexts/auth-context";
 import withApiService from "../../hoc/with-api-service";
 import "./guild-display.scss";
 import HeroList from "./heros/hero-list";
@@ -88,9 +89,12 @@ const GuildDisplay = ({
 };
 
 class GuildDisplayContainer extends Component {
+  static contextType = AuthContext;
+
   componentDidMount() {
+    const auth = this.context;
     this.props.fetchQuests();
-    this.props.fetchHeroes();
+    this.props.fetchHeroes(auth);
   }
 
   render() {

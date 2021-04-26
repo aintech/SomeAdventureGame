@@ -1,14 +1,16 @@
 import React, { useContext, useState } from "react";
 import { useHistory } from "react-router";
 import AuthContext from "../../contexts/auth-context";
-import AuthService from "../../services/auth-service";
+import { login, register } from "../../services/auth-service";
 import "./welcome-page.scss";
+
+//TODO: При успешной регистрации сразу логиниться
+//TODO: После нажатия кнопок регистрации или логина дизейблить их
+//TODO: Выводить сообщения об удачной регистрации и логине
 
 const WelcomePage = () => {
   const auth = useContext(AuthContext);
   const history = useHistory();
-  const authService = new AuthService();
-  let disableBtns = false;
 
   const [form, setForm] = useState({ login: "", password: "" });
 
@@ -18,15 +20,13 @@ const WelcomePage = () => {
 
   const registerHandler = async () => {
     try {
-      await authService.request("/api/auth/register", "POST", { ...form });
+      await register({ ...form });
     } catch (e) {}
   };
 
   const loginHandler = async () => {
     try {
-      const data = await authService.request("/api/auth/login", "POST", {
-        ...form,
-      });
+      const data = await login({ ...form });
       auth.login(data.token, data.userId);
     } catch (e) {}
   };

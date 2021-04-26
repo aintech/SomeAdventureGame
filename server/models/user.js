@@ -1,12 +1,4 @@
-import pg from "pg";
-
-const pool = new pg.Pool({
-  user: "yaremchuken",
-  host: "localhost",
-  database: "adventure",
-  password: "admin",
-  port: 5432,
-});
+import usePool from "./use-pool.js";
 
 class User {
   constructor(id, login, password) {
@@ -19,7 +11,7 @@ class User {
 const saveUser = (user) => {
   return new Promise((resolve, reject) => {
     const { login, password } = user;
-    pool.query(
+    usePool(
       "insert into public.user (login, password) values ($1, $2)",
       [login, password],
       (error, result) => {
@@ -34,7 +26,7 @@ const saveUser = (user) => {
 
 const getUser = (login) => {
   return new Promise((resolve, reject) => {
-    pool.query(
+    usePool(
       "select * from public.user where login = $1",
       [login],
       (error, result) => {

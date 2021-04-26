@@ -10,8 +10,8 @@ const authRouter = Router();
 authRouter.post(
   "/register",
   [
-    check("password", "Password must be 6 symbols minimum").isLength({
-      min: 6,
+    check("password", "Password must be 3 symbols minimum").isLength({
+      min: 3,
     }),
   ],
   async (req, res) => {
@@ -50,8 +50,8 @@ authRouter.post(
 authRouter.post(
   "/login",
   [
-    check("password", "Password must be 6 symbols minimum").isLength({
-      min: 6,
+    check("password", "Password must be 3 symbols minimum").isLength({
+      min: 3,
     }),
   ],
   async (req, res) => {
@@ -79,9 +79,7 @@ authRouter.post(
         return res.status(400).json({ message: "Invalid password" });
       }
 
-      const token = jwt.sign({ userId: user.id }, config.get("jwtSecret"), {
-        expiresIn: "1h",
-      });
+      const token = jwt.sign({ userId: user.id }, config.get("jwtSecret"));
 
       res.json({ token, userId: user.id });
     } catch (e) {

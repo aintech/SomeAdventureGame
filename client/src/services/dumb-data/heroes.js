@@ -2,7 +2,7 @@ const heroes = [
   {
     id: 1,
     name: "Jonh",
-    class: "warrior",
+    type: "warrior",
     level: 3,
     health: 20,
     power: 7,
@@ -13,7 +13,7 @@ const heroes = [
   {
     id: 2,
     name: "Steven",
-    class: "wizard",
+    type: "mage",
     level: 1,
     health: 5,
     power: 3,
@@ -24,7 +24,7 @@ const heroes = [
   {
     id: 3,
     name: "Flora",
-    class: "wizard",
+    type: "mage",
     level: 5,
     health: 25,
     power: 14,
@@ -35,7 +35,7 @@ const heroes = [
   {
     id: 4,
     name: "Ratta de curra",
-    class: "warrior",
+    type: "warrior",
     level: 17,
     health: 95,
     power: 45,
@@ -46,7 +46,7 @@ const heroes = [
   {
     id: 5,
     name: "Currier",
-    class: "warrior",
+    type: "warrior",
     level: 1,
     health: 10,
     power: 3,
@@ -57,7 +57,7 @@ const heroes = [
   {
     id: 6,
     name: "Toster",
-    class: "wizard",
+    type: "mage",
     level: 1,
     health: 5,
     power: 4,

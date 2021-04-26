@@ -1,3 +1,5 @@
+import { convertHero } from "./converters";
+
 const intialState = {
   gold: 0,
   fame: 0,
@@ -66,7 +68,7 @@ const reducer = (state = intialState, action) => {
     case "FETCH_HEROES_SUCCESS":
       return {
         ...state,
-        heroes: action.payload,
+        heroes: action.payload.map((h) => convertHero(h)),
       };
 
     case "FETCH_EMBARKED_QUESTS_REQUEST":
