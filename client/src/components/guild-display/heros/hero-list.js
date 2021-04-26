@@ -17,8 +17,9 @@ const HeroList = ({
   return (
     <div className="hero-list">
       {heroes.map((hero, index) => {
-        const isAssigned =
-          heroesAssignedToQuest?.findIndex((h) => h.id === hero.id) > -1;
+        const enabled =
+          heroesAssignedToQuest?.length < 4 &&
+          heroesAssignedToQuest?.findIndex((h) => h.id === hero.id) === -1;
 
         return (
           <div key={hero.id}>
@@ -29,7 +30,7 @@ const HeroList = ({
               onAssignToQuest={() => {
                 assignToQuest(hero);
               }}
-              isAssigned={isAssigned}
+              enabled={enabled}
             />
           </div>
         );

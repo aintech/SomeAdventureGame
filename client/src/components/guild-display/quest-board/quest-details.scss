@@ -110,23 +110,29 @@
     gap: 10px;
 
     &__hero {
-      width: to-gameplay-scale(80px);
-      height: to-gameplay-scale(80px);
-      display: block;
+      display: flex;
+      flex-flow: column;
       justify-self: center;
+      height: to-gameplay-scale(150px);
+      margin-top: -15px;
+      background-image: url(../../../img/guild-display/guild-assigned_hero_bg.svg);
+      background-repeat: no-repeat;
 
       &:first-child {
         grid-column: 2;
       }
 
       &--warrior {
-        height: inherit;
+        width: to-gameplay-scale(80px);
+        height: to-gameplay-scale(80px);
         background-image: url(../../../img/guild-display/guild-hero_icon_warrior.svg);
         background-repeat: no-repeat;
         background-size: contain;
       }
+
       &--wizard {
-        height: inherit;
+        width: to-gameplay-scale(80px);
+        height: to-gameplay-scale(80px);
         background-image: url(../../../img/guild-display/guild-hero_icon_wizard.svg);
         background-repeat: no-repeat;
         background-size: contain;
@@ -134,14 +140,11 @@
 
       &-name {
         font-size: 1.2rem;
-        margin-top: -2rem;
-        margin-left: 5px;
+        align-self: center;
       }
 
       &-dismiss {
-        position: relative;
-        top: -120%;
-        left: 65%;
+        align-self: center;
         width: to-gameplay-scale(40px);
         height: to-gameplay-scale(40px);
         background-image: url(../../../img/guild-display/guild-btn_dismiss_hero.svg);

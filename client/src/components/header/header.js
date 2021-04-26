@@ -5,10 +5,16 @@ import { fetchGameStats } from "../../actions/actions.js";
 import withApiService from "../../hoc/with-api-service.js";
 import "./header.scss";
 
-const Header = ({ gold, fame, fetchGameStats }) => {
+const Header = ({ gold, fame, fetchGameStats, isAuthenticated, logout }) => {
   useEffect(() => {
     fetchGameStats();
   });
+
+  const logoutBtn = (
+    <button className="header__btn-logout" onClick={logout}>
+      LOGOUT
+    </button>
+  );
 
   return (
     <header className="header">
@@ -18,6 +24,7 @@ const Header = ({ gold, fame, fetchGameStats }) => {
         <div className="header__resources-fame">Слава: {fame}</div>
         <div className="header__resources-gold--img"></div>
         <div className="header__resources-gold">Золото: {gold}</div>
+        {isAuthenticated ? logoutBtn : null}
       </div>
     </header>
   );

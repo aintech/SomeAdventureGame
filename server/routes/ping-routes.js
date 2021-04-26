@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const pingRouter = Router();
 
-pingRouter.get("/ping", async (req, res) => {
+pingRouter.get("/ping", async (_, res) => {
   res.json({ message: "ping" });
 });
 

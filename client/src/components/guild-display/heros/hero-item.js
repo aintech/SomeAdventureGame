@@ -1,21 +1,15 @@
 import React from "react";
 import "./hero-item.scss";
 
-const HeroItem = ({
-  hero,
-  chosenQuest,
-  onAssignToQuest,
-  isAssigned,
-  reward,
-}) => {
+const HeroItem = ({ hero, chosenQuest, onAssignToQuest, enabled, reward }) => {
   const classDesc = hero.class === "warrior" ? "Воин" : "Маг";
 
   const assignBtnStyle = {
-    display: chosenQuest && !isAssigned ? "block" : "none",
+    display: chosenQuest && enabled ? "block" : "none",
   };
 
   const style = {
-    opacity: isAssigned ? 0.5 : 1,
+    opacity: enabled ? 1 : 0.5,
   };
 
   const rewardStyle = {

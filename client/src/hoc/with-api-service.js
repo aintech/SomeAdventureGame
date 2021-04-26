@@ -1,4 +1,4 @@
-import { ApiServiceConsumer } from "../services-context/api-service-context";
+import { ApiServiceConsumer } from "../contexts/api-service-context";
 
 const withApiService = () => (Wrapped) => {
   return (props) => {

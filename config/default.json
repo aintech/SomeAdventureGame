@@ -1,3 +1,5 @@
 {
-  "serverPort": 8081
+  "serverPort": 8081,
+  "jwtSecret": "veryVerySecretlySecret",
+  "baseUrl": "http://localhost:8081"
 }

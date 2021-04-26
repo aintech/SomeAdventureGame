@@ -30,6 +30,7 @@ const QuestReward = ({ quest, heroes, onQuestRewardCollected }) => {
             <div key={hero.id}>
               <HeroItem
                 hero={hero}
+                enabled={true}
                 reward={{
                   gold: heroGoldReward,
                   experience: heroExperienceReward,
