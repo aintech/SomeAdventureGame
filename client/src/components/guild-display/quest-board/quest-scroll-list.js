@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import { connect } from "react-redux";
-import QuestDetails from "./quest-details";
-import QuestScrollItem from "./quest-scroll-item";
+import { bindActionCreators, compose } from "redux";
 import {
+  embarkHeroesOnQuest,
   questScrollChoosed,
   questScrollClosed,
-  embarkHeroesOnQuest,
 } from "../../../actions/actions.js";
-import "./quest-scroll-list.scss";
-import { bindActionCreators, compose } from "redux";
+import AuthContext from "../../../contexts/auth-context.js";
 import withApiService from "../../../hoc/with-api-service.js";
+import QuestDetails from "./quest-details";
+import QuestScrollItem from "./quest-scroll-item";
+import "./quest-scroll-list.scss";
 
 const QuestScrollList = ({
   quests,
@@ -18,8 +19,10 @@ const QuestScrollList = ({
   questScrollClosed,
   embarkHeroesOnQuest,
 }) => {
+  const auth = useContext(AuthContext);
+
   const acceptQuest = (quest, heroesAssignedToQuest) => {
-    embarkHeroesOnQuest({ quest, heroesAssignedToQuest });
+    embarkHeroesOnQuest(auth, quest, heroesAssignedToQuest);
   };
 
   const chooseQuest = (quest) => {
@@ -42,10 +45,14 @@ const QuestScrollList = ({
     );
   }
 
+  const freshQuests = quests
+    .filter((q) => q.embarkedTime === null)
+    .sort((a, b) => a.id - b.id);
+
   return (
     <div className="quest-scroll-list">
-      {quests
-        .filter((q) => q.embarkedTime === null)
+      {freshQuests
+        .slice(0, Math.min(9, freshQuests.length))
         .map((quest, idx) => {
           return (
             <div key={quest.id}>

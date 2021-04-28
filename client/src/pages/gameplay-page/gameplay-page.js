@@ -1,15 +1,31 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
-import { buildingClicked, fetchBuildings } from "../../actions/actions";
+import {
+  buildingClicked,
+  fetchHeroes,
+  fetchQuests,
+} from "../../actions/actions";
 import BuildingDetails from "../../components/building-details/building-details";
 import BuildingItem from "../../components/building-item/building-item";
+import Loader from "../../components/loader/loader";
 import QuestProgressListContainer from "../../components/quest-progress/quest-progress-list/quest-progress-list.js";
 import QuestRewardContainer from "../../components/quest-reward/quest-reward.js";
+import AuthContext from "../../contexts/auth-context";
 import withApiService from "../../hoc/with-api-service.js";
 import "./gameplay-page.scss";
 
-const GameplayPage = ({ buildings, onBuildingClicked, chosenBuilding }) => {
+const GameplayPage = ({
+  quests,
+  heroes,
+  onBuildingClicked,
+  chosenBuilding,
+}) => {
+  const [buildings] = useState([
+    { id: 1, type: "tavern" },
+    { id: 2, type: "guild" },
+  ]);
+
   return (
     <div className="gameplay">
       <div className="gameplay__world">
@@ -28,27 +44,36 @@ const GameplayPage = ({ buildings, onBuildingClicked, chosenBuilding }) => {
         <QuestRewardContainer />
       </div>
       <div className="gameplay__quest-progress">
-        <QuestProgressListContainer />
+        <QuestProgressListContainer quests={quests} heroes={heroes} />
       </div>
     </div>
   );
 };
 
 class GameplayPageContainer extends Component {
+  static contextType = AuthContext;
+
   componentDidMount() {
-    this.props.fetchBuildings();
+    const auth = this.context;
+    this.props.fetchQuests(auth);
+    this.props.fetchHeroes(auth);
   }
 
   render() {
-    const { buildings, onBuildingClicked, chosenBuilding } = this.props;
+    const { quests, heroes, onBuildingClicked, chosenBuilding } = this.props;
 
-    if (!buildings) {
-      return <div>LOADING ...</div>;
+    if (!quests) {
+      return <Loader message={"Fetching quests..."} />;
+    }
+
+    if (!heroes) {
+      return <Loader message={"Fetching heroes..."} />;
     }
 
     return (
       <GameplayPage
-        buildings={buildings}
+        quests={quests}
+        heroes={heroes}
         onBuildingClicked={onBuildingClicked}
         chosenBuilding={chosenBuilding}
       />
@@ -56,17 +81,17 @@ class GameplayPageContainer extends Component {
   }
 }
 
-const mapStateToProps = ({ buildings, chosenBuilding }) => {
-  return { buildings, chosenBuilding };
+const mapStateToProps = ({ quests, heroes, chosenBuilding }) => {
+  return { quests, heroes, chosenBuilding };
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-  const { apiService } = ownProps;
-
+const mapDispatchToProps = (dispatch, customProps) => {
+  const { apiService } = customProps;
   return bindActionCreators(
     {
-      fetchBuildings: fetchBuildings(apiService),
       onBuildingClicked: buildingClicked,
+      fetchQuests: fetchQuests(apiService),
+      fetchHeroes: fetchHeroes(apiService),
     },
     dispatch
   );

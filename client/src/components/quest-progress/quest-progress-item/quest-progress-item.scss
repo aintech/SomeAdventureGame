@@ -42,7 +42,6 @@
     height: to-gameplay-scale(68px);
     background-image: url(../../../img/quest-progress/quest-progress_chest.png);
     background-size: contain;
-    // transform: translateY(10px);
     transform: translateX(to-gameplay-scale(50px));
     z-index: 990;
 
@@ -50,7 +49,6 @@
 
     &:hover {
       animation: pulsate 1s infinite;
-      // transform: translateX(to-gameplay-scale(50px)) scale(1.4);
     }
   }
 

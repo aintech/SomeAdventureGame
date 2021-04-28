@@ -1,14 +1,17 @@
+import { createStats } from "./stats.js";
 import usePool from "./use-pool.js";
 
-class User {
-  constructor(id, login, password) {
-    this.id = id;
-    this.login = login;
-    this.password = password;
-  }
-}
+const createUser = async (user) => {
+  await _persistUser(user);
 
-const saveUser = (user) => {
+  const persisted = await getUser(user.login);
+
+  await createStats(persisted.id);
+
+  return Promise.resolve(persisted);
+};
+
+const _persistUser = async (user) => {
   return new Promise((resolve, reject) => {
     const { login, password } = user;
     usePool(
@@ -45,4 +48,4 @@ const getUser = (login) => {
   });
 };
 
-export { User, saveUser, getUser };
+export { createUser, getUser };

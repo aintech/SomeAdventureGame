@@ -3,7 +3,7 @@ import config from "config";
 import { Router } from "express";
 import { check, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
-import { getUser, saveUser, User } from "../models/user.js";
+import { createUser, getUser } from "../models/user.js";
 
 const authRouter = Router();
 
@@ -36,9 +36,9 @@ authRouter.post(
 
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      const user = new User(null, login, hashedPassword);
+      const user = { login, password: hashedPassword };
 
-      await saveUser(user);
+      await createUser(user);
 
       res.status(201).json({ message: "user registered" });
     } catch (e) {

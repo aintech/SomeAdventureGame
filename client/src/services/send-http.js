@@ -1,5 +1,15 @@
-const sendHttp = async (url, method = "GET", body = null, headers = {}) => {
+const sendHttp = async (
+  url,
+  token,
+  method = "GET",
+  body = null,
+  headers = {}
+) => {
   try {
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     if (body) {
       body = JSON.stringify(body);
       headers["Content-Type"] = "application/json";

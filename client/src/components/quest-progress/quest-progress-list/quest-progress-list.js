@@ -1,19 +1,30 @@
-import "./quest-progress-list.scss";
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators, compose } from "redux";
-import withApiService from "../../../hoc/with-api-service.js";
+import React from "react";
 import QuestProgressItem from "../quest-progress-item/quest-progress-item.js";
-import { fetchEmbarkedQuests } from "../../../actions/actions.js";
+import "./quest-progress-list.scss";
 
-const QuestProgressList = ({ embarkedQuests }) => {
+const QuestProgressList = ({ quests, heroes }) => {
+  if (!quests || !heroes) {
+    return null;
+  }
+
+  const embarked = [];
+  for (let i = 0; i < quests.length; i++) {
+    const q = quests[i];
+    if (q.embarkedTime) {
+      embarked.push({
+        key: q,
+        value: heroes.filter((h) => h.embarkedQuest === q.id),
+      });
+    }
+  }
+
   return (
     <div className="quest-progress-list">
-      {embarkedQuests.map((embarkedQuest) => {
-        const { key: quest, value: heroes } = embarkedQuest;
+      {embarked.map((eq) => {
+        const { key: quest, value: hers } = eq;
         return (
           <div key={quest.id}>
-            <QuestProgressItem quest={quest} heroes={heroes} />
+            <QuestProgressItem quest={quest} heroes={hers} />
           </div>
         );
       })}
@@ -21,37 +32,4 @@ const QuestProgressList = ({ embarkedQuests }) => {
   );
 };
 
-class QuestProgressListContainer extends Component {
-  componentDidMount() {
-    this.props.fetchEmbarkedQuests();
-  }
-
-  render() {
-    const { embarkedQuests } = this.props;
-
-    if (!embarkedQuests) {
-      return <div>LOADING...</div>;
-    }
-
-    return <QuestProgressList embarkedQuests={embarkedQuests} />;
-  }
-}
-
-const mapStateToProps = ({ embarkedQuests }) => {
-  return { embarkedQuests };
-};
-
-const mapDispatchToProps = (dispatch, customProps) => {
-  const { apiService } = customProps;
-  return bindActionCreators(
-    {
-      fetchEmbarkedQuests: fetchEmbarkedQuests(apiService),
-    },
-    dispatch
-  );
-};
-
-export default compose(
-  withApiService(),
-  connect(mapStateToProps, mapDispatchToProps)
-)(QuestProgressListContainer);
+export default QuestProgressList;

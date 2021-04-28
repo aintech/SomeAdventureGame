@@ -4,6 +4,12 @@
   @include absoluteCenter;
 }
 
+.loader__message {
+  font-size: 2rem;
+  text-align: center;
+  color: white;
+}
+
 @keyframes ldio-i9szrwkta0d {
   0% {
     transform: rotate(0deg);

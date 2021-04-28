@@ -53,6 +53,7 @@ const WelcomePage = () => {
           name="password"
           value={form.password}
           onChange={changeHandler}
+          onKeyPress={loginHandler}
           required
         />
         <button

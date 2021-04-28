@@ -1,14 +1,17 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
-import { onQuestRewardCollected } from "../../actions/actions";
+import { onCompleteQuest } from "../../actions/actions";
+import AuthContext from "../../contexts/auth-context";
 import withApiService from "../../hoc/with-api-service";
 import HeroItem from "../guild-display/heros/hero-item";
 import "./quest-reward.scss";
 
-const QuestReward = ({ quest, heroes, onQuestRewardCollected }) => {
+//TODO: реплика героев после выполнения квеста (в качестве небольшого суммари по квесту)
+
+const QuestReward = ({ auth, quest, heroes, onCompleteQuest }) => {
   const clickHandler = () => {
-    onQuestRewardCollected({ quest, heroes });
+    onCompleteQuest(auth, quest, heroes);
   };
 
   const heroGoldReward = Math.floor(
@@ -45,40 +48,37 @@ const QuestReward = ({ quest, heroes, onQuestRewardCollected }) => {
 };
 
 class QuestRewardContainer extends Component {
+  static contextType = AuthContext;
   render() {
-    const { quest, embarkedQuests, onQuestRewardCollected } = this.props;
+    const auth = this.context;
+    const { quest, heroes, onCompleteQuest } = this.props;
 
     if (!quest) {
       return null;
     }
 
-    const heroes = embarkedQuests.filter(
-      (embark) => embark.key.id === quest.id
-    )[0].value;
-
-    if (!heroes) {
-      return null;
-    }
+    const questHeroes = heroes.filter((h) => h.embarkedQuest === quest.id);
 
     return (
       <QuestReward
+        auth={auth}
         quest={quest}
-        heroes={heroes}
-        onQuestRewardCollected={onQuestRewardCollected}
+        heroes={questHeroes}
+        onCompleteQuest={onCompleteQuest}
       />
     );
   }
 }
 
-const mapStateToProps = ({ collectingQuestReward, embarkedQuests }) => {
-  return { quest: collectingQuestReward, embarkedQuests };
+const mapStateToProps = ({ collectingQuestReward, heroes }) => {
+  return { quest: collectingQuestReward, heroes };
 };
 
 const mapDispatchToProps = (dispatch, custonProps) => {
   const { apiService } = custonProps;
   return bindActionCreators(
     {
-      onQuestRewardCollected: onQuestRewardCollected(apiService),
+      onCompleteQuest: onCompleteQuest(apiService),
     },
     dispatch
   );

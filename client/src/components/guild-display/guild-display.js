@@ -1,13 +1,8 @@
 import React, { Component, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators, compose } from "redux";
-import {
-  fetchHeroes,
-  fetchQuests,
-  questScrollClosed,
-} from "../../actions/actions";
-import AuthContext from "../../contexts/auth-context";
-import withApiService from "../../hoc/with-api-service";
+import { bindActionCreators } from "redux";
+import { questScrollClosed } from "../../actions/actions";
+import Loader from "../loader/loader";
 import "./guild-display.scss";
 import HeroList from "./heros/hero-list";
 import QuestScrollList from "./quest-board/quest-scroll-list";
@@ -23,7 +18,9 @@ const GuildDisplay = ({
   const [heroesOnPage, setHeroesOnPage] = useState([]);
 
   useEffect(() => {
-    const idleHeroes = heroes.filter((h) => h.embarkedQuest === null);
+    const idleHeroes = heroes
+      .filter((h) => h.embarkedQuest === null)
+      .sort((a, b) => a.id - b.id);
 
     const lPage = Math.max(0, Math.ceil(idleHeroes.length / 4) - 1);
 
@@ -89,14 +86,6 @@ const GuildDisplay = ({
 };
 
 class GuildDisplayContainer extends Component {
-  static contextType = AuthContext;
-
-  componentDidMount() {
-    const auth = this.context;
-    this.props.fetchQuests();
-    this.props.fetchHeroes(auth);
-  }
-
   render() {
     const {
       quests,
@@ -107,7 +96,7 @@ class GuildDisplayContainer extends Component {
     } = this.props;
 
     if (!quests) {
-      return <div>LOADING...</div>;
+      return <Loader message={"Fetching quests for guild..."} />;
     }
 
     const closeDisplayProcedure = () => {
@@ -130,19 +119,11 @@ const mapStateToProps = ({ quests, heroes, heroesAssignedToQuest }) => {
   return { quests, heroes, heroesAssignedToQuest };
 };
 
-const mapDispatchToProps = (dispatch, customProps) => {
-  const { apiService } = customProps;
-  return bindActionCreators(
-    {
-      fetchQuests: fetchQuests(apiService),
-      fetchHeroes: fetchHeroes(apiService),
-      closeQuestScroll: questScrollClosed,
-    },
-    dispatch
-  );
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({ closeQuestScroll: questScrollClosed }, dispatch);
 };
 
-export default compose(
-  withApiService(),
-  connect(mapStateToProps, mapDispatchToProps)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(GuildDisplayContainer);

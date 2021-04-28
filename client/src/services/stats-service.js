@@ -1,9 +1,9 @@
 import sendHttp from "./send-http";
 
-const baseUrl = "/api/heroes";
+const baseUrl = "/api/stats";
 
-const getHeroes = async (userId, token) => {
+const getStats = async (userId, token) => {
   return await sendHttp(`${baseUrl}/${userId}`, token);
 };
 
-export { getHeroes };
+export { getStats };

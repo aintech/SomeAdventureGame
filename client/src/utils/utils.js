@@ -1,9 +1,5 @@
 import { gameplayScale } from "./variables.js";
 
-// const compose = (...funcs) => (comp) => {
-//   return funcs.reduceRight((wrapped, f) => f(wrapped), comp);
-// };
-
 const padding = (num, places) => {
   return String(num).padStart(places, "0");
 };

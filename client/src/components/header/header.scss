@@ -8,7 +8,6 @@
   border-bottom: 1px solid #f4f2f2;
 
   display: flex;
-  // justify-content: space-between;
 
   &__title {
     color: lavender;
@@ -18,11 +17,11 @@
 
   &__btn-logout {
     height: $header_height;
-    width: 8%;
+    width: 7%;
     display: inline-block;
     cursor: pointer;
-    color: blanchedalmond;
-    background-color: burlywood;
+    color: white;
+    background-color: yellowgreen;
     border: none;
     outline: none;
 

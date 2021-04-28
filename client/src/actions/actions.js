@@ -4,30 +4,10 @@ const gameStatsRequested = () => {
   };
 };
 
-const gameStatsLoaded = (data) => {
+const gameStatsLoaded = (stats) => {
   return {
     type: "FETCH_GAME_STATS_SUCCESS",
-    payload: data,
-  };
-};
-
-const buildingsRequested = () => {
-  return {
-    type: "FETCH_BUILDINGS_REQUEST",
-  };
-};
-
-const buildingsLoaded = (data) => {
-  return {
-    type: "FETCH_BUILDINGS_SUCCESS",
-    payload: data,
-  };
-};
-
-const buildingClicked = (building) => {
-  return {
-    type: "BUILDING_CLICKED",
-    payload: building,
+    payload: stats,
   };
 };
 
@@ -57,14 +37,10 @@ const heroesLoaded = (heroes) => {
   };
 };
 
-const embarkedQuestsRequested = () => {
-  return { type: "FETCH_EMBARKED_QUESTS_REQUEST" };
-};
-
-const embarkedQuestsLoaded = (embarkedQuests) => {
+const buildingClicked = (building) => {
   return {
-    type: "FETCH_EMBARKED_QUESTS_SUCCESS",
-    payload: embarkedQuests,
+    type: "BUILDING_CLICKED",
+    payload: building,
   };
 };
 
@@ -102,33 +78,28 @@ const heroesEmbarkedOnQuest = (payload) => {
   };
 };
 
-const collectingQuestReward = (payload) => {
+const collectingQuestReward = (quest) => {
   return {
     type: "COLLECTING_QUEST_REWARD",
-    payload: payload,
+    payload: quest,
   };
 };
 
-const questRewardCollected = (payload) => {
+const completeQuest = (payload) => {
   return {
-    type: "QUEST_REWARD_COLLECTED",
+    type: "COMPLETE_QUEST",
     payload: payload,
   };
 };
 
-const fetchGameStats = (apiService) => () => (dispatch) => {
+const fetchGameStats = (apiService) => (auth) => (dispatch) => {
   dispatch(gameStatsRequested);
-  apiService.getGameStats().then((data) => dispatch(gameStatsLoaded(data)));
+  apiService.getGameStats(auth).then((data) => dispatch(gameStatsLoaded(data)));
 };
 
-const fetchBuildings = (apiService) => () => (dispatch) => {
-  dispatch(buildingsRequested);
-  apiService.getBuildings().then((data) => dispatch(buildingsLoaded(data)));
-};
-
-const fetchQuests = (apiService) => () => (dispatch) => {
+const fetchQuests = (apiService) => (auth) => (dispatch) => {
   dispatch(questsRequested);
-  apiService.getQuests().then((data) => dispatch(questsLoaded(data)));
+  apiService.getQuests(auth).then((data) => dispatch(questsLoaded(data)));
 };
 
 const fetchHeroes = (apiService) => (auth) => (dispatch) => {
@@ -136,31 +107,24 @@ const fetchHeroes = (apiService) => (auth) => (dispatch) => {
   apiService.getHeroes(auth).then((data) => dispatch(heroesLoaded(data)));
 };
 
-const fetchEmbarkedQuests = (apiService) => () => (dispatch) => {
-  dispatch(embarkedQuestsRequested);
+const embarkHeroesOnQuest = (apiService) => (auth, quest, assignedHeroes) => (
+  dispatch
+) => {
   apiService
-    .getEmbarkedQuests()
-    .then((data) => dispatch(embarkedQuestsLoaded(data)));
-};
-
-const embarkHeroesOnQuest = (apiService) => (payload) => (dispatch) => {
-  apiService
-    .embarkHeroesOnQuest(payload)
+    .embarkHeroesOnQuest(auth, quest, assignedHeroes)
     .then((data) => dispatch(heroesEmbarkedOnQuest(data)));
 };
 
-const onQuestRewardCollected = (apiService) => (payload) => (dispatch) => {
+const onCompleteQuest = (apiService) => (auth, quest, heroes) => (dispatch) => {
   apiService
-    .questRewardCollected(payload)
-    .then((data) => dispatch(questRewardCollected(data)));
+    .completeQuest(auth, quest, heroes)
+    .then((data) => dispatch(completeQuest(data)));
 };
 
 export {
   fetchGameStats,
-  fetchBuildings,
   fetchQuests,
   fetchHeroes,
-  fetchEmbarkedQuests,
   buildingClicked,
   questScrollChoosed,
   questScrollClosed,
@@ -168,5 +132,5 @@ export {
   heroDismissedFromQuest,
   embarkHeroesOnQuest,
   collectingQuestReward,
-  onQuestRewardCollected,
+  onCompleteQuest,
 };

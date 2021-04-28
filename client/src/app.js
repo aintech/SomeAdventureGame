@@ -18,7 +18,7 @@ const App = () => {
   const apiService = new ApiService();
 
   if (!ready) {
-    return <Loader />;
+    return <Loader message={"App is preparing..."} />;
   }
 
   return (

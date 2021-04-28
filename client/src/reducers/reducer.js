@@ -1,15 +1,13 @@
-import { convertHero } from "./converters";
+import { convertHero, convertQuest } from "./converters";
 
 const intialState = {
   gold: 0,
   fame: 0,
-  buildings: [],
   quests: [],
   heroes: [],
   chosenBuilding: null,
   chosenQuest: null,
   heroesAssignedToQuest: [],
-  embarkedQuests: [],
   collectingQuestReward: null,
 };
 
@@ -29,24 +27,6 @@ const reducer = (state = intialState, action) => {
         fame: action.payload.fame,
       };
 
-    case "FETCH_BUILDINGS_REQUEST":
-      return {
-        ...state,
-        buildings: [],
-      };
-
-    case "FETCH_BUILDINGS_SUCCESS":
-      return {
-        ...state,
-        buildings: action.payload,
-      };
-
-    case "BUILDING_CLICKED":
-      return {
-        ...state,
-        chosenBuilding: action.payload,
-      };
-
     case "FETCH_QUESTS_REQUEST":
       return {
         ...state,
@@ -56,7 +36,7 @@ const reducer = (state = intialState, action) => {
     case "FETCH_QUESTS_SUCCESS":
       return {
         ...state,
-        quests: action.payload,
+        quests: action.payload.map((q) => convertQuest(q)),
       };
 
     case "FETCH_HEROES_REQUEST":
@@ -71,16 +51,10 @@ const reducer = (state = intialState, action) => {
         heroes: action.payload.map((h) => convertHero(h)),
       };
 
-    case "FETCH_EMBARKED_QUESTS_REQUEST":
+    case "BUILDING_CLICKED":
       return {
         ...state,
-        embarkedQuests: [],
-      };
-
-    case "FETCH_EMBARKED_QUESTS_SUCCESS":
-      return {
-        ...state,
-        embarkedQuests: action.payload,
+        chosenBuilding: action.payload,
       };
 
     case "QUEST_SCROLL_CHOOSED":
@@ -115,15 +89,33 @@ const reducer = (state = intialState, action) => {
       };
 
     case "HEROES_EMBARKED_ON_QUEST":
-      const { quest, heroesAssignedToQuest } = action.payload;
+      const { embarkedQuests, embarkedHeroes } = action.payload;
+
+      const questIdx = state.quests.findIndex(
+        (q) => q.id === embarkedQuests[0].id
+      );
+
+      let upHeroes = [...state.heroes];
+      for (let i = 0; i < embarkedHeroes.length; i++) {
+        const hero = convertHero(embarkedHeroes[i]);
+        const heroIdx = upHeroes.findIndex((h) => h.id === hero.id);
+        upHeroes = [
+          ...upHeroes.slice(0, heroIdx),
+          hero,
+          ...upHeroes.slice(heroIdx + 1),
+        ];
+      }
+
       return {
         ...state,
+        quests: [
+          ...state.quests.slice(0, questIdx),
+          convertQuest(embarkedQuests[0]),
+          ...state.quests.slice(questIdx + 1),
+        ],
+        heroes: upHeroes,
         chosenQuest: null,
         heroesAssignedToQuest: [],
-        embarkedQuests: [
-          ...state.embarkedQuests,
-          { key: quest, value: heroesAssignedToQuest },
-        ],
       };
 
     case "COLLECTING_QUEST_REWARD":
@@ -132,19 +124,32 @@ const reducer = (state = intialState, action) => {
         collectingQuestReward: action.payload,
       };
 
-    case "QUEST_REWARD_COLLECTED":
-      const embIdx = state.embarkedQuests.findIndex(
-        (emb) => emb.key.id === action.payload.questId
-      );
+    case "COMPLETE_QUEST":
+      const { stats, quest, heroes } = action.payload;
+
+      const completeQuestIdx = state.quests.findIndex((q) => q.id === quest.id);
+
+      let doneHeroes = [...state.heroes];
+      for (let i = 0; i < heroes.length; i++) {
+        const hero = convertHero(heroes[i]);
+        const heroIdx = doneHeroes.findIndex((h) => h.id === hero.id);
+        doneHeroes = [
+          ...doneHeroes.slice(0, heroIdx),
+          hero,
+          ...doneHeroes.slice(heroIdx + 1),
+        ];
+      }
+
       return {
         ...state,
-        gold: action.payload.gold,
-        fame: action.payload.fame,
-        collectingQuestReward: null,
-        embarkedQuests: [
-          ...state.embarkedQuests.slice(0, embIdx),
-          ...state.embarkedQuests.slice(embIdx + 1),
+        gold: stats.gold,
+        fame: stats.fame,
+        quests: [
+          ...state.quests.slice(0, completeQuestIdx),
+          ...state.quests.slice(completeQuestIdx + 1),
         ],
+        heroes: doneHeroes,
+        collectingQuestReward: null,
       };
 
     default:

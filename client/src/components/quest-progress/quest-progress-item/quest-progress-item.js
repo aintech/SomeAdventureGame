@@ -34,11 +34,17 @@ class QuestProgressItem extends Component {
     const seconds = Math.floor(
       quest.duration - (new Date() - quest.embarkedTime) / 1000
     );
+
     this.setState({
       seconds: seconds,
       // currentX: 20 + Math.floor(160 - 160 * (seconds / quest.duration)),
     });
     this.startTimers();
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.secondsTimer);
+    clearInterval(this.framesTimer);
   }
 
   startTimers() {
@@ -77,7 +83,7 @@ class QuestProgressItem extends Component {
   draw() {
     this.canvasCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    //Draw background
+    /* Draw background */
     if (this.state.backImg) {
       this.canvasCtx.drawImage(
         this.state.backImg,
@@ -95,7 +101,7 @@ class QuestProgressItem extends Component {
       );
     }
 
-    //Draw hero
+    /* Draw hero */
     if (this.state.heroImg && this.state.seconds > 0) {
       this.canvasCtx.drawImage(
         this.state.heroImg,
