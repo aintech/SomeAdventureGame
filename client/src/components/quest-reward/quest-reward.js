@@ -8,6 +8,7 @@ import HeroItem from "../guild-display/heros/hero-item";
 import "./quest-reward.scss";
 
 //TODO: реплика героев после выполнения квеста (в качестве небольшого суммари по квесту)
+//TODO: сделать отдельный экранчик для героев, hero-item получается кривым
 
 const QuestReward = ({ auth, quest, heroes, onCompleteQuest }) => {
   const clickHandler = () => {

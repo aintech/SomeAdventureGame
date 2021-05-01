@@ -1,10 +1,50 @@
 import usePool from "./use-pool.js";
 
-const getHeroes = (userId) => {
+let _maxLevel = 0;
+const _levels = [];
+const _fetchLevels = () => {
   return new Promise((resolve, reject) => {
+    usePool("select * from public.hero_level", [], (_, result) => {
+      resolve(result.rows);
+    });
+  });
+};
+
+const _calcHeroLevel = (hero) => {
+  return Math.max(
+    ..._levels.filter((l) => l.exp < hero.experience).map((l) => l.lvl)
+  );
+};
+
+const _calcLevelProgress = (hero) => {
+  const prevLvlExp = _levels.filter((l) => l.lvl === hero.level)[0].exp;
+  const nextLvlExp =
+    hero.level === _maxLevel
+      ? Number.MAX_SAFE_INTEGER
+      : _levels.filter((l) => l.lvl === hero.level + 1)[0].exp;
+
+  const lvlsScope = nextLvlExp - prevLvlExp;
+  const heroScope = hero.experience - prevLvlExp;
+  return heroScope / lvlsScope;
+};
+
+const _addLevelInfo = (heroes) => {
+  return heroes
+    .map((h) => {
+      return { ...h, level: _calcHeroLevel(h) };
+    })
+    .map((h) => {
+      return { ...h, progress: _calcLevelProgress(h) };
+    });
+};
+
+const _addEquipment = async (heroes) => {
+  const equipment = await new Promise((resolve, reject) => {
     usePool(
-      "select * from public.hero where user_id = $1",
-      [userId],
+      `select * from public.hero_equipment he
+       left join public.equipment e on e.id = he.equipment_id
+       where he.hero_id in (${heroes.map((h) => h.id).join(",")})`,
+      [],
       (error, result) => {
         if (error) {
           return reject(error);
@@ -13,9 +53,48 @@ const getHeroes = (userId) => {
       }
     );
   });
+
+  heroes.forEach((h) => {
+    h.equipment = equipment.filter((e) => e.hero_id === h.id);
+  });
+
+  return heroes;
 };
 
-const getHeroesByIds = (heroIds) => {
+const getHeroes = async (userId) => {
+  if (_levels.length === 0) {
+    await _fetchLevels().then((data) =>
+      data.forEach((d) =>
+        _levels.push({ lvl: Number(d.level), exp: Number(d.experience) })
+      )
+    );
+    _maxLevel = Math.max(..._levels.map((l) => l.lvl));
+  }
+
+  return new Promise((resolve, reject) => {
+    usePool(
+      "select * from public.hero where user_id = $1",
+      [userId],
+      (error, result) => {
+        if (error) {
+          return reject(error);
+        }
+        resolve(_addEquipment(_addLevelInfo(result.rows)));
+      }
+    );
+  });
+};
+
+const getHeroesByIds = async (heroIds) => {
+  if (_levels.length === 0) {
+    await _fetchLevels().then((data) =>
+      data.forEach((d) =>
+        _levels.push({ lvl: Number(d.level), exp: Number(d.experience) })
+      )
+    );
+    _maxLevel = Math.max(..._levels.map((l) => l.lvl));
+  }
+
   return new Promise((resolve, reject) => {
     usePool(
       `select * from public.hero where id in (${heroIds.join(",")})`,
@@ -24,7 +103,7 @@ const getHeroesByIds = (heroIds) => {
         if (error) {
           return reject(error);
         }
-        resolve(result.rows);
+        resolve(_addLevelInfo(result.rows));
       }
     );
   });

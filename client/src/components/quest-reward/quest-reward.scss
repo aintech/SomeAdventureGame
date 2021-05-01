@@ -15,11 +15,11 @@
 
   &__content {
     @include absoluteCenter;
-    height: 60%;
-    width: 40%;
+    // height: 60%;
+    // width: 40%;
 
     display: grid;
-    grid-template-rows: 15% 18% 15% 8% 15% 5% 1fr;
+    grid-template-rows: 15% 18% 15% 5% 15% 5% 1fr;
   }
 
   &__title {
@@ -32,7 +32,7 @@
     color: white;
     font-size: to-gameplay-scale(8rem);
     grid-row: 3;
-    margin-left: 40%;
+    margin-left: 45%;
     align-self: center;
   }
 
@@ -40,7 +40,7 @@
     color: white;
     font-size: to-gameplay-scale(8rem);
     grid-row: 5;
-    margin-left: 40%;
+    margin-left: 45%;
     align-self: center;
   }
 

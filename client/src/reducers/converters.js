@@ -9,6 +9,8 @@ const convertHero = (hero) => {
     experience: hero.experience,
     gold: hero.gold,
     embarkedQuest: hero.embarked_quest,
+    progress: hero.progress,
+    equipment: hero.equipment,
   };
 };
 
