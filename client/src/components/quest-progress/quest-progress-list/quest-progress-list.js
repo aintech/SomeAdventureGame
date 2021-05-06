@@ -8,12 +8,11 @@ const QuestProgressList = ({ quests, heroes }) => {
   }
 
   const embarked = [];
-  for (let i = 0; i < quests.length; i++) {
-    const q = quests[i];
-    if (q.embarkedTime) {
+  for (const quest of quests) {
+    if (quest.embarkedTime) {
       embarked.push({
-        key: q,
-        value: heroes.filter((h) => h.embarkedQuest === q.id),
+        key: quest,
+        value: heroes.filter((h) => h.embarkedQuest === quest.id),
       });
     }
   }

@@ -7,6 +7,7 @@ const intialState = {
   heroes: [],
   chosenBuilding: null,
   chosenQuest: null,
+  chosenHero: null,
   heroesAssignedToQuest: [],
   collectingQuestReward: null,
 };
@@ -70,6 +71,18 @@ const reducer = (state = intialState, action) => {
         heroesAssignedToQuest: [],
       };
 
+    case "HERO_STATS_CHOOSED":
+      return {
+        ...state,
+        chosenHero: action.payload,
+      };
+
+    case "HERO_STATS_CLOSED":
+      return {
+        ...state,
+        chosenHero: null,
+      };
+
     case "HERO_ASSIGNED_TO_QUEST":
       return {
         ...state,
@@ -96,8 +109,8 @@ const reducer = (state = intialState, action) => {
       );
 
       let upHeroes = [...state.heroes];
-      for (let i = 0; i < embarkedHeroes.length; i++) {
-        const hero = convertHero(embarkedHeroes[i]);
+      for (const embHero of embarkedHeroes) {
+        const hero = convertHero(embHero);
         const heroIdx = upHeroes.findIndex((h) => h.id === hero.id);
         upHeroes = [
           ...upHeroes.slice(0, heroIdx),
@@ -130,8 +143,8 @@ const reducer = (state = intialState, action) => {
       const completeQuestIdx = state.quests.findIndex((q) => q.id === quest.id);
 
       let doneHeroes = [...state.heroes];
-      for (let i = 0; i < heroes.length; i++) {
-        const hero = convertHero(heroes[i]);
+      for (const hr of heroes) {
+        const hero = convertHero(hr);
         const heroIdx = doneHeroes.findIndex((h) => h.id === hero.id);
         doneHeroes = [
           ...doneHeroes.slice(0, heroIdx),

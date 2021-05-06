@@ -13,7 +13,6 @@ const GuildDisplay = ({
   heroesAssignedToQuest,
   closeDisplay,
 }) => {
-  console.log("heroes", heroes);
   const [page, setPage] = useState(0);
   const [lastPage, setLastPage] = useState(0);
   const [heroesOnPage, setHeroesOnPage] = useState([]);

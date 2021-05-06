@@ -2,7 +2,22 @@ import React, { useEffect, useRef } from "react";
 import { toGameplayScale } from "../../../utils/utils";
 import "./hero-item.scss";
 
-const HeroItem = ({ hero, chosenQuest, onAssignToQuest, enabled, reward }) => {
+//TODO: Убрать дублирование
+const calcSurplus = (equipment) => {
+  let power = 0;
+  let defence = 0;
+  let health = 0;
+
+  for (const equip of equipment) {
+    power += +equip.power;
+    defence += +equip.defence;
+    health += +equip.health;
+  }
+
+  return { power, defence, health };
+};
+
+const HeroItem = ({ hero, chosenQuest, onClickHandler, enabled, reward }) => {
   const canvasRef = useRef(null);
   const canvasW = toGameplayScale(80);
   const canvasH = toGameplayScale(10);
@@ -28,12 +43,14 @@ const HeroItem = ({ hero, chosenQuest, onAssignToQuest, enabled, reward }) => {
     display: reward ? "block" : "none",
   };
 
+  const equipSurplus = calcSurplus(hero.equipment);
+
   return (
-    <div className="hero-item" style={style}>
+    <div className="hero-item" style={style} onClick={onClickHandler}>
       <button
+        id="hero_assigned_btn"
         className="hero-item__btn--assign"
         style={assignBtnStyle}
-        onClick={onAssignToQuest}
       ></button>
       <div className={`hero-item__portrait--${hero.type}`}></div>
       <div className="hero-item__type-level">
@@ -46,8 +63,10 @@ const HeroItem = ({ hero, chosenQuest, onAssignToQuest, enabled, reward }) => {
         height={canvasH}
       />
       <div className="hero-item__name">{hero.name}</div>
-      <div className="hero-item__power">{hero.power}</div>
-      <div className="hero-item__health">{hero.health}</div>
+      <div className="hero-item__power">{+hero.power + equipSurplus.power}</div>
+      <div className="hero-item__health">
+        {+hero.health + equipSurplus.health}
+      </div>
       <div className="hero-item__gold">{hero.gold}</div>
       <div className="hero-item__reward--gold" style={rewardStyle}>
         {reward?.gold}

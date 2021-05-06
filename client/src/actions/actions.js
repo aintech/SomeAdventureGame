@@ -57,6 +57,19 @@ const questScrollClosed = () => {
   };
 };
 
+const heroStatsChoosed = (hero) => {
+  return {
+    type: "HERO_STATS_CHOOSED",
+    payload: hero,
+  };
+};
+
+const heroStatsClosed = () => {
+  return {
+    type: "HERO_STATS_CLOSED",
+  };
+};
+
 const heroAssignedToQuest = (hero) => {
   return {
     type: "HERO_ASSIGNED_TO_QUEST",
@@ -128,6 +141,8 @@ export {
   buildingClicked,
   questScrollChoosed,
   questScrollClosed,
+  heroStatsChoosed,
+  heroStatsClosed,
   heroAssignedToQuest,
   heroDismissedFromQuest,
   embarkHeroesOnQuest,

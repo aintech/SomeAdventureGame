@@ -8,6 +8,7 @@ import {
 } from "../../actions/actions";
 import BuildingDetails from "../../components/building-details/building-details";
 import BuildingItem from "../../components/building-item/building-item";
+import HeroStats from "../../components/hero-stats/hero-stats";
 import Loader from "../../components/loader/loader";
 import QuestProgressListContainer from "../../components/quest-progress/quest-progress-list/quest-progress-list.js";
 import QuestRewardContainer from "../../components/quest-reward/quest-reward.js";
@@ -40,9 +41,8 @@ const GameplayPage = ({
 
         <BuildingDetails chosenBuilding={chosenBuilding} />
       </div>
-      <div>
-        <QuestRewardContainer />
-      </div>
+      <QuestRewardContainer />
+      <HeroStats />
       <div className="gameplay__quest-progress">
         <QuestProgressListContainer quests={quests} heroes={heroes} />
       </div>

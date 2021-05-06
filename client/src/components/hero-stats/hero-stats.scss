@@ -1,0 +1,186 @@
+@import "../../utils/variables.scss";
+@import "../../utils/mixins.scss";
+
+$width: 360px; // calc(513px * 0.7);
+
+.hero-stats {
+  position: absolute;
+  width: $gameplay_width;
+  height: $gameplay_height;
+  background-color: rgba($color: black, $alpha: 0.8);
+  cursor: default;
+  z-index: 2000;
+
+  display: grid;
+  grid-template-columns: 1fr 165px 75px 55px 70px 1fr;
+  grid-template-rows: 1fr 63px 45px 13px 30px 30px 60px 50px 50px 50px 20px 1fr;
+
+  & > * {
+    font-size: 3rem;
+    color: white;
+    z-index: inherit;
+  }
+
+  &__bg {
+    @include absoluteCenter;
+    width: 360px;
+    height: calc(591px * 0.7);
+    background-image: url(../../img/hero-stats/hero-stats_bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  &__portrait {
+    grid-row: 4;
+    grid-column: 2;
+    width: 96px;
+    height: 93px;
+    margin-left: 20px;
+
+    & > * {
+      height: 100%;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    &--mage {
+      background-image: url(../../img/portraits/portrait-mage.png);
+    }
+
+    &--warrior {
+      background-image: url(../../img/portraits/portrait-warrior.png);
+    }
+  }
+
+  &__health-bar {
+    position: absolute;
+    top: 220px;
+    left: 517px;
+  }
+
+  &__experience-bar {
+    position: absolute;
+    top: 252px;
+    left: 517px;
+  }
+
+  &__experience {
+    font-size: 2rem;
+    grid-row: 6;
+    grid-column: 5;
+  }
+
+  &__gold {
+    grid-row: 3;
+    grid-column: 5;
+    align-self: center;
+    justify-self: flex-end;
+    margin-right: 65px;
+    margin-top: 4px;
+  }
+
+  &__name {
+    grid-row: 2;
+    grid-column: 2/6;
+    align-self: flex-end;
+    justify-self: center;
+  }
+
+  &__level {
+    grid-row: 3;
+    grid-column: 2;
+    align-self: center;
+    margin-left: 110px;
+    margin-top: 4px;
+  }
+
+  &__power {
+    grid-row: 8;
+    grid-column: 4;
+    align-self: flex-end;
+
+    &-surplus {
+      grid-row: 8;
+      grid-column: 5;
+      align-self: flex-end;
+    }
+  }
+
+  &__defence {
+    grid-row: 9;
+    grid-column: 4;
+    align-self: flex-end;
+
+    &-surplus {
+      grid-row: 9;
+      grid-column: 5;
+      align-self: flex-end;
+    }
+  }
+
+  &__health {
+    grid-row: 10;
+    grid-column: 4;
+    align-self: flex-end;
+
+    &-surplus {
+      grid-row: 10;
+      grid-column: 5;
+      align-self: flex-end;
+    }
+  }
+
+  &__equipment {
+    display: grid;
+
+    grid-row: 8;
+    grid-column: 2;
+
+    margin-left: 16px;
+
+    grid-template-rows: repeat(4 1fr);
+    grid-template-columns: repeat(4 1fr);
+    gap: 7px;
+
+    & > * {
+      width: 76px;
+      height: 72px;
+      margin-top: -1px;
+      margin-left: 1px;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+    &-weapon {
+      grid-row: 1;
+      grid-column: 1;
+
+      &--rusty_sword {
+        background-image: url(../../img/equipment/equipment-weapon-rusty_sword.png);
+      }
+
+      &--bent_staff {
+        background-image: url(../../img/equipment/equipment-weapon-bent_staff.png);
+      }
+    }
+
+    &-armor {
+      grid-row: 1;
+      grid-column: 2;
+
+      &--simple_shirt {
+        background-image: url(../../img/equipment/equipment-armor-simple_shirt.png);
+      }
+    }
+
+    &-shield {
+      grid-row: 2;
+      grid-column: 1;
+    }
+
+    &-accessory {
+      grid-row: 2;
+      grid-column: 2;
+    }
+  }
+}

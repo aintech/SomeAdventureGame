@@ -1,17 +1,26 @@
 import React from "react";
 import { connect } from "react-redux";
+import {
+  heroAssignedToQuest,
+  heroStatsChoosed,
+} from "../../../actions/actions.js";
 import HeroItem from "./hero-item";
-import { heroAssignedToQuest } from "../../../actions/actions.js";
 import "./hero-list.scss";
 
 const HeroList = ({
   heroes,
   chosenQuest,
+  heroChoosed,
   heroAssignedToQuest,
   heroesAssignedToQuest,
 }) => {
-  const assignToQuest = (hero) => {
-    heroAssignedToQuest(hero);
+  const heroClickHandler = (hero, event) => {
+    event.preventDefault();
+    if (event.target.id === "hero_assigned_btn") {
+      heroAssignedToQuest(hero);
+    } else {
+      heroChoosed(hero);
+    }
   };
 
   return (
@@ -27,9 +36,7 @@ const HeroList = ({
               hero={hero}
               index={index}
               chosenQuest={chosenQuest}
-              onAssignToQuest={() => {
-                assignToQuest(hero);
-              }}
+              onClickHandler={(event) => heroClickHandler(hero, event)}
               enabled={enabled}
             />
           </div>
@@ -46,6 +53,9 @@ const mapStateToProps = ({ chosenQuest }) => {
 const mapDispatchToProps = (dispatch) => ({
   heroAssignedToQuest: (hero) => {
     dispatch(heroAssignedToQuest(hero));
+  },
+  heroChoosed: (hero) => {
+    dispatch(heroStatsChoosed(hero));
   },
 });
 
