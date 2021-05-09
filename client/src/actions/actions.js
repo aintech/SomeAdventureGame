@@ -84,10 +84,10 @@ const heroDismissedFromQuest = (hero) => {
   };
 };
 
-const heroesEmbarkedOnQuest = (payload) => {
+const heroesEmbarkedOnQuest = (embarkedQuestAndHeroes) => {
   return {
     type: "HEROES_EMBARKED_ON_QUEST",
-    payload: payload,
+    payload: embarkedQuestAndHeroes,
   };
 };
 

@@ -5,6 +5,11 @@
   transform: translate(-50%, -50%);
 }
 
+@mixin strokeText {
+  text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black,
+    1px 1px 0 black;
+}
+
 @mixin clearfix {
   &::after {
     content: "";

@@ -24,11 +24,13 @@ const WelcomePage = () => {
     } catch (e) {}
   };
 
-  const loginHandler = async () => {
-    try {
-      const data = await login({ ...form });
-      auth.login(data.token, data.userId);
-    } catch (e) {}
+  const loginHandler = async (event) => {
+    if (event.code === "Enter" || event.code === "NumpadEnter") {
+      try {
+        const data = await login({ ...form });
+        auth.login(data.token, data.userId);
+      } catch (e) {}
+    }
   };
 
   const gotoGameplay = () => {

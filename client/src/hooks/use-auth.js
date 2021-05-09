@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 const storageName = "someAdventureGameUserData";
-const storageLifetime = 60 * 60 * 1000;
+const storageLifetime = 24 * 60 * 60 * 1000;
 
 const useAuth = () => {
   const [token, setToken] = useState(null);

@@ -4,6 +4,7 @@ import { bindActionCreators, compose } from "redux";
 import { onCompleteQuest } from "../../actions/actions";
 import AuthContext from "../../contexts/auth-context";
 import withApiService from "../../hoc/with-api-service";
+import { GUILD_SHARE } from "../../utils/variables";
 import HeroItem from "../guild-display/heros/hero-item";
 import "./quest-reward.scss";
 
@@ -15,8 +16,14 @@ const QuestReward = ({ auth, quest, heroes, onCompleteQuest }) => {
     onCompleteQuest(auth, quest, heroes);
   };
 
+  const checkpointsTribute = quest.checkpoints
+    .filter((c) => c.type === "gold")
+    .map((c) => +c.value)
+    .reduce((a, b) => a + b);
+
   const heroGoldReward = Math.floor(
-    Math.floor(quest.tribute * 0.5) / heroes.length
+    Math.floor(quest.tribute * (1 - GUILD_SHARE)) / heroes.length +
+      Math.floor(checkpointsTribute / heroes.length)
   );
 
   const heroExperienceReward = Math.floor(quest.experience / heroes.length);
@@ -26,7 +33,7 @@ const QuestReward = ({ auth, quest, heroes, onCompleteQuest }) => {
       <div className="quest-reward__content">
         <div className="quest-reward__title">{quest.title}</div>
         <div className="quest-reward__tribute">
-          {Math.floor(quest.tribute * 0.5)}
+          {Math.floor(quest.tribute * GUILD_SHARE)}
         </div>
         <div className="quest-reward__fame">{quest.fame}</div>
         <div className="quest-reward__heroes-holder">

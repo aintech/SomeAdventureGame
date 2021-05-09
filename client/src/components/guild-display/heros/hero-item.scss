@@ -6,7 +6,7 @@
   background-image: url(../../../img/guild-display/guild-hero_display.svg);
   background-size: contain;
   background-repeat: no-repeat;
-  cursor: pointer;
+  cursor: default;
 
   display: grid;
   grid-template-columns:
@@ -23,6 +23,12 @@
 
   & > * {
     align-self: center;
+  }
+
+  &--hoverable {
+    &:hover {
+      transform: scale(1.05);
+    }
   }
 
   &__btn--assign {
@@ -72,7 +78,17 @@
     line-height: to-gameplay-scale(2rem);
     grid-row: 2;
     grid-column: 3;
-    margin-bottom: to-gameplay-scale(10px);
+    margin-bottom: to-gameplay-scale(24px);
+  }
+
+  &__health-bar {
+    grid-row: 2;
+    grid-column: 3;
+    border: 1px solid white;
+    justify-self: center;
+    align-self: flex-end;
+    margin-left: 3px;
+    margin-bottom: 12px;
   }
 
   &__exp-bar {

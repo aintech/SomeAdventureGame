@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { heroDismissedFromQuest } from "../../../actions/actions.js";
 import { convertDuration } from "../../../utils/utils.js";
+import { GUILD_SHARE } from "../../../utils/variables.js";
 import "./quest-details.scss";
 
 const QuestDetails = ({
@@ -72,7 +73,8 @@ const QuestDetails = ({
         {convertDuration(quest.duration)}
       </div>
       <div className="quest-details__tribute">
-        Доля гильдии {Math.floor(quest.tribute * 0.5)} монет (50%)
+        Доля гильдии {Math.floor(quest.tribute * GUILD_SHARE)} монет ($
+        {GUILD_SHARE * 100}%)
       </div>
       <div className="quest-details__experience">
         Опыт героям {quest.experience} очков

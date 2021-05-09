@@ -1,3 +1,5 @@
+@import "../src/utils/variables.scss";
+
 //RESPONSIVE BREAKPOINTS
 $bp-largest: 75em; // 1200px
 $bp-large: 62.5em; // 1000px
@@ -22,5 +24,5 @@ body {
   font-weight: 300;
   line-height: 1.6;
   background-color: darkslategray;
-  min-height: 100vh;
+  // min-height: 100vh;
 }

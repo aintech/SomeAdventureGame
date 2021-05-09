@@ -28,7 +28,8 @@ const HeroList = ({
       {heroes.map((hero, index) => {
         const enabled =
           heroesAssignedToQuest?.length < 4 &&
-          heroesAssignedToQuest?.findIndex((h) => h.id === hero.id) === -1;
+          heroesAssignedToQuest?.findIndex((h) => h.id === hero.id) === -1 &&
+          !hero.embarkedQuest;
 
         return (
           <div key={hero.id}>

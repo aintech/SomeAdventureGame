@@ -7,7 +7,7 @@ const createStats = (userId) => {
       [userId, 1000, 0],
       (error, result) => {
         if (error) {
-          reject(error);
+          return reject(error);
         }
         resolve(result.rows[0]);
       }
@@ -22,7 +22,7 @@ const getStats = (userId) => {
       [userId],
       (error, result) => {
         if (error) {
-          reject(error);
+          return reject(error);
         }
         resolve(result.rows[0]);
       }
@@ -39,7 +39,7 @@ const addStats = (userId, gold, fame) => {
       [userId, gold, fame],
       (error, result) => {
         if (error) {
-          reject(error);
+          return reject(error);
         }
         resolve({});
       }

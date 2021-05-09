@@ -2,20 +2,21 @@ import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { heroStatsClosed } from "../../actions/actions";
+import { HEALTH_PER_VITALITY } from "../../utils/variables";
 import "./hero-stats.scss";
 
 const calcSurplus = (equipment) => {
   let power = 0;
   let defence = 0;
-  let health = 0;
+  let vitality = 0;
 
   for (const equip of equipment) {
     power += +equip.power;
     defence += +equip.defence;
-    health += +equip.health;
+    vitality += +equip.vitality;
   }
 
-  return { power, defence, health };
+  return { power, defence, vitality };
 };
 
 const HeroStats = ({ hero, heroStatsClosed }) => {
@@ -27,7 +28,12 @@ const HeroStats = ({ hero, heroStatsClosed }) => {
       const healthBar = healthCanvasRef.current.getContext("2d");
       healthBar.clearRect(0, 0, 124, 21);
       healthBar.fillStyle = "red";
-      healthBar.fillRect(0, 0, 124, 21);
+      healthBar.fillRect(
+        0,
+        0,
+        124 * (hero.health / (hero.vitality * HEALTH_PER_VITALITY)),
+        21
+      );
 
       const experienceBar = experienceCanvasRef.current.getContext("2d");
       experienceBar.clearRect(0, 0, 124, 21);
@@ -69,6 +75,7 @@ const HeroStats = ({ hero, heroStatsClosed }) => {
       <div className="hero-stats__gold">{hero.gold}</div>
       <div className="hero-stats__name">{hero.name}</div>
       <div className="hero-stats__level">{hero.level}</div>
+      <div className="hero-stats__health">{hero.health}</div>
       <div className="hero-stats__experience">{hero.experience}</div>
       <div className="hero-stats__power">{hero.power}</div>
       <div className="hero-stats__power-surplus">+{equipmentSurplus.power}</div>
@@ -76,15 +83,31 @@ const HeroStats = ({ hero, heroStatsClosed }) => {
       <div className="hero-stats__defence-surplus">
         +{equipmentSurplus.defence}
       </div>
-      <div className="hero-stats__health">{hero.health}</div>
-      <div className="hero-stats__health-surplus">
-        +{equipmentSurplus.health}
+      <div className="hero-stats__vitality">{hero.vitality}</div>
+      <div className="hero-stats__vitality-surplus">
+        +{equipmentSurplus.vitality}
       </div>
       <div className="hero-stats__equipment">
-        <div className={weaponStyle}></div>
-        <div className={armorStyle}></div>
-        <div className={shieldStyle}></div>
-        <div className={accessoryStyle}></div>
+        <div className={weaponStyle}>
+          <div className="hero-stats__equipment--level">
+            {weapon ? `lv. ${weapon.level}` : null}
+          </div>
+        </div>
+        <div className={armorStyle}>
+          <div className="hero-stats__equipment--level">
+            {armor ? `lv. ${armor.level}` : null}
+          </div>
+        </div>
+        <div className={shieldStyle}>
+          <div className="hero-stats__equipment--level">
+            {shield ? `lv. ${shield.level}` : null}
+          </div>
+        </div>
+        <div className={accessoryStyle}>
+          <div className="hero-stats__equipment--level">
+            {accessory ? `lv. ${accessory.level}` : null}
+          </div>
+        </div>
       </div>
 
       <canvas

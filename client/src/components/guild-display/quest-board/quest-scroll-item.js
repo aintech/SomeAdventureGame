@@ -20,7 +20,7 @@ const getStoredRotation = (index, questId) => {
 
   if (storedRotation) {
     const parsed = JSON.parse(storedRotation);
-    if (Number.parseInt(parsed.questId) !== questId) {
+    if (parsed.questId !== questId) {
       storeRotation(index, questId, rotation);
     } else {
       rotation = parsed.rotation;

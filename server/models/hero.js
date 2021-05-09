@@ -10,6 +10,18 @@ const _fetchLevels = () => {
   });
 };
 
+//TODO: Переделать на декоратор при переезде на TypeScript
+const _checkLevelsLoaded = async () => {
+  if (_levels.length === 0) {
+    await _fetchLevels().then((data) =>
+      data.forEach((d) =>
+        _levels.push({ lvl: Number(d.level), exp: Number(d.experience) })
+      )
+    );
+    _maxLevel = Math.max(..._levels.map((l) => l.lvl));
+  }
+};
+
 const _calcHeroLevel = (hero) => {
   return Math.max(
     ..._levels.filter((l) => l.exp < hero.experience).map((l) => l.lvl)
@@ -61,15 +73,12 @@ const _addEquipment = async (heroes) => {
   return heroes;
 };
 
+const prepareHeroes = (heroes) => {
+  return _addEquipment(_addLevelInfo(heroes));
+};
+
 const getHeroes = async (userId) => {
-  if (_levels.length === 0) {
-    await _fetchLevels().then((data) =>
-      data.forEach((d) =>
-        _levels.push({ lvl: Number(d.level), exp: Number(d.experience) })
-      )
-    );
-    _maxLevel = Math.max(..._levels.map((l) => l.lvl));
-  }
+  await _checkLevelsLoaded();
 
   return new Promise((resolve, reject) => {
     usePool(
@@ -79,21 +88,14 @@ const getHeroes = async (userId) => {
         if (error) {
           return reject(error);
         }
-        resolve(_addEquipment(_addLevelInfo(result.rows)));
+        resolve(prepareHeroes(result.rows));
       }
     );
   });
 };
 
 const getHeroesByIds = async (heroIds) => {
-  if (_levels.length === 0) {
-    await _fetchLevels().then((data) =>
-      data.forEach((d) =>
-        _levels.push({ lvl: Number(d.level), exp: Number(d.experience) })
-      )
-    );
-    _maxLevel = Math.max(..._levels.map((l) => l.lvl));
-  }
+  await _checkLevelsLoaded();
 
   return new Promise((resolve, reject) => {
     usePool(
@@ -103,7 +105,7 @@ const getHeroesByIds = async (heroIds) => {
         if (error) {
           return reject(error);
         }
-        resolve(_addLevelInfo(result.rows));
+        resolve(prepareHeroes(result.rows));
       }
     );
   });
@@ -137,7 +139,7 @@ const completeHeroesQuest = async (heroIds, heroesTribute, experience) => {
       [tributePerHero, experiencePerHero],
       (error, result) => {
         if (error) {
-          reject(error);
+          return reject(error);
         }
         resolve({});
       }

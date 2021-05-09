@@ -10,7 +10,7 @@
 
   &__btn--close {
     float: right;
-    margin-right: 4rem;
+    margin-right: 6rem;
     margin-top: 1rem;
     width: to-gameplay-scale(84px);
     height: to-gameplay-scale(84px);
@@ -23,6 +23,33 @@
 
     &:hover {
       transform: scale(1.1);
+    }
+  }
+
+  &__btn--show-unabled {
+    display: flex;
+    position: absolute;
+    top: 65px;
+    left: 800px;
+    background-color: transparent;
+    border: 1px solid yellowgreen;
+    color: yellowgreen;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+
+    &:hover {
+      border: 1px solid yellow;
+    }
+
+    & > i {
+      color: yellowgreen;
+    }
+
+    & > span {
+      align-self: center;
+      margin: 4px;
+      margin-left: 5px;
     }
   }
 

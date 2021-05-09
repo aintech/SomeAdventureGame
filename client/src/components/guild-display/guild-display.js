@@ -7,6 +7,9 @@ import "./guild-display.scss";
 import HeroList from "./heros/hero-list";
 import QuestScrollList from "./quest-board/quest-scroll-list";
 
+//TODO: Переключалка setShowUnabledHeroes сбрасывается если переоткрыть гильдию -
+//      лучше сделать через редюсер чтобы запоминалась
+
 const GuildDisplay = ({
   quests,
   heroes,
@@ -16,10 +19,11 @@ const GuildDisplay = ({
   const [page, setPage] = useState(0);
   const [lastPage, setLastPage] = useState(0);
   const [heroesOnPage, setHeroesOnPage] = useState([]);
+  const [showUnabledHeroes, setShowUnabledHeroes] = useState(false);
 
   useEffect(() => {
     const idleHeroes = heroes
-      .filter((h) => h.embarkedQuest === null)
+      .filter((h) => showUnabledHeroes || h.embarkedQuest === null)
       .sort((a, b) => a.id - b.id);
 
     const lPage = Math.max(0, Math.ceil(idleHeroes.length / 4) - 1);
@@ -39,11 +43,17 @@ const GuildDisplay = ({
 
     setLastPage(lPage);
     setHeroesOnPage(idleHeroes.slice(start, end));
-  }, [page, heroes, heroesAssignedToQuest]);
+  }, [page, heroes, heroesAssignedToQuest, showUnabledHeroes]);
 
   const switchPage = (add) => {
     const nPage = page + add;
     setPage(nPage);
+  };
+
+  const switchShowUnabled = () => {
+    switchPage(-page);
+    const show = !showUnabledHeroes;
+    setShowUnabledHeroes(show);
   };
 
   const prevStyle = {
@@ -69,6 +79,15 @@ const GuildDisplay = ({
         className="guild-display__btn--close"
         onClick={closeDisplay}
       ></button>
+      <button
+        className="guild-display__btn--show-unabled"
+        onClick={switchShowUnabled}
+      >
+        <i className="material-icons guild-display__btn--show-unabled-icon">
+          {!showUnabledHeroes ? "check_box" : "check_box_outline_blank"}
+        </i>
+        <span>Only idle heroes</span>
+      </button>
       <button
         className="guild-display__btn--previous"
         style={prevStyle}
