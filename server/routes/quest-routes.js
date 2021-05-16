@@ -1,6 +1,10 @@
 import { Router } from "express";
 import AuthMiddleware from "../middleware/auth-middleware.js";
-import { embarkOnQuest, getQuests, completeQuest } from "../models/quest.js";
+import {
+  completeQuest,
+  embarkOnQuest,
+  getQuests,
+} from "../repository/quest.js";
 
 const questsRouter = Router();
 

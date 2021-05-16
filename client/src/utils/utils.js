@@ -14,4 +14,12 @@ const toGameplayScale = (value) => {
   return value / gameplayScale;
 };
 
-export { convertDuration, toGameplayScale };
+const millisToSecs = (milliseconds) => {
+  return Math.floor(milliseconds * 0.001);
+};
+
+const dateToSecs = (date) => {
+  return millisToSecs(date.getTime());
+};
+
+export { convertDuration, toGameplayScale, millisToSecs, dateToSecs };

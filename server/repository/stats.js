@@ -5,11 +5,11 @@ const createStats = (userId) => {
     usePool(
       "insert into public.stats (user_id, gold, fame) values ($1, $2, $3)",
       [userId, 1000, 0],
-      (error, result) => {
+      (error, _) => {
         if (error) {
-          return reject(error);
+          return reject(new Error(`createStats ${error}`));
         }
-        resolve(result.rows[0]);
+        resolve({});
       }
     );
   });
@@ -22,7 +22,7 @@ const getStats = (userId) => {
       [userId],
       (error, result) => {
         if (error) {
-          return reject(error);
+          return reject(new Error(`getStats ${error}`));
         }
         resolve(result.rows[0]);
       }
@@ -39,7 +39,7 @@ const addStats = (userId, gold, fame) => {
       [userId, gold, fame],
       (error, result) => {
         if (error) {
-          return reject(error);
+          return reject(new Error(`addStats ${error}`));
         }
         resolve({});
       }

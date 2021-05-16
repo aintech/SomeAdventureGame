@@ -12,6 +12,9 @@ const HeroItem = ({ hero, chosenQuest, onClickHandler, enabled, reward }) => {
   useEffect(() => {
     const healthCtx = healthCanvasRef.current.getContext("2d");
     healthCtx.clearRect(0, 0, canvasW, canvasH);
+    healthCtx.fillStyle = "lightgray";
+    healthCtx.fillRect(0, 0, canvasW, canvasH);
+
     healthCtx.fillStyle = "red";
     healthCtx.fillRect(
       0,
@@ -22,6 +25,8 @@ const HeroItem = ({ hero, chosenQuest, onClickHandler, enabled, reward }) => {
 
     const experienceCtx = experienceCanvasRef.current.getContext("2d");
     experienceCtx.clearRect(0, 0, canvasW, canvasH);
+    experienceCtx.fillStyle = "lightgray";
+    experienceCtx.fillRect(0, 0, canvasW, canvasH);
     experienceCtx.fillStyle = "yellow";
     experienceCtx.fillRect(0, 0, canvasW * hero.progress, canvasH);
   });

@@ -1,5 +1,5 @@
 import { getHeroes } from "./heroes-service.js";
-import { embarkOnQuest, getQuests, completeQuest } from "./quests-service.js";
+import { completeQuest, embarkOnQuest, getQuests } from "./quests-service.js";
 import { getStats } from "./stats-service.js";
 
 export default class ApiService {

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import AuthMiddleware from "../middleware/auth-middleware.js";
-import { getStats } from "../models/stats.js";
+import { getStats } from "../repository/stats.js";
 
 const statsRouter = Router();
 

@@ -1,15 +1,17 @@
-const _getTotalAttribute = (hero, attrName) => {
+const getTotalAttribute = (hero, attrName) => {
   return (
     +hero[attrName] +
     hero.equipment.map((e) => +e[attrName]).reduce((a, b) => a + b)
   );
 };
 
-const _convertQuestCheckpoint = (checkpoint) => {
+const convertQuestCheckpoint = (checkpoint) => {
   return {
-    occureTime: new Date(checkpoint.occure_time),
+    id: checkpoint.id,
+    occuredTime: +checkpoint.occured_time,
     type: checkpoint.type,
-    value: checkpoint.value,
+    duration: +checkpoint.duration,
+    outcome: checkpoint.outcome,
   };
 };
 
@@ -21,11 +23,11 @@ const convertHero = (hero) => {
     level: hero.level,
     health: hero.health,
     power: hero.power,
-    powerTotal: _getTotalAttribute(hero, "power"),
+    powerTotal: getTotalAttribute(hero, "power"),
     defence: hero.defence,
-    defenceTotal: _getTotalAttribute(hero, "defence"),
+    defenceTotal: getTotalAttribute(hero, "defence"),
     vitality: hero.vitality,
-    vitalityTotal: _getTotalAttribute(hero, "vitality"),
+    vitalityTotal: getTotalAttribute(hero, "vitality"),
     experience: hero.experience,
     gold: hero.gold,
     embarkedQuest: hero.embarked_quest,
@@ -42,10 +44,12 @@ const convertQuest = (quest) => {
     description: quest.description,
     experience: quest.experience,
     duration: quest.duration,
+    progressId: quest.progress_id,
+    progressDuration: quest.progress_duration,
     tribute: quest.tribute,
     fame: quest.fame,
     embarkedTime: quest.embarked_time ? Date.parse(quest.embarked_time) : null,
-    checkpoints: quest.checkpoints.map((c) => _convertQuestCheckpoint(c)),
+    checkpoints: quest.checkpoints.map((c) => convertQuestCheckpoint(c)),
   };
 };
 

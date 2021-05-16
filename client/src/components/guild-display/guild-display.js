@@ -7,9 +7,10 @@ import "./guild-display.scss";
 import HeroList from "./heros/hero-list";
 import QuestScrollList from "./quest-board/quest-scroll-list";
 
-//TODO: Переключалка setShowUnabledHeroes сбрасывается если переоткрыть гильдию -
-//      лучше сделать через редюсер чтобы запоминалась
-
+/**
+ * TODO: Переключалка setShowUnabledHeroes сбрасывается если переоткрыть гильдию -
+ * лучше сделать через редюсер чтобы запоминалась
+ */
 const GuildDisplay = ({
   quests,
   heroes,
@@ -56,6 +57,12 @@ const GuildDisplay = ({
     setShowUnabledHeroes(show);
   };
 
+  const clickHandler = (event) => {
+    if (event.target.id === "guild-display") {
+      closeDisplay();
+    }
+  };
+
   const prevStyle = {
     opacity: page === 0 ? 0.5 : 1,
     cursor: page === 0 ? "default" : "pointer",
@@ -69,7 +76,7 @@ const GuildDisplay = ({
   };
 
   return (
-    <div className="guild-display">
+    <div className="guild-display" id="guild-display" onClick={clickHandler}>
       <QuestScrollList quests={quests} />
       <HeroList
         heroes={heroesOnPage}

@@ -73,7 +73,7 @@ const QuestDetails = ({
         {convertDuration(quest.duration)}
       </div>
       <div className="quest-details__tribute">
-        Доля гильдии {Math.floor(quest.tribute * GUILD_SHARE)} монет ($
+        Доля гильдии {Math.floor(quest.tribute * GUILD_SHARE)} монет (
         {GUILD_SHARE * 100}%)
       </div>
       <div className="quest-details__experience">
@@ -84,6 +84,7 @@ const QuestDetails = ({
         className="quest-details__btn--accept"
         onClick={onAcceptQuest}
         style={acceptBtnStyle}
+        disabled={heroesAssignedToQuest.length === 0}
       ></button>
     </div>
   );

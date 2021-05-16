@@ -1,5 +1,4 @@
 import pg from "pg";
-// import pgp from "pg-promise";
 
 const pool = new pg.Pool({
   user: "yaremchuken",

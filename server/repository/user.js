@@ -19,7 +19,7 @@ const _persistUser = async (user) => {
       [login, password],
       (error, result) => {
         if (error) {
-          return reject(error);
+          return reject(new Error(`persistUser ${error}`));
         }
         resolve(result.rows[0]);
       }
@@ -34,7 +34,7 @@ const getUser = (login) => {
       [login],
       (error, result) => {
         if (error) {
-          return reject(error);
+          return reject(new Error(`getUser ${error}`));
         }
         if (!result) {
           return resolve(null);

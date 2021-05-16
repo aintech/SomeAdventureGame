@@ -8,8 +8,10 @@ import { GUILD_SHARE } from "../../utils/variables";
 import HeroItem from "../guild-display/heros/hero-item";
 import "./quest-reward.scss";
 
-//TODO: реплика героев после выполнения квеста (в качестве небольшого суммари по квесту)
-//TODO: сделать отдельный экранчик для героев, hero-item получается кривым
+/**
+ * TODO: реплика героев после выполнения квеста (в качестве небольшого суммари по квесту)
+ * TODO: сделать отдельный экранчик для героев, hero-item получается кривым
+ */
 
 const QuestReward = ({ auth, quest, heroes, onCompleteQuest }) => {
   const clickHandler = () => {
@@ -17,8 +19,8 @@ const QuestReward = ({ auth, quest, heroes, onCompleteQuest }) => {
   };
 
   const checkpointsTribute = quest.checkpoints
-    .filter((c) => c.type === "gold")
-    .map((c) => +c.value)
+    .filter((c) => c.type === "chest")
+    .map((c) => +c.outcome)
     .reduce((a, b) => a + b);
 
   const heroGoldReward = Math.floor(

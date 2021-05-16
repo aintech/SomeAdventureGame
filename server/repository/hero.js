@@ -10,7 +10,9 @@ const _fetchLevels = () => {
   });
 };
 
-//TODO: Переделать на декоратор при переезде на TypeScript
+/**
+ * TODO: Переделать на декоратор при переезде на TypeScript
+ */
 const _checkLevelsLoaded = async () => {
   if (_levels.length === 0) {
     await _fetchLevels().then((data) =>
@@ -73,7 +75,7 @@ const _addEquipment = async (heroes) => {
   return heroes;
 };
 
-const prepareHeroes = (heroes) => {
+const _prepareHeroes = (heroes) => {
   return _addEquipment(_addLevelInfo(heroes));
 };
 
@@ -88,7 +90,7 @@ const getHeroes = async (userId) => {
         if (error) {
           return reject(error);
         }
-        resolve(prepareHeroes(result.rows));
+        resolve(_prepareHeroes(result.rows));
       }
     );
   });
@@ -105,7 +107,7 @@ const getHeroesByIds = async (heroIds) => {
         if (error) {
           return reject(error);
         }
-        resolve(prepareHeroes(result.rows));
+        resolve(_prepareHeroes(result.rows));
       }
     );
   });
@@ -117,9 +119,9 @@ const embarkHeroesOnQuest = (questId, heroIds) => {
       `update public.hero set embarked_quest = $1 
        where id in (${heroIds.join(",")})`,
       [questId],
-      (error, result) => {
+      (error, _) => {
         if (error) {
-          return reject(error);
+          return reject(new Error(`embarkHeroesOnQuest ${error}`));
         }
         resolve({});
       }
@@ -139,7 +141,7 @@ const completeHeroesQuest = async (heroIds, heroesTribute, experience) => {
       [tributePerHero, experiencePerHero],
       (error, result) => {
         if (error) {
-          return reject(error);
+          return reject(new Error(`completeHeroesQuest ${error}`));
         }
         resolve({});
       }

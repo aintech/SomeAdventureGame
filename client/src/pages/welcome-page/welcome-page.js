@@ -4,9 +4,11 @@ import AuthContext from "../../contexts/auth-context";
 import { login, register } from "../../services/auth-service";
 import "./welcome-page.scss";
 
-//TODO: При успешной регистрации сразу логиниться
-//TODO: После нажатия кнопок регистрации или логина дизейблить их
-//TODO: Выводить сообщения об удачной регистрации и логине
+/**
+ * TODO: При успешной регистрации сразу логиниться
+ * TODO: После нажатия кнопок регистрации или логина дизейблить их
+ * TODO: Выводить сообщения об удачной регистрации и логине
+ */
 
 const WelcomePage = () => {
   const auth = useContext(AuthContext);
@@ -25,7 +27,11 @@ const WelcomePage = () => {
   };
 
   const loginHandler = async (event) => {
-    if (event.code === "Enter" || event.code === "NumpadEnter") {
+    if (
+      event.target.id === "login_btn" ||
+      event.code === "Enter" ||
+      event.code === "NumpadEnter"
+    ) {
       try {
         const data = await login({ ...form });
         auth.login(data.token, data.userId);
@@ -66,6 +72,7 @@ const WelcomePage = () => {
           REGISTER
         </button>
         <button
+          id="login_btn"
           className="login__form--btn"
           type="button"
           onClick={loginHandler}

@@ -3,7 +3,7 @@ import config from "config";
 import { Router } from "express";
 import { check, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
-import { createUser, getUser } from "../models/user.js";
+import { createUser, getUser } from "../repository/user.js";
 
 const authRouter = Router();
 

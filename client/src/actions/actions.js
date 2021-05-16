@@ -120,13 +120,12 @@ const fetchHeroes = (apiService) => (auth) => (dispatch) => {
   apiService.getHeroes(auth).then((data) => dispatch(heroesLoaded(data)));
 };
 
-const embarkHeroesOnQuest = (apiService) => (auth, quest, assignedHeroes) => (
-  dispatch
-) => {
-  apiService
-    .embarkHeroesOnQuest(auth, quest, assignedHeroes)
-    .then((data) => dispatch(heroesEmbarkedOnQuest(data)));
-};
+const embarkHeroesOnQuest =
+  (apiService) => (auth, quest, assignedHeroes) => (dispatch) => {
+    apiService
+      .embarkHeroesOnQuest(auth, quest, assignedHeroes)
+      .then((data) => dispatch(heroesEmbarkedOnQuest(data)));
+  };
 
 const onCompleteQuest = (apiService) => (auth, quest, heroes) => (dispatch) => {
   apiService
