@@ -113,9 +113,9 @@ const completeQuest = async (userId, questId, heroIds) => {
 
   const checkpoints = await getQuestCheckpointsByQuest(userId, questId);
   const checkpointsTribute = checkpoints
-    .filter((c) => c.type === "chest")
+    .filter((c) => c.type === "treasure")
     .map((c) => +c.outcome)
-    .reduce((a, b) => a + b);
+    .reduce((a, b) => a + b, 0);
 
   const heroesTribute =
     Math.floor(quest.tribute * (1 - GUILD_SHARE)) + checkpointsTribute;

@@ -1,15 +1,17 @@
+import getBattleOutcome from "../battle/battle-processor.js";
+import { getMonsterParty } from "./monster.js";
 import { persistQuestCheckpoints } from "./quest-checkpoints.js";
 import usePool from "./use-pool.js";
 
-const generateCheckpoints = (quest, heroes) => {
+const generateCheckpoints = async (quest, heroes) => {
   const checkpoints = [];
 
   //чекпоинты начинаются со второй трети квеста, и происходят примерно каждые 30 секунд
-  const checkpointsCount = 3; //Math.floor(questDuration * 0.5 * 0.1);
+  const checkpointsCount = 1; //Math.floor(questDuration * 0.5 * 0.1);
 
   let checkpointsDuration = 0;
   for (let i = 0; i < checkpointsCount; i++) {
-    const type = "chest"; //Math.random() > 0.7 ? "chest" : "monster";
+    const type = Math.random() > 1 ? "treasure" : "battle";
 
     const checkpointTime = i * 10;
     //пока чекпоинты начинаются с первой десятой части квеста
@@ -20,24 +22,28 @@ const generateCheckpoints = (quest, heroes) => {
 
     const occured_time = addSec;
 
-    const duration = 10;
-
-    checkpointsDuration += duration;
-
     let outcome;
+    let actors;
+    let duration;
     switch (type) {
-      case "chest":
+      case "treasure":
         outcome = quest.level * Math.floor(Math.random() * 20 + 10);
+        duration = 10;
         break;
-      // case "monster":
-      //   const monsters = await getMonsters(quest.level);
-      //   value = monsters[Math.floor(Math.random() * monsters.length)];
-      //   break;
+      case "battle":
+        const monsters = await getMonsterParty(quest.level);
+        outcome = getBattleOutcome(monsters, heroes);
+        actors = new Map();
+        monsters.forEach((m) => actors.set(m.actorId, m.name));
+        duration = Math.max(...outcome.keys());
+        break;
       default:
         throw new Error(`Unknown checkpoint type ${type}`);
     }
 
-    checkpoints.push({ type, occured_time, duration, outcome });
+    checkpointsDuration += duration;
+
+    checkpoints.push({ type, occured_time, duration, outcome, actors });
   }
 
   return checkpoints;
@@ -67,7 +73,7 @@ const persistProgress = (userId, questId, checkpoints) => {
 };
 
 const createQuestProgress = async (userId, quest, heroes) => {
-  const checkpoints = generateCheckpoints(quest, heroes);
+  const checkpoints = await generateCheckpoints(quest, heroes);
   const progressId = await persistProgress(userId, quest.id, checkpoints);
   await persistQuestCheckpoints(progressId, checkpoints);
   return progressId;

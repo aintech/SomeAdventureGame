@@ -7,7 +7,7 @@ const persistQuestCheckpoints = async (progressId, checkpoints) => {
     for (const checkpoint of checkpoints) {
       sql += `
           insert into public.quest_checkpoint 
-          (quest_progress_id, type, occured_time, duration, outcome)
+          (quest_progress_id, type, occured_time, duration, outcome, actors)
           values
           (
             ${progressId},
@@ -15,9 +15,14 @@ const persistQuestCheckpoints = async (progressId, checkpoints) => {
             ${checkpoint.occured_time}, 
             ${checkpoint.duration},
             '${
-              checkpoint.type === "chest"
-                ? checkpoint.outcome
-                : JSON.stringify(checkpoint.outcome)
+              checkpoint.outcome instanceof Map
+                ? JSON.stringify(Array.from(checkpoint.outcome.entries()))
+                : checkpoint.outcome
+            }',
+            '${
+              checkpoint.actors
+                ? JSON.stringify(Array.from(checkpoint.actors.entries()))
+                : null
             }');
           `;
     }
@@ -51,6 +56,14 @@ const getQuestCheckpoints = (progressIds, checkIfPassed = false) => {
         if (error) {
           return reject(new Error(`getQuestCheckpoints ${error}`));
         }
+        // const checkpoints = result.rows;
+        // checkpoints.map((c) => {
+        //   return {
+        //     ...c,
+        //     outcome: c.type === "treasure" ? c.outcome :
+        //   };
+        // });
+        // console.log(result.rows);
         resolve(result.rows);
       }
     );
@@ -66,7 +79,7 @@ const getQuestCheckpointsByQuest = async (
   return getQuestCheckpoints([progress.id], checkIfPassed);
 };
 
-const deleteCheckpoints = () => {
+const deleteCheckpoints = (userId, questId) => {
   return new Promise((resolve, reject) => {
     usePool(
       `delete from public.quest_checkpoint 

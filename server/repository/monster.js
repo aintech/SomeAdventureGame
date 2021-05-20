@@ -12,15 +12,22 @@ const _fetchMonsters = () => {
   });
 };
 
-/**
- * TODO: Возвращать монстров в зависимости от уровня
- */
-const getMonsters = async (level) => {
+const getMonsterParty = async (level) => {
   if (_monsters.length === 0) {
     _monsters = await _fetchMonsters();
   }
 
-  return Promise.resolve(_monsters.slice());
+  const partyCount = Math.random() > 0.5 ? 2 : 3; // Math.floor(Math.random() * 3) + 1;
+  const monstersByLevel = _monsters.filter((m) => m.level === level);
+  const monsters = [];
+  for (let i = 0; i < partyCount; i++) {
+    const monster =
+      monstersByLevel[Math.floor(Math.random() * monstersByLevel.length)];
+    monster.actorId = i;
+    monsters.push(monster);
+  }
+
+  return monsters;
 };
 
-export { getMonsters };
+export { getMonsterParty };

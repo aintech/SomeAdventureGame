@@ -5,7 +5,10 @@ import { collectingQuestReward } from "../../../actions/actions.js";
 import AuthContext from "../../../contexts/auth-context.js";
 import withApiService from "../../../hoc/with-api-service.js";
 import progressBG from "../../../img/quest-progress/quest-progress_background.png";
-import chestImgSrc from "../../../img/quest-progress/quest-progress_chest.png";
+import chestClosedImgSrc from "../../../img/quest-progress/Chest_closed.png";
+import chestOpenImgSrc from "../../../img/quest-progress/Chest_open.png";
+import skeletonImgSrc from "../../../img/quest-progress/Skeleton.png";
+import skeletonDeadImgSrc from "../../../img/quest-progress/Skeleton_dead.png";
 import heroImgSrc from "../../../img/quest-progress/quest-progress_hero.png";
 import {
   convertDuration,
@@ -25,7 +28,10 @@ class QuestProgressItem extends Component {
       bgOffset: 0,
       backImg: null,
       heroImg: null,
-      chestImg: null,
+      chestClosedImg: null,
+      chestOpenImg: null,
+      skeletonImg: null,
+      skeletonDeadImg: null,
       eventMessages: [],
       activeCheckpoint: null,
       willBeSpendOnCheckpoints: 0,
@@ -103,7 +109,7 @@ class QuestProgressItem extends Component {
     });
   }
 
-  finishActiveQuestEvent() {
+  finishActiveCheckpoint() {
     const { activeCheckpoint } = this.state;
 
     const msg = `+${activeCheckpoint.outcome} g`;
@@ -116,11 +122,12 @@ class QuestProgressItem extends Component {
     });
   }
 
-  sendMessage(message, color = "yellow") {
+  sendMessage(message, color = "yellow", direction = "left") {
     const event = {
       fireTime: new Date(),
       message,
       color,
+      direction,
     };
     this.setState((state) => {
       return { eventMessages: [...state.eventMessages, event] };
@@ -138,6 +145,10 @@ class QuestProgressItem extends Component {
       };
     });
 
+    if (this.state.activeCheckpoint) {
+      this.checkCheckpointSteps();
+    }
+
     if (seconds <= 0) {
       clearInterval(this.secondsTimer);
       clearInterval(this.updateTimer);
@@ -153,6 +164,20 @@ class QuestProgressItem extends Component {
       ) {
         this.setAsActiveCheckpoint(checkpoint);
         return;
+      }
+    }
+  }
+
+  checkCheckpointSteps() {
+    const checkpoint = this.state.activeCheckpoint;
+    if (checkpoint.outcome instanceof Map) {
+      const sec = this.state.seconds - checkpoint.occuredTime;
+      const step = checkpoint.outcome.get(sec);
+      if (step?.length > 0) {
+        for (const action of step) {
+          const direction = action.action === "monster_hit" ? "right" : "left";
+          this.sendMessage(`-${action.value} hp`, "red", direction);
+        }
       }
     }
   }
@@ -178,7 +203,7 @@ class QuestProgressItem extends Component {
         this.state.seconds >
         activeCheckpoint.occuredTime + activeCheckpoint.duration
       ) {
-        this.finishActiveQuestEvent();
+        this.finishActiveCheckpoint();
       }
     }
 
@@ -230,8 +255,11 @@ class QuestProgressItem extends Component {
       }
 
       switch (checkpoint.type) {
-        case "chest":
+        case "treasure":
           this.drawChest(diff, passed);
+          break;
+        case "battle":
+          this.drawEnemy(checkpoint.actors, diff, passed);
           break;
         default:
           throw new Error(
@@ -255,18 +283,19 @@ class QuestProgressItem extends Component {
 
     /* Draw event messages */
     for (const message of this.state.eventMessages) {
+      const direction = message.direction === "right" ? -1 : 1;
       const off = (message.fireTime.getTime() - new Date().getTime()) / 100;
       this.canvasCtx.fillStyle = message.color;
-      this.canvasCtx.fillText(message.message, 60 + off, 35 + off);
+      this.canvasCtx.fillText(message.message, 60 + off * direction, 35 + off);
     }
   }
 
   drawChest(diff, passed) {
-    if (this.state.chestImg) {
+    if (this.state.chestOpenImg && this.state.chestClosedImg) {
       const offset = 80 + diff / 80;
       if (!passed) {
         this.canvasCtx.drawImage(
-          this.state.chestImg,
+          this.state.chestClosedImg,
           offset,
           16,
           toGameplayScale(36),
@@ -274,12 +303,37 @@ class QuestProgressItem extends Component {
         );
       } else {
         this.canvasCtx.drawImage(
-          this.state.chestImg,
+          this.state.chestOpenImg,
           offset,
-          24,
+          16,
           toGameplayScale(36),
           toGameplayScale(46)
         );
+      }
+    }
+  }
+
+  drawEnemy(actors, diff, passed) {
+    if (this.state.skeletonImg && this.state.skeletonDeadImg) {
+      const offset = 80 + diff / 80;
+      for (let i = 0; i < actors.size; i++) {
+        if (!passed) {
+          this.canvasCtx.drawImage(
+            this.state.skeletonImg,
+            offset + i * 10,
+            16 + i * 2,
+            toGameplayScale(36),
+            toGameplayScale(46)
+          );
+        } else {
+          this.canvasCtx.drawImage(
+            this.state.skeletonDeadImg,
+            offset + i * 10,
+            16 + i * 2,
+            toGameplayScale(36),
+            toGameplayScale(46)
+          );
+        }
       }
     }
   }
@@ -296,8 +350,20 @@ class QuestProgressItem extends Component {
     this.setState({ heroImg: event.target });
   }
 
-  chestLoaded(event) {
-    this.setState({ chestImg: event.target });
+  chestClosedLoaded(event) {
+    this.setState({ chestClosedImg: event.target });
+  }
+
+  chestOpenLoaded(event) {
+    this.setState({ chestOpenImg: event.target });
+  }
+
+  skeletonLoaded(event) {
+    this.setState({ skeletonImg: event.target });
+  }
+
+  skeletonDeadLoaded(event) {
+    this.setState({ skeletonDeadImg: event.target });
   }
 
   collectReward() {
@@ -319,10 +385,10 @@ class QuestProgressItem extends Component {
       description = "DONE";
     } else if (this.state.activeCheckpoint) {
       switch (this.state.activeCheckpoint.type) {
-        case "chest":
-          description = "Cracking";
+        case "treasure":
+          description = "Treasure";
           break;
-        case "monster":
+        case "battle":
           description = "Battle";
           break;
         default:
@@ -355,8 +421,27 @@ class QuestProgressItem extends Component {
           alt=""
         />
         <img
-          src={chestImgSrc}
-          onLoad={this.chestLoaded.bind(this)}
+          src={chestClosedImgSrc}
+          onLoad={this.chestClosedLoaded.bind(this)}
+          style={{ display: "none" }}
+          alt=""
+        />
+        <img
+          src={chestOpenImgSrc}
+          onLoad={this.chestOpenLoaded.bind(this)}
+          style={{ display: "none" }}
+          alt=""
+        />
+
+        <img
+          src={skeletonImgSrc}
+          onLoad={this.skeletonLoaded.bind(this)}
+          style={{ display: "none" }}
+          alt=""
+        />
+        <img
+          src={skeletonDeadImgSrc}
+          onLoad={this.skeletonDeadLoaded.bind(this)}
           style={{ display: "none" }}
           alt=""
         />

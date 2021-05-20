@@ -6,8 +6,12 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Some memos and inserts for DB
+# Some memos
 memos.txt
+
+# Help sqls
+select.sql
+clear.sql
 
 # Design ideas
 1d68b9f97a02e08898f0d65113e00b3b.png
@@ -16,4 +20,7 @@ ac9152f8cea0c4c5e8f3cf8efb24a425.jpg
 luc-moratal-pixtogether1-export.gif
 qg7rmtmuc7b41.png
 quest-progress_BG.png
-sqls.sql
+58aa5e5968f0847def72b9eabd444bcb.jpg
+75069d387bbe4447d7b1664e2fb30b7b.png
+animation-step-step-open-and-closed-wooden-vector-21007163.jpg
+fb9d1c8f98ddeeaf59e3642fd381e389.jpg

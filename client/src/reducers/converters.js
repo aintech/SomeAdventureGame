@@ -1,6 +1,10 @@
-const getTotalAttribute = (hero, attrName) => {
+/**
+ *
+ * Вычитаем бонус экипировки чтобы получить "начальное" значение атрибута героя
+ */
+const getRawAttribute = (hero, attrName) => {
   return (
-    +hero[attrName] +
+    +hero[attrName] -
     hero.equipment.map((e) => +e[attrName]).reduce((a, b) => a + b)
   );
 };
@@ -11,7 +15,11 @@ const convertQuestCheckpoint = (checkpoint) => {
     occuredTime: +checkpoint.occured_time,
     type: checkpoint.type,
     duration: +checkpoint.duration,
-    outcome: checkpoint.outcome,
+    outcome:
+      checkpoint.type === "treasure"
+        ? checkpoint.outcome
+        : new Map(JSON.parse(checkpoint.outcome)),
+    actors: checkpoint.actors ? new Map(JSON.parse(checkpoint.actors)) : null,
   };
 };
 
@@ -23,11 +31,13 @@ const convertHero = (hero) => {
     level: hero.level,
     health: hero.health,
     power: hero.power,
-    powerTotal: getTotalAttribute(hero, "power"),
+    powerRaw: getRawAttribute(hero, "power"),
     defence: hero.defence,
-    defenceTotal: getTotalAttribute(hero, "defence"),
+    defenceRaw: getRawAttribute(hero, "defence"),
     vitality: hero.vitality,
-    vitalityTotal: getTotalAttribute(hero, "vitality"),
+    vitalityRaw: getRawAttribute(hero, "vitality"),
+    initiative: hero.initiative,
+    initiativeRaw: getRawAttribute(hero, "initiative"),
     experience: hero.experience,
     gold: hero.gold,
     embarkedQuest: hero.embarked_quest,

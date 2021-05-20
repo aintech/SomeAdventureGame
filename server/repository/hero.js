@@ -79,6 +79,11 @@ const _prepareHeroes = (heroes) => {
   return _addEquipment(_addLevelInfo(heroes));
 };
 
+/**
+ * У атрибутов (power, health и т.д.) значения указаны уже с учётом экипировки!
+ * так сделано чтобы не подмешивать в разных местах характеристики экипировки при расчёте
+ * характеристик героя.
+ */
 const getHeroes = async (userId) => {
   await _checkLevelsLoaded();
 
@@ -139,7 +144,7 @@ const completeHeroesQuest = async (heroIds, heroesTribute, experience) => {
        set gold = (gold + $1), experience = (experience + $2), embarked_quest = null
        where id in (${heroIds.join(",")})`,
       [tributePerHero, experiencePerHero],
-      (error, result) => {
+      (error, _) => {
         if (error) {
           return reject(new Error(`completeHeroesQuest ${error}`));
         }

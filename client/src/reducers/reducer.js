@@ -118,7 +118,6 @@ const reducer = (state = intialState, action) => {
           ...upHeroes.slice(heroIdx + 1),
         ];
       }
-
       return {
         ...state,
         quests: [

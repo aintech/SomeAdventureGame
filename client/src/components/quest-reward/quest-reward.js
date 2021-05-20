@@ -19,9 +19,9 @@ const QuestReward = ({ auth, quest, heroes, onCompleteQuest }) => {
   };
 
   const checkpointsTribute = quest.checkpoints
-    .filter((c) => c.type === "chest")
+    .filter((c) => c.type === "treasure")
     .map((c) => +c.outcome)
-    .reduce((a, b) => a + b);
+    .reduce((a, b) => a + b, 0);
 
   const heroGoldReward = Math.floor(
     Math.floor(quest.tribute * (1 - GUILD_SHARE)) / heroes.length +

@@ -19,7 +19,7 @@ const HeroItem = ({ hero, chosenQuest, onClickHandler, enabled, reward }) => {
     healthCtx.fillRect(
       0,
       0,
-      canvasW * (hero.health / (hero.vitalityTotal * HEALTH_PER_VITALITY)),
+      canvasW * (hero.health / (hero.vitality * HEALTH_PER_VITALITY)),
       canvasH
     );
 
@@ -71,7 +71,7 @@ const HeroItem = ({ hero, chosenQuest, onClickHandler, enabled, reward }) => {
         height={canvasH}
       />
       <div className="hero-item__name">{hero.name}</div>
-      <div className="hero-item__power">{hero.powerTotal}</div>
+      <div className="hero-item__power">{hero.power}</div>
       <div className="hero-item__health">{hero.health}</div>
       <div className="hero-item__gold">{hero.gold}</div>
       <div className="hero-item__reward--gold" style={rewardStyle}>

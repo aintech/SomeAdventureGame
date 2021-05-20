@@ -37,7 +37,7 @@ const addStats = (userId, gold, fame) => {
        set gold = (gold + $2), fame = (fame + $3)
        where user_id = $1`,
       [userId, gold, fame],
-      (error, result) => {
+      (error, _) => {
         if (error) {
           return reject(new Error(`addStats ${error}`));
         }

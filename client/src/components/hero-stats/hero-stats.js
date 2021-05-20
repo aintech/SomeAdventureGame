@@ -9,16 +9,21 @@ const calcSurplus = (equipment) => {
   let power = 0;
   let defence = 0;
   let vitality = 0;
+  let initiative = 0;
 
   for (const equip of equipment) {
     power += +equip.power;
     defence += +equip.defence;
     vitality += +equip.vitality;
+    initiative -= +equip.initiative;
   }
 
-  return { power, defence, vitality };
+  return { power, defence, vitality, initiative };
 };
 
+/**
+ * TODO: Выводить инициативу
+ */
 const HeroStats = ({ hero, heroStatsClosed }) => {
   const healthCanvasRef = useRef(null);
   const experienceCanvasRef = useRef(null);
@@ -77,13 +82,13 @@ const HeroStats = ({ hero, heroStatsClosed }) => {
       <div className="hero-stats__level">{hero.level}</div>
       <div className="hero-stats__health">{hero.health}</div>
       <div className="hero-stats__experience">{hero.experience}</div>
-      <div className="hero-stats__power">{hero.power}</div>
+      <div className="hero-stats__power">{hero.powerRaw}</div>
       <div className="hero-stats__power-surplus">+{equipmentSurplus.power}</div>
-      <div className="hero-stats__defence">{hero.defence}</div>
+      <div className="hero-stats__defence">{hero.defenceRaw}</div>
       <div className="hero-stats__defence-surplus">
         +{equipmentSurplus.defence}
       </div>
-      <div className="hero-stats__vitality">{hero.vitality}</div>
+      <div className="hero-stats__vitality">{hero.vitalityRaw}</div>
       <div className="hero-stats__vitality-surplus">
         +{equipmentSurplus.vitality}
       </div>
