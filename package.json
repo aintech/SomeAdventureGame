@@ -1,5 +1,5 @@
 {
-  "name": "some-adventure-game",
+  "name": "some_adventure_game-server",
   "version": "0.0.1",
   "description": "Some Adventure Game",
   "type": "module",
