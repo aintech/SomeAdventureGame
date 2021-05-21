@@ -6,12 +6,11 @@ import usePool from "./use-pool.js";
 const generateCheckpoints = async (quest, heroes) => {
   const checkpoints = [];
 
-  //чекпоинты начинаются со второй трети квеста, и происходят примерно каждые 30 секунд
-  const checkpointsCount = 1; //Math.floor(questDuration * 0.5 * 0.1);
+  const checkpointsCount = Math.floor(quest.duration * 0.5 * 0.1);
 
   let checkpointsDuration = 0;
   for (let i = 0; i < checkpointsCount; i++) {
-    const type = Math.random() > 1 ? "treasure" : "battle";
+    const type = i % 2 == 0 ? "treasure" : "battle"; //Math.random() > 1 ? "treasure" : "battle";
 
     const checkpointTime = i * 10;
     //пока чекпоинты начинаются с первой десятой части квеста

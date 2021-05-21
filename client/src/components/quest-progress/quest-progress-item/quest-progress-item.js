@@ -51,7 +51,6 @@ class QuestProgressItem extends Component {
     this.auth = this.context;
     this.canvas = this.canvasRef.current;
     this.canvasCtx = this.canvas.getContext("2d");
-    this.canvasCtx.font = "Bold 14pt Nunito";
 
     const { quest } = this.props;
     const seconds = Math.floor(millisToSecs(new Date() - quest.embarkedTime));
@@ -112,9 +111,10 @@ class QuestProgressItem extends Component {
   finishActiveCheckpoint() {
     const { activeCheckpoint } = this.state;
 
-    const msg = `+${activeCheckpoint.outcome} g`;
-
-    this.sendMessage(msg);
+    if (activeCheckpoint.type === "treasure") {
+      const msg = `+${activeCheckpoint.outcome} g`;
+      this.sendMessage(msg);
+    }
 
     this.calcWillBeSpendOnCheckpoints(this.state.seconds);
     this.setState({
@@ -174,12 +174,25 @@ class QuestProgressItem extends Component {
       const sec = this.state.seconds - checkpoint.occuredTime;
       const step = checkpoint.outcome.get(sec);
       if (step?.length > 0) {
+        const merged = new Map();
         for (const action of step) {
-          const direction = action.action === "monster_hit" ? "right" : "left";
-          this.sendMessage(`-${action.value} hp`, "red", direction);
+          if (merged.has(action.action)) {
+            merged.set(
+              action.action,
+              merged.get(action.action) + +action.value
+            );
+          } else {
+            merged.set(action.action, +action.value);
+          }
         }
+        merged.forEach(this.createBattleMessage.bind(this));
       }
     }
+  }
+
+  createBattleMessage(value, key, map) {
+    const direction = key === "monster_hit" ? "right" : "left";
+    this.sendMessage(`-${value} hp`, "red", direction);
   }
 
   calcDrawOffset() {
@@ -282,12 +295,29 @@ class QuestProgressItem extends Component {
     }
 
     /* Draw event messages */
-    for (const message of this.state.eventMessages) {
-      const direction = message.direction === "right" ? -1 : 1;
-      const off = (message.fireTime.getTime() - new Date().getTime()) / 100;
-      this.canvasCtx.fillStyle = message.color;
-      this.canvasCtx.fillText(message.message, 60 + off * direction, 35 + off);
+    for (const msg of this.state.eventMessages) {
+      const direction = msg.direction === "right" ? -1 : 1;
+      const off = (msg.fireTime.getTime() - new Date().getTime()) / 100;
+      const startPoint = msg.direction === "left" ? 20 : 90;
+      this.drawStroked(
+        this.canvasCtx,
+        msg.message,
+        startPoint + off * direction,
+        35 + off,
+        msg.color
+      );
     }
+  }
+
+  drawStroked(ctx, msg, x, y, color) {
+    ctx.font = "bold 16px Nunito";
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 8;
+    ctx.strokeText(msg, x, y);
+    ctx.fillStyle = color;
+    ctx.miterLimit = 2;
+    ctx.fillText(msg, x, y);
+    // ctx.scale(0.25, 0.25);
   }
 
   drawChest(diff, passed) {
@@ -386,7 +416,7 @@ class QuestProgressItem extends Component {
     } else if (this.state.activeCheckpoint) {
       switch (this.state.activeCheckpoint.type) {
         case "treasure":
-          description = "Treasure";
+          description = "Cracking";
           break;
         case "battle":
           description = "Battle";

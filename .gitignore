@@ -10,8 +10,7 @@ yarn-error.log*
 memos.txt
 
 # Help sqls
-select.sql
-clear.sql
+sql.sql
 
 # Design ideas
 1d68b9f97a02e08898f0d65113e00b3b.png
