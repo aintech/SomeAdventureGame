@@ -1,9 +1,20 @@
 import React from "react";
 import { connect } from "react-redux";
-import { heroDismissedFromQuest } from "../../../actions/actions.js";
+import { Dispatch } from "redux";
+import { heroDismissedFromQuest } from "../../../actions/actions";
+import Hero, { HeroType } from "../../../models/Hero";
+import Quest from "../../../models/Quest";
 import { convertDuration } from "../../../utils/utils";
 import { GUILD_SHARE } from "../../../utils/variables";
 import "./quest-details.scss";
+
+type QuestDetailsProps = {
+  quest: Quest;
+  heroesAssignedToQuest: Hero[];
+  heroDismissedFromQuest: (hero: Hero) => void;
+  acceptQuest: (quest: Quest, assignedHeroes: Hero[]) => void;
+  closeDetails: () => void;
+};
 
 const QuestDetails = ({
   quest,
@@ -11,8 +22,8 @@ const QuestDetails = ({
   acceptQuest,
   heroDismissedFromQuest,
   closeDetails,
-}) => {
-  const dismissHero = (hero) => {
+}: QuestDetailsProps) => {
+  const dismissHero = (hero: Hero) => {
     heroDismissedFromQuest(hero);
   };
 
@@ -40,7 +51,9 @@ const QuestDetails = ({
         return (
           <div className="quest-details__assigned-heroes__hero" key={hero.id}>
             <div
-              className={`quest-details__assigned-heroes__hero--${hero.type}`}
+              className={`quest-details__assigned-heroes__hero--${
+                HeroType[hero.type]
+              }`}
             ></div>
             <div className="quest-details__assigned-heroes__hero-name">
               {shortName}
@@ -67,7 +80,7 @@ const QuestDetails = ({
       <div className="quest-details__title">{quest.title}</div>
       <div className="quest-details__level">Ур. {quest.level}</div>
       <div className="quest-details__description">
-        {quest.description.replace(":tribute", quest.tribute)}
+        {quest.description.replace(":tribute", quest.tribute.toString())}
       </div>
       <div className="quest-details__duration">
         {convertDuration(quest.duration)}
@@ -90,12 +103,16 @@ const QuestDetails = ({
   );
 };
 
-const mapStateToProps = ({ heroesAssignedToQuest }) => {
+type state = {
+  heroesAssignedToQuest: Hero[];
+};
+
+const mapStateToProps = ({ heroesAssignedToQuest }: state) => {
   return { heroesAssignedToQuest };
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  heroDismissedFromQuest: (hero) => {
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  heroDismissedFromQuest: (hero: Hero) => {
     dispatch(heroDismissedFromQuest(hero));
   },
 });

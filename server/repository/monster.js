@@ -1,3 +1,4 @@
+import { anyOf } from "../../shared/utils/arrays.js";
 import usePool from "./use-pool.js";
 
 let _monsters = [];
@@ -22,11 +23,7 @@ const getMonsterParty = async (level) => {
   const monstersByLevel = [..._monsters]; //_monsters.filter((m) => m.level === level);
   const monsters = [];
   for (let i = 0; i < partyCount; i++) {
-    const monster = JSON.parse(
-      JSON.stringify(
-        monstersByLevel[Math.floor(Math.random() * monstersByLevel.length)]
-      )
-    );
+    const monster = JSON.parse(JSON.stringify(anyOf(monstersByLevel)));
     monster.actorId = i;
     monsters.push(monster);
   }

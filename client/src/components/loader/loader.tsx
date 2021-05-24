@@ -1,6 +1,6 @@
 import "./loader.scss";
 
-const Loader = ({ message }) => {
+const Loader = ({ message }: { message: string }) => {
   return (
     <div className="loader__container">
       <div className="loadingio-spinner-wedges-lih1xtea5hd">

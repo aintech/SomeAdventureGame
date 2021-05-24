@@ -3,18 +3,18 @@ import { useCallback, useEffect, useState } from "react";
 const storageName = "someAdventureGameUserData";
 const storageLifetime = 24 * 60 * 60 * 1000;
 
-interface StoredUserData {
+type StoredUserData = {
   token: string;
   userId: number;
   time: number;
-}
+};
 
 const useAuth = () => {
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const [ready, setReady] = useState<boolean>(false);
 
-  const login = useCallback((jwtToken: string, id: number): void => {
+  const login = useCallback((jwtToken: string, id: number) => {
     setToken(jwtToken);
     setUserId(id);
 
@@ -28,7 +28,7 @@ const useAuth = () => {
     );
   }, []);
 
-  const logout = useCallback((): void => {
+  const logout = useCallback(() => {
     setToken(null);
     setUserId(null);
     localStorage.removeItem(storageName);

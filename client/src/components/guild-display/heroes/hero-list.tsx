@@ -1,31 +1,48 @@
 import React from "react";
 import { connect } from "react-redux";
+import { Dispatch } from "redux";
 import {
   heroAssignedToQuest,
   heroStatsChoosed,
-} from "../../../actions/actions.js";
+} from "../../../actions/actions";
+import Hero from "../../../models/Hero";
+import Quest from "../../../models/Quest";
 import HeroItem from "./hero-item";
 import "./hero-list.scss";
+
+type HeroListProps = {
+  heroes: Hero[];
+  chosenQuest: Quest;
+  heroClicked: (hero: Hero) => void;
+  assignHeroToQuest: (hero: Hero) => void;
+  heroesAssignedToQuest: Hero[];
+};
 
 const HeroList = ({
   heroes,
   chosenQuest,
-  heroChoosed,
-  heroAssignedToQuest,
+  heroClicked,
+  assignHeroToQuest,
   heroesAssignedToQuest,
-}) => {
-  const heroClickHandler = (hero, event) => {
+}: HeroListProps) => {
+  const heroClickHandler = (
+    hero: Hero,
+    event: React.MouseEvent<HTMLDivElement>
+  ) => {
     event.preventDefault();
-    if (event.target.id === "hero_assigned_btn") {
-      heroAssignedToQuest(hero);
+    if (
+      event.target instanceof HTMLButtonElement &&
+      event.target.id === "hero_assigned_btn"
+    ) {
+      assignHeroToQuest(hero);
     } else {
-      heroChoosed(hero);
+      heroClicked(hero);
     }
   };
 
   return (
     <div className="hero-list">
-      {heroes.map((hero, index) => {
+      {heroes.map((hero) => {
         const enabled =
           heroesAssignedToQuest?.length < 4 &&
           heroesAssignedToQuest?.findIndex((h) => h.id === hero.id) === -1 &&
@@ -35,7 +52,6 @@ const HeroList = ({
           <div key={hero.id}>
             <HeroItem
               hero={hero}
-              index={index}
               chosenQuest={chosenQuest}
               itemClickHandler={(event) => heroClickHandler(hero, event)}
               enabled={enabled}
@@ -47,15 +63,19 @@ const HeroList = ({
   );
 };
 
-const mapStateToProps = ({ chosenQuest }) => {
+type state = {
+  chosenQuest: Quest;
+};
+
+const mapStateToProps = ({ chosenQuest }: state) => {
   return { chosenQuest };
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  heroAssignedToQuest: (hero) => {
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  assignHeroToQuest: (hero: Hero) => {
     dispatch(heroAssignedToQuest(hero));
   },
-  heroChoosed: (hero) => {
+  heroClicked: (hero: Hero) => {
     dispatch(heroStatsChoosed(hero));
   },
 });

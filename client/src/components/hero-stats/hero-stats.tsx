@@ -23,10 +23,10 @@ const calcEquipSurpluses = (equipment: Equipment[]): PersonageStats => {
   return new PersonageStats(power, defence, vitality, initiative);
 };
 
-interface HeroStatsProps {
+type HeroStatsProps = {
   hero: Hero;
   heroStatsClosed: () => void;
-}
+};
 
 /**
  * TODO: Выводить инициативу

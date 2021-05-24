@@ -1,4 +1,4 @@
-import { anyOf } from "../../client/src/utils/arrays.js";
+import { anyOf } from "../../shared/utils/arrays.js";
 
 const getBattleOutcome = (origMonsters, origHeroes) => {
   const monsters = origMonsters.map((m) => convertChar(m));
@@ -54,7 +54,7 @@ const getBattleOutcome = (origMonsters, origHeroes) => {
 };
 
 const removeEmptySteps = (steps) => {
-  return steps.filter((value, key) => value.lenght > 0);
+  return new Map([...steps].filter(([_, v]) => v.length > 0)); // steps.filter((value, key) => value.lenght > 0);
 };
 
 const convertChar = (char) => {

@@ -8,13 +8,13 @@ import Quest from "../../../models/Quest";
 import { toGameplayScale } from "../../../utils/utils";
 import "./hero-item.scss";
 
-interface HeroItemProps {
+type HeroItemProps = {
   hero: Hero;
   chosenQuest: Quest;
   itemClickHandler: (event: React.MouseEvent<HTMLDivElement>) => void;
   enabled: boolean;
-  reward: { gold: number; experience: number };
-}
+  reward?: { gold: number; experience: number };
+};
 
 const HeroItem = ({
   hero,

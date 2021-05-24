@@ -1,16 +1,32 @@
 import React, { useContext } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators, compose } from "redux";
+import { bindActionCreators, compose, Dispatch } from "redux";
 import {
   embarkHeroesOnQuest,
   questScrollChoosed,
   questScrollClosed,
-} from "../../../actions/actions.js";
-import AuthContext from "../../../contexts/auth-context";
-import withApiService from "../../../hoc/with-api-service";
+} from "../../../actions/actions";
+import AuthContext, { AuthProps } from "../../../contexts/auth-context";
+import withApiService, {
+  WithApiServiceProps,
+} from "../../../hoc/with-api-service";
+import Hero from "../../../models/Hero";
+import Quest from "../../../models/Quest";
 import QuestDetails from "./quest-details";
 import QuestScrollItem from "./quest-scroll-item";
 import "./quest-scroll-list.scss";
+
+type QuestScrollListProps = {
+  quests: Quest[];
+  chosenQuest: Quest;
+  questScrollChoosed: (quest: Quest) => void;
+  questScrollClosed: () => void;
+  embarkHeroesOnQuest: (
+    auth: AuthProps,
+    quest: Quest,
+    heroesAssignedToQuest: Hero[]
+  ) => void;
+};
 
 const QuestScrollList = ({
   quests,
@@ -18,14 +34,18 @@ const QuestScrollList = ({
   questScrollChoosed,
   questScrollClosed,
   embarkHeroesOnQuest,
-}) => {
-  const auth = useContext(AuthContext);
+}: QuestScrollListProps) => {
+  const authCtx = useContext(AuthContext);
 
-  const acceptQuest = (quest, heroesAssignedToQuest) => {
-    embarkHeroesOnQuest(auth, quest, heroesAssignedToQuest);
+  const acceptQuest = (quest: Quest, heroesAssignedToQuest: Hero[]) => {
+    embarkHeroesOnQuest(
+      { userId: authCtx.userId, token: authCtx.token },
+      quest,
+      heroesAssignedToQuest
+    );
   };
 
-  const chooseQuest = (quest) => {
+  const chooseQuest = (quest: Quest) => {
     questScrollChoosed(quest);
   };
 
@@ -46,7 +66,7 @@ const QuestScrollList = ({
   }
 
   const freshQuests = quests
-    .filter((q) => q.embarkedTime === null)
+    .filter((q) => !q.progress)
     .sort((a, b) => a.id - b.id);
 
   return (
@@ -55,12 +75,8 @@ const QuestScrollList = ({
         .slice(0, Math.min(9, freshQuests.length))
         .map((quest, idx) => {
           return (
-            <div key={quest.id}>
-              <QuestScrollItem
-                quest={quest}
-                index={idx}
-                onClickQuestScroll={() => chooseQuest(quest)}
-              />
+            <div key={quest.id} onClick={() => chooseQuest(quest)}>
+              <QuestScrollItem quest={quest} index={idx} />
             </div>
           );
         })}
@@ -68,11 +84,18 @@ const QuestScrollList = ({
   );
 };
 
-const mapStateToProps = ({ chosenQuest }) => {
+type state = {
+  chosenQuest: Quest;
+};
+
+const mapStateToProps = ({ chosenQuest }: state) => {
   return { chosenQuest };
 };
 
-const mapDispatchToProps = (dispatch, customProps) => {
+const mapDispatchToProps = (
+  dispatch: Dispatch,
+  customProps: WithApiServiceProps
+) => {
   const { apiService } = customProps;
   return bindActionCreators(
     {

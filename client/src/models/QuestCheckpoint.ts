@@ -30,7 +30,7 @@ export default class QuestCheckpoint {
     /** duration of checkpoint in seconds */
     public duration: number,
     /** key of this Map is second on which action occures */
-    public outcome: Map<number, CheckpointAction>,
+    public outcome: Map<number, CheckpointAction[]>,
     public actors: CheckpointActor[]
   ) {}
 }
@@ -46,42 +46,44 @@ const convertType = (type: string): CheckpointType => {
   }
 };
 
-const convertActionType = (type: string): CheckpointActionType => {
-  switch (type) {
+const convertActionType = (action: string): CheckpointActionType => {
+  switch (action) {
     case "hero_attack_opponent":
       return CheckpointActionType.HERO_ATTACK_OPPONENT;
     case "opponent_attack_hero":
       return CheckpointActionType.OPPONENT_ATTACK_HERO;
     default:
-      throw new Error(`Unknown action type in converter ${type}`);
+      throw new Error(`Unknown action type in converter ${action}`);
   }
 };
 
 const convertOutcome = (
   type: CheckpointType,
   outcome: string
-): Map<number, CheckpointAction> => {
-  const out: Map<number, CheckpointAction> = new Map();
+): Map<number, CheckpointAction[]> => {
+  const out: Map<number, CheckpointAction[]> = new Map();
   switch (type) {
     case CheckpointType.TREASURE:
-      out.set(
-        0,
-        new CheckpointAction(null, null, null, Number.parseInt(outcome))
-      );
+      out.set(0, [
+        new CheckpointAction(null, null, null, Number.parseInt(outcome)),
+      ]);
       break;
     case CheckpointType.BATTLE:
-      const parsed: Map<number, any> = new Map(JSON.parse(outcome)) as Map<
+      const parsed: Map<number, any[]> = new Map(JSON.parse(outcome)) as Map<
         number,
-        any
+        any[]
       >;
       parsed.forEach((value, key) => {
         out.set(
           key,
-          new CheckpointAction(
-            value.actorId,
-            value.opponentId,
-            convertActionType(value.type),
-            value.value
+          value.map(
+            (v) =>
+              new CheckpointAction(
+                v.actorId,
+                v.opponentId,
+                convertActionType(v.action),
+                v.value
+              )
           )
         );
       });

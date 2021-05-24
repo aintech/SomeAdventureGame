@@ -1,7 +1,7 @@
 import React, { Component, createRef } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
-import { collectingQuestReward } from "../../../actions/actions.js";
+import { collectingQuestReward } from "../../../actions/actions";
 import AuthContext from "../../../contexts/auth-context";
 import withApiService from "../../../hoc/with-api-service";
 import progressBG from "../../../img/quest-progress/quest-progress_background.png";

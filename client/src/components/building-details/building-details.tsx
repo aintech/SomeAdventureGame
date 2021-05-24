@@ -1,24 +1,32 @@
 import React from "react";
 import { connect } from "react-redux";
+import { Dispatch } from "redux";
 import { buildingClicked } from "../../actions/actions";
+import Building, { BuildingType } from "../../models/Building";
 import GuildDisplay from "../guild-display/guild-display";
 import "./building-details.scss";
 
-const BuildingDetails = ({ chosenBuilding, buildingClicked }) => {
+type BuildingDetailsProps = {
+  chosenBuilding: Building;
+  hideBuildingDisplay: () => void;
+};
+
+const BuildingDetails = ({
+  chosenBuilding,
+  hideBuildingDisplay,
+}: BuildingDetailsProps) => {
   if (!chosenBuilding) {
     return null;
   }
 
   let display;
   switch (chosenBuilding.type) {
-    case "tavern":
+    case BuildingType.TAVERN:
       display = <div>TAVERN WILL BE HERE</div>;
       break;
-
-    case "guild":
-      display = <GuildDisplay closeDisplay={buildingClicked} />;
+    case BuildingType.GUILD:
+      display = <GuildDisplay closeDisplay={hideBuildingDisplay} />;
       break;
-
     default:
       display = null;
       break;
@@ -31,8 +39,8 @@ const BuildingDetails = ({ chosenBuilding, buildingClicked }) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  buildingClicked: () => {
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  hideBuildingDisplay: () => {
     dispatch(buildingClicked(null));
   },
 });

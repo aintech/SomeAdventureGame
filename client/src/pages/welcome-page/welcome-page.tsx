@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useHistory } from "react-router";
 import AuthContext from "../../contexts/auth-context";
+import LoginForm from "../../models/LoginForm";
 import { login, register } from "../../services/auth-service";
 import "./welcome-page.scss";
 
@@ -14,9 +15,9 @@ const WelcomePage = () => {
   const auth = useContext(AuthContext);
   const history = useHistory();
 
-  const [form, setForm] = useState({ login: "", password: "" });
+  const [form, setForm] = useState<LoginForm>({ login: "", password: "" });
 
-  const changeHandler = (event) => {
+  const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [event.target.name]: event.target.value });
   };
 
@@ -26,12 +27,18 @@ const WelcomePage = () => {
     } catch (e) {}
   };
 
-  const loginHandler = async (event) => {
-    if (
-      event.target.id === "login_btn" ||
-      event.code === "Enter" ||
-      event.code === "NumpadEnter"
-    ) {
+  const loginHandler = async (
+    event:
+      | React.KeyboardEvent<HTMLDivElement>
+      | React.MouseEvent<HTMLButtonElement>
+  ) => {
+    const btnPressed = event.currentTarget.id === "login_btn";
+
+    const enterPressed =
+      "code" in event &&
+      (event.code === "Enter" || event.code === "NumpadEnter");
+
+    if (btnPressed || enterPressed) {
       try {
         const data = await login({ ...form });
         auth.login(data.token, data.userId);
@@ -44,7 +51,7 @@ const WelcomePage = () => {
   };
 
   const loginForm = (
-    <div className="login__form">
+    <div className="login__form" onKeyPress={loginHandler}>
       <form>
         <input
           className="login__form--input"
@@ -61,7 +68,6 @@ const WelcomePage = () => {
           name="password"
           value={form.password}
           onChange={changeHandler}
-          onKeyPress={loginHandler}
           required
         />
         <button

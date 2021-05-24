@@ -1,11 +1,20 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { Component, CSSProperties, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import { bindActionCreators, Dispatch } from "redux";
 import { questScrollClosed } from "../../actions/actions";
+import Hero from "../../models/Hero";
+import Quest from "../../models/Quest";
 import Loader from "../loader/loader";
 import "./guild-display.scss";
 import HeroList from "./heroes/hero-list";
 import QuestScrollList from "./quest-board/quest-scroll-list";
+
+type GuildDisplayProps = {
+  quests: Quest[];
+  heroes: Hero[];
+  heroesAssignedToQuest: Hero[];
+  closeDisplay: () => void;
+};
 
 /**
  * TODO: Переключалка setShowUnabledHeroes сбрасывается если переоткрыть гильдию -
@@ -16,11 +25,11 @@ const GuildDisplay = ({
   heroes,
   heroesAssignedToQuest,
   closeDisplay,
-}) => {
-  const [page, setPage] = useState(0);
-  const [lastPage, setLastPage] = useState(0);
-  const [heroesOnPage, setHeroesOnPage] = useState([]);
-  const [showUnabledHeroes, setShowUnabledHeroes] = useState(false);
+}: GuildDisplayProps) => {
+  const [page, setPage] = useState<number>(0);
+  const [lastPage, setLastPage] = useState<number>(0);
+  const [heroesOnPage, setHeroesOnPage] = useState<Hero[]>([]);
+  const [showUnabledHeroes, setShowUnabledHeroes] = useState<boolean>(false);
 
   useEffect(() => {
     const idleHeroes = heroes
@@ -46,7 +55,7 @@ const GuildDisplay = ({
     setHeroesOnPage(idleHeroes.slice(start, end));
   }, [page, heroes, heroesAssignedToQuest, showUnabledHeroes]);
 
-  const switchPage = (add) => {
+  const switchPage = (add: number) => {
     const nPage = page + add;
     setPage(nPage);
   };
@@ -57,19 +66,19 @@ const GuildDisplay = ({
     setShowUnabledHeroes(show);
   };
 
-  const clickHandler = (event) => {
-    if (event.target.id === "guild-display") {
+  const clickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
+    if ((event.target as HTMLDivElement).id === "guild-display") {
       closeDisplay();
     }
   };
 
-  const prevStyle = {
+  const prevStyle: CSSProperties = {
     opacity: page === 0 ? 0.5 : 1,
     cursor: page === 0 ? "default" : "pointer",
     pointerEvents: page === 0 ? "none" : "inherit",
   };
 
-  const nextStyle = {
+  const nextStyle: CSSProperties = {
     opacity: page === lastPage ? 0.5 : 1,
     cursor: page === lastPage ? "default" : "pointer",
     pointerEvents: page === lastPage ? "none" : "inherit",
@@ -111,14 +120,22 @@ const GuildDisplay = ({
   );
 };
 
-class GuildDisplayContainer extends Component {
+type GuildDisplayContainerProps = {
+  quests: Quest[];
+  heroes: Hero[];
+  heroesAssignedToQuest: Hero[];
+  closeDisplay: () => void;
+  closeQuestScroll: () => void;
+};
+
+class GuildDisplayContainer extends Component<GuildDisplayContainerProps> {
   render() {
     const {
       quests,
       heroes,
+      heroesAssignedToQuest,
       closeDisplay,
       closeQuestScroll,
-      heroesAssignedToQuest,
     } = this.props;
 
     if (!quests) {
@@ -141,11 +158,17 @@ class GuildDisplayContainer extends Component {
   }
 }
 
-const mapStateToProps = ({ quests, heroes, heroesAssignedToQuest }) => {
+type state = {
+  quests: Quest[];
+  heroes: Hero[];
+  heroesAssignedToQuest: Hero[];
+};
+
+const mapStateToProps = ({ quests, heroes, heroesAssignedToQuest }: state) => {
   return { quests, heroes, heroesAssignedToQuest };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators({ closeQuestScroll: questScrollClosed }, dispatch);
 };
 

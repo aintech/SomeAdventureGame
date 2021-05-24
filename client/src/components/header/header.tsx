@@ -7,13 +7,13 @@ import withApiService from "../../hoc/with-api-service";
 import ApiService from "../../services/api-service";
 import "./header.scss";
 
-interface HeaderProps {
+type HeaderProps = {
   gold: number;
   fame: number;
   fetchGameStats: (apiService: any) => (auth: any) => (dispatch: any) => void;
   isAuthenticated: boolean;
   logout: () => void;
-}
+};
 
 const Header = ({
   gold,

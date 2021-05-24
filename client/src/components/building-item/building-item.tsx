@@ -1,7 +1,13 @@
 import React from "react";
+import Building from "../../models/Building";
 import "./building-item.scss";
 
-const BuildingItem = ({ building, onBuildingClicked }) => {
+type BuildingItemProps = {
+  building: Building;
+  onBuildingClicked: (event: React.MouseEvent<HTMLDivElement>) => void;
+};
+
+const BuildingItem = ({ building, onBuildingClicked }: BuildingItemProps) => {
   return (
     <div>
       <div

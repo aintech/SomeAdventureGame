@@ -1,7 +1,12 @@
 import { ApiServiceConsumer } from "../contexts/api-service-context";
+import ApiService from "../services/api-service";
 
-const withApiService = () => (Wrapped) => {
-  return (props) => {
+export type WithApiServiceProps = {
+  apiService: ApiService;
+};
+
+const withApiService = () => (Wrapped: any) => {
+  return (props: any) => {
     return (
       <ApiServiceConsumer>
         {(apiService) => {
