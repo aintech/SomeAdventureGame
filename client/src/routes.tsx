@@ -2,7 +2,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import GameplayPage from "./pages/gameplay-page/gameplay-page";
 import WelcomePage from "./pages/welcome-page/welcome-page";
 
-export const useRoutes = (isAuthenticated) => {
+export const useRoutes = (isAuthenticated: boolean) => {
   if (!isAuthenticated) {
     return (
       <Switch>

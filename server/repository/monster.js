@@ -18,11 +18,15 @@ const getMonsterParty = async (level) => {
   }
 
   const partyCount = Math.random() > 0.5 ? 2 : 3; // Math.floor(Math.random() * 3) + 1;
-  const monstersByLevel = _monsters.filter((m) => m.level === level);
+  //Пока в базе есть только монстры 1 уровня
+  const monstersByLevel = [..._monsters]; //_monsters.filter((m) => m.level === level);
   const monsters = [];
   for (let i = 0; i < partyCount; i++) {
-    const monster =
-      monstersByLevel[Math.floor(Math.random() * monstersByLevel.length)];
+    const monster = JSON.parse(
+      JSON.stringify(
+        monstersByLevel[Math.floor(Math.random() * monstersByLevel.length)]
+      )
+    );
     monster.actorId = i;
     monsters.push(monster);
   }

@@ -24,7 +24,13 @@ const App = () => {
   return (
     <Provider store={store}>
       <AuthContext.Provider
-        value={{ token, login, logout, userId, isAuthenticated }}
+        value={{
+          token,
+          login,
+          logout,
+          userId,
+          isAuthenticated,
+        }}
       >
         <ApiServiceProvider value={apiService}>
           <BrowserRouter>

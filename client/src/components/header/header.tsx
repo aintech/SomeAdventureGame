@@ -1,12 +1,27 @@
 import React, { useContext, useEffect } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
-import { fetchGameStats } from "../../actions/actions.js";
-import AuthContext from "../../contexts/auth-context.js";
-import withApiService from "../../hoc/with-api-service.js";
+import { fetchGameStats } from "../../actions/actions";
+import AuthContext from "../../contexts/auth-context";
+import withApiService from "../../hoc/with-api-service";
+import ApiService from "../../services/api-service";
 import "./header.scss";
 
-const Header = ({ gold, fame, fetchGameStats, isAuthenticated, logout }) => {
+interface HeaderProps {
+  gold: number;
+  fame: number;
+  fetchGameStats: (apiService: any) => (auth: any) => (dispatch: any) => void;
+  isAuthenticated: boolean;
+  logout: () => void;
+}
+
+const Header = ({
+  gold,
+  fame,
+  fetchGameStats,
+  isAuthenticated,
+  logout,
+}: HeaderProps) => {
   const authContext = useContext(AuthContext);
 
   useEffect(() => {
@@ -37,11 +52,14 @@ const Header = ({ gold, fame, fetchGameStats, isAuthenticated, logout }) => {
   );
 };
 
-const mapStateToProps = ({ gold, fame }) => {
+const mapStateToProps = ({ gold, fame }: { gold: number; fame: number }) => {
   return { gold, fame };
 };
 
-const mapDispatchToProps = (dispatch, customProps) => {
+const mapDispatchToProps = (
+  dispatch: any,
+  customProps: { apiService: ApiService }
+) => {
   const { apiService } = customProps;
   return bindActionCreators(
     { fetchGameStats: fetchGameStats(apiService) },

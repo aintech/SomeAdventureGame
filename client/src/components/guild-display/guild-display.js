@@ -4,7 +4,7 @@ import { bindActionCreators } from "redux";
 import { questScrollClosed } from "../../actions/actions";
 import Loader from "../loader/loader";
 import "./guild-display.scss";
-import HeroList from "./heros/hero-list";
+import HeroList from "./heroes/hero-list";
 import QuestScrollList from "./quest-board/quest-scroll-list";
 
 /**

@@ -17,12 +17,12 @@ const getBattleOutcome = (origMonsters, origHeroes) => {
         battleSteps.get(sec).push({
           heroId: hero.id,
           monsterId: opponent.id,
-          action: "monster_hit",
+          action: "hero_attack_opponent",
           value: hit,
         });
 
         if (partyDefeated(monsters)) {
-          return battleSteps;
+          return removeEmptySteps(battleSteps);
         }
       }
     }
@@ -37,20 +37,24 @@ const getBattleOutcome = (origMonsters, origHeroes) => {
         battleSteps.get(sec).push({
           monsterId: monster.id,
           heroId: opponent.id,
-          action: "hero_hit",
+          action: "opponent_attack_hero",
           value: hit,
         });
 
         if (partyDefeated(heroes)) {
-          return battleSteps;
+          return removeEmptySteps(battleSteps);
         }
       }
     }
 
     if (partyDefeated(monsters) || partyDefeated(heroes)) {
-      return battleSteps;
+      return removeEmptySteps(battleSteps);
     }
   }
+};
+
+const removeEmptySteps = (steps) => {
+  return steps.filter((value, key) => value.lenght > 0);
 };
 
 const convertChar = (char) => {

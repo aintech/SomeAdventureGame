@@ -1,4 +1,5 @@
-import { convertHero, convertQuest } from "./converters";
+import { convert as convertHero } from "../models/Hero";
+import { convert as convertQuest } from "../models/Quest";
 
 const intialState = {
   gold: 0,

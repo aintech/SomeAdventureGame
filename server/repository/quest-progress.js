@@ -32,8 +32,9 @@ const generateCheckpoints = async (quest, heroes) => {
       case "battle":
         const monsters = await getMonsterParty(quest.level);
         outcome = getBattleOutcome(monsters, heroes);
-        actors = new Map();
-        monsters.forEach((m) => actors.set(m.actorId, m.name));
+        actors = monsters.map((m) => {
+          return { ...m };
+        });
         duration = Math.max(...outcome.keys());
         break;
       default:

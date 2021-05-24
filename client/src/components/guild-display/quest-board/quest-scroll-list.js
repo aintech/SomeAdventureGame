@@ -6,8 +6,8 @@ import {
   questScrollChoosed,
   questScrollClosed,
 } from "../../../actions/actions.js";
-import AuthContext from "../../../contexts/auth-context.js";
-import withApiService from "../../../hoc/with-api-service.js";
+import AuthContext from "../../../contexts/auth-context";
+import withApiService from "../../../hoc/with-api-service";
 import QuestDetails from "./quest-details";
 import QuestScrollItem from "./quest-scroll-item";
 import "./quest-scroll-list.scss";

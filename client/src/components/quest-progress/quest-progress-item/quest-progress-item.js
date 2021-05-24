@@ -2,8 +2,8 @@ import React, { Component, createRef } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
 import { collectingQuestReward } from "../../../actions/actions.js";
-import AuthContext from "../../../contexts/auth-context.js";
-import withApiService from "../../../hoc/with-api-service.js";
+import AuthContext from "../../../contexts/auth-context";
+import withApiService from "../../../hoc/with-api-service";
 import progressBG from "../../../img/quest-progress/quest-progress_background.png";
 import chestClosedImgSrc from "../../../img/quest-progress/Chest_closed.png";
 import chestOpenImgSrc from "../../../img/quest-progress/Chest_open.png";
@@ -14,7 +14,7 @@ import {
   convertDuration,
   millisToSecs,
   toGameplayScale,
-} from "../../../utils/utils.js";
+} from "../../../utils/utils";
 import "./quest-progress-item.scss";
 
 class QuestProgressItem extends Component {

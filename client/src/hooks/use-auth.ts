@@ -3,12 +3,18 @@ import { useCallback, useEffect, useState } from "react";
 const storageName = "someAdventureGameUserData";
 const storageLifetime = 24 * 60 * 60 * 1000;
 
-const useAuth = () => {
-  const [token, setToken] = useState(null);
-  const [ready, setReady] = useState(false);
-  const [userId, setUserId] = useState(null);
+interface StoredUserData {
+  token: string;
+  userId: number;
+  time: number;
+}
 
-  const login = useCallback((jwtToken, id) => {
+const useAuth = () => {
+  const [token, setToken] = useState<string | null>(null);
+  const [userId, setUserId] = useState<number | null>(null);
+  const [ready, setReady] = useState<boolean>(false);
+
+  const login = useCallback((jwtToken: string, id: number): void => {
     setToken(jwtToken);
     setUserId(id);
 
@@ -22,18 +28,20 @@ const useAuth = () => {
     );
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback((): void => {
     setToken(null);
     setUserId(null);
     localStorage.removeItem(storageName);
   }, []);
 
-  const isFreshLogin = (loginTime) => {
+  const isFreshLogin = (loginTime: number): boolean => {
     return loginTime + storageLifetime > new Date().getTime();
   };
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem(storageName));
+    const data: StoredUserData = JSON.parse(
+      localStorage.getItem(storageName) as string
+    );
     if (data && data.token && isFreshLogin(data.time)) {
       login(data.token, data.userId);
     } else {

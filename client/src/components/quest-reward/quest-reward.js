@@ -5,7 +5,7 @@ import { onCompleteQuest } from "../../actions/actions";
 import AuthContext from "../../contexts/auth-context";
 import withApiService from "../../hoc/with-api-service";
 import { GUILD_SHARE } from "../../utils/variables";
-import HeroItem from "../guild-display/heros/hero-item";
+import HeroItem from "../guild-display/heroes/hero-item";
 import "./quest-reward.scss";
 
 /**

@@ -13,7 +13,7 @@ import Loader from "../../components/loader/loader";
 import QuestProgressListContainer from "../../components/quest-progress/quest-progress-list/quest-progress-list.js";
 import QuestRewardContainer from "../../components/quest-reward/quest-reward.js";
 import AuthContext from "../../contexts/auth-context";
-import withApiService from "../../hoc/with-api-service.js";
+import withApiService from "../../hoc/with-api-service";
 import "./gameplay-page.scss";
 
 const GameplayPage = ({

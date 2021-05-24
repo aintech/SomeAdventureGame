@@ -37,7 +37,7 @@ const HeroList = ({
               hero={hero}
               index={index}
               chosenQuest={chosenQuest}
-              onClickHandler={(event) => heroClickHandler(hero, event)}
+              itemClickHandler={(event) => heroClickHandler(hero, event)}
               enabled={enabled}
             />
           </div>

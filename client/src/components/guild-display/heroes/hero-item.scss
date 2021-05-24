@@ -63,12 +63,12 @@
     margin-bottom: to-gameplay-scale(-15px);
   }
 
-  &__portrait--warrior {
+  &__portrait--WARRIOR {
     @include portrait;
     background-image: url(../../../img/guild-display/guild-hero_icon_warrior.svg);
   }
 
-  &__portrait--mage {
+  &__portrait--MAGE {
     @include portrait;
     background-image: url(../../../img/guild-display/guild-hero_icon_mage.svg);
   }

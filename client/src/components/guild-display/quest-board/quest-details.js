@@ -1,8 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
 import { heroDismissedFromQuest } from "../../../actions/actions.js";
-import { convertDuration } from "../../../utils/utils.js";
-import { GUILD_SHARE } from "../../../utils/variables.js";
+import { convertDuration } from "../../../utils/utils";
+import { GUILD_SHARE } from "../../../utils/variables";
 import "./quest-details.scss";
 
 const QuestDetails = ({

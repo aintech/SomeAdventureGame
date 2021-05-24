@@ -2,7 +2,6 @@ import React from "react";
 import { connect } from "react-redux";
 import { buildingClicked } from "../../actions/actions";
 import GuildDisplay from "../guild-display/guild-display";
-
 import "./building-details.scss";
 
 const BuildingDetails = ({ chosenBuilding, buildingClicked }) => {
