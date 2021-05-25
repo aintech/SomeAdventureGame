@@ -167,7 +167,7 @@ class QuestProgressItem extends Component<
     const { activeCheckpoint } = this.state;
 
     if (activeCheckpoint!.type === CheckpointType.TREASURE) {
-      const msg = `+${activeCheckpoint!.outcome} g`;
+      const msg = `+${activeCheckpoint!.outcome.get(0)![0].value} g`;
       this.sendMessage(msg);
     }
 
@@ -224,18 +224,15 @@ class QuestProgressItem extends Component<
 
   checkCheckpointActions() {
     const checkpoint = this.state.activeCheckpoint!;
-    if (checkpoint.outcome instanceof Map) {
-      const sec = this.state.seconds - checkpoint!.occuredTime;
+    if (checkpoint.type === CheckpointType.BATTLE) {
+      const sec = this.state.seconds - checkpoint.occuredTime;
       const actions = checkpoint.outcome.get(sec);
       if (actions && actions.length > 0) {
         const merged = new Map<CheckpointActionType, number>();
         for (const action of actions) {
-          if (!action.type) {
-            throw new Error(`No action type in actions!`);
-          }
           merged.set(
-            action.type,
-            (merged.get(action.type) ?? 0) + action.value
+            action.type!,
+            (merged.get(action.type!) ?? 0) + action.value
           );
         }
         merged.forEach(this.createBattleMessage.bind(this));

@@ -63,17 +63,22 @@ const getRawStat =
     );
   };
 
+/**
+ * FIXME: когда бэк переедет на PG и Typescript то через АПИ начнут
+ * приходить числа в нормальном формате вместо строки,
+ * и можно будет поубирать плюсики из конвертеров
+ */
 const convert = (response: HeroResponse): Hero => {
   return new Hero(
-    response.id,
+    +response.id,
     response.name,
     convertType(response.type),
-    response.level,
+    +response.level,
     new PersonageStats(
-      response.power,
-      response.defence,
-      response.vitality,
-      response.initiative
+      +response.power,
+      +response.defence,
+      +response.vitality,
+      +response.initiative
     ),
     new PersonageStats(
       getRawStat("power")(response)(response.equipment),
@@ -81,11 +86,11 @@ const convert = (response: HeroResponse): Hero => {
       getRawStat("vitality")(response)(response.equipment),
       getRawStat("initiative")(response)(response.equipment)
     ),
-    response.health,
-    response.experience,
-    response.progress,
-    response.gold,
-    response.embarked_quest ? response.embarked_quest : null,
+    +response.health,
+    +response.experience,
+    +response.progress,
+    +response.gold,
+    response.embarked_quest ? +response.embarked_quest : null,
     response.equipment.map((e) => convertEquipment(e))
   );
 };

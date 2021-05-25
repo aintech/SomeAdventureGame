@@ -1,4 +1,7 @@
-import { CheckpointResponse } from "../services/QuestsService";
+import {
+  CheckpointActorResponse,
+  CheckpointResponse,
+} from "../services/QuestsService";
 
 export enum CheckpointType {
   TREASURE,
@@ -59,30 +62,37 @@ const convertActionType = (action: string): CheckpointActionType => {
   }
 };
 
+type CheckpointActionResponse = {
+  actorId: number;
+  opponentId: number;
+  action: string;
+  value: number;
+};
+
 const convertOutcome = (
   type: CheckpointType,
   outcome: string
 ): Map<number, CheckpointAction[]> => {
-  const out: Map<number, CheckpointAction[]> = new Map();
+  const result: Map<number, CheckpointAction[]> = new Map();
+
   switch (type) {
     case CheckpointType.TREASURE:
-      out.set(0, [
+      result.set(0, [
         new CheckpointAction(null, null, null, Number.parseInt(outcome)),
       ]);
       break;
     case CheckpointType.BATTLE:
-      const parsed: Map<number, any[]> = new Map(JSON.parse(outcome)) as Map<
-        number,
-        any[]
-      >;
+      const parsed: Map<number, CheckpointActionResponse[]> = new Map(
+        JSON.parse(outcome)
+      ) as Map<number, CheckpointActionResponse[]>;
       parsed.forEach((value, key) => {
-        out.set(
+        result.set(
           key,
           value.map(
             (v) =>
               new CheckpointAction(
-                v.actorId,
-                v.opponentId,
+                +v.actorId,
+                +v.opponentId,
                 convertActionType(v.action),
                 v.value
               )
@@ -93,19 +103,28 @@ const convertOutcome = (
     default:
       throw new Error(`Unknown checkpoint type in converter ${type}`);
   }
-  return out;
+
+  return result;
+};
+
+const convertActors = (actors: string): CheckpointActor[] => {
+  const parsed = JSON.parse(actors);
+  if (parsed) {
+    return (parsed as CheckpointActorResponse[]).map(
+      (a) => new CheckpointActor(+a.id, a.name)
+    );
+  }
+  return [];
 };
 
 const convert = (response: CheckpointResponse): QuestCheckpoint => {
   return new QuestCheckpoint(
-    response.id,
-    response.occured_time,
+    +response.id,
+    +response.occured_time,
     convertType(response.type),
-    response.duration,
+    +response.duration,
     convertOutcome(convertType(response.type), response.outcome),
-    response.actors instanceof Array
-      ? response.actors.map((a) => new CheckpointActor(a.id, a.name))
-      : []
+    convertActors(response.actors)
   );
 };
 

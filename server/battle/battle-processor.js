@@ -15,8 +15,8 @@ const getBattleOutcome = (origMonsters, origHeroes) => {
         const hit = Math.max(+hero.power - +opponent.defence, 0);
         opponent.health -= hit;
         battleSteps.get(sec).push({
-          heroId: hero.id,
-          monsterId: opponent.id,
+          actorId: hero.id,
+          opponentId: opponent.id,
           action: "hero_attack_opponent",
           value: hit,
         });
@@ -35,8 +35,8 @@ const getBattleOutcome = (origMonsters, origHeroes) => {
         opponent.health -= hit;
 
         battleSteps.get(sec).push({
-          monsterId: monster.id,
-          heroId: opponent.id,
+          actorId: monster.id,
+          opponentId: opponent.id,
           action: "opponent_attack_hero",
           value: hit,
         });

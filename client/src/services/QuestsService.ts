@@ -16,7 +16,7 @@ export interface CheckpointResponse {
   type: string;
   duration: number;
   outcome: string;
-  actors: CheckpointActorResponse[];
+  actors: string;
 }
 
 export interface QuestResponse {

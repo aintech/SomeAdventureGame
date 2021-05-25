@@ -53,16 +53,16 @@ const collectAvailableHeroTypes = (
 
 const convert = (response: EquipmentResponse): Equipment => {
   return new Equipment(
-    response.id,
+    +response.id,
     response.name,
     response.description,
     convertType(response.type),
-    response.level,
+    +response.level,
     new PersonageStats(
-      response.power,
-      response.defence,
-      response.vitality,
-      response.initiative
+      +response.power,
+      +response.defence,
+      +response.vitality,
+      +response.initiative
     ),
     collectAvailableHeroTypes(response.warrior, response.mage),
     response.avatar

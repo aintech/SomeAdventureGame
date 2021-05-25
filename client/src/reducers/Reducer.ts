@@ -123,7 +123,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       const { embarkedQuests, embarkedHeroes } = action.payload;
 
       const questIdx = state.quests.findIndex(
-        (q) => q.id === embarkedQuests[0].id
+        (q) => q.id === +embarkedQuests[0].id
       );
 
       let upHeroes = [...state.heroes];
@@ -157,7 +157,9 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
     case ActionType.COMPLETE_QUEST:
       const { stats, quest, heroes } = action.payload;
 
-      const completeQuestIdx = state.quests.findIndex((q) => q.id === quest.id);
+      const completeQuestIdx = state.quests.findIndex(
+        (q) => q.id === +quest.id
+      );
 
       let doneHeroes = [...state.heroes];
       for (const hr of heroes) {
