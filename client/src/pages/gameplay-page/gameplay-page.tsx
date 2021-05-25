@@ -1,30 +1,39 @@
 import React, { Component, useState } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators, compose } from "redux";
-import {
-  buildingClicked,
-  fetchHeroes,
-  fetchQuests,
-} from "../../actions/actions";
+import { bindActionCreators, compose, Dispatch } from "redux";
+import { buildingClicked } from "../../actions/Actions";
+import { fetchHeroes, fetchQuests } from "../../actions/ApiActions";
 import BuildingDetails from "../../components/building-details/building-details";
 import BuildingItem from "../../components/building-item/building-item";
 import HeroStats from "../../components/hero-stats/hero-stats";
 import Loader from "../../components/loader/loader";
-import QuestProgressListContainer from "../../components/quest-progress/quest-progress-list/quest-progress-list.js";
-import QuestRewardContainer from "../../components/quest-reward/quest-reward.js";
-import AuthContext from "../../contexts/auth-context";
-import withApiService from "../../hoc/with-api-service";
+import QuestProgressListContainer from "../../components/quest-progress/quest-progress-list/quest-progress-list";
+import QuestRewardContainer from "../../components/quest-reward/quest-reward";
+import AuthContext, { AuthProps } from "../../contexts/auth-context";
+import withApiService, {
+  WithApiServiceProps,
+} from "../../hoc/with-api-service";
+import Building, { BuildingType } from "../../models/Building";
+import Hero from "../../models/Hero";
+import Quest from "../../models/Quest";
 import "./gameplay-page.scss";
+
+type GameplayPageProps = {
+  quests: Quest[];
+  heroes: Hero[];
+  onBuildingClicked: (building: Building) => void;
+  chosenBuilding: Building;
+};
 
 const GameplayPage = ({
   quests,
   heroes,
   onBuildingClicked,
   chosenBuilding,
-}) => {
+}: GameplayPageProps) => {
   const [buildings] = useState([
-    { id: 1, type: "tavern" },
-    { id: 2, type: "guild" },
+    new Building(1, BuildingType.TAVERN),
+    new Building(2, BuildingType.GUILD),
   ]);
 
   return (
@@ -50,7 +59,16 @@ const GameplayPage = ({
   );
 };
 
-class GameplayPageContainer extends Component {
+type GameplayPageContainerProps = {
+  fetchQuests: (auth: AuthProps) => Quest[];
+  fetchHeroes: (auth: AuthProps) => Hero[];
+  quests: Quest[];
+  heroes: Hero[];
+  onBuildingClicked: (building: Building) => void;
+  chosenBuilding: Building;
+};
+
+class GameplayPageContainer extends Component<GameplayPageContainerProps> {
   static contextType = AuthContext;
 
   componentDidMount() {
@@ -81,11 +99,20 @@ class GameplayPageContainer extends Component {
   }
 }
 
-const mapStateToProps = ({ quests, heroes, chosenBuilding }) => {
+type state = {
+  quests: Quest[];
+  heroes: Hero[];
+  chosenBuilding: Building;
+};
+
+const mapStateToProps = ({ quests, heroes, chosenBuilding }: state) => {
   return { quests, heroes, chosenBuilding };
 };
 
-const mapDispatchToProps = (dispatch, customProps) => {
+const mapDispatchToProps = (
+  dispatch: Dispatch,
+  customProps: WithApiServiceProps
+) => {
   const { apiService } = customProps;
   return bindActionCreators(
     {

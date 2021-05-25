@@ -4,7 +4,7 @@ import { Dispatch } from "redux";
 import {
   heroAssignedToQuest,
   heroStatsChoosed,
-} from "../../../actions/actions";
+} from "../../../actions/Actions";
 import Hero from "../../../models/Hero";
 import Quest from "../../../models/Quest";
 import HeroItem from "./hero-item";

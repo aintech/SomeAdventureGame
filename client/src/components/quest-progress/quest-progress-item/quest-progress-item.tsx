@@ -1,15 +1,22 @@
 import React, { Component, createRef } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators, compose } from "redux";
-import { collectingQuestReward } from "../../../actions/actions";
-import AuthContext from "../../../contexts/auth-context";
+import { bindActionCreators, compose, Dispatch } from "redux";
+import { collectingQuestReward } from "../../../actions/Actions";
+import AuthContext, { AuthProps } from "../../../contexts/auth-context";
 import withApiService from "../../../hoc/with-api-service";
-import progressBG from "../../../img/quest-progress/quest-progress_background.png";
 import chestClosedImgSrc from "../../../img/quest-progress/Chest_closed.png";
 import chestOpenImgSrc from "../../../img/quest-progress/Chest_open.png";
+import progressBG from "../../../img/quest-progress/quest-progress_background.png";
+import heroImgSrc from "../../../img/quest-progress/quest-progress_hero.png";
 import skeletonImgSrc from "../../../img/quest-progress/Skeleton.png";
 import skeletonDeadImgSrc from "../../../img/quest-progress/Skeleton_dead.png";
-import heroImgSrc from "../../../img/quest-progress/quest-progress_hero.png";
+import Hero from "../../../models/Hero";
+import Quest from "../../../models/Quest";
+import QuestCheckpoint, {
+  CheckpointActionType,
+  CheckpointActor,
+  CheckpointType,
+} from "../../../models/QuestCheckpoint";
 import {
   convertDuration,
   millisToSecs,
@@ -17,13 +24,58 @@ import {
 } from "../../../utils/utils";
 import "./quest-progress-item.scss";
 
-class QuestProgressItem extends Component {
+enum Direction {
+  LEFT,
+  RIGHT,
+}
+
+class EventMessage {
+  constructor(
+    public fireTime: Date,
+    public message: string,
+    public color: string,
+    public direction: Direction
+  ) {}
+}
+
+type QuestProgressItemProps = {
+  quest: Quest;
+  heroes: Hero[];
+  collectingQuestReward: (quest: Quest) => void;
+};
+
+type QuestProgressItemState = {
+  /** Сколько секунд прошло с НАЧАЛА квеста */
+  seconds: number;
+  bgOffset: number;
+  backImg: HTMLImageElement | null;
+  heroImg: HTMLImageElement | null;
+  chestClosedImg: HTMLImageElement | null;
+  chestOpenImg: HTMLImageElement | null;
+  skeletonImg: HTMLImageElement | null;
+  skeletonDeadImg: HTMLImageElement | null;
+  eventMessages: EventMessage[];
+  activeCheckpoint: QuestCheckpoint | null;
+  willBeSpendOnCheckpoints: number;
+  spendedOnCheckpoints: number;
+};
+
+class QuestProgressItem extends Component<
+  QuestProgressItemProps,
+  QuestProgressItemState
+> {
   static contextType = AuthContext;
 
-  constructor() {
-    super();
+  private auth: AuthProps | null = null;
+  private secondsTimer: NodeJS.Timeout | null = null;
+  private updateTimer: NodeJS.Timeout | null = null;
+  private canvasRef: React.RefObject<HTMLCanvasElement>;
+  private canvas: HTMLCanvasElement | null = null;
+  private canvasCtx: CanvasRenderingContext2D | null = null;
+
+  constructor(props: QuestProgressItemProps) {
+    super(props);
     this.state = {
-      /** Сколько секунд прошло с НАЧАЛА квеста */
       seconds: 0,
       bgOffset: 0,
       backImg: null,
@@ -35,25 +87,23 @@ class QuestProgressItem extends Component {
       eventMessages: [],
       activeCheckpoint: null,
       willBeSpendOnCheckpoints: 0,
-      spendedOnCkecpoints: 0,
+      spendedOnCheckpoints: 0,
     };
-    this.secondsTimer = 0;
-    this.updateTimer = 0;
+    this.canvasRef = createRef();
     this.startTimers = this.startTimers.bind(this);
     this.countSeconds = this.countSeconds.bind(this);
     this.update = this.update.bind(this);
-    this.canvasRef = createRef();
-    this.canvas = null;
-    this.canvasCtx = null;
   }
 
   componentDidMount() {
     this.auth = this.context;
-    this.canvas = this.canvasRef.current;
-    this.canvasCtx = this.canvas.getContext("2d");
+    this.canvas = this.canvasRef.current!;
+    this.canvasCtx = this.canvas.getContext("2d")!;
 
     const { quest } = this.props;
-    const seconds = Math.floor(millisToSecs(new Date() - quest.embarkedTime));
+    const seconds = Math.floor(
+      millisToSecs(new Date().getTime() - quest.progress!.embarkedTime)
+    );
 
     this.setState({
       seconds,
@@ -68,28 +118,33 @@ class QuestProgressItem extends Component {
   }
 
   componentWillUnmount() {
-    clearInterval(this.secondsTimer);
-    clearInterval(this.updateTimer);
+    if (this.secondsTimer) {
+      clearInterval(this.secondsTimer);
+    }
+    if (this.updateTimer) {
+      clearInterval(this.updateTimer);
+    }
   }
 
   startTimers() {
-    if (this.secondsTimer === 0) {
+    if (!this.secondsTimer) {
       this.secondsTimer = setInterval(this.countSeconds, 1000);
     }
-    if (this.updateTimer === 0) {
+    if (!this.updateTimer) {
       this.updateTimer = setInterval(this.update, 1000 / 20);
     }
   }
 
-  calcWillBeSpendOnCheckpoints(seconds) {
+  calcWillBeSpendOnCheckpoints(seconds: number) {
     const { quest } = this.props;
-    const willBeSpendOnCheckpoints = quest.checkpoints
-      .filter((c) => c.occuredTime >= seconds)
+
+    const willBeSpendOnCheckpoints = quest
+      .progress!.checkpoints.filter((c) => c.occuredTime >= seconds)
       .map((c) => +c.duration)
       .reduce((a, b) => a + b, 0);
 
-    const spendedOnCheckpoints = quest.checkpoints
-      .filter((c) => c.occuredTime < seconds)
+    const spendedOnCheckpoints = quest
+      .progress!.checkpoints.filter((c) => c.occuredTime < seconds)
       .map((c) => +c.duration)
       .reduce((a, b) => a + b, 0);
 
@@ -102,7 +157,7 @@ class QuestProgressItem extends Component {
   /**
    * TODO: Активный чекпоинт рисовать отдельным экранчиком с анимацией боя или вскрытия сундука
    */
-  setAsActiveCheckpoint(checkpoint) {
+  setAsActiveCheckpoint(checkpoint: QuestCheckpoint) {
     this.setState({
       activeCheckpoint: checkpoint,
     });
@@ -111,8 +166,8 @@ class QuestProgressItem extends Component {
   finishActiveCheckpoint() {
     const { activeCheckpoint } = this.state;
 
-    if (activeCheckpoint.type === "treasure") {
-      const msg = `+${activeCheckpoint.outcome} g`;
+    if (activeCheckpoint!.type === CheckpointType.TREASURE) {
+      const msg = `+${activeCheckpoint!.outcome} g`;
       this.sendMessage(msg);
     }
 
@@ -122,13 +177,8 @@ class QuestProgressItem extends Component {
     });
   }
 
-  sendMessage(message, color = "yellow", direction = "left") {
-    const event = {
-      fireTime: new Date(),
-      message,
-      color,
-      direction,
-    };
+  sendMessage(message: string, color = "yellow", direction = Direction.LEFT) {
+    const event = new EventMessage(new Date(), message, color, direction);
     this.setState((state) => {
       return { eventMessages: [...state.eventMessages, event] };
     });
@@ -146,18 +196,22 @@ class QuestProgressItem extends Component {
     });
 
     if (this.state.activeCheckpoint) {
-      this.checkCheckpointSteps();
+      this.checkCheckpointActions();
     }
 
     if (seconds <= 0) {
-      clearInterval(this.secondsTimer);
-      clearInterval(this.updateTimer);
+      if (this.secondsTimer) {
+        clearInterval(this.secondsTimer);
+      }
+      if (this.updateTimer) {
+        clearInterval(this.updateTimer);
+      }
       this.draw();
     }
   }
 
   checkIfCheckpointOccured() {
-    for (const checkpoint of this.props.quest.checkpoints) {
+    for (const checkpoint of this.props.quest.progress!.checkpoints) {
       if (
         this.state.seconds >= checkpoint.occuredTime &&
         this.state.seconds < checkpoint.occuredTime + checkpoint.duration
@@ -168,41 +222,45 @@ class QuestProgressItem extends Component {
     }
   }
 
-  checkCheckpointSteps() {
-    const checkpoint = this.state.activeCheckpoint;
+  checkCheckpointActions() {
+    const checkpoint = this.state.activeCheckpoint!;
     if (checkpoint.outcome instanceof Map) {
-      const sec = this.state.seconds - checkpoint.occuredTime;
-      const step = checkpoint.outcome.get(sec);
-      if (step?.length > 0) {
-        const merged = new Map();
-        for (const action of step) {
-          if (merged.has(action.action)) {
-            merged.set(
-              action.action,
-              merged.get(action.action) + +action.value
-            );
-          } else {
-            merged.set(action.action, +action.value);
+      const sec = this.state.seconds - checkpoint!.occuredTime;
+      const actions = checkpoint.outcome.get(sec);
+      if (actions && actions.length > 0) {
+        const merged = new Map<CheckpointActionType, number>();
+        for (const action of actions) {
+          if (!action.type) {
+            throw new Error(`No action type in actions!`);
           }
+          merged.set(
+            action.type,
+            (merged.get(action.type) ?? 0) + action.value
+          );
         }
         merged.forEach(this.createBattleMessage.bind(this));
       }
     }
   }
 
-  createBattleMessage(value, key, map) {
-    const direction = key === "monster_hit" ? "right" : "left";
+  createBattleMessage(value: number, key: CheckpointActionType) {
+    const direction =
+      key === CheckpointActionType.HERO_ATTACK_OPPONENT
+        ? Direction.RIGHT
+        : Direction.LEFT;
     this.sendMessage(`-${value} hp`, "red", direction);
   }
 
   calcDrawOffset() {
-    let offset = this.state.bgOffset - 1;
-    if (offset < -this.canvas.width) {
-      offset += this.canvas.width;
+    if (this.canvas) {
+      let offset = this.state.bgOffset - 1;
+      if (offset < -this.canvas.width) {
+        offset += this.canvas.width;
+      }
+      this.setState({
+        bgOffset: offset,
+      });
     }
-    this.setState({
-      bgOffset: offset,
-    });
   }
 
   update() {
@@ -224,6 +282,10 @@ class QuestProgressItem extends Component {
   }
 
   draw() {
+    if (!this.canvas || !this.canvasCtx) {
+      return;
+    }
+
     this.canvasCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     /* Draw background */
@@ -245,7 +307,7 @@ class QuestProgressItem extends Component {
     }
 
     /* Draw checkpoints obstacles */
-    for (const checkpoint of this.props.quest.checkpoints) {
+    for (const checkpoint of this.props.quest.progress!.checkpoints) {
       /** Здесь пока используем  милисекунды для отрисовки позиции более плавно */
       const passed =
         checkpoint.occuredTime + checkpoint.duration < this.state.seconds;
@@ -255,7 +317,7 @@ class QuestProgressItem extends Component {
         diff = this.state.activeCheckpoint.id === checkpoint.id ? -800 : 800000;
       } else {
         diff =
-          this.props.quest.embarkedTime +
+          this.props.quest.progress!.embarkedTime +
           checkpoint.occuredTime * 1000 +
           (passed
             ? /**
@@ -268,15 +330,17 @@ class QuestProgressItem extends Component {
       }
 
       switch (checkpoint.type) {
-        case "treasure":
+        case CheckpointType.TREASURE:
           this.drawChest(diff, passed);
           break;
-        case "battle":
+        case CheckpointType.BATTLE:
           this.drawEnemy(checkpoint.actors, diff, passed);
           break;
         default:
           throw new Error(
-            `unknown checkpoint type in draw call: ${checkpoint.type}`
+            `unknown checkpoint type in draw call: ${
+              CheckpointType[checkpoint.type]
+            }`
           );
       }
     }
@@ -296,9 +360,9 @@ class QuestProgressItem extends Component {
 
     /* Draw event messages */
     for (const msg of this.state.eventMessages) {
-      const direction = msg.direction === "right" ? -1 : 1;
+      const direction = msg.direction === Direction.RIGHT ? -1 : 1;
       const off = (msg.fireTime.getTime() - new Date().getTime()) / 100;
-      const startPoint = msg.direction === "left" ? 20 : 90;
+      const startPoint = msg.direction === Direction.RIGHT ? 90 : 20;
       this.drawStroked(
         this.canvasCtx,
         msg.message,
@@ -309,7 +373,13 @@ class QuestProgressItem extends Component {
     }
   }
 
-  drawStroked(ctx, msg, x, y, color) {
+  drawStroked(
+    ctx: CanvasRenderingContext2D,
+    msg: string,
+    x: number,
+    y: number,
+    color: string
+  ) {
     ctx.font = "bold 16px Nunito";
     ctx.strokeStyle = "black";
     ctx.lineWidth = 8;
@@ -320,22 +390,59 @@ class QuestProgressItem extends Component {
     // ctx.scale(0.25, 0.25);
   }
 
-  drawChest(diff, passed) {
-    if (this.state.chestOpenImg && this.state.chestClosedImg) {
-      const offset = 80 + diff / 80;
+  drawChest(diff: number, passed: boolean) {
+    if (
+      !this.canvasCtx ||
+      !this.state.chestOpenImg ||
+      !this.state.chestClosedImg
+    ) {
+      return;
+    }
+
+    const offset = 80 + diff / 80;
+    if (!passed) {
+      this.canvasCtx.drawImage(
+        this.state.chestClosedImg,
+        offset,
+        16,
+        toGameplayScale(36),
+        toGameplayScale(46)
+      );
+    } else {
+      this.canvasCtx.drawImage(
+        this.state.chestOpenImg,
+        offset,
+        16,
+        toGameplayScale(36),
+        toGameplayScale(46)
+      );
+    }
+  }
+
+  drawEnemy(actors: CheckpointActor[], diff: number, passed: boolean) {
+    if (
+      !this.canvasCtx ||
+      !this.state.skeletonImg ||
+      !this.state.skeletonDeadImg
+    ) {
+      return;
+    }
+
+    const offset = 80 + diff / 80;
+    for (let i = 0; i < actors.length; i++) {
       if (!passed) {
         this.canvasCtx.drawImage(
-          this.state.chestClosedImg,
-          offset,
-          16,
+          this.state.skeletonImg,
+          offset + i * 10,
+          16 + i * 2,
           toGameplayScale(36),
           toGameplayScale(46)
         );
       } else {
         this.canvasCtx.drawImage(
-          this.state.chestOpenImg,
-          offset,
-          16,
+          this.state.skeletonDeadImg,
+          offset + i * 10,
+          16 + i * 2,
           toGameplayScale(36),
           toGameplayScale(46)
         );
@@ -343,57 +450,8 @@ class QuestProgressItem extends Component {
     }
   }
 
-  drawEnemy(actors, diff, passed) {
-    if (this.state.skeletonImg && this.state.skeletonDeadImg) {
-      const offset = 80 + diff / 80;
-      for (let i = 0; i < actors.size; i++) {
-        if (!passed) {
-          this.canvasCtx.drawImage(
-            this.state.skeletonImg,
-            offset + i * 10,
-            16 + i * 2,
-            toGameplayScale(36),
-            toGameplayScale(46)
-          );
-        } else {
-          this.canvasCtx.drawImage(
-            this.state.skeletonDeadImg,
-            offset + i * 10,
-            16 + i * 2,
-            toGameplayScale(36),
-            toGameplayScale(46)
-          );
-        }
-      }
-    }
-  }
-
   questFinished() {
-    return this.props.quest.progressDuration - this.state.seconds <= 0;
-  }
-
-  bgLoaded(event) {
-    this.setState({ backImg: event.target });
-  }
-
-  heroLoaded(event) {
-    this.setState({ heroImg: event.target });
-  }
-
-  chestClosedLoaded(event) {
-    this.setState({ chestClosedImg: event.target });
-  }
-
-  chestOpenLoaded(event) {
-    this.setState({ chestOpenImg: event.target });
-  }
-
-  skeletonLoaded(event) {
-    this.setState({ skeletonImg: event.target });
-  }
-
-  skeletonDeadLoaded(event) {
-    this.setState({ skeletonDeadImg: event.target });
+    return this.props.quest.progress!.duration - this.state.seconds <= 0;
   }
 
   collectReward() {
@@ -403,7 +461,7 @@ class QuestProgressItem extends Component {
   render() {
     const { quest } = this.props;
     const remainSeconds =
-      quest.progressDuration -
+      quest.progress!.duration -
       this.state.seconds -
       this.state.willBeSpendOnCheckpoints;
 
@@ -415,15 +473,17 @@ class QuestProgressItem extends Component {
       description = "DONE";
     } else if (this.state.activeCheckpoint) {
       switch (this.state.activeCheckpoint.type) {
-        case "treasure":
+        case CheckpointType.TREASURE:
           description = "Cracking";
           break;
-        case "battle":
+        case CheckpointType.BATTLE:
           description = "Battle";
           break;
         default:
           throw new Error(
-            `unknown checkpoint type: ${this.state.activeCheckpoint.type}`
+            `unknown checkpoint type: ${
+              CheckpointType[this.state.activeCheckpoint.type]
+            }`
           );
       }
     } else {
@@ -440,38 +500,38 @@ class QuestProgressItem extends Component {
 
         <img
           src={progressBG}
-          onLoad={this.bgLoaded.bind(this)}
+          onLoad={(e) => this.setState({ backImg: e.currentTarget })}
           style={{ display: "none" }}
           alt=""
         />
         <img
           src={heroImgSrc}
-          onLoad={this.heroLoaded.bind(this)}
+          onLoad={(e) => this.setState({ heroImg: e.currentTarget })}
           style={{ display: "none" }}
           alt=""
         />
         <img
           src={chestClosedImgSrc}
-          onLoad={this.chestClosedLoaded.bind(this)}
+          onLoad={(e) => this.setState({ chestClosedImg: e.currentTarget })}
           style={{ display: "none" }}
           alt=""
         />
         <img
           src={chestOpenImgSrc}
-          onLoad={this.chestOpenLoaded.bind(this)}
+          onLoad={(e) => this.setState({ chestOpenImg: e.currentTarget })}
           style={{ display: "none" }}
           alt=""
         />
 
         <img
           src={skeletonImgSrc}
-          onLoad={this.skeletonLoaded.bind(this)}
+          onLoad={(e) => this.setState({ skeletonImg: e.currentTarget })}
           style={{ display: "none" }}
           alt=""
         />
         <img
           src={skeletonDeadImgSrc}
-          onLoad={this.skeletonDeadLoaded.bind(this)}
+          onLoad={(e) => this.setState({ skeletonDeadImg: e.currentTarget })}
           style={{ display: "none" }}
           alt=""
         />
@@ -481,7 +541,7 @@ class QuestProgressItem extends Component {
           height={toGameplayScale(65)}
           style={{
             marginLeft: `${toGameplayScale(35)}px`,
-            zIndex: `-1`,
+            zIndex: -1,
           }}
           ref={this.canvasRef}
         ></canvas>
@@ -498,7 +558,7 @@ class QuestProgressItem extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       collectingQuestReward,

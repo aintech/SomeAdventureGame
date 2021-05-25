@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { heroStatsClosed } from "../../actions/actions";
+import { heroStatsClosed } from "../../actions/Actions";
 import Equipment, { EquipmentType } from "../../models/Equipment";
 import Hero, { calcHealthFraction, HeroType } from "../../models/Hero";
 import PersonageStats from "../../models/PersonageStats";

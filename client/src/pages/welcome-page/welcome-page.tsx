@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { useHistory } from "react-router";
 import AuthContext from "../../contexts/auth-context";
 import LoginForm from "../../models/LoginForm";
-import { login, register } from "../../services/auth-service";
+import { login, register } from "../../services/AuthService";
 import "./welcome-page.scss";
 
 /**
@@ -41,7 +41,7 @@ const WelcomePage = () => {
     if (btnPressed || enterPressed) {
       try {
         const data = await login({ ...form });
-        auth.login(data.token, data.userId);
+        auth.login(data.token!, data.userId!);
       } catch (e) {}
     }
   };

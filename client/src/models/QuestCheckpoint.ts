@@ -1,18 +1,20 @@
-enum CheckpointType {
+import { CheckpointResponse } from "../services/QuestsService";
+
+export enum CheckpointType {
   TREASURE,
   BATTLE,
 }
 
-enum CheckpointActionType {
+export enum CheckpointActionType {
   HERO_ATTACK_OPPONENT,
   OPPONENT_ATTACK_HERO,
 }
 
-class CheckpointActor {
+export class CheckpointActor {
   constructor(public id: number, public name: string) {}
 }
 
-class CheckpointAction {
+export class CheckpointAction {
   constructor(
     public actorId: number | null,
     public opponentId: number | null,
@@ -94,26 +96,17 @@ const convertOutcome = (
   return out;
 };
 
-const convertActors = (actors: any[]): CheckpointActor[] => {
-  const acts: CheckpointActor[] = [];
-  for (const actor of actors) {
-    acts.push(new CheckpointActor(actor.id, actor.name));
-  }
-  return acts;
-};
-
-const convert = (checkpointApiResponse: any): QuestCheckpoint => {
+const convert = (response: CheckpointResponse): QuestCheckpoint => {
   return new QuestCheckpoint(
-    checkpointApiResponse.id,
-    checkpointApiResponse.occured_time,
-    convertType(checkpointApiResponse.type),
-    checkpointApiResponse.duration,
-    convertOutcome(
-      convertType(checkpointApiResponse.type),
-      checkpointApiResponse.outcome
-    ),
-    convertActors(checkpointApiResponse.actors)
+    response.id,
+    response.occured_time,
+    convertType(response.type),
+    response.duration,
+    convertOutcome(convertType(response.type), response.outcome),
+    response.actors instanceof Array
+      ? response.actors.map((a) => new CheckpointActor(a.id, a.name))
+      : []
   );
 };
 
-export { CheckpointType, convert };
+export { convert };

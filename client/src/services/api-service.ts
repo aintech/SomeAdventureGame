@@ -1,27 +1,26 @@
 import { AuthProps } from "../contexts/auth-context.js";
-import Hero from "../models/Hero.js";
-import Quest from "../models/Quest.js";
-import { getHeroes } from "./heroes-service.js";
-import { completeQuest, embarkOnQuest, getQuests } from "./quests-service.js";
-import { getStats } from "./stats-service.js";
+import Hero from "../models/Hero";
+import Quest from "../models/Quest";
+import { getHeroes } from "./HeroesService";
+import { completeQuest, embarkOnQuest, getQuests } from "./QuestsService";
+import { getStats } from "./StatsService";
 
 export default class ApiService {
   getGameStats(auth: AuthProps) {
-    return getStats(auth.userId, auth.token);
+    return getStats(auth);
   }
 
   getQuests(auth: AuthProps) {
-    return getQuests(auth.userId, auth.token);
+    return getQuests(auth);
   }
 
   getHeroes(auth: AuthProps) {
-    return getHeroes(auth.userId, auth.token);
+    return getHeroes(auth);
   }
 
   embarkHeroesOnQuest(auth: AuthProps, quest: Quest, assignedHeroes: Hero[]) {
     return embarkOnQuest(
-      auth.userId,
-      auth.token,
+      auth,
       quest.id,
       assignedHeroes.map((h) => h.id)
     );
@@ -29,8 +28,7 @@ export default class ApiService {
 
   completeQuest(auth: AuthProps, quest: Quest, heroes: Hero[]) {
     return completeQuest(
-      auth.userId,
-      auth.token,
+      auth,
       quest.id,
       heroes.map((h) => h.id)
     );

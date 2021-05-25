@@ -1,8 +1,9 @@
+import { HeroResponse, StatsHolder } from "../services/HeroesService";
 import { HEALTH_PER_VITALITY } from "../utils/variables";
 import Equipment, { convert as convertEquipment } from "./Equipment";
 import PersonageStats from "./PersonageStats";
 
-enum HeroType {
+export enum HeroType {
   WARRIOR,
   MAGE,
 }
@@ -53,40 +54,40 @@ const convertType = (type: string): HeroType => {
 };
 
 /** Computes 'initial' hero stats without equipment surpluses */
-const getRawStat = (heroApiResponse: any, statName: string): number => {
-  return (
-    +heroApiResponse[statName] -
-    heroApiResponse.equipment
-      .map((e: any) => +e[statName])
-      .reduce((a: number, b: number) => a + b)
-  );
-};
+const getRawStat =
+  <T extends StatsHolder, U extends keyof T>(stat: U) =>
+  (hero: T) =>
+  (equipment: T[]): number => {
+    return (
+      +hero[stat] - equipment.map((e: T) => +e[stat]).reduce((a, b) => a + b)
+    );
+  };
 
-const convert = (heroApiResponse: any): Hero => {
+const convert = (response: HeroResponse): Hero => {
   return new Hero(
-    +heroApiResponse.id,
-    heroApiResponse.name,
-    convertType(heroApiResponse.type),
-    +heroApiResponse.level,
+    response.id,
+    response.name,
+    convertType(response.type),
+    response.level,
     new PersonageStats(
-      +heroApiResponse.power,
-      +heroApiResponse.defence,
-      +heroApiResponse.vitality,
-      +heroApiResponse.initiative
+      response.power,
+      response.defence,
+      response.vitality,
+      response.initiative
     ),
     new PersonageStats(
-      getRawStat(heroApiResponse, "power"),
-      getRawStat(heroApiResponse, "defence"),
-      getRawStat(heroApiResponse, "vitality"),
-      getRawStat(heroApiResponse, "initiative")
+      getRawStat("power")(response)(response.equipment),
+      getRawStat("defence")(response)(response.equipment),
+      getRawStat("vitality")(response)(response.equipment),
+      getRawStat("initiative")(response)(response.equipment)
     ),
-    +heroApiResponse.health,
-    +heroApiResponse.experience,
-    +heroApiResponse.progress,
-    +heroApiResponse.gold,
-    heroApiResponse.embarked_quest ? +heroApiResponse.embarked_quest : null,
-    (heroApiResponse.equipment as any[]).map((e) => convertEquipment(e))
+    response.health,
+    response.experience,
+    response.progress,
+    response.gold,
+    response.embarked_quest ? response.embarked_quest : null,
+    response.equipment.map((e) => convertEquipment(e))
   );
 };
 
-export { HeroType, calcHealthFraction, typeName, convertType, convert };
+export { calcHealthFraction, typeName, convertType, convert };

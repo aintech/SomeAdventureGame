@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
-import { fetchGameStats } from "../../actions/actions";
+import { fetchGameStats } from "../../actions/ApiActions";
 import AuthContext from "../../contexts/auth-context";
 import withApiService from "../../hoc/with-api-service";
 import ApiService from "../../services/api-service";

@@ -1,5 +1,5 @@
 import React from "react";
-import Building from "../../models/Building";
+import Building, { BuildingType } from "../../models/Building";
 import "./building-item.scss";
 
 type BuildingItemProps = {
@@ -11,7 +11,9 @@ const BuildingItem = ({ building, onBuildingClicked }: BuildingItemProps) => {
   return (
     <div>
       <div
-        className={`gameplay__world__btn--building-${building.type}`}
+        className={`gameplay__world__btn--building-${
+          BuildingType[building.type]
+        }`}
         onClick={onBuildingClicked}
       ></div>
     </div>

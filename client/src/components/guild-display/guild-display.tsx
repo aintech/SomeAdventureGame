@@ -1,7 +1,7 @@
 import React, { Component, CSSProperties, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
-import { questScrollClosed } from "../../actions/actions";
+import { questScrollClosed } from "../../actions/Actions";
 import Hero from "../../models/Hero";
 import Quest from "../../models/Quest";
 import Loader from "../loader/loader";

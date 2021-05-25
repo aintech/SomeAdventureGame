@@ -1,7 +1,8 @@
+import { QuestResponse } from "../services/QuestsService";
 import QuestCheckpoint from "./QuestCheckpoint";
 import { convert as convertCheckpoint } from "./QuestCheckpoint";
 
-class Progress {
+export class Progress {
   constructor(
     public id: number,
     public duration: number,
@@ -24,27 +25,25 @@ export default class Quest {
   ) {}
 }
 
-const convert = (questApiResponse: any): Quest => {
+const convert = (response: QuestResponse): Quest => {
   return new Quest(
-    +questApiResponse.id,
-    +questApiResponse.level,
-    questApiResponse.title,
-    questApiResponse.description,
-    +questApiResponse.experience,
-    +questApiResponse.duration,
-    +questApiResponse.tribute,
-    +questApiResponse.fame,
-    questApiResponse.progress_id
+    response.id,
+    response.level,
+    response.title,
+    response.description,
+    response.experience,
+    response.duration,
+    response.tribute,
+    response.fame,
+    response.progress_id
       ? new Progress(
-          +questApiResponse.progress_id,
-          +questApiResponse.process_duration,
-          Date.parse(questApiResponse.embarked_time),
-          (questApiResponse.checkpoints as any[]).map((c) =>
-            convertCheckpoint(c)
-          )
+          response.progress_id,
+          response.progress_duration,
+          Date.parse(response.embarked_time),
+          (response.checkpoints as any[]).map((c) => convertCheckpoint(c))
         )
       : null
   );
 };
 
-export { Progress, convert };
+export { convert };

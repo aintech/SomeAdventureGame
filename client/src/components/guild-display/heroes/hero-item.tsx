@@ -10,8 +10,8 @@ import "./hero-item.scss";
 
 type HeroItemProps = {
   hero: Hero;
-  chosenQuest: Quest;
-  itemClickHandler: (event: React.MouseEvent<HTMLDivElement>) => void;
+  chosenQuest?: Quest;
+  itemClickHandler?: (event: React.MouseEvent<HTMLDivElement>) => void;
   enabled: boolean;
   reward?: { gold: number; experience: number };
 };

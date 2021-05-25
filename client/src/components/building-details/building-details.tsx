@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { buildingClicked } from "../../actions/actions";
+import { buildingClicked } from "../../actions/Actions";
 import Building, { BuildingType } from "../../models/Building";
 import GuildDisplay from "../guild-display/guild-display";
 import "./building-details.scss";

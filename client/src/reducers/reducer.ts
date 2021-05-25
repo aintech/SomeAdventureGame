@@ -1,5 +1,22 @@
-import { convert as convertHero } from "../models/Hero";
-import { convert as convertQuest } from "../models/Quest";
+import { Action } from "../actions/Actions";
+import { ActionType } from "../actions/ActionType";
+import Building from "../models/Building";
+import Hero, { convert as convertHero } from "../models/Hero";
+import Quest, { convert as convertQuest } from "../models/Quest";
+import { HeroResponse } from "../services/HeroesService";
+import { QuestResponse } from "../services/QuestsService";
+
+type State = {
+  gold: number;
+  fame: number;
+  quests: Quest[];
+  heroes: Hero[];
+  chosenBuilding: Building | null;
+  chosenQuest: Quest | null;
+  chosenHero: Hero | null;
+  heroesAssignedToQuest: Hero[];
+  collectingQuestReward: Quest | null;
+};
 
 const intialState = {
   gold: 0,
@@ -13,84 +30,84 @@ const intialState = {
   collectingQuestReward: null,
 };
 
-const reducer = (state = intialState, action) => {
+const reducer = (state: State = intialState, action: Action) => {
   switch (action.type) {
-    case "FETCH_GAME_STATS_REQUEST":
+    case ActionType.FETCH_GAME_STATS_REQUEST:
       return {
         ...state,
         gold: 0,
         fame: 0,
       };
 
-    case "FETCH_GAME_STATS_SUCCESS":
+    case ActionType.FETCH_GAME_STATS_SUCCESS:
       return {
         ...state,
         gold: action.payload.gold,
         fame: action.payload.fame,
       };
 
-    case "FETCH_QUESTS_REQUEST":
+    case ActionType.FETCH_QUESTS_REQUEST:
       return {
         ...state,
         quests: [],
       };
 
-    case "FETCH_QUESTS_SUCCESS":
+    case ActionType.FETCH_QUESTS_SUCCESS:
       return {
         ...state,
-        quests: action.payload.map((q) => convertQuest(q)),
+        quests: action.payload.map((q: QuestResponse) => convertQuest(q)),
       };
 
-    case "FETCH_HEROES_REQUEST":
+    case ActionType.FETCH_HEROES_REQUEST:
       return {
         ...state,
         heroes: [],
       };
 
-    case "FETCH_HEROES_SUCCESS":
+    case ActionType.FETCH_HEROES_SUCCESS:
       return {
         ...state,
-        heroes: action.payload.map((h) => convertHero(h)),
+        heroes: action.payload.map((h: HeroResponse) => convertHero(h)),
       };
 
-    case "BUILDING_CLICKED":
+    case ActionType.BUILDING_CLICKED:
       return {
         ...state,
         chosenBuilding: action.payload,
       };
 
-    case "QUEST_SCROLL_CHOOSED":
+    case ActionType.QUEST_SCROLL_CHOOSED:
       return {
         ...state,
         chosenQuest: action.payload,
       };
 
-    case "QUEST_SCROLL_CLOSED":
+    case ActionType.QUEST_SCROLL_CLOSED:
       return {
         ...state,
         chosenQuest: null,
         heroesAssignedToQuest: [],
       };
 
-    case "HERO_STATS_CHOOSED":
+    case ActionType.HERO_STATS_CHOOSED:
       return {
         ...state,
         chosenHero: action.payload,
       };
 
-    case "HERO_STATS_CLOSED":
+    case ActionType.HERO_STATS_CLOSED:
       return {
         ...state,
         chosenHero: null,
       };
 
-    case "HERO_ASSIGNED_TO_QUEST":
+    case ActionType.HERO_ASSIGNED_TO_QUEST:
       return {
         ...state,
         heroesAssignedToQuest: [...state.heroesAssignedToQuest, action.payload],
       };
 
-    case "HERO_DISMISSED_FROM_QUEST":
+    case ActionType.HERO_DISMISSED_FROM_QUEST:
       const idx = state.heroesAssignedToQuest.findIndex(
         (hero) => hero.id === action.payload.id
       );
@@ -102,7 +119,7 @@ const reducer = (state = intialState, action) => {
         ],
       };
 
-    case "HEROES_EMBARKED_ON_QUEST":
+    case ActionType.HEROES_EMBARKED_ON_QUEST:
       const { embarkedQuests, embarkedHeroes } = action.payload;
 
       const questIdx = state.quests.findIndex(
@@ -131,13 +148,13 @@ const reducer = (state = intialState, action) => {
         heroesAssignedToQuest: [],
       };
 
-    case "COLLECTING_QUEST_REWARD":
+    case ActionType.COLLECTING_QUEST_REWARD:
       return {
         ...state,
         collectingQuestReward: action.payload,
       };
 
-    case "COMPLETE_QUEST":
+    case ActionType.COMPLETE_QUEST:
       const { stats, quest, heroes } = action.payload;
 
       const completeQuestIdx = state.quests.findIndex((q) => q.id === quest.id);

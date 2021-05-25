@@ -1,26 +1,43 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators, compose } from "redux";
-import { onCompleteQuest } from "../../actions/actions";
-import AuthContext from "../../contexts/auth-context";
-import withApiService from "../../hoc/with-api-service";
+import { bindActionCreators, compose, Dispatch } from "redux";
+import { onCompleteQuest } from "../../actions/ApiActions";
+import AuthContext, { AuthProps } from "../../contexts/auth-context";
+import withApiService, {
+  WithApiServiceProps,
+} from "../../hoc/with-api-service";
+import Hero from "../../models/Hero";
+import Quest from "../../models/Quest";
+import { CheckpointType } from "../../models/QuestCheckpoint";
 import { GUILD_SHARE } from "../../utils/variables";
 import HeroItem from "../guild-display/heroes/hero-item";
 import "./quest-reward.scss";
+
+type QuestRewardProps = {
+  auth: AuthProps;
+  quest: Quest;
+  heroes: Hero[];
+  onCompleteQuest: (auth: AuthProps, quest: Quest, heroes: Hero[]) => void;
+};
 
 /**
  * TODO: реплика героев после выполнения квеста (в качестве небольшого суммари по квесту)
  * TODO: сделать отдельный экранчик для героев, hero-item получается кривым
  */
 
-const QuestReward = ({ auth, quest, heroes, onCompleteQuest }) => {
+const QuestReward = ({
+  auth,
+  quest,
+  heroes,
+  onCompleteQuest,
+}: QuestRewardProps) => {
   const clickHandler = () => {
     onCompleteQuest(auth, quest, heroes);
   };
 
-  const checkpointsTribute = quest.checkpoints
-    .filter((c) => c.type === "treasure")
-    .map((c) => +c.outcome)
+  const checkpointsTribute = quest
+    .progress!.checkpoints.filter((c) => c.type === CheckpointType.TREASURE)
+    .map((c) => c.outcome.get(0)![0].value)
     .reduce((a, b) => a + b, 0);
 
   const heroGoldReward = Math.floor(
@@ -57,7 +74,13 @@ const QuestReward = ({ auth, quest, heroes, onCompleteQuest }) => {
   );
 };
 
-class QuestRewardContainer extends Component {
+type QuestRewardContainerProps = {
+  quest: Quest;
+  heroes: Hero[];
+  onCompleteQuest: (auth: AuthProps, quest: Quest, heroes: Hero[]) => void;
+};
+
+class QuestRewardContainer extends Component<QuestRewardContainerProps, {}> {
   static contextType = AuthContext;
   render() {
     const auth = this.context;
@@ -80,11 +103,19 @@ class QuestRewardContainer extends Component {
   }
 }
 
-const mapStateToProps = ({ collectingQuestReward, heroes }) => {
+type state = {
+  collectingQuestReward: Quest;
+  heroes: Hero[];
+};
+
+const mapStateToProps = ({ collectingQuestReward, heroes }: state) => {
   return { quest: collectingQuestReward, heroes };
 };
 
-const mapDispatchToProps = (dispatch, custonProps) => {
+const mapDispatchToProps = (
+  dispatch: Dispatch,
+  custonProps: WithApiServiceProps
+) => {
   const { apiService } = custonProps;
   return bindActionCreators(
     {

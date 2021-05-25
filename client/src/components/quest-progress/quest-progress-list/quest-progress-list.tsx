@@ -1,15 +1,22 @@
 import React from "react";
-import QuestProgressItem from "../quest-progress-item/quest-progress-item.js";
+import Hero from "../../../models/Hero";
+import Quest from "../../../models/Quest";
+import QuestProgressItem from "../quest-progress-item/quest-progress-item";
 import "./quest-progress-list.scss";
 
-const QuestProgressList = ({ quests, heroes }) => {
+type QuestProgressListProps = {
+  quests: Quest[];
+  heroes: Hero[];
+};
+
+const QuestProgressList = ({ quests, heroes }: QuestProgressListProps) => {
   if (!quests || !heroes) {
     return null;
   }
 
   const embarked = [];
   for (const quest of quests) {
-    if (quest.embarkedTime) {
+    if (quest.progress?.embarkedTime) {
       embarked.push({
         key: quest,
         value: heroes.filter((h) => h.embarkedQuest === quest.id),
@@ -20,10 +27,10 @@ const QuestProgressList = ({ quests, heroes }) => {
   return (
     <div className="quest-progress-list">
       {embarked.map((eq) => {
-        const { key: quest, value: hers } = eq;
+        const { key: quest, value: heroes } = eq;
         return (
           <div key={quest.id}>
-            <QuestProgressItem quest={quest} heroes={hers} />
+            <QuestProgressItem quest={quest} heroes={heroes} />
           </div>
         );
       })}

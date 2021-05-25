@@ -1,16 +1,17 @@
+import { AuthProps } from "../contexts/auth-context";
 import LoginForm from "../models/LoginForm";
-import sendHttp from "./send-http";
+import sendHttp from "./SendHttp";
 
 const baseUrl = "/api/auth";
 
 const register = async (form: LoginForm) => {
-  return await sendHttp(`${baseUrl}/register`, null, "POST", {
+  return await sendHttp<AuthProps>(`${baseUrl}/register`, null, "POST", {
     ...form,
   });
 };
 
 const login = async (form: LoginForm) => {
-  return await sendHttp(`${baseUrl}/login`, null, "POST", {
+  return await sendHttp<AuthProps>(`${baseUrl}/login`, null, "POST", {
     ...form,
   });
 };

@@ -1,20 +1,21 @@
-const sendHttp = async (
-  url,
-  token,
+async function sendHttp<T>(
+  url: string,
+  token: string | null,
   method = "GET",
-  body = null,
-  headers = {}
-) => {
+  body: any = null
+): Promise<T> {
+  let headers: HeadersInit = new Headers();
+
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  if (body) {
+    body = JSON.stringify(body);
+    headers.set("Content-Type", "application/json");
+  }
+
   try {
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-
-    if (body) {
-      body = JSON.stringify(body);
-      headers["Content-Type"] = "application/json";
-    }
-
     const response = await fetch(url, {
       method,
       body,
@@ -33,6 +34,6 @@ const sendHttp = async (
   } catch (e) {
     throw e;
   }
-};
+}
 
 export default sendHttp;

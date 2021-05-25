@@ -2,10 +2,10 @@ import React, { useContext } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import {
-  embarkHeroesOnQuest,
   questScrollChoosed,
   questScrollClosed,
-} from "../../../actions/actions";
+} from "../../../actions/Actions";
+import { embarkHeroesOnQuest } from "../../../actions/ApiActions";
 import AuthContext, { AuthProps } from "../../../contexts/auth-context";
 import withApiService, {
   WithApiServiceProps,

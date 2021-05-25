@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { heroDismissedFromQuest } from "../../../actions/actions";
+import { heroDismissedFromQuest } from "../../../actions/Actions";
 import Hero, { HeroType } from "../../../models/Hero";
 import Quest from "../../../models/Quest";
 import { convertDuration } from "../../../utils/utils";
