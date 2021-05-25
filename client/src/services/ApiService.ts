@@ -1,4 +1,4 @@
-import { AuthProps } from "../contexts/auth-context.js";
+import { AuthProps } from "../contexts/AuthContext";
 import Hero from "../models/Hero";
 import Quest from "../models/Quest";
 import { getHeroes } from "./HeroesService";

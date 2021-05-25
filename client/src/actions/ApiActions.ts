@@ -1,5 +1,5 @@
-import { AuthProps } from "../contexts/auth-context";
-import ApiService from "../services/api-service";
+import { AuthProps } from "../contexts/AuthContext";
+import ApiService from "../services/ApiService";
 import {
   gameStatsRequested,
   gameStatsLoaded,

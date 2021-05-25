@@ -4,8 +4,8 @@ import { Dispatch } from "redux";
 import { heroDismissedFromQuest } from "../../../actions/Actions";
 import Hero, { HeroType } from "../../../models/Hero";
 import Quest from "../../../models/Quest";
-import { convertDuration } from "../../../utils/utils";
-import { GUILD_SHARE } from "../../../utils/variables";
+import { convertDuration } from "../../../utils/Utils";
+import { GUILD_SHARE } from "../../../utils/Variables";
 import "./quest-details.scss";
 
 type QuestDetailsProps = {

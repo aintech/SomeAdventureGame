@@ -1,14 +1,14 @@
 import React from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
-import Header from "./components/header/header";
-import Loader from "./components/loader/loader";
-import { ApiServiceProvider } from "./contexts/api-service-context";
-import AuthContext from "./contexts/auth-context";
-import useAuth from "./hooks/use-auth";
-import { useRoutes } from "./routes";
-import ApiService from "./services/api-service";
-import store from "./store";
+import Header from "./components/header/Header";
+import Loader from "./components/loader/Loader";
+import { ApiServiceProvider } from "./contexts/ApiServiceContext";
+import AuthContext from "./contexts/AuthContext";
+import useAuth from "./hooks/UseAuth";
+import { useRoutes } from "./Routes";
+import ApiService from "./services/ApiService";
+import store from "./Store";
 
 const App = () => {
   const { token, login, logout, userId, ready } = useAuth();

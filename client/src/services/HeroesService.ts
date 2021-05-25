@@ -1,4 +1,4 @@
-import { AuthProps } from "../contexts/auth-context";
+import { AuthProps } from "../contexts/AuthContext";
 import sendHttp from "./SendHttp";
 
 const baseUrl = "/api/heroes";
@@ -36,7 +36,10 @@ export interface HeroResponse extends StatsHolder {
 }
 
 const getHeroes = async (auth: AuthProps) => {
-  return await sendHttp<HeroResponse>(`${baseUrl}/${auth.userId}`, auth.token);
+  return await sendHttp<HeroResponse[]>(
+    `${baseUrl}/${auth.userId}`,
+    auth.token
+  );
 };
 
 export { getHeroes };

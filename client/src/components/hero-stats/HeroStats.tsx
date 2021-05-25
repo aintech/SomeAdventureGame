@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsClosed } from "../../actions/Actions";
 import Equipment, { EquipmentType } from "../../models/Equipment";
 import Hero, { calcHealthFraction, HeroType } from "../../models/Hero";
@@ -139,7 +139,7 @@ const mapStateToProps = ({ chosenHero }: { chosenHero: Hero }) => {
   return { hero: chosenHero };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators({ heroStatsClosed }, dispatch);
 };
 

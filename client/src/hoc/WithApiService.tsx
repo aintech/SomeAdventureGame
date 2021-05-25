@@ -1,5 +1,5 @@
-import { ApiServiceConsumer } from "../contexts/api-service-context";
-import ApiService from "../services/api-service";
+import { ApiServiceConsumer } from "../contexts/ApiServiceContext";
+import ApiService from "../services/ApiService";
 
 export type WithApiServiceProps = {
   apiService: ApiService;

@@ -1,4 +1,4 @@
-import { Action } from "../actions/Actions";
+import { PayloadedAction } from "../actions/Actions";
 import { ActionType } from "../actions/ActionType";
 import Building from "../models/Building";
 import Hero, { convert as convertHero } from "../models/Hero";
@@ -6,7 +6,7 @@ import Quest, { convert as convertQuest } from "../models/Quest";
 import { HeroResponse } from "../services/HeroesService";
 import { QuestResponse } from "../services/QuestsService";
 
-type State = {
+export type State = {
   gold: number;
   fame: number;
   quests: Quest[];
@@ -30,7 +30,7 @@ const intialState = {
   collectingQuestReward: null,
 };
 
-const reducer = (state: State = intialState, action: Action) => {
+const reducer = (state: State = intialState, action: PayloadedAction) => {
   switch (action.type) {
     case ActionType.FETCH_GAME_STATS_REQUEST:
       return {

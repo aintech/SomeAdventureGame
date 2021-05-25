@@ -1,4 +1,4 @@
-import { AuthProps } from "../contexts/auth-context";
+import { AuthProps } from "../contexts/AuthContext";
 import LoginForm from "../models/LoginForm";
 import sendHttp from "./SendHttp";
 

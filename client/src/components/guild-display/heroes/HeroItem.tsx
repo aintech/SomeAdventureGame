@@ -5,7 +5,7 @@ import Hero, {
   typeName,
 } from "../../../models/Hero";
 import Quest from "../../../models/Quest";
-import { toGameplayScale } from "../../../utils/utils";
+import { toGameplayScale } from "../../../utils/Utils";
 import "./hero-item.scss";
 
 type HeroItemProps = {

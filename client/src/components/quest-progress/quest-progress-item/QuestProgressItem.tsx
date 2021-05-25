@@ -2,8 +2,8 @@ import React, { Component, createRef } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { collectingQuestReward } from "../../../actions/Actions";
-import AuthContext, { AuthProps } from "../../../contexts/auth-context";
-import withApiService from "../../../hoc/with-api-service";
+import AuthContext, { AuthProps } from "../../../contexts/AuthContext";
+import withApiService from "../../../hoc/WithApiService";
 import chestClosedImgSrc from "../../../img/quest-progress/Chest_closed.png";
 import chestOpenImgSrc from "../../../img/quest-progress/Chest_open.png";
 import progressBG from "../../../img/quest-progress/quest-progress_background.png";
@@ -21,7 +21,7 @@ import {
   convertDuration,
   millisToSecs,
   toGameplayScale,
-} from "../../../utils/utils";
+} from "../../../utils/Utils";
 import "./quest-progress-item.scss";
 
 enum Direction {

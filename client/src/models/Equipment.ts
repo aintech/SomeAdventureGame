@@ -1,7 +1,8 @@
+import { EquipmentResponse } from "../services/HeroesService";
 import { HeroType } from "./Hero";
 import PersonageStats from "./PersonageStats";
 
-enum EquipmentType {
+export enum EquipmentType {
   WEAPON,
   ARMOR,
   SHIELD,
@@ -50,25 +51,22 @@ const collectAvailableHeroTypes = (
   return types;
 };
 
-const convert = (equipmentApiResponse: any): Equipment => {
+const convert = (response: EquipmentResponse): Equipment => {
   return new Equipment(
-    +equipmentApiResponse.id,
-    equipmentApiResponse.name,
-    equipmentApiResponse.description,
-    convertType(equipmentApiResponse.type),
-    +equipmentApiResponse.level,
+    response.id,
+    response.name,
+    response.description,
+    convertType(response.type),
+    response.level,
     new PersonageStats(
-      +equipmentApiResponse.power,
-      +equipmentApiResponse.defence,
-      +equipmentApiResponse.vitality,
-      +equipmentApiResponse.initiative
+      response.power,
+      response.defence,
+      response.vitality,
+      response.initiative
     ),
-    collectAvailableHeroTypes(
-      equipmentApiResponse.warrior,
-      equipmentApiResponse.mage
-    ),
-    equipmentApiResponse.avatar
+    collectAvailableHeroTypes(response.warrior, response.mage),
+    response.avatar
   );
 };
 
-export { EquipmentType, convert };
+export { convert };

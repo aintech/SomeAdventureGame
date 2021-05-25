@@ -1,4 +1,6 @@
-import { AuthProps } from "../contexts/auth-context";
+import { AuthProps } from "../contexts/AuthContext";
+import GameStats from "../models/GameStats";
+import { HeroResponse } from "./HeroesService";
 import sendHttp from "./SendHttp";
 
 const baseUrl = "/api/quests";
@@ -33,8 +35,16 @@ export interface QuestResponse {
 }
 
 const getQuests = async (auth: AuthProps) => {
-  return await sendHttp<QuestResponse>(`${baseUrl}/${auth.userId}`, auth.token);
+  return await sendHttp<QuestResponse[]>(
+    `${baseUrl}/${auth.userId}`,
+    auth.token
+  );
 };
+
+export interface EmbarkOnQuestResponse {
+  embarkedQuests: QuestResponse[];
+  embarkedHeroes: HeroResponse[];
+}
 
 const embarkOnQuest = async (
   auth: AuthProps,
@@ -42,7 +52,7 @@ const embarkOnQuest = async (
   heroIds: number[]
 ) => {
   const body = { questId, heroIds };
-  return await sendHttp(
+  return await sendHttp<EmbarkOnQuestResponse>(
     `${baseUrl}/embark/${auth.userId}`,
     auth.token,
     "POST",
@@ -50,13 +60,19 @@ const embarkOnQuest = async (
   );
 };
 
+export interface CompleteQuestResponse {
+  stats: GameStats;
+  quest: QuestResponse;
+  heroes: HeroResponse[];
+}
+
 const completeQuest = async (
   auth: AuthProps,
   questId: number,
   heroIds: number[]
 ) => {
   const body = { questId, heroIds };
-  return await sendHttp(
+  return await sendHttp<CompleteQuestResponse>(
     `${baseUrl}/complete/${auth.userId}`,
     auth.token,
     "POST",

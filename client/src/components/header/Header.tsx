@@ -1,16 +1,16 @@
 import React, { useContext, useEffect } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators, compose } from "redux";
+import { bindActionCreators, compose, Dispatch } from "redux";
 import { fetchGameStats } from "../../actions/ApiActions";
-import AuthContext from "../../contexts/auth-context";
-import withApiService from "../../hoc/with-api-service";
-import ApiService from "../../services/api-service";
+import AuthContext, { AuthProps } from "../../contexts/AuthContext";
+import withApiService from "../../hoc/WithApiService";
+import ApiService from "../../services/ApiService";
 import "./header.scss";
 
 type HeaderProps = {
   gold: number;
   fame: number;
-  fetchGameStats: (apiService: any) => (auth: any) => (dispatch: any) => void;
+  fetchGameStats: (auth: AuthProps) => void;
   isAuthenticated: boolean;
   logout: () => void;
 };
@@ -28,7 +28,7 @@ const Header = ({
     if (authContext.userId) {
       fetchGameStats(authContext);
     }
-  });
+  }, [fetchGameStats, authContext]);
 
   const headerBar = (
     <React.Fragment>
@@ -57,7 +57,7 @@ const mapStateToProps = ({ gold, fame }: { gold: number; fame: number }) => {
 };
 
 const mapDispatchToProps = (
-  dispatch: any,
+  dispatch: Dispatch,
   customProps: { apiService: ApiService }
 ) => {
   const { apiService } = customProps;

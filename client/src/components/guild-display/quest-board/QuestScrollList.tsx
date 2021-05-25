@@ -6,14 +6,14 @@ import {
   questScrollClosed,
 } from "../../../actions/Actions";
 import { embarkHeroesOnQuest } from "../../../actions/ApiActions";
-import AuthContext, { AuthProps } from "../../../contexts/auth-context";
+import AuthContext, { AuthProps } from "../../../contexts/AuthContext";
 import withApiService, {
   WithApiServiceProps,
-} from "../../../hoc/with-api-service";
+} from "../../../hoc/WithApiService";
 import Hero from "../../../models/Hero";
 import Quest from "../../../models/Quest";
-import QuestDetails from "./quest-details";
-import QuestScrollItem from "./quest-scroll-item";
+import QuestDetails from "./QuestDetails";
+import QuestScrollItem from "./QuestScrollItem";
 import "./quest-scroll-list.scss";
 
 type QuestScrollListProps = {

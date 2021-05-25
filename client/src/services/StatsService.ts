@@ -1,4 +1,4 @@
-import { AuthProps } from "../contexts/auth-context";
+import { AuthProps } from "../contexts/AuthContext";
 import GameStats from "../models/GameStats";
 import sendHttp from "./SendHttp";
 

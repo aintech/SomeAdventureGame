@@ -7,7 +7,7 @@ import {
 } from "../../../actions/Actions";
 import Hero from "../../../models/Hero";
 import Quest from "../../../models/Quest";
-import HeroItem from "./hero-item";
+import HeroItem from "./HeroItem";
 import "./hero-list.scss";
 
 type HeroListProps = {

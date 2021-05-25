@@ -4,10 +4,10 @@ import { bindActionCreators, Dispatch } from "redux";
 import { questScrollClosed } from "../../actions/Actions";
 import Hero from "../../models/Hero";
 import Quest from "../../models/Quest";
-import Loader from "../loader/loader";
+import Loader from "../loader/Loader";
 import "./guild-display.scss";
-import HeroList from "./heroes/hero-list";
-import QuestScrollList from "./quest-board/quest-scroll-list";
+import HeroList from "./heroes/HeroList";
+import QuestScrollList from "./quest-board/QuestScrollList";
 
 type GuildDisplayProps = {
   quests: Quest[];

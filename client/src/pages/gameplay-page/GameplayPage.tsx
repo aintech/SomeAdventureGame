@@ -3,16 +3,14 @@ import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { buildingClicked } from "../../actions/Actions";
 import { fetchHeroes, fetchQuests } from "../../actions/ApiActions";
-import BuildingDetails from "../../components/building-details/building-details";
-import BuildingItem from "../../components/building-item/building-item";
-import HeroStats from "../../components/hero-stats/hero-stats";
-import Loader from "../../components/loader/loader";
-import QuestProgressListContainer from "../../components/quest-progress/quest-progress-list/quest-progress-list";
-import QuestRewardContainer from "../../components/quest-reward/quest-reward";
-import AuthContext, { AuthProps } from "../../contexts/auth-context";
-import withApiService, {
-  WithApiServiceProps,
-} from "../../hoc/with-api-service";
+import BuildingDetails from "../../components/building-details/BuildingDetails";
+import BuildingItem from "../../components/building-item/BuildingItem";
+import HeroStats from "../../components/hero-stats/HeroStats";
+import Loader from "../../components/loader/Loader";
+import QuestProgressListContainer from "../../components/quest-progress/quest-progress-list/QuestProgressList";
+import QuestRewardContainer from "../../components/quest-reward/QuestReward";
+import AuthContext, { AuthProps } from "../../contexts/AuthContext";
+import withApiService, { WithApiServiceProps } from "../../hoc/WithApiService";
 import Building, { BuildingType } from "../../models/Building";
 import Hero from "../../models/Hero";
 import Quest from "../../models/Quest";

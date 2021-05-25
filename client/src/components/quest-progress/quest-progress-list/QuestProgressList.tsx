@@ -1,7 +1,7 @@
 import React from "react";
 import Hero from "../../../models/Hero";
 import Quest from "../../../models/Quest";
-import QuestProgressItem from "../quest-progress-item/quest-progress-item";
+import QuestProgressItem from "../quest-progress-item/QuestProgressItem";
 import "./quest-progress-list.scss";
 
 type QuestProgressListProps = {

@@ -2,15 +2,13 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { onCompleteQuest } from "../../actions/ApiActions";
-import AuthContext, { AuthProps } from "../../contexts/auth-context";
-import withApiService, {
-  WithApiServiceProps,
-} from "../../hoc/with-api-service";
+import AuthContext, { AuthProps } from "../../contexts/AuthContext";
+import withApiService, { WithApiServiceProps } from "../../hoc/WithApiService";
 import Hero from "../../models/Hero";
 import Quest from "../../models/Quest";
 import { CheckpointType } from "../../models/QuestCheckpoint";
-import { GUILD_SHARE } from "../../utils/variables";
-import HeroItem from "../guild-display/heroes/hero-item";
+import { GUILD_SHARE } from "../../utils/Variables";
+import HeroItem from "../guild-display/heroes/HeroItem";
 import "./quest-reward.scss";
 
 type QuestRewardProps = {

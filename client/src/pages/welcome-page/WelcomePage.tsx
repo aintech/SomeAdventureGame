@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useHistory } from "react-router";
-import AuthContext from "../../contexts/auth-context";
+import AuthContext from "../../contexts/AuthContext";
 import LoginForm from "../../models/LoginForm";
 import { login, register } from "../../services/AuthService";
 import "./welcome-page.scss";
