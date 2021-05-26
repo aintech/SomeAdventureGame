@@ -133,7 +133,6 @@
 
   @mixin reward {
     width: fit-content;
-    line-height: 1;
     justify-self: right;
     font-size: to-gameplay-scale(2.4rem);
     color: yellow;
@@ -153,6 +152,9 @@
       &::before {
         content: "+";
       }
+      &::after {
+        content: "\00a0g";
+      }
     }
 
     &--experience {
@@ -163,6 +165,9 @@
 
       &::before {
         content: "+";
+      }
+      &::after {
+        content: "\00a0 exp";
       }
     }
   }

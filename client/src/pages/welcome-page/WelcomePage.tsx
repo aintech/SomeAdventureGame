@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useHistory } from "react-router";
 import AuthContext from "../../contexts/AuthContext";
+import { useDisplayMessage } from "../../hooks/UseDisplayMessages";
 import LoginForm from "../../models/LoginForm";
 import { login, register } from "../../services/AuthService";
 import "./welcome-page.scss";
@@ -14,6 +15,7 @@ import "./welcome-page.scss";
 const WelcomePage = () => {
   const auth = useContext(AuthContext);
   const history = useHistory();
+  const displayMessage = useDisplayMessage();
 
   const [form, setForm] = useState<LoginForm>({ login: "", password: "" });
 
@@ -42,6 +44,7 @@ const WelcomePage = () => {
       try {
         const data = await login({ ...form });
         auth.login(data.token!, data.userId!);
+        displayMessage(`Добро пожаловать!`);
       } catch (e) {}
     }
   };

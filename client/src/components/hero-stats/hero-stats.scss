@@ -4,7 +4,7 @@
 $width: 360px; // calc(513px * 0.7);
 
 .hero-stats {
-  font-weight: bold;
+  font-size: 3rem;
   position: absolute;
   width: $gameplay_width;
   height: $gameplay_height;
@@ -14,10 +14,9 @@ $width: 360px; // calc(513px * 0.7);
 
   display: grid;
   grid-template-columns: 1fr 165px 75px 55px 70px 1fr;
-  grid-template-rows: 1fr 63px 45px 13px 30px 30px 60px 50px 50px 50px 20px 1fr;
+  grid-template-rows: 1fr 63px 45px 13px 27px 6px 27px 60px 50px 50px 50px 20px 1fr;
 
   & > * {
-    font-size: 3rem;
     color: white;
     z-index: inherit;
   }
@@ -29,6 +28,33 @@ $width: 360px; // calc(513px * 0.7);
     background-image: url(../../img/hero-stats/hero-stats_bg.png);
     background-repeat: no-repeat;
     background-size: cover;
+  }
+
+  &__name {
+    grid-row: 2;
+    grid-column: 2/6;
+    align-self: center;
+    justify-self: center;
+    @include strokeText;
+  }
+
+  &__level {
+    grid-row: 3;
+    grid-column: 2;
+    align-self: center;
+    margin-left: 110px;
+    margin-top: 4px;
+    @include strokeText;
+  }
+
+  &__gold {
+    grid-row: 3;
+    grid-column: 5;
+    align-self: center;
+    justify-self: flex-end;
+    margin-right: 65px;
+    margin-top: 4px;
+    @include strokeText;
   }
 
   &__portrait {
@@ -69,81 +95,56 @@ $width: 360px; // calc(513px * 0.7);
     font-size: 2rem;
     grid-row: 5;
     grid-column: 5;
+    align-self: center;
     @include strokeText;
   }
 
   &__experience {
     font-size: 2rem;
-    grid-row: 6;
-    grid-column: 5;
-    @include strokeText;
-  }
-
-  &__gold {
-    grid-row: 3;
+    grid-row: 7;
     grid-column: 5;
     align-self: center;
-    justify-self: flex-end;
-    margin-right: 65px;
-    margin-top: 4px;
-    @include strokeText;
-  }
-
-  &__name {
-    grid-row: 2;
-    grid-column: 2/6;
-    align-self: flex-end;
-    justify-self: center;
-    @include strokeText;
-  }
-
-  &__level {
-    grid-row: 3;
-    grid-column: 2;
-    align-self: center;
-    margin-left: 110px;
-    margin-top: 4px;
     @include strokeText;
   }
 
   &__power {
-    grid-row: 8;
-    grid-column: 4;
-    align-self: flex-end;
-    @include strokeText;
-
-    &-surplus {
-      grid-row: 8;
-      grid-column: 5;
-      align-self: flex-end;
-      @include strokeText;
-    }
-  }
-
-  &__defence {
     grid-row: 9;
     grid-column: 4;
-    align-self: flex-end;
+    align-self: center;
     @include strokeText;
 
     &-surplus {
       grid-row: 9;
       grid-column: 5;
-      align-self: flex-end;
+      align-self: center;
       @include strokeText;
     }
   }
 
-  &__vitality {
+  &__defence {
     grid-row: 10;
     grid-column: 4;
-    align-self: flex-end;
+    align-self: center;
     @include strokeText;
 
     &-surplus {
       grid-row: 10;
       grid-column: 5;
-      align-self: flex-end;
+      align-self: center;
+      @include strokeText;
+    }
+  }
+
+  &__vitality {
+    grid-row: 11;
+    grid-column: 4;
+    align-self: center;
+    @include strokeText;
+
+    &-surplus {
+      grid-row: 11;
+      grid-column: 5;
+      align-self: center;
       @include strokeText;
     }
   }
@@ -151,7 +152,7 @@ $width: 360px; // calc(513px * 0.7);
   &__equipment {
     display: grid;
 
-    grid-row: 8;
+    grid-row: 9;
     grid-column: 2;
 
     margin-left: 16px;

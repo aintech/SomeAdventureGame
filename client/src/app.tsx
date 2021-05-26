@@ -3,6 +3,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import Header from "./components/header/Header";
 import Loader from "./components/loader/Loader";
+import MessagePopupContainer from "./components/message-popup/MessagePopupContainer";
 import { ApiServiceProvider } from "./contexts/ApiServiceContext";
 import AuthContext from "./contexts/AuthContext";
 import useAuth from "./hooks/UseAuth";
@@ -35,6 +36,7 @@ const App = () => {
         <ApiServiceProvider value={apiService}>
           <BrowserRouter>
             <main>
+              <MessagePopupContainer messages={[]} />
               <Header isAuthenticated={isAuthenticated} logout={logout} />
               {routes}
             </main>

@@ -4,6 +4,8 @@ import { bindActionCreators, compose, Dispatch } from "redux";
 import { fetchGameStats } from "../../actions/ApiActions";
 import AuthContext, { AuthProps } from "../../contexts/AuthContext";
 import withApiService from "../../hoc/WithApiService";
+import { useDisplayMessage } from "../../hooks/UseDisplayMessages";
+import GameStats from "../../models/GameStats";
 import ApiService from "../../services/ApiService";
 import "./header.scss";
 
@@ -22,6 +24,7 @@ const Header = ({
   isAuthenticated,
   logout,
 }: HeaderProps) => {
+  const displayMessage = useDisplayMessage();
   const authContext = useContext(AuthContext);
 
   useEffect(() => {
@@ -29,6 +32,11 @@ const Header = ({
       fetchGameStats(authContext);
     }
   }, [fetchGameStats, authContext]);
+
+  const onLogout = () => {
+    displayMessage(`До скорой встречи!`);
+    logout();
+  };
 
   const headerBar = (
     <React.Fragment>
@@ -38,7 +46,7 @@ const Header = ({
         <div className="header__resources-gold--img"></div>
         <div className="header__resources-gold">Золото: {gold}</div>
       </div>
-      <button className="header__btn-logout" onClick={logout}>
+      <button className="header__btn-logout" onClick={onLogout}>
         LOGOUT
       </button>
     </React.Fragment>
@@ -52,7 +60,7 @@ const Header = ({
   );
 };
 
-const mapStateToProps = ({ gold, fame }: { gold: number; fame: number }) => {
+const mapStateToProps = ({ gold, fame }: GameStats) => {
   return { gold, fame };
 };
 

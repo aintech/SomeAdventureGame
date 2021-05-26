@@ -27,10 +27,11 @@
   }
 
   &__btn--show-unabled {
+    font-family: inherit;
     display: flex;
     position: absolute;
     top: 65px;
-    left: 800px;
+    left: 820px;
     background-color: transparent;
     border: 1px solid yellowgreen;
     color: yellowgreen;

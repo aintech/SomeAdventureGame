@@ -1,5 +1,6 @@
 import { PayloadedAction } from "../actions/Actions";
 import { ActionType } from "../actions/ActionType";
+import { Message } from "../components/message-popup/MessagePopup";
 import Building from "../models/Building";
 import Hero, { convert as convertHero } from "../models/Hero";
 import Quest, { convert as convertQuest } from "../models/Quest";
@@ -16,6 +17,7 @@ export type State = {
   chosenHero: Hero | null;
   heroesAssignedToQuest: Hero[];
   collectingQuestReward: Quest | null;
+  messages: Message[];
 };
 
 const intialState = {
@@ -28,6 +30,7 @@ const intialState = {
   chosenHero: null,
   heroesAssignedToQuest: [],
   collectingQuestReward: null,
+  messages: [],
 };
 
 const reducer = (state: State = intialState, action: PayloadedAction) => {
@@ -182,6 +185,25 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         ],
         heroes: doneHeroes,
         collectingQuestReward: null,
+      };
+
+    case ActionType.SHOW_USER_MESSAGE:
+      return {
+        ...state,
+        messages: [...state.messages, action.payload],
+      };
+
+    case ActionType.DISMISS_USER_MESSAGE:
+      const messageIdx = state.messages.findIndex(
+        (m) => m.id === action.payload
+      );
+
+      return {
+        ...state,
+        messages: [
+          ...state.messages.slice(0, messageIdx),
+          ...state.messages.slice(messageIdx + 1),
+        ],
       };
 
     default:

@@ -15,18 +15,17 @@
 
   &__content {
     @include absoluteCenter;
+    top: 45%;
     width: 50%;
-    // height: 60%;
-    // width: 40%;
-
     display: grid;
-    grid-template-rows: 15% 18% 15% 5% 15% 5% 1fr;
+    grid-template-rows: 20% 20% 18% 4% 20% 10% 1fr;
   }
 
   &__title {
     font-size: to-gameplay-scale(7rem);
     grid-row: 1;
     justify-self: center;
+    align-self: center;
   }
 
   &__tribute {
@@ -35,6 +34,7 @@
     grid-row: 3;
     margin-left: 45%;
     align-self: center;
+    @include strokeText;
   }
 
   &__fame {
@@ -43,6 +43,7 @@
     grid-row: 5;
     margin-left: 45%;
     align-self: center;
+    @include strokeText;
   }
 
   &__heroes-holder {

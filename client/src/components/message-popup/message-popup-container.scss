@@ -1,0 +1,17 @@
+@import "../../utils/variables.scss";
+
+.message-popup-container {
+  position: absolute;
+  display: flex;
+  z-index: 3000;
+  top: calc(1rem + #{$header_height});
+  right: 0px;
+  overflow: hidden;
+  min-width: 350px;
+  align-content: flex-end;
+  justify-content: flex-end;
+
+  & ul {
+    list-style-type: none;
+  }
+}

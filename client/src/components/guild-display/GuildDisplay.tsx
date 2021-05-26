@@ -102,7 +102,7 @@ const GuildDisplay = ({
         <i className="material-icons guild-display__btn--show-unabled-icon">
           {!showUnabledHeroes ? "check_box" : "check_box_outline_blank"}
         </i>
-        <span>Only idle heroes</span>
+        <span>Только свободные</span>
       </button>
       <button
         className="guild-display__btn--previous"

@@ -50,9 +50,9 @@ const QuestReward = ({
       <div className="quest-reward__content">
         <div className="quest-reward__title">{quest.title}</div>
         <div className="quest-reward__tribute">
-          {Math.floor(quest.tribute * GUILD_SHARE)}
+          {Math.floor(quest.tribute * GUILD_SHARE)} gold
         </div>
-        <div className="quest-reward__fame">{quest.fame}</div>
+        <div className="quest-reward__fame">{quest.fame} fame</div>
         <div className="quest-reward__heroes-holder">
           {heroes.map((hero) => (
             <div key={hero.id}>

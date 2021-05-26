@@ -1,0 +1,23 @@
+@import "../../utils/animations.scss";
+
+.message-popup {
+  border: solid 1px black;
+  border-radius: 5px;
+  background-color: rgba($color: teal, $alpha: 0.6);
+  display: flex;
+  cursor: default;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  max-width: 300px;
+  animation: appear 1s;
+
+  &:hover {
+    background-color: rgba($color: teal, $alpha: 0.9);
+  }
+
+  &__text {
+    font-size: 1.6rem;
+    color: whitesmoke;
+    margin: 6px;
+  }
+}

@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { heroDismissedFromQuest } from "../../../actions/Actions";
+import { useDisplayMessage } from "../../../hooks/UseDisplayMessages";
 import Hero, { HeroType } from "../../../models/Hero";
 import Quest from "../../../models/Quest";
 import { convertDuration } from "../../../utils/Utils";
@@ -23,12 +24,15 @@ const QuestDetails = ({
   heroDismissedFromQuest,
   closeDetails,
 }: QuestDetailsProps) => {
+  const displayMessage = useDisplayMessage();
+
   const dismissHero = (hero: Hero) => {
     heroDismissedFromQuest(hero);
   };
 
   const onAcceptQuest = () => {
     acceptQuest(quest, heroesAssignedToQuest);
+    displayMessage(`Герои отправились на задание "${quest.title}"`);
   };
 
   const acceptBtnStyle =

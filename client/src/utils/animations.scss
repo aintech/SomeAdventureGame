@@ -1,0 +1,30 @@
+@keyframes appear {
+  0% {
+    transform: translateX(100%);
+  }
+
+  95% {
+    transform: translateX(-10px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulsate {
+  0% {
+    transform: translateX(to-gameplay-scale(50px)) scale(1.4);
+    box-shadow: 0 1rem 4rem rgba($color: black, $alpha: 0.25);
+  }
+
+  50% {
+    transform: translateX(to-gameplay-scale(50px)) scale(1.5);
+    box-shadow: 0 2rem 4rem rgba($color: black, $alpha: 0.25);
+  }
+
+  100% {
+    transform: translateX(to-gameplay-scale(50px)) scale(1.4);
+    box-shadow: 0 1rem 4rem rgba($color: black, $alpha: 0.25);
+  }
+}

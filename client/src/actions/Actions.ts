@@ -1,4 +1,5 @@
 import { Action } from "redux";
+import { Message } from "../components/message-popup/MessagePopup";
 import Building from "../models/Building";
 import GameStats from "../models/GameStats";
 import Hero from "../models/Hero";
@@ -118,10 +119,24 @@ export const collectingQuestReward = (quest: Quest): PayloadedAction => {
 };
 
 export const completeQuest = (
-  payload: CompleteQuestResponse
+  questResponse: CompleteQuestResponse
 ): PayloadedAction => {
   return {
     type: ActionType.COMPLETE_QUEST,
-    payload: payload,
+    payload: questResponse,
+  };
+};
+
+export const showUserMessage = (message: Message): PayloadedAction => {
+  return {
+    type: ActionType.SHOW_USER_MESSAGE,
+    payload: message,
+  };
+};
+
+export const dismissUserMessage = (id: number): PayloadedAction => {
+  return {
+    type: ActionType.DISMISS_USER_MESSAGE,
+    payload: id,
   };
 };

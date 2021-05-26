@@ -39,6 +39,10 @@ type QuestScrollItemProps = {
   index: number;
 };
 
+/**
+ * TODO: Уровень переместить налево, справа будет награда
+ */
+
 const QuestScrollItem = ({ quest, index }: QuestScrollItemProps) => {
   const { rotation } = getStoredRotation(index, quest.id);
   const style = { transform: `rotate(${rotation}deg)` };
