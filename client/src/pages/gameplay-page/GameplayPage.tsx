@@ -2,13 +2,17 @@ import React, { Component, useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { buildingClicked } from "../../actions/Actions";
-import { fetchHeroes, fetchQuests } from "../../actions/ApiActions";
-import BuildingDetails from "../../components/building-details/BuildingDetails";
-import BuildingItem from "../../components/building-item/BuildingItem";
-import HeroStats from "../../components/hero-stats/HeroStats";
+import {
+  fetchHeroes,
+  fetchQuests,
+  fetchTavernPatrons,
+} from "../../actions/ApiActions";
+import BuildingDetails from "../../components/gameplay/building-details/BuildingDetails";
+import BuildingItem from "../../components/gameplay/building-item/BuildingItem";
+import HeroStats from "../../components/gameplay/hero-stats/HeroStats";
 import Loader from "../../components/loader/Loader";
-import QuestProgressListContainer from "../../components/quest-progress/quest-progress-list/QuestProgressList";
-import QuestRewardContainer from "../../components/quest-reward/QuestReward";
+import QuestProgressListContainer from "../../components/gameplay/quest-progress/quest-progress-list/QuestProgressList";
+import QuestRewardContainer from "../../components/gameplay/quest-reward/QuestReward";
 import AuthContext, { AuthProps } from "../../contexts/AuthContext";
 import withApiService, { WithApiServiceProps } from "../../hoc/WithApiService";
 import Building, { BuildingType } from "../../models/Building";
@@ -60,6 +64,7 @@ const GameplayPage = ({
 type GameplayPageContainerProps = {
   fetchQuests: (auth: AuthProps) => Quest[];
   fetchHeroes: (auth: AuthProps) => Hero[];
+  fetchTavernPatrons: (auth: AuthProps) => Hero[];
   quests: Quest[];
   heroes: Hero[];
   onBuildingClicked: (building: Building) => void;
@@ -73,6 +78,7 @@ class GameplayPageContainer extends Component<GameplayPageContainerProps> {
     const auth = this.context;
     this.props.fetchQuests(auth);
     this.props.fetchHeroes(auth);
+    this.props.fetchTavernPatrons(auth);
   }
 
   render() {
@@ -117,6 +123,7 @@ const mapDispatchToProps = (
       onBuildingClicked: buildingClicked,
       fetchQuests: fetchQuests(apiService),
       fetchHeroes: fetchHeroes(apiService),
+      fetchTavernPatrons: fetchTavernPatrons(apiService),
     },
     dispatch
   );

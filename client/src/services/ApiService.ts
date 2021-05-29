@@ -1,7 +1,7 @@
 import { AuthProps } from "../contexts/AuthContext";
 import Hero from "../models/Hero";
 import Quest from "../models/Quest";
-import { getHeroes } from "./HeroesService";
+import { getHeroes, getTavernPatrons } from "./HeroesService";
 import { completeQuest, embarkOnQuest, getQuests } from "./QuestsService";
 import { getStats } from "./StatsService";
 
@@ -16,6 +16,10 @@ export default class ApiService {
 
   getHeroes(auth: AuthProps) {
     return getHeroes(auth);
+  }
+
+  getTavernPatrons(auth: AuthProps) {
+    return getTavernPatrons(auth);
   }
 
   embarkHeroesOnQuest(auth: AuthProps, quest: Quest, assignedHeroes: Hero[]) {

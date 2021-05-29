@@ -12,6 +12,7 @@ export type State = {
   fame: number;
   quests: Quest[];
   heroes: Hero[];
+  tavernPatrons: Hero[];
   chosenBuilding: Building | null;
   chosenQuest: Quest | null;
   chosenHero: Hero | null;
@@ -25,6 +26,7 @@ const intialState = {
   fame: 0,
   quests: [],
   heroes: [],
+  tavernPatrons: [],
   chosenBuilding: null,
   chosenQuest: null,
   chosenHero: null,
@@ -71,6 +73,18 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       return {
         ...state,
         heroes: action.payload.map((h: HeroResponse) => convertHero(h)),
+      };
+
+    case ActionType.FETCH_TAVERN_PATRONS_REQUEST:
+      return {
+        ...state,
+        tavernPatrons: [],
+      };
+
+    case ActionType.FETCH_TAVERN_PATRONS_SUCCESS:
+      return {
+        ...state,
+        tavernPatrons: action.payload.map((h: HeroResponse) => convertHero(h)),
       };
 
     case ActionType.BUILDING_CLICKED:

@@ -9,6 +9,8 @@ import {
   heroesLoaded,
   heroesEmbarkedOnQuest,
   completeQuest,
+  tavernPatronsRequested,
+  tavernPatronsLoaded,
 } from "../actions/Actions";
 import Quest from "../models/Quest";
 import Hero from "../models/Hero";
@@ -31,6 +33,14 @@ export const fetchHeroes =
   (apiService: ApiService) => (auth: AuthProps) => (dispatch: any) => {
     dispatch(heroesRequested);
     apiService.getHeroes(auth).then((data) => dispatch(heroesLoaded(data)));
+  };
+
+export const fetchTavernPatrons =
+  (apiService: ApiService) => (auth: AuthProps) => (dispatch: any) => {
+    dispatch(tavernPatronsRequested);
+    apiService
+      .getTavernPatrons(auth)
+      .then((data) => dispatch(tavernPatronsLoaded(data)));
   };
 
 export const embarkHeroesOnQuest =

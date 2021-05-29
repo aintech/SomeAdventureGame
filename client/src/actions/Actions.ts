@@ -55,6 +55,23 @@ export const heroesLoaded = (heroes: HeroResponse[]): PayloadedAction => {
   };
 };
 
+export const tavernPatronsRequested = (): PayloadedAction => {
+  return {
+    type: ActionType.FETCH_TAVERN_PATRONS_REQUEST,
+  };
+};
+
+export const tavernPatronsLoaded = (
+  patrons: HeroResponse[]
+): PayloadedAction => {
+  console.log(patrons);
+
+  return {
+    type: ActionType.FETCH_TAVERN_PATRONS_SUCCESS,
+    payload: patrons,
+  };
+};
+
 export const buildingClicked = (building: Building | null): PayloadedAction => {
   return {
     type: ActionType.BUILDING_CLICKED,

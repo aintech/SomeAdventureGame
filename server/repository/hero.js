@@ -3,7 +3,7 @@ import usePool from "./use-pool.js";
 let _maxLevel = 0;
 const _levels = [];
 const _fetchLevels = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _) => {
     usePool("select * from public.hero_level", [], (_, result) => {
       resolve(result.rows);
     });
@@ -43,6 +43,9 @@ const _calcLevelProgress = (hero) => {
 };
 
 const _addLevelInfo = (heroes) => {
+  if (heroes.length === 0) {
+    return [];
+  }
   return heroes
     .map((h) => {
       return { ...h, level: _calcHeroLevel(h) };
@@ -53,6 +56,9 @@ const _addLevelInfo = (heroes) => {
 };
 
 const _addEquipment = async (heroes) => {
+  if (heroes.length === 0) {
+    return [];
+  }
   const equipment = await new Promise((resolve, reject) => {
     usePool(
       `select * from public.hero_equipment he
@@ -61,7 +67,7 @@ const _addEquipment = async (heroes) => {
       [],
       (error, result) => {
         if (error) {
-          return reject(error);
+          return reject(new Error(`_addEquipment ${error}`));
         }
         resolve(result.rows);
       }
@@ -89,11 +95,28 @@ const getHeroes = async (userId) => {
 
   return new Promise((resolve, reject) => {
     usePool(
-      "select * from public.hero where user_id = $1",
+      "select * from public.hero where user_id = $1 and hired = true",
       [userId],
       (error, result) => {
         if (error) {
-          return reject(error);
+          return reject(new Error(`getHeroes ${error}`));
+        }
+        resolve(_prepareHeroes(result.rows));
+      }
+    );
+  });
+};
+
+const getNotHiredHeroes = async (userId) => {
+  await _checkLevelsLoaded();
+
+  return new Promise((resolve, reject) => {
+    usePool(
+      `select * from public.hero where user_id = $1 and hired = false`,
+      [userId],
+      (error, result) => {
+        if (error) {
+          return reject(new Error(`getNotHiredHeroes ${error}`));
         }
         resolve(_prepareHeroes(result.rows));
       }
@@ -110,7 +133,7 @@ const getHeroesByIds = async (heroIds) => {
       [],
       (error, result) => {
         if (error) {
-          return reject(error);
+          return reject(new Error(`getHeroesByIds ${error}`));
         }
         resolve(_prepareHeroes(result.rows));
       }
@@ -154,4 +177,10 @@ const completeHeroesQuest = async (heroIds, heroesTribute, experience) => {
   });
 };
 
-export { getHeroes, getHeroesByIds, embarkHeroesOnQuest, completeHeroesQuest };
+export {
+  getHeroes,
+  getNotHiredHeroes,
+  getHeroesByIds,
+  embarkHeroesOnQuest,
+  completeHeroesQuest,
+};

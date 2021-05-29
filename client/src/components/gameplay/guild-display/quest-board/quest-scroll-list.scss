@@ -1,0 +1,14 @@
+@import "../../../../utils/variables.scss";
+
+.quest-scroll-list {
+  position: absolute;
+  top: calc(240px / #{$gameplay_scale});
+  left: calc(120px / #{$gameplay_scale});
+  width: calc(690px / #{$gameplay_scale});
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  row-gap: calc(56px / #{$gameplay_scale});
+  justify-items: center;
+}

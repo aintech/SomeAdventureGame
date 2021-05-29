@@ -42,4 +42,11 @@ const getHeroes = async (auth: AuthProps) => {
   );
 };
 
-export { getHeroes };
+const getTavernPatrons = async (auth: AuthProps) => {
+  return await sendHttp<HeroResponse[]>(
+    `${baseUrl}/${auth.userId}/tavern`,
+    auth.token
+  );
+};
+
+export { getHeroes, getTavernPatrons };
