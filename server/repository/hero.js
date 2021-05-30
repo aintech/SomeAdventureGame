@@ -124,6 +124,38 @@ const getNotHiredHeroes = async (userId) => {
   });
 };
 
+const hireHero = async (userId, heroId) => {
+  await new Promise((resolve, reject) => {
+    usePool(
+      `update public.stats 
+       set gold = gold - (select gold from public.hero where id = $2)
+       where user_id = $1`,
+      [userId, heroId],
+      (error, result) => {
+        if (error) {
+          return reject(new Error(`hireHero stats ${error}`));
+        }
+        resolve({});
+      }
+    );
+  });
+
+  await new Promise((resolve, reject) => {
+    usePool(
+      `update public.hero set hired = true where id = $1`,
+      [heroId],
+      (error, _) => {
+        if (error) {
+          return reject(new Error(`hireHero ${error}`));
+        }
+        resolve({});
+      }
+    );
+  });
+
+  return getHeroesByIds([heroId]);
+};
+
 const getHeroesByIds = async (heroIds) => {
   await _checkLevelsLoaded();
 
@@ -180,6 +212,7 @@ const completeHeroesQuest = async (heroIds, heroesTribute, experience) => {
 export {
   getHeroes,
   getNotHiredHeroes,
+  hireHero,
   getHeroesByIds,
   embarkHeroesOnQuest,
   completeHeroesQuest,

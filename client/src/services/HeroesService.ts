@@ -1,4 +1,6 @@
 import { AuthProps } from "../contexts/AuthContext";
+import GameStats from "../models/GameStats";
+import Hero from "../models/Hero";
 import sendHttp from "./SendHttp";
 
 const baseUrl = "/api/heroes";
@@ -49,4 +51,17 @@ const getTavernPatrons = async (auth: AuthProps) => {
   );
 };
 
-export { getHeroes, getTavernPatrons };
+export interface HireHeroResponse {
+  stats: GameStats;
+  hired: HeroResponse;
+}
+
+const hireHero = async (auth: AuthProps, hero: Hero) => {
+  return await sendHttp<HireHeroResponse>(
+    `${baseUrl}/${auth.userId}/hire/${hero.id}`,
+    auth.token,
+    "PUT"
+  );
+};
+
+export { getHeroes, getTavernPatrons, hireHero };

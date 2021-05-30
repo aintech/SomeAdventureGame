@@ -11,6 +11,7 @@ import {
   completeQuest,
   tavernPatronsRequested,
   tavernPatronsLoaded,
+  heroHired,
 } from "../actions/Actions";
 import Quest from "../models/Quest";
 import Hero from "../models/Hero";
@@ -59,4 +60,11 @@ export const onCompleteQuest =
     apiService
       .completeQuest(auth, quest, heroes)
       .then((data) => dispatch(completeQuest(data)));
+  };
+
+export const onHireHero =
+  (apiService: ApiService) =>
+  (auth: AuthProps, hero: Hero) =>
+  (dispatch: any) => {
+    apiService.hireHero(auth, hero).then((data) => dispatch(heroHired(data)));
   };

@@ -14,7 +14,23 @@ $width: 360px; // calc(513px * 0.7);
 
   display: grid;
   grid-template-columns: 1fr 165px 75px 55px 70px 1fr;
-  grid-template-rows: 1fr 63px 45px 13px 27px 6px 27px 60px 50px 50px 50px 20px 1fr;
+  grid-template-rows:
+    1fr
+    [name-row] 63px [name-row
+    level-row] 45px [level-row]
+    13px
+    [health-row] 27px [health-row]
+    6px
+    [experience-row] 27px [experience-row]
+    60px
+    [power-row] 30px [power-row]
+    8px
+    [defence-row] 30px [defence-row]
+    8px
+    [vitality-row] 30px [vitality-row]
+    8px
+    [initiative-row] 30px [initiative-row]
+    26px 1fr;
 
   & > * {
     color: white;
@@ -31,7 +47,7 @@ $width: 360px; // calc(513px * 0.7);
   }
 
   &__name {
-    grid-row: 2;
+    grid-row: name-row;
     grid-column: 2/6;
     align-self: center;
     justify-self: center;
@@ -39,16 +55,16 @@ $width: 360px; // calc(513px * 0.7);
   }
 
   &__level {
-    grid-row: 3;
+    grid-row: level-row;
     grid-column: 2;
     align-self: center;
-    margin-left: 110px;
+    margin-left: 130px;
     margin-top: 4px;
     @include strokeText;
   }
 
   &__gold {
-    grid-row: 3;
+    grid-row: level-row;
     grid-column: 5;
     align-self: center;
     justify-self: flex-end;
@@ -82,69 +98,93 @@ $width: 360px; // calc(513px * 0.7);
   &__health-bar {
     position: absolute;
     top: 220px;
-    left: 517px;
+    left: 518px;
   }
 
   &__experience-bar {
     position: absolute;
     top: 252px;
-    left: 517px;
+    left: 518px;
   }
 
   &__health {
     font-size: 2rem;
-    grid-row: 5;
+    grid-row: health-row;
     grid-column: 5;
     align-self: center;
+    transform: translateY(2px) translateX(5px);
     @include strokeText;
   }
 
   &__experience {
     font-size: 2rem;
-    grid-row: 7;
+    grid-row: experience-row;
     grid-column: 5;
     align-self: center;
+    transform: translateY(2px) translateX(5px);
     @include strokeText;
   }
 
   &__power {
-    grid-row: 9;
+    grid-row: power-row;
     grid-column: 4;
     align-self: center;
+    transform: translateY(2px);
     @include strokeText;
 
     &-surplus {
-      grid-row: 9;
+      grid-row: power-row;
       grid-column: 5;
       align-self: center;
+      transform: translateY(2px);
       @include strokeText;
     }
   }
 
   &__defence {
-    grid-row: 10;
+    grid-row: defence-row;
     grid-column: 4;
     align-self: center;
+    transform: translateY(2px);
     @include strokeText;
 
     &-surplus {
-      grid-row: 10;
+      grid-row: defence-row;
       grid-column: 5;
       align-self: center;
+      transform: translateY(2px);
       @include strokeText;
     }
   }
 
   &__vitality {
-    grid-row: 11;
+    grid-row: vitality-row;
     grid-column: 4;
     align-self: center;
+    transform: translateY(2px);
     @include strokeText;
 
     &-surplus {
-      grid-row: 11;
+      grid-row: vitality-row;
       grid-column: 5;
       align-self: center;
+      transform: translateY(2px);
+      @include strokeText;
+    }
+  }
+
+  &__initiative {
+    grid-row: initiative-row;
+    grid-column: 4;
+    align-self: center;
+    transform: translateY(2px);
+    @include strokeText;
+
+    &-surplus {
+      grid-row: initiative-row;
+      grid-column: 5;
+      align-self: center;
+      transform: translateY(2px);
       @include strokeText;
     }
   }

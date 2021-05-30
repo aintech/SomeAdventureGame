@@ -47,7 +47,7 @@ const GuildDisplay = ({
       start +
       (page === 0
         ? Math.min(4, idleHeroes.length)
-        : lPage === page
+        : lPage === page && idleHeroes.length % 4 !== 0
         ? idleHeroes.length % 4
         : 4);
 

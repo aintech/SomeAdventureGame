@@ -3,23 +3,23 @@ import { getNotHiredHeroes } from "./hero.js";
 import usePool from "./use-pool.js";
 
 const getTavernPatrons = async (userId) => {
-  let heroes = await getNotHiredHeroes(userId);
-  if (isItTimeToReplenishHeroes(heroes)) {
-    if (heroes.length > 0) {
-      await seeingOffHeroes(heroes.map((h) => h.id));
+  let patrons = await getNotHiredHeroes(userId);
+  if (isItTimeToReplenishPatrons(patrons)) {
+    if (patrons.length > 0) {
+      await seeingOffPatrons(patrons.map((h) => h.id));
     }
     await letInHeroes(userId);
-    heroes = await getNotHiredHeroes(userId);
+    patrons = await getNotHiredHeroes(userId);
   }
-  return heroes;
+  return patrons;
 };
 
-const isItTimeToReplenishHeroes = (heroes) => {
-  const dayAgo = new Date(new Date().getTime() - 60 * 60 * 1000);
+const isItTimeToReplenishPatrons = (heroes) => {
+  const dayAgo = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
   return heroes.length === 0 || heroes.some((h) => h.appear_at < dayAgo);
 };
 
-const seeingOffHeroes = async (heroIds) => {
+const seeingOffPatrons = async (heroIds) => {
   const ids = heroIds.join(",");
   return Promise.all([
     new Promise((resolve, reject) => {
@@ -28,7 +28,7 @@ const seeingOffHeroes = async (heroIds) => {
         [],
         (error, _) => {
           if (error) {
-            return reject(new Error(`seeingOffHeroes - equip ${error}`));
+            return reject(new Error(`seeingOffPatrons - equip ${error}`));
           }
           resolve({});
         }
@@ -41,7 +41,7 @@ const seeingOffHeroes = async (heroIds) => {
         [],
         (error, _) => {
           if (error) {
-            return reject(new Error(`seeingOffHeroes - heroes ${error}`));
+            return reject(new Error(`seeingOffPatrons - heroes ${error}`));
           }
           resolve({});
         }
@@ -52,7 +52,7 @@ const seeingOffHeroes = async (heroIds) => {
 
 const letInHeroes = async (userId) => {
   const heroes = [];
-  const poolSize = 1; //Math.floor(Math.random() * 7) + 3;
+  const poolSize = 6; //Math.floor(Math.random() * 7) + 3;
   for (let i = 0; i < poolSize; i++) {
     heroes.push({
       name: generateName(),
@@ -64,24 +64,26 @@ const letInHeroes = async (userId) => {
       health: 100,
       experience: 50,
       gold: 100,
+      index: i,
     });
   }
 
-  await persistHeroes(userId, heroes);
+  await persistPastrons(userId, heroes);
 
   const newlyArrived = await getNotHiredHeroes(userId);
 
-  await giveHeroesEqipment(newlyArrived);
+  await givePatronsEqipment(newlyArrived);
 };
 
-const persistHeroes = async (userId, heroes) => {
+const persistPastrons = async (userId, heroes) => {
   const heroesData = heroes
     .map(
       (hero) =>
         `select 
             ${userId}, '${hero.name}', '${hero.type}', 
             ${hero.power}, ${hero.defence}, ${hero.vitality}, ${hero.initiative},
-            ${hero.health}, ${hero.experience}, ${hero.gold}, now()`
+            ${hero.health}, ${hero.experience}, ${hero.gold}, 
+            (now() + interval '${hero.index} seconds')`
     )
     .join(" union ");
   return new Promise((resolve, reject) => {
@@ -93,7 +95,7 @@ const persistHeroes = async (userId, heroes) => {
       [],
       (error, _) => {
         if (error) {
-          reject(new Error(`persistHeroes ${error}`));
+          reject(new Error(`persistPastrons ${error}`));
         }
         resolve({});
       }
@@ -101,7 +103,7 @@ const persistHeroes = async (userId, heroes) => {
   });
 };
 
-const giveHeroesEqipment = async (heroes) => {
+const givePatronsEqipment = async (heroes) => {
   const defaultArmor = heroes
     .map((hero) => `select ${hero.id}, 3`)
     .join(" union ");
@@ -117,7 +119,7 @@ const giveHeroesEqipment = async (heroes) => {
       [],
       (error, _) => {
         if (error) {
-          return reject(new Error(`giveHeroesEqipment ${error}`));
+          return reject(new Error(`givePatronsEqipment ${error}`));
         }
         resolve({});
       }

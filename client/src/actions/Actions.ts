@@ -4,7 +4,7 @@ import Building from "../models/Building";
 import GameStats from "../models/GameStats";
 import Hero from "../models/Hero";
 import Quest from "../models/Quest";
-import { HeroResponse } from "../services/HeroesService";
+import { HeroResponse, HireHeroResponse } from "../services/HeroesService";
 import {
   CompleteQuestResponse,
   EmbarkOnQuestResponse,
@@ -64,8 +64,6 @@ export const tavernPatronsRequested = (): PayloadedAction => {
 export const tavernPatronsLoaded = (
   patrons: HeroResponse[]
 ): PayloadedAction => {
-  console.log(patrons);
-
   return {
     type: ActionType.FETCH_TAVERN_PATRONS_SUCCESS,
     payload: patrons,
@@ -155,5 +153,12 @@ export const dismissUserMessage = (id: number): PayloadedAction => {
   return {
     type: ActionType.DISMISS_USER_MESSAGE,
     payload: id,
+  };
+};
+
+export const heroHired = (hiredResult: HireHeroResponse): PayloadedAction => {
+  return {
+    type: ActionType.HERO_HIRED,
+    payload: hiredResult,
   };
 };

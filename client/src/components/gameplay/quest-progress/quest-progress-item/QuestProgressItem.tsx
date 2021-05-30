@@ -2,7 +2,6 @@ import React, { Component, createRef } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { collectingQuestReward } from "../../../../actions/Actions";
-import AuthContext, { AuthProps } from "../../../../contexts/AuthContext";
 import withApiService from "../../../../hoc/WithApiService";
 import chestClosedImgSrc from "../../../../img/quest-progress/Chest_closed.png";
 import chestOpenImgSrc from "../../../../img/quest-progress/Chest_open.png";
@@ -64,9 +63,6 @@ class QuestProgressItem extends Component<
   QuestProgressItemProps,
   QuestProgressItemState
 > {
-  static contextType = AuthContext;
-
-  private auth: AuthProps | null = null;
   private secondsTimer: NodeJS.Timeout | null = null;
   private updateTimer: NodeJS.Timeout | null = null;
   private canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -96,7 +92,6 @@ class QuestProgressItem extends Component<
   }
 
   componentDidMount() {
-    this.auth = this.context;
     this.canvas = this.canvasRef.current!;
     this.canvasCtx = this.canvas.getContext("2d")!;
 

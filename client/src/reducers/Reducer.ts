@@ -4,7 +4,7 @@ import { Message } from "../components/message-popup/MessagePopup";
 import Building from "../models/Building";
 import Hero, { convert as convertHero } from "../models/Hero";
 import Quest, { convert as convertQuest } from "../models/Quest";
-import { HeroResponse } from "../services/HeroesService";
+import { HeroResponse, HireHeroResponse } from "../services/HeroesService";
 import { QuestResponse } from "../services/QuestsService";
 
 export type State = {
@@ -217,6 +217,21 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         messages: [
           ...state.messages.slice(0, messageIdx),
           ...state.messages.slice(messageIdx + 1),
+        ],
+      };
+    case ActionType.HERO_HIRED:
+      const hireResult = action.payload as HireHeroResponse;
+      const hero: Hero = convertHero(hireResult.hired);
+      const patronIdx = state.tavernPatrons.findIndex((p) => p.id === hero.id);
+
+      return {
+        ...state,
+        gold: hireResult.stats.gold,
+        fame: hireResult.stats.fame,
+        heroes: [...state.heroes, hero],
+        tavernPatrons: [
+          ...state.tavernPatrons.slice(0, patronIdx),
+          ...state.tavernPatrons.slice(patronIdx + 1),
         ],
       };
 

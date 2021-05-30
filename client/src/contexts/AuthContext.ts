@@ -1,17 +1,15 @@
 import { Context, createContext } from "react";
 
-export type AuthProps = {
+export interface AuthProps {
   userId: number | null;
   token: string | null;
-};
+}
 
-type AuthContextProps = {
-  userId: number | null;
-  token: string | null;
+interface AuthContextProps extends AuthProps {
   login: (jwtToken: string, id: number) => void;
   logout: () => void;
   isAuthenticated: boolean;
-};
+}
 
 const AuthContext: Context<AuthContextProps> = createContext(
   {} as AuthContextProps

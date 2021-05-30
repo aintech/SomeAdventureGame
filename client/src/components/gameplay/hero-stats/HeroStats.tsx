@@ -28,9 +28,6 @@ type HeroStatsProps = {
   heroStatsClosed: () => void;
 };
 
-/**
- * TODO: Выводить инициативу
- */
 const HeroStats = ({ hero, heroStatsClosed }: HeroStatsProps) => {
   const healthRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const expRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
@@ -95,6 +92,10 @@ const HeroStats = ({ hero, heroStatsClosed }: HeroStatsProps) => {
       <div className="hero-stats__vitality">{hero.rawStats.vitality}</div>
       <div className="hero-stats__vitality-surplus">
         +{equipmentSurplus.vitality}
+      </div>
+      <div className="hero-stats__initiative">{hero.rawStats.initiative}</div>
+      <div className="hero-stats__initiative-surplus">
+        -{equipmentSurplus.initiative}
       </div>
       <div className="hero-stats__equipment">
         <div className={weaponStyle}>

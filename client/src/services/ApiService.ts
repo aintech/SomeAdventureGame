@@ -1,7 +1,7 @@
 import { AuthProps } from "../contexts/AuthContext";
 import Hero from "../models/Hero";
 import Quest from "../models/Quest";
-import { getHeroes, getTavernPatrons } from "./HeroesService";
+import { getHeroes, getTavernPatrons, hireHero } from "./HeroesService";
 import { completeQuest, embarkOnQuest, getQuests } from "./QuestsService";
 import { getStats } from "./StatsService";
 
@@ -36,5 +36,9 @@ export default class ApiService {
       quest.id,
       heroes.map((h) => h.id)
     );
+  }
+
+  hireHero(auth: AuthProps, hero: Hero) {
+    return hireHero(auth, hero);
   }
 }
