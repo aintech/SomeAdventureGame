@@ -38,17 +38,11 @@ export interface HeroResponse extends StatsHolder {
 }
 
 const getHeroes = async (auth: AuthProps) => {
-  return await sendHttp<HeroResponse[]>(
-    `${baseUrl}/${auth.userId}`,
-    auth.token
-  );
+  return await sendHttp<HeroResponse[]>(`${baseUrl}`, auth);
 };
 
 const getTavernPatrons = async (auth: AuthProps) => {
-  return await sendHttp<HeroResponse[]>(
-    `${baseUrl}/${auth.userId}/tavern`,
-    auth.token
-  );
+  return await sendHttp<HeroResponse[]>(`${baseUrl}/tavern`, auth);
 };
 
 export interface HireHeroResponse {
@@ -58,8 +52,9 @@ export interface HireHeroResponse {
 
 const hireHero = async (auth: AuthProps, hero: Hero) => {
   return await sendHttp<HireHeroResponse>(
-    `${baseUrl}/${auth.userId}/hire/${hero.id}`,
-    auth.token,
+    `${baseUrl}/hire`,
+    auth,
+    [`hero_id=${hero.id}`],
     "PUT"
   );
 };

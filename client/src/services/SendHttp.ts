@@ -1,13 +1,17 @@
+import { AuthProps } from "../contexts/AuthContext";
+
 async function sendHttp<T>(
-  url: string,
-  token: string | null,
+  path: string,
+  auth: AuthProps | null,
+  params: string[] = [],
   method = "GET",
   body: any = null
 ): Promise<T> {
   let headers: HeadersInit = new Headers();
 
-  if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
+  if (auth) {
+    headers.set("Authorization", `Bearer ${auth.token}`);
+    params.push(`user_id=${auth.userId}`);
   }
 
   if (body) {
@@ -15,12 +19,11 @@ async function sendHttp<T>(
     headers.set("Content-Type", "application/json");
   }
 
+  const url = path + (params ? "?" : "") + params.join("&");
+  const request = { method, body, headers };
+
   try {
-    const response = await fetch(url, {
-      method,
-      body,
-      headers,
-    });
+    const response = await fetch(url, request);
 
     const data = await response.json();
 

@@ -4,7 +4,7 @@
 .hero-item {
   height: to-gameplay-scale(250px);
   background-image: url(../../../../img/guild-display/guild-hero_display.png);
-  background-size: contain;
+  background-size: cover;
   background-repeat: no-repeat;
   cursor: default;
 
@@ -15,8 +15,8 @@
     to-gameplay-scale(70px)
     to-gameplay-scale(20px);
   grid-template-rows:
-    to-gameplay-scale(34px)
-    to-gameplay-scale(80px)
+    to-gameplay-scale(36px)
+    to-gameplay-scale(82px)
     to-gameplay-scale(60px)
     to-gameplay-scale(50px);
   column-gap: 10px;

@@ -38,11 +38,7 @@ const QuestScrollList = ({
   const authCtx = useContext(AuthContext);
 
   const acceptQuest = (quest: Quest, heroesAssignedToQuest: Hero[]) => {
-    embarkHeroesOnQuest(
-      { userId: authCtx.userId, token: authCtx.token },
-      quest,
-      heroesAssignedToQuest
-    );
+    embarkHeroesOnQuest(authCtx, quest, heroesAssignedToQuest);
   };
 
   const chooseQuest = (quest: Quest) => {

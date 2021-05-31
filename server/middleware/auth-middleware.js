@@ -1,6 +1,10 @@
 import jwt from "jsonwebtoken";
 import config from "config";
 
+/**
+ * TODO: проверять что токен принадлежит соответствующему user_id
+ */
+
 const AuthMiddleware = (req, res, next) => {
   if (req.method === "OPTIONS") {
     return next;

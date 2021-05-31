@@ -66,16 +66,15 @@ const QuestReward = ({
       </div>
       <div className="quest-reward__heroes-holder">
         {heroes.map((hero) => (
-          <div key={hero.id}>
-            <HeroItem
-              hero={hero}
-              enabled={true}
-              reward={{
-                gold: heroGoldReward,
-                experience: heroExperienceReward,
-              }}
-            />
-          </div>
+          <HeroItem
+            key={hero.id}
+            hero={hero}
+            enabled={true}
+            reward={{
+              gold: heroGoldReward,
+              experience: heroExperienceReward,
+            }}
+          />
         ))}
       </div>
     </div>

@@ -1,8 +1,14 @@
 import { AuthProps } from "../contexts/AuthContext";
 import Hero from "../models/Hero";
 import Quest from "../models/Quest";
+import QuestCheckpoint from "../models/QuestCheckpoint";
 import { getHeroes, getTavernPatrons, hireHero } from "./HeroesService";
-import { completeQuest, embarkOnQuest, getQuests } from "./QuestsService";
+import {
+  completeQuest,
+  embarkOnQuest,
+  checkpointPassed,
+  getQuests,
+} from "./QuestsService";
 import { getStats } from "./StatsService";
 
 export default class ApiService {
@@ -28,6 +34,10 @@ export default class ApiService {
       quest.id,
       assignedHeroes.map((h) => h.id)
     );
+  }
+
+  checkpointPassed(auth: AuthProps, checkpoint: QuestCheckpoint) {
+    return checkpointPassed(auth, checkpoint.id);
   }
 
   completeQuest(auth: AuthProps, quest: Quest, heroes: Hero[]) {

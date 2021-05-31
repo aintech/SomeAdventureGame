@@ -22,7 +22,7 @@ const TavernDisplay = ({
   hirePatron,
 }: TavernDisplayProps) => {
   return (
-    <div className="tavern-display">
+    <div className="tavern-display" onClick={closeDisplay}>
       <button
         className="tavern-display__btn--close"
         onClick={closeDisplay}

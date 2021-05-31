@@ -35,10 +35,7 @@ export interface QuestResponse {
 }
 
 const getQuests = async (auth: AuthProps) => {
-  return await sendHttp<QuestResponse[]>(
-    `${baseUrl}/${auth.userId}`,
-    auth.token
-  );
+  return await sendHttp<QuestResponse[]>(`${baseUrl}`, auth);
 };
 
 export interface EmbarkOnQuestResponse {
@@ -53,10 +50,24 @@ const embarkOnQuest = async (
 ) => {
   const body = { questId, heroIds };
   return await sendHttp<EmbarkOnQuestResponse>(
-    `${baseUrl}/embark/${auth.userId}`,
-    auth.token,
+    `${baseUrl}/embark`,
+    auth,
+    [],
     "POST",
     body
+  );
+};
+
+export interface CheckpointPassedResponse {
+  embarkedHeroes: HeroResponse[];
+}
+
+const checkpointPassed = async (auth: AuthProps, checkpointId: number) => {
+  return await sendHttp<CheckpointPassedResponse>(
+    `${baseUrl}/checkpoint`,
+    auth,
+    [`checkpoint_id=${checkpointId}`],
+    "PUT"
   );
 };
 
@@ -73,11 +84,12 @@ const completeQuest = async (
 ) => {
   const body = { questId, heroIds };
   return await sendHttp<CompleteQuestResponse>(
-    `${baseUrl}/complete/${auth.userId}`,
-    auth.token,
+    `${baseUrl}/complete`,
+    auth,
+    [],
     "POST",
     body
   );
 };
 
-export { getQuests, embarkOnQuest, completeQuest };
+export { getQuests, embarkOnQuest, checkpointPassed, completeQuest };

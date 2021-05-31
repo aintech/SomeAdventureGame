@@ -15,6 +15,7 @@ import {
 } from "../actions/Actions";
 import Quest from "../models/Quest";
 import Hero from "../models/Hero";
+import QuestCheckpoint from "../models/QuestCheckpoint";
 
 export const fetchGameStats =
   (apiService: ApiService) => (auth: AuthProps) => (dispatch: any) => {
@@ -51,6 +52,15 @@ export const embarkHeroesOnQuest =
     apiService
       .embarkHeroesOnQuest(auth, quest, assignedHeroes)
       .then((data) => dispatch(heroesEmbarkedOnQuest(data)));
+  };
+
+export const checkpointPassed =
+  (apiService: ApiService) =>
+  (auth: AuthProps, checkpoint: QuestCheckpoint) =>
+  (dispatch: any) => {
+    apiService
+      .checkpointPassed(auth, checkpoint)
+      .then((data) => console.log(data));
   };
 
 export const onCompleteQuest =

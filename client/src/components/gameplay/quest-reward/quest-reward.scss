@@ -73,11 +73,9 @@
   }
 
   &__heroes-holder {
-    // grid-row: 7;
-    // justify-self: center;
-    // align-self: flex-end;
-
-    display: flex;
+    height: max-content;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     margin-left: 80px;
     margin-top: 100px;
     gap: to-gameplay-scale(50px);

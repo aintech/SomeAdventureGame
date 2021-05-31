@@ -10,7 +10,7 @@ const generateCheckpoints = async (quest, heroes) => {
 
   let checkpointsDuration = 0;
   for (let i = 0; i < checkpointsCount; i++) {
-    const type = i % 2 == 0 ? "treasure" : "battle"; //Math.random() > 1 ? "treasure" : "battle";
+    const type = i % 2 == 0 ? "battle" : "treasure"; //Math.random() > 1 ? "treasure" : "battle";
 
     const checkpointTime = i * 10;
     //пока чекпоинты начинаются с первой десятой части квеста

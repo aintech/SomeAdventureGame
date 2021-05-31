@@ -56,14 +56,6 @@ const getQuestCheckpoints = (progressIds, checkIfPassed = false) => {
         if (error) {
           return reject(new Error(`getQuestCheckpoints ${error}`));
         }
-        // const checkpoints = result.rows;
-        // checkpoints.map((c) => {
-        //   return {
-        //     ...c,
-        //     outcome: c.type === "treasure" ? c.outcome :
-        //   };
-        // });
-        // console.log(result.rows);
         resolve(result.rows);
       }
     );
@@ -77,6 +69,11 @@ const getQuestCheckpointsByQuest = async (
 ) => {
   const progress = await getQuestProgress(userId, questId);
   return getQuestCheckpoints([progress.id], checkIfPassed);
+};
+
+const checkpointPassed = async (userId, checkpointId) => {
+  console.log(userId, checkpointId);
+  return true;
 };
 
 const deleteCheckpoints = (userId, questId) => {
@@ -100,5 +97,6 @@ export {
   persistQuestCheckpoints,
   getQuestCheckpoints,
   getQuestCheckpointsByQuest,
+  checkpointPassed,
   deleteCheckpoints,
 };

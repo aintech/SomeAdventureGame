@@ -2,7 +2,9 @@ import React, { Component, createRef } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { collectingQuestReward } from "../../../../actions/Actions";
-import withApiService from "../../../../hoc/WithApiService";
+import withApiService, {
+  WithApiServiceProps,
+} from "../../../../hoc/WithApiService";
 import chestClosedImgSrc from "../../../../img/quest-progress/Chest_closed.png";
 import chestOpenImgSrc from "../../../../img/quest-progress/Chest_open.png";
 import progressBG from "../../../../img/quest-progress/quest-progress_background.png";
@@ -21,7 +23,9 @@ import {
   millisToSecs,
   toGameplayScale,
 } from "../../../../utils/Utils";
+import { checkpointPassed } from "../../../../actions/ApiActions";
 import "./quest-progress-item.scss";
+import AuthContext, { AuthProps } from "../../../../contexts/AuthContext";
 
 enum Direction {
   LEFT,
@@ -41,6 +45,7 @@ type QuestProgressItemProps = {
   quest: Quest;
   heroes: Hero[];
   collectingQuestReward: (quest: Quest) => void;
+  checkpointPassed: (auth: AuthProps, checkpoint: QuestCheckpoint) => void;
 };
 
 type QuestProgressItemState = {
@@ -63,6 +68,9 @@ class QuestProgressItem extends Component<
   QuestProgressItemProps,
   QuestProgressItemState
 > {
+  static contextType = AuthContext;
+
+  private auth: AuthProps | null = null;
   private secondsTimer: NodeJS.Timeout | null = null;
   private updateTimer: NodeJS.Timeout | null = null;
   private canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -92,6 +100,7 @@ class QuestProgressItem extends Component<
   }
 
   componentDidMount() {
+    this.auth = this.context;
     this.canvas = this.canvasRef.current!;
     this.canvasCtx = this.canvas.getContext("2d")!;
 
@@ -161,7 +170,11 @@ class QuestProgressItem extends Component<
   finishActiveCheckpoint() {
     const { activeCheckpoint } = this.state;
 
-    if (activeCheckpoint!.type === CheckpointType.TREASURE) {
+    if (!activeCheckpoint) {
+      return;
+    }
+
+    if (activeCheckpoint.type === CheckpointType.TREASURE) {
       const msg = `+${activeCheckpoint!.outcome.get(0)![0].value} g`;
       this.sendMessage(msg);
     }
@@ -170,6 +183,10 @@ class QuestProgressItem extends Component<
     this.setState({
       activeCheckpoint: null,
     });
+
+    if (activeCheckpoint.type === CheckpointType.BATTLE) {
+      this.props.checkpointPassed(this.auth!, activeCheckpoint);
+    }
   }
 
   sendMessage(message: string, color = "yellow", direction = Direction.LEFT) {
@@ -551,10 +568,15 @@ class QuestProgressItem extends Component<
   }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
+const mapDispatchToProps = (
+  dispatch: Dispatch,
+  customProps: WithApiServiceProps
+) => {
+  const { apiService } = customProps;
   return bindActionCreators(
     {
       collectingQuestReward,
+      checkpointPassed: checkpointPassed(apiService),
     },
     dispatch
   );
