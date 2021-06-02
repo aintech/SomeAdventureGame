@@ -6,6 +6,7 @@ import Hero from "../models/Hero";
 import Quest from "../models/Quest";
 import { HeroResponse, HireHeroResponse } from "../services/HeroesService";
 import {
+  CheckpointPassedResponse,
   CompleteQuestResponse,
   EmbarkOnQuestResponse,
   QuestResponse,
@@ -123,6 +124,13 @@ export const heroesEmbarkedOnQuest = (
   return {
     type: ActionType.HEROES_EMBARKED_ON_QUEST,
     payload: embarkedQuestAndHeroes,
+  };
+};
+
+export const checkpointPassed = (embarked: CheckpointPassedResponse) => {
+  return {
+    type: ActionType.CHECKPOINT_PASSED,
+    payload: embarked,
   };
 };
 

@@ -6,7 +6,7 @@ import { useDisplayMessage } from "../../../../hooks/UseDisplayMessages";
 import Hero, { HeroType } from "../../../../models/Hero";
 import Quest from "../../../../models/Quest";
 import { convertDuration } from "../../../../utils/Utils";
-import { GUILD_SHARE } from "../../../../utils/Variables";
+import { GUILD_SHARE } from "../../../../utils/variables";
 import "./quest-details.scss";
 
 type QuestDetailsProps = {
@@ -107,11 +107,11 @@ const QuestDetails = ({
   );
 };
 
-type state = {
+type QuestDetailsState = {
   heroesAssignedToQuest: Hero[];
 };
 
-const mapStateToProps = ({ heroesAssignedToQuest }: state) => {
+const mapStateToProps = ({ heroesAssignedToQuest }: QuestDetailsState) => {
   return { heroesAssignedToQuest };
 };
 

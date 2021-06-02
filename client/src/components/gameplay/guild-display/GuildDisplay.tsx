@@ -158,13 +158,17 @@ class GuildDisplayContainer extends Component<GuildDisplayContainerProps> {
   }
 }
 
-type state = {
+type GUildDisplayState = {
   quests: Quest[];
   heroes: Hero[];
   heroesAssignedToQuest: Hero[];
 };
 
-const mapStateToProps = ({ quests, heroes, heroesAssignedToQuest }: state) => {
+const mapStateToProps = ({
+  quests,
+  heroes,
+  heroesAssignedToQuest,
+}: GUildDisplayState) => {
   return { quests, heroes, heroesAssignedToQuest };
 };
 

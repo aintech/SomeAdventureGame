@@ -1,13 +1,10 @@
-import usePool from "./use-pool.js";
+import { HEALTH_PER_VITALITY } from "../../client/src/utils/variables.js";
+import query from "./db.js";
 
 let _maxLevel = 0;
 const _levels = [];
 const _fetchLevels = () => {
-  return new Promise((resolve, _) => {
-    usePool("select * from public.hero_level", [], (_, result) => {
-      resolve(result.rows);
-    });
-  });
+  return query("fetchLevels", "select * from public.hero_level");
 };
 
 /**
@@ -59,20 +56,12 @@ const _addEquipment = async (heroes) => {
   if (heroes.length === 0) {
     return [];
   }
-  const equipment = await new Promise((resolve, reject) => {
-    usePool(
-      `select * from public.hero_equipment he
-       left join public.equipment e on e.id = he.equipment_id
-       where he.hero_id in (${heroes.map((h) => h.id).join(",")})`,
-      [],
-      (error, result) => {
-        if (error) {
-          return reject(new Error(`_addEquipment ${error}`));
-        }
-        resolve(result.rows);
-      }
-    );
-  });
+  const equipment = await query(
+    "addEquipment",
+    `select * from public.hero_equipment he
+     left join public.equipment e on e.id = he.equipment_id
+     where he.hero_id in (${heroes.map((h) => h.id).join(",")})`
+  );
 
   heroes.forEach((h) => {
     h.equipment = equipment.filter((e) => e.hero_id === h.id);
@@ -92,121 +81,91 @@ const _prepareHeroes = (heroes) => {
  */
 const getHeroes = async (userId) => {
   await _checkLevelsLoaded();
-
-  return new Promise((resolve, reject) => {
-    usePool(
-      "select * from public.hero where user_id = $1 and hired = true",
-      [userId],
-      (error, result) => {
-        if (error) {
-          return reject(new Error(`getHeroes ${error}`));
-        }
-        resolve(_prepareHeroes(result.rows));
-      }
-    );
-  });
+  return query(
+    "getHeroes",
+    "select * from public.hero where user_id = $1 and hired = true",
+    [userId],
+    _prepareHeroes
+  );
 };
 
 const getNotHiredHeroes = async (userId) => {
   await _checkLevelsLoaded();
-
-  return new Promise((resolve, reject) => {
-    usePool(
-      `select * from public.hero where user_id = $1 and hired = false`,
-      [userId],
-      (error, result) => {
-        if (error) {
-          return reject(new Error(`getNotHiredHeroes ${error}`));
-        }
-        resolve(_prepareHeroes(result.rows));
-      }
-    );
-  });
+  return query(
+    "getNotHiredHeroes",
+    `select * from public.hero where user_id = $1 and hired = false`,
+    [userId],
+    _prepareHeroes
+  );
 };
 
 const hireHero = async (userId, heroId) => {
-  await new Promise((resolve, reject) => {
-    usePool(
-      `update public.stats 
+  await query(
+    "hireHero - stats",
+    `update public.stats 
        set gold = gold - (select gold from public.hero where id = $2)
        where user_id = $1`,
-      [userId, heroId],
-      (error, result) => {
-        if (error) {
-          return reject(new Error(`hireHero stats ${error}`));
-        }
-        resolve({});
-      }
-    );
-  });
+    [userId, heroId]
+  );
 
-  await new Promise((resolve, reject) => {
-    usePool(
-      `update public.hero set hired = true where id = $1`,
-      [heroId],
-      (error, _) => {
-        if (error) {
-          return reject(new Error(`hireHero ${error}`));
-        }
-        resolve({});
-      }
-    );
-  });
+  await query(
+    "hireHero - hired",
+    `update public.hero set hired = true where id = $1`,
+    [heroId]
+  );
 
   return getHeroesByIds([heroId]);
 };
 
 const getHeroesByIds = async (heroIds) => {
   await _checkLevelsLoaded();
-
-  return new Promise((resolve, reject) => {
-    usePool(
-      `select * from public.hero where id in (${heroIds.join(",")})`,
-      [],
-      (error, result) => {
-        if (error) {
-          return reject(new Error(`getHeroesByIds ${error}`));
-        }
-        resolve(_prepareHeroes(result.rows));
-      }
-    );
-  });
+  return query(
+    "getHeroesByIds",
+    `select * from public.hero where id in (${heroIds.join(",")})`,
+    [],
+    _prepareHeroes
+  );
 };
 
 const embarkHeroesOnQuest = (questId, heroIds) => {
-  return new Promise((resolve, reject) => {
-    usePool(
-      `update public.hero set embarked_quest = $1 
-       where id in (${heroIds.join(",")})`,
-      [questId],
-      (error, _) => {
-        if (error) {
-          return reject(new Error(`embarkHeroesOnQuest ${error}`));
-        }
-        resolve({});
-      }
-    );
-  });
+  return query(
+    "embarkHeroesOnQuest",
+    `update public.hero set embarked_quest = $1 
+     where id in (${heroIds.join(",")})`,
+    [questId]
+  );
+};
+
+const adjustHealth = (heroId, amount) => {
+  return query(
+    "adjustHealth",
+    `update public.hero 
+     set health = max(0, min(vitality * ${HEALTH_PER_VITALITY}, health + ${amount})) 
+     where id = $1`,
+    [heroId]
+  );
+};
+
+const getHeroesOnQuest = (userId, questId) => {
+  return query(
+    "getHeroesOnQuest",
+    `select * from public.hero where user_id = $1 and embarked_quest = $2`,
+    [userId, questId],
+    _prepareHeroes
+  );
 };
 
 const completeHeroesQuest = async (heroIds, heroesTribute, experience) => {
   const tributePerHero = Math.floor(heroesTribute / heroIds.length);
   const experiencePerHero = Math.floor(experience / heroIds.length);
 
-  return new Promise((resolve, reject) => {
-    usePool(
-      `update public.hero
-       set gold = (gold + $1), experience = (experience + $2), embarked_quest = null
-       where id in (${heroIds.join(",")})`,
-      [tributePerHero, experiencePerHero],
-      (error, _) => {
-        if (error) {
-          return reject(new Error(`completeHeroesQuest ${error}`));
-        }
-        resolve({});
-      }
-    );
-  });
+  return query(
+    "completeHeroesQuest",
+    `update public.hero
+     set gold = (gold + $1), experience = (experience + $2), embarked_quest = null
+     where id in (${heroIds.join(",")})`,
+    [tributePerHero, experiencePerHero]
+  );
 };
 
 export {
@@ -215,5 +174,7 @@ export {
   hireHero,
   getHeroesByIds,
   embarkHeroesOnQuest,
+  adjustHealth,
+  getHeroesOnQuest,
   completeHeroesQuest,
 };

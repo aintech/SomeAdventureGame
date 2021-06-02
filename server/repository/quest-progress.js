@@ -1,7 +1,7 @@
 import getBattleOutcome from "../battle/battle-processor.js";
+import query from "./db.js";
 import { getMonsterParty } from "./monster.js";
 import { persistQuestCheckpoints } from "./quest-checkpoints.js";
-import usePool from "./use-pool.js";
 
 const generateCheckpoints = async (quest, heroes) => {
   const checkpoints = [];
@@ -54,22 +54,16 @@ const persistProgress = (userId, questId, checkpoints) => {
     .map((c) => +c.duration)
     .reduce((a, b) => a + b);
 
-  return new Promise((resolve, reject) => {
-    usePool(
-      `with quest_duration as (select duration as d from public.quest where id = $2)
-       insert into public.quest_progress 
-       (user_id, quest_id, duration, embarked_time) 
-       values ($1, $2, (select d from quest_duration) + $3, now()) 
-       returning id`,
-      [userId, questId, checkpointsDuration],
-      (error, result) => {
-        if (error) {
-          return reject(new Error(`createQuestProgress ${error}`));
-        }
-        resolve(result.rows[0].id);
-      }
-    );
-  });
+  return query(
+    "persistProgress",
+    `with quest_duration as (select duration as d from public.quest where id = $2)
+     insert into public.quest_progress 
+     (user_id, quest_id, duration, embarked_time) 
+     values ($1, $2, (select d from quest_duration) + $3, now()) 
+     returning id`,
+    [userId, questId, checkpointsDuration],
+    (val) => val[0].id
+  );
 };
 
 const createQuestProgress = async (userId, quest, heroes) => {
@@ -80,20 +74,13 @@ const createQuestProgress = async (userId, quest, heroes) => {
 };
 
 const completeProgress = (userId, questId) => {
-  return new Promise((resolve, reject) => {
-    usePool(
-      `update public.quest_progress 
-       set completed = true 
-       where user_id = $1 and quest_id = $2`,
-      [userId, questId],
-      (error, _) => {
-        if (error) {
-          return reject(new Error(`completeProgress ${error}`));
-        }
-        resolve({});
-      }
-    );
-  });
+  return query(
+    "completeProgress",
+    `update public.quest_progress 
+     set completed = true 
+     where user_id = $1 and quest_id = $2`,
+    [userId, questId]
+  );
 };
 
 export { createQuestProgress, completeProgress };

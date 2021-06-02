@@ -35,6 +35,7 @@ questsRouter.put("/checkpoint", AuthMiddleware, async (req, res) => {
   try {
     const passed = await checkpointPassed(
       req.query.user_id,
+      req.query.quest_id,
       req.query.checkpoint_id
     );
     res.json(passed);

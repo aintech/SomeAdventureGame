@@ -12,6 +12,7 @@ import {
   tavernPatronsRequested,
   tavernPatronsLoaded,
   heroHired,
+  checkpointPassed,
 } from "../actions/Actions";
 import Quest from "../models/Quest";
 import Hero from "../models/Hero";
@@ -54,13 +55,13 @@ export const embarkHeroesOnQuest =
       .then((data) => dispatch(heroesEmbarkedOnQuest(data)));
   };
 
-export const checkpointPassed =
+export const onCheckpointPassed =
   (apiService: ApiService) =>
-  (auth: AuthProps, checkpoint: QuestCheckpoint) =>
+  (auth: AuthProps, quest: Quest, checkpoint: QuestCheckpoint) =>
   (dispatch: any) => {
     apiService
-      .checkpointPassed(auth, checkpoint)
-      .then((data) => console.log(data));
+      .checkpointPassed(auth, quest, checkpoint)
+      .then((data) => dispatch(checkpointPassed(data)));
   };
 
 export const onCompleteQuest =

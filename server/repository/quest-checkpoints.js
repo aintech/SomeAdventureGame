@@ -1,4 +1,6 @@
-import { getQuestProgress } from "./quest.js";
+import query from "./db.js";
+import { adjustHealth, getHeroesOnQuest } from "./hero.js";
+import { getQuestProgress, getQuestsByIds } from "./quest.js";
 import usePool from "./use-pool.js";
 
 const persistQuestCheckpoints = async (progressId, checkpoints) => {
@@ -38,7 +40,22 @@ const persistQuestCheckpoints = async (progressId, checkpoints) => {
   return getQuestCheckpoints([progressId]);
 };
 
-const getQuestCheckpoints = (progressIds, checkIfPassed = false) => {
+const getQuestCheckpoint = (checkpointId) => {
+  return new Promise((resolve, reject) => {
+    usePool(
+      `select * from public.quest_checkpoint where id = $1`,
+      [checkpointId],
+      (error, result) => {
+        if (error) {
+          return reject(new Error(`getQuestCheckpoint ${error}`));
+        }
+        resolve(result.rows[0]);
+      }
+    );
+  });
+};
+
+const getQuestCheckpoints = (progressIds) => {
   return new Promise((resolve, reject) => {
     if (progressIds.length === 0) {
       return resolve([]);
@@ -71,9 +88,47 @@ const getQuestCheckpointsByQuest = async (
   return getQuestCheckpoints([progress.id], checkIfPassed);
 };
 
-const checkpointPassed = async (userId, checkpointId) => {
-  console.log(userId, checkpointId);
-  return true;
+const checkpointPassed = async (userId, questId, checkpointId) => {
+  const checkpoint = await getQuestCheckpoint(checkpointId);
+
+  if (checkpoint.passed) {
+    return;
+  }
+
+  if (checkpoint.type === "battle") {
+    const outcome = JSON.parse(checkpoint.outcome);
+    const heroDamage = new Map();
+    const adjustments = [];
+    for (const actions of outcome) {
+      for (const action of actions[1]) {
+        if (action.action === "opponent_attack_hero") {
+          heroDamage.set(
+            action.opponentId,
+            (heroDamage.get(action.opponentId) ?? 0) + action.value
+          );
+        }
+      }
+    }
+
+    for (const damage of heroDamage) {
+      adjustments.push(adjustHealth(damage[0], damage[1]));
+    }
+  }
+
+  await Promise.all([...adjustments, markAsPassed(checkpointId)]);
+
+  const quests = await getQuestsByIds(userId, [questId]);
+  const heroes = await getHeroesOnQuest(userId, questId);
+
+  return { quest: quests[0], heroes };
+};
+
+const markAsPassed = (checkpointId) => {
+  return query(
+    "markAsPassed",
+    `update public.quest_checkpoint set passed = true where id = $1`,
+    [checkpointId]
+  );
 };
 
 const deleteCheckpoints = (userId, questId) => {

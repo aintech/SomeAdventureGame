@@ -1,6 +1,6 @@
 import generateName from "../../shared/utils/hero-names-generator.js";
+import query from "./db.js";
 import { getNotHiredHeroes } from "./hero.js";
-import usePool from "./use-pool.js";
 
 const getTavernPatrons = async (userId) => {
   let patrons = await getNotHiredHeroes(userId);
@@ -22,31 +22,14 @@ const isItTimeToReplenishPatrons = (heroes) => {
 const seeingOffPatrons = async (heroIds) => {
   const ids = heroIds.join(",");
   return Promise.all([
-    new Promise((resolve, reject) => {
-      usePool(
-        `delete from public.hero_equipment where hero_id in (${ids})`,
-        [],
-        (error, _) => {
-          if (error) {
-            return reject(new Error(`seeingOffPatrons - equip ${error}`));
-          }
-          resolve({});
-        }
-      );
-    }),
-
-    new Promise((resolve, reject) => {
-      usePool(
-        `delete from public.hero where id in (${ids})`,
-        [],
-        (error, _) => {
-          if (error) {
-            return reject(new Error(`seeingOffPatrons - heroes ${error}`));
-          }
-          resolve({});
-        }
-      );
-    }),
+    query(
+      "seeingOffPatrons - equip",
+      `delete from public.hero_equipment where hero_id in (${ids})`
+    ),
+    query(
+      "seeingOffPatrons - heroes",
+      `delete from public.hero where id in (${ids})`
+    ),
   ]);
 };
 
@@ -86,21 +69,14 @@ const persistPastrons = async (userId, heroes) => {
             (now() + interval '${hero.index} seconds')`
     )
     .join(" union ");
-  return new Promise((resolve, reject) => {
-    usePool(
-      `insert into public.hero 
+
+  return query(
+    "persistPastrons",
+    `insert into public.hero 
        (user_id, name, type, power, defence, vitality, initiative, 
         health, experience, gold, appear_at)
-       select * from (${heroesData}) as vals`,
-      [],
-      (error, _) => {
-        if (error) {
-          reject(new Error(`persistPastrons ${error}`));
-        }
-        resolve({});
-      }
-    );
-  });
+       select * from (${heroesData}) as vals`
+  );
 };
 
 const givePatronsEqipment = async (heroes) => {
@@ -112,19 +88,11 @@ const givePatronsEqipment = async (heroes) => {
     .map((hero) => `select ${hero.id}, ${hero.type === "mage" ? 2 : 1}`)
     .join(" union ");
 
-  return new Promise((resolve, reject) => {
-    usePool(
-      `insert into public.hero_equipment (hero_id, equipment_id)
-       select * from (${defaultArmor} union ${defaultWeapon}) as vals;`,
-      [],
-      (error, _) => {
-        if (error) {
-          return reject(new Error(`givePatronsEqipment ${error}`));
-        }
-        resolve({});
-      }
-    );
-  });
+  return query(
+    "givePatronsEqipment",
+    `insert into public.hero_equipment (hero_id, equipment_id)
+     select * from (${defaultArmor} union ${defaultWeapon}) as vals;`
+  );
 };
 
 export { getTavernPatrons };

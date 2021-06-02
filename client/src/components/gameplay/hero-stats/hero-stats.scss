@@ -1,13 +1,11 @@
 @import "../../../utils/variables.scss";
 @import "../../../utils/mixins.scss";
 
-$width: 360px; // calc(513px * 0.7);
-
 .hero-stats {
   font-size: 3rem;
-  position: absolute;
-  width: $gameplay_width;
-  height: $gameplay_height;
+  @include absoluteCenter;
+  width: 100vw;
+  height: 100vh;
   background-color: rgba($color: black, $alpha: 0.8);
   cursor: default;
   z-index: 2000;
@@ -96,15 +94,17 @@ $width: 360px; // calc(513px * 0.7);
   }
 
   &__health-bar {
-    position: absolute;
-    top: 220px;
-    left: 518px;
+    grid-row: health-row;
+    grid-column: 3;
+    align-self: center;
+    transform: translateX(3px);
   }
 
   &__experience-bar {
-    position: absolute;
-    top: 252px;
-    left: 518px;
+    grid-row: experience-row;
+    grid-column: 3;
+    align-self: center;
+    transform: translateX(3px);
   }
 
   &__health {

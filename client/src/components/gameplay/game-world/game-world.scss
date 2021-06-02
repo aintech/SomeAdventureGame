@@ -1,0 +1,11 @@
+@import "../../../utils/variables.scss";
+@import "../../../utils/mixins.scss";
+
+.game-world {
+  @include absoluteCenter;
+  display: block;
+  width: $gameplay_width;
+  height: $gameplay_height;
+  background-image: url(../../../img/village.png);
+  background-size: cover;
+}

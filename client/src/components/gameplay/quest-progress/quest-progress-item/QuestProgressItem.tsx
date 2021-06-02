@@ -23,7 +23,7 @@ import {
   millisToSecs,
   toGameplayScale,
 } from "../../../../utils/Utils";
-import { checkpointPassed } from "../../../../actions/ApiActions";
+import { onCheckpointPassed } from "../../../../actions/ApiActions";
 import "./quest-progress-item.scss";
 import AuthContext, { AuthProps } from "../../../../contexts/AuthContext";
 
@@ -45,7 +45,11 @@ type QuestProgressItemProps = {
   quest: Quest;
   heroes: Hero[];
   collectingQuestReward: (quest: Quest) => void;
-  checkpointPassed: (auth: AuthProps, checkpoint: QuestCheckpoint) => void;
+  onCheckpointPassed: (
+    auth: AuthProps,
+    quest: Quest,
+    checkpoint: QuestCheckpoint
+  ) => void;
 };
 
 type QuestProgressItemState = {
@@ -184,9 +188,11 @@ class QuestProgressItem extends Component<
       activeCheckpoint: null,
     });
 
-    if (activeCheckpoint.type === CheckpointType.BATTLE) {
-      this.props.checkpointPassed(this.auth!, activeCheckpoint);
-    }
+    this.props.onCheckpointPassed(
+      this.auth!,
+      this.props.quest,
+      activeCheckpoint
+    );
   }
 
   sendMessage(message: string, color = "yellow", direction = Direction.LEFT) {
@@ -576,7 +582,7 @@ const mapDispatchToProps = (
   return bindActionCreators(
     {
       collectingQuestReward,
-      checkpointPassed: checkpointPassed(apiService),
+      onCheckpointPassed: onCheckpointPassed(apiService),
     },
     dispatch
   );

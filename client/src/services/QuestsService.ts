@@ -1,5 +1,6 @@
 import { AuthProps } from "../contexts/AuthContext";
 import GameStats from "../models/GameStats";
+import Quest from "../models/Quest";
 import { HeroResponse } from "./HeroesService";
 import sendHttp from "./SendHttp";
 
@@ -59,14 +60,19 @@ const embarkOnQuest = async (
 };
 
 export interface CheckpointPassedResponse {
+  embarkedQuest: Quest;
   embarkedHeroes: HeroResponse[];
 }
 
-const checkpointPassed = async (auth: AuthProps, checkpointId: number) => {
+const checkpointPassed = async (
+  auth: AuthProps,
+  questId: number,
+  checkpointId: number
+) => {
   return await sendHttp<CheckpointPassedResponse>(
     `${baseUrl}/checkpoint`,
     auth,
-    [`checkpoint_id=${checkpointId}`],
+    [`quest_id=${questId}`, `checkpoint_id=${checkpointId}`],
     "PUT"
   );
 };

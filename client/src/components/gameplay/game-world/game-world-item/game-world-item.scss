@@ -1,0 +1,33 @@
+@import "../../../../utils/variables.scss";
+
+.game-world__building {
+  &-TAVERN {
+    position: absolute;
+    top: calc(345px / #{$gameplay_scale});
+    left: calc(563px / #{$gameplay_scale});
+    width: calc(312px / 3);
+    height: calc(264px / 3);
+    background-image: url(../../../../img/village_tavern.png);
+    background-size: cover;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  &-GUILD {
+    position: absolute;
+    top: calc(200px / #{$gameplay_scale});
+    left: calc(962px / #{$gameplay_scale});
+    width: calc(512px / 3);
+    height: calc(512px / 3);
+    background-image: url(../../../../img/village_guild.png);
+    background-size: cover;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}

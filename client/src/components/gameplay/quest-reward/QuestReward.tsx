@@ -9,7 +9,7 @@ import withApiService, {
 import Hero from "../../../models/Hero";
 import Quest from "../../../models/Quest";
 import { CheckpointType } from "../../../models/QuestCheckpoint";
-import { GUILD_SHARE } from "../../../utils/Variables";
+import { GUILD_SHARE } from "../../../utils/variables";
 import HeroItem from "../guild-display/heroes/HeroItem";
 import "./quest-reward.scss";
 import fameImg from "../../../img/quest-reward/quest-reward_star.png";
@@ -24,7 +24,6 @@ type QuestRewardProps = {
 
 /**
  * TODO: реплика героев после выполнения квеста (в качестве небольшого суммари по квесту)
- * TODO: сделать отдельный экранчик для героев, hero-item получается кривым
  */
 
 const QuestReward = ({
@@ -110,12 +109,15 @@ class QuestRewardContainer extends Component<QuestRewardContainerProps, {}> {
   }
 }
 
-type state = {
+type QuestRewardState = {
   collectingQuestReward: Quest;
   heroes: Hero[];
 };
 
-const mapStateToProps = ({ collectingQuestReward, heroes }: state) => {
+const mapStateToProps = ({
+  collectingQuestReward,
+  heroes,
+}: QuestRewardState) => {
   return { quest: collectingQuestReward, heroes };
 };
 

@@ -63,11 +63,11 @@ const HeroList = ({
   );
 };
 
-type state = {
+type HeroListState = {
   chosenQuest: Quest;
 };
 
-const mapStateToProps = ({ chosenQuest }: state) => {
+const mapStateToProps = ({ chosenQuest }: HeroListState) => {
   return { chosenQuest };
 };
 

@@ -5,7 +5,7 @@ import { buildingClicked } from "../../../actions/Actions";
 import Building, { BuildingType } from "../../../models/Building";
 import GuildDisplay from "../guild-display/GuildDisplay";
 import TavernDisplay from "../tavern-display/TavernDisplay";
-import "./building-details.scss";
+import "./building-container.scss";
 
 type BuildingDetailsProps = {
   chosenBuilding: Building;

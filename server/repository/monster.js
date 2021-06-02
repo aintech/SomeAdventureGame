@@ -1,16 +1,9 @@
 import { anyOf } from "../../shared/utils/arrays.js";
-import usePool from "./use-pool.js";
+import query from "./db.js";
 
 let _monsters = [];
 const _fetchMonsters = () => {
-  return new Promise((resolve, reject) => {
-    usePool("select * from public.monster", [], (error, result) => {
-      if (error) {
-        return reject(new Error(`fetchMonster ${error}`));
-      }
-      resolve(result.rows);
-    });
-  });
+  return query("fetchMonsters", "select * from public.monster");
 };
 
 const getMonsterParty = async (level) => {

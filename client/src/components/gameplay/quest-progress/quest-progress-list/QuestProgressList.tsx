@@ -1,12 +1,13 @@
 import React from "react";
+import { connect } from "react-redux";
 import Hero from "../../../../models/Hero";
 import Quest from "../../../../models/Quest";
 import QuestProgressItem from "../quest-progress-item/QuestProgressItem";
 import "./quest-progress-list.scss";
 
 type QuestProgressListProps = {
-  quests: Quest[];
-  heroes: Hero[];
+  quests?: Quest[];
+  heroes?: Hero[];
 };
 
 const QuestProgressList = ({ quests, heroes }: QuestProgressListProps) => {
@@ -38,4 +39,13 @@ const QuestProgressList = ({ quests, heroes }: QuestProgressListProps) => {
   );
 };
 
-export default QuestProgressList;
+type QuestProgressListState = {
+  quests: Quest[];
+  heroes: Hero[];
+};
+
+const mapStateToProps = ({ quests, heroes }: QuestProgressListState) => {
+  return { quests, heroes };
+};
+
+export default connect(mapStateToProps, null)(QuestProgressList);

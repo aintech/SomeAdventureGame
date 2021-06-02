@@ -1,65 +1,52 @@
+import query, { single } from "./db.js";
 import {
   completeHeroesQuest,
   embarkHeroesOnQuest,
   getHeroesByIds,
 } from "./hero.js";
 import {
+  deleteCheckpoints,
   getQuestCheckpoints,
   getQuestCheckpointsByQuest,
-  deleteCheckpoints,
 } from "./quest-checkpoints.js";
 import { completeProgress, createQuestProgress } from "./quest-progress.js";
 import { addStats, getStats } from "./stats.js";
-import usePool from "./use-pool.js";
 
 const GUILD_SHARE = 0.5;
 
 const getQuestsByIds = (userId, questIds) => {
-  return new Promise((resolve, reject) => {
-    usePool(
-      `select 
-            quest.*, 
-            progress.id as progress_id,
-            progress.embarked_time, 
-            progress.duration as progress_duration 
-       from public.quest quest 
-       left join public.quest_progress progress 
-            on progress.quest_id = quest.id and progress.user_id = $1
-       where quest.id in (${questIds.join(",")});`,
-      [userId],
-      (error, result) => {
-        if (error) {
-          return reject(new Error(`getQuestsByIds ${error}`));
-        }
-        resolve(result.rows);
-      }
-    );
-  });
+  return query(
+    "getQuestsByIds",
+    `select 
+          quest.*, 
+          progress.id as progress_id,
+          progress.embarked_time, 
+          progress.duration as progress_duration 
+     from public.quest quest 
+     left join public.quest_progress progress 
+          on progress.quest_id = quest.id and progress.user_id = $1
+     where quest.id in (${questIds.join(",")});`,
+    [userId]
+  );
 };
 
 const getQuests = async (userId) => {
-  const quests = await new Promise((resolve, reject) => {
-    usePool(
-      `select 
-              quest.*, 
-              progress.id as progress_id, 
-              progress.embarked_time, 
-              progress.duration as progress_duration
-       from public.quest quest
-       left join public.quest_progress progress 
-              on progress.quest_id = quest.id and progress.user_id = $1
-       where 
-       quest.id not in (select quest_id from public.quest_progress where user_id = $1) 
-       or progress.completed = false;`,
-      [userId],
-      (error, result) => {
-        if (error) {
-          return reject(new Error(`getQuests ${error}`));
-        }
-        resolve(result.rows);
-      }
-    );
-  });
+  const quests = await query(
+    "getQuests",
+    `select 
+            quest.*, 
+            progress.id as progress_id, 
+            progress.embarked_time, 
+            progress.duration as progress_duration
+     from public.quest quest
+     left join public.quest_progress progress 
+            on progress.quest_id = quest.id and progress.user_id = $1
+     where 
+     quest.id not in (select quest_id from public.quest_progress where user_id = $1) 
+     or progress.completed = false;`,
+    [userId]
+  );
+
   const checkpoints = await getQuestCheckpoints(
     quests.filter((q) => q.progress_id).map((q) => q.progress_id),
     true
@@ -75,18 +62,12 @@ const getQuests = async (userId) => {
 };
 
 const getQuestProgress = (userId, questId) => {
-  return new Promise((resolve, reject) => {
-    usePool(
-      `select * from public.quest_progress where user_id = $1 and quest_id = $2`,
-      [userId, questId],
-      (error, result) => {
-        if (error) {
-          return reject(new Error(`getQuestProgress ${error}`));
-        }
-        resolve(result.rows[0]);
-      }
-    );
-  });
+  return query(
+    "getQuestProgress",
+    `select * from public.quest_progress where user_id = $1 and quest_id = $2`,
+    [userId, questId],
+    single
+  );
 };
 
 const embarkOnQuest = async (userId, questId, heroIds) => {

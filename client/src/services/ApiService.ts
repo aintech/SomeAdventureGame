@@ -36,8 +36,8 @@ export default class ApiService {
     );
   }
 
-  checkpointPassed(auth: AuthProps, checkpoint: QuestCheckpoint) {
-    return checkpointPassed(auth, checkpoint.id);
+  checkpointPassed(auth: AuthProps, quest: Quest, checkpoint: QuestCheckpoint) {
+    return checkpointPassed(auth, quest.id, checkpoint.id);
   }
 
   completeQuest(auth: AuthProps, quest: Quest, heroes: Hero[]) {

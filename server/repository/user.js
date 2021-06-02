@@ -1,3 +1,4 @@
+import query, { single } from "./db.js";
 import { createStats } from "./stats.js";
 import usePool from "./use-pool.js";
 
@@ -12,19 +13,12 @@ const createUser = async (user) => {
 };
 
 const _persistUser = async (user) => {
-  return new Promise((resolve, reject) => {
-    const { login, password } = user;
-    usePool(
-      "insert into public.user (login, password) values ($1, $2)",
-      [login, password],
-      (error, result) => {
-        if (error) {
-          return reject(new Error(`persistUser ${error}`));
-        }
-        resolve(result.rows[0]);
-      }
-    );
-  });
+  const { login, password } = user;
+  return query(
+    "persistUser",
+    "insert into public.user (login, password) values ($1, $2)",
+    [login, password]
+  );
 };
 
 const getUser = (login) => {

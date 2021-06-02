@@ -165,6 +165,31 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         heroesAssignedToQuest: [],
       };
 
+    case ActionType.CHECKPOINT_PASSED:
+      const { embQuest, embHeroes } = action.payload;
+
+      const qIdx = state.quests.findIndex((q) => q.id === +embQuest.id);
+
+      let uHeroes = [...state.heroes];
+      for (const embHero of embHeroes) {
+        const hero = convertHero(embHero);
+        const heroIdx = uHeroes.findIndex((h) => h.id === hero.id);
+        uHeroes = [
+          ...uHeroes.slice(0, heroIdx),
+          hero,
+          ...uHeroes.slice(heroIdx + 1),
+        ];
+      }
+      return {
+        ...state,
+        quests: [
+          ...state.quests.slice(0, qIdx),
+          convertQuest(embQuest),
+          ...state.quests.slice(qIdx + 1),
+        ],
+        heroes: uHeroes,
+      };
+
     case ActionType.COLLECTING_QUEST_REWARD:
       return {
         ...state,

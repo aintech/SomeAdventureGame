@@ -80,11 +80,11 @@ const QuestScrollList = ({
   );
 };
 
-type state = {
+type QuestScrollListState = {
   chosenQuest: Quest;
 };
 
-const mapStateToProps = ({ chosenQuest }: state) => {
+const mapStateToProps = ({ chosenQuest }: QuestScrollListState) => {
   return { chosenQuest };
 };
 

@@ -1,4 +1,4 @@
-import { gameplayScale } from "./Variables";
+import { gameplayScale } from "./variables";
 
 const padding = (num: number, places: number): string => {
   return String(num).padStart(places, "0");
