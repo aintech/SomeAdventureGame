@@ -3,20 +3,24 @@
 @import "../../../utils/functions.scss";
 
 .quest-reward {
-  height: $gameplay_height;
-  width: $gameplay_width;
-  position: fixed;
-  top: 0;
-  left: 0;
+  @include absoluteCenter;
+  width: 100vw;
+  height: 100vh;
   background-color: rgba($color: black, $alpha: 0.8);
-  background-image: url(../../../img/quest-reward/quest-reward_scroll.png);
-  background-size: cover;
   cursor: default;
   z-index: 1000;
-  display: flex;
 
-  &__content {
-    // @include absoluteCenter;
+  &__container {
+    @include absoluteCenter;
+    display: flex;
+    width: $gameplay_width;
+    height: $gameplay_height;
+    background-image: url(../../../img/quest-reward/quest-reward_scroll.png);
+    background-size: cover;
+    overflow: hidden;
+  }
+
+  &__scroll {
     width: 46%;
     margin-left: 12%;
     display: grid;

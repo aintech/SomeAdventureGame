@@ -3,6 +3,7 @@
 @import "../../../utils/mixins.scss";
 
 .tavern-display {
+  @include absoluteCenter;
   display: block;
   width: $gameplay_width;
   height: $gameplay_height;

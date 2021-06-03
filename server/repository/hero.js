@@ -140,7 +140,7 @@ const adjustHealth = (heroId, amount) => {
   return query(
     "adjustHealth",
     `update public.hero 
-     set health = max(0, min(vitality * ${HEALTH_PER_VITALITY}, health + ${amount})) 
+     set health = greatest(0, least(vitality * ${HEALTH_PER_VITALITY}, health + ${amount})) 
      where id = $1`,
     [heroId]
   );

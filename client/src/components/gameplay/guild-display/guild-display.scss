@@ -1,13 +1,14 @@
 @import "../../../utils/variables.scss";
 @import "../../../utils/functions.scss";
+@import "../../../utils/mixins.scss";
 
 .guild-display {
+  @include absoluteCenter;
   display: block;
   width: $gameplay_width;
   height: $gameplay_height;
   background-image: url(../../../img/guild-display/guild-quest_board.png);
   background-size: cover;
-  z-index: 1010;
 
   &__btn--close {
     float: right;

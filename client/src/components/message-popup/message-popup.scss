@@ -1,4 +1,5 @@
 @import "../../utils/animations.scss";
+@import "../../utils/mixins.scss";
 
 .message-popup {
   border: solid 1px black;
@@ -19,5 +20,6 @@
     font-size: 1.6rem;
     color: whitesmoke;
     margin: 6px;
+    @include strokeText;
   }
 }

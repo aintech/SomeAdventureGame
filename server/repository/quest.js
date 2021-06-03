@@ -14,8 +14,8 @@ import { addStats, getStats } from "./stats.js";
 
 const GUILD_SHARE = 0.5;
 
-const getQuestsByIds = (userId, questIds) => {
-  return query(
+const getQuestsByIds = async (userId, questIds, withCheckpoints = true) => {
+  const quests = await query(
     "getQuestsByIds",
     `select 
           quest.*, 
@@ -28,6 +28,8 @@ const getQuestsByIds = (userId, questIds) => {
      where quest.id in (${questIds.join(",")});`,
     [userId]
   );
+
+  return withCheckpoints ? addCheckpoints(quests) : quests;
 };
 
 const getQuests = async (userId) => {
@@ -47,6 +49,10 @@ const getQuests = async (userId) => {
     [userId]
   );
 
+  return addCheckpoints(quests);
+};
+
+const addCheckpoints = async (quests) => {
   const checkpoints = await getQuestCheckpoints(
     quests.filter((q) => q.progress_id).map((q) => q.progress_id),
     true
@@ -71,19 +77,19 @@ const getQuestProgress = (userId, questId) => {
 };
 
 const embarkOnQuest = async (userId, questId, heroIds) => {
-  const fetchedQuests = await getQuestsByIds(userId, [questId]);
+  const fetchedQuests = await getQuestsByIds(userId, [questId], false);
   const quest = fetchedQuests[0];
   const heroes = await getHeroesByIds(heroIds);
 
-  const progressId = await createQuestProgress(userId, quest, heroes);
+  await createQuestProgress(userId, quest, heroes);
 
   await embarkHeroesOnQuest(questId, heroIds);
 
   const embarkedQuests = await getQuestsByIds(userId, [questId]);
   const embarkedHeroes = await getHeroesByIds(heroIds);
-  const questCheckpoints = await getQuestCheckpoints([progressId]);
+  // const questCheckpoints = await getQuestCheckpoints([progressId]);
 
-  embarkedQuests[0].checkpoints = questCheckpoints;
+  // embarkedQuests[0].checkpoints = questCheckpoints;
 
   return Promise.resolve({ embarkedQuests, embarkedHeroes });
 };

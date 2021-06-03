@@ -166,7 +166,10 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       };
 
     case ActionType.CHECKPOINT_PASSED:
-      const { embQuest, embHeroes } = action.payload;
+      const embQuest = action.payload.quest;
+      const embHeroes = action.payload.heroes;
+
+      console.log(action.payload);
 
       const qIdx = state.quests.findIndex((q) => q.id === +embQuest.id);
 

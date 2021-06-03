@@ -1,14 +1,11 @@
 @import "../../../utils/variables.scss";
 @import "../../../utils/mixins.scss";
 
-.building-details {
+.building-container {
   @include absoluteCenter;
   width: 100vw;
   height: 100vh;
   background-color: rgba($color: black, $alpha: 0.8);
-  z-index: 1000;
-
-  &__content {
-    @include absoluteCenter;
-  }
+  cursor: default;
+  z-index: 2000;
 }

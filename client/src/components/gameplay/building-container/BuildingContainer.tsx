@@ -34,10 +34,18 @@ const BuildingDetails = ({
   }
 
   return (
-    <div className="building-details">
-      <div className="building-details__content">{display}</div>
+    <div className="building-container">
+      <div>{display}</div>
     </div>
   );
+};
+
+type BuildingContainerState = {
+  chosenBuilding: Building;
+};
+
+const mapStateToProps = ({ chosenBuilding }: BuildingContainerState) => {
+  return { chosenBuilding };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -46,4 +54,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   },
 });
 
-export default connect(null, mapDispatchToProps)(BuildingDetails);
+export default connect(mapStateToProps, mapDispatchToProps)(BuildingDetails);

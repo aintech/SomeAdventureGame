@@ -6,6 +6,7 @@ import {
   fetchQuests,
   fetchTavernPatrons,
 } from "../../actions/ApiActions";
+import BuildingContainer from "../../components/gameplay/building-container/BuildingContainer";
 import GameWorld from "../../components/gameplay/game-world/GameWorld";
 import HeroStats from "../../components/gameplay/hero-stats/HeroStats";
 import QuestProgressList from "../../components/gameplay/quest-progress/quest-progress-list/QuestProgressList";
@@ -21,6 +22,7 @@ const GameplayPage = () => {
   return (
     <React.Fragment>
       <GameWorld />
+      <BuildingContainer />
       <QuestRewardContainer />
       <HeroStats />
       <QuestProgressList />

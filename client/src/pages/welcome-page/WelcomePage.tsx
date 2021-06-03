@@ -26,6 +26,7 @@ const WelcomePage = () => {
   const registerHandler = async () => {
     try {
       await register({ ...form });
+      performLogin();
     } catch (e) {}
   };
 
@@ -41,11 +42,19 @@ const WelcomePage = () => {
       (event.code === "Enter" || event.code === "NumpadEnter");
 
     if (btnPressed || enterPressed) {
-      try {
-        const data = await login({ ...form });
-        auth.login(data.token!, data.userId!);
-        displayMessage(`Добро пожаловать!`);
-      } catch (e) {}
+      performLogin();
+    }
+  };
+
+  const performLogin = async () => {
+    try {
+      const data = await login({ ...form });
+      auth.login(data.token!, data.userId!);
+      displayMessage(`Добро пожаловать!`);
+    } catch (e) {
+      displayMessage(
+        `Ой, залогиниться не получилось :( Проверь пожалуйста что логин и пароль указаны верно!`
+      );
     }
   };
 

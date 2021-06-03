@@ -50,31 +50,33 @@ const QuestReward = ({
 
   return (
     <div className="quest-reward" onClick={clickHandler}>
-      <div className="quest-reward__content">
-        <div className="quest-reward__title">{quest.title}</div>
-        <div className="quest-reward__tribute">
-          <img src={goldImg} alt="gold" />
-          <span className="quest-reward__tribute--text">
-            {Math.floor(quest.tribute * GUILD_SHARE)} g
-          </span>
+      <div className="quest-reward__container">
+        <div className="quest-reward__scroll">
+          <div className="quest-reward__title">{quest.title}</div>
+          <div className="quest-reward__tribute">
+            <img src={goldImg} alt="gold" />
+            <span className="quest-reward__tribute--text">
+              {Math.floor(quest.tribute * GUILD_SHARE)} g
+            </span>
+          </div>
+          <div className="quest-reward__fame">
+            <img src={fameImg} alt="fame" />
+            <span className="quest-reward__fame--text">{quest.fame} f</span>
+          </div>
         </div>
-        <div className="quest-reward__fame">
-          <img src={fameImg} alt="fame" />
-          <span className="quest-reward__fame--text">{quest.fame} f</span>
+        <div className="quest-reward__heroes-holder">
+          {heroes.map((hero) => (
+            <HeroItem
+              key={hero.id}
+              hero={hero}
+              enabled={true}
+              reward={{
+                gold: heroGoldReward,
+                experience: heroExperienceReward,
+              }}
+            />
+          ))}
         </div>
-      </div>
-      <div className="quest-reward__heroes-holder">
-        {heroes.map((hero) => (
-          <HeroItem
-            key={hero.id}
-            hero={hero}
-            enabled={true}
-            reward={{
-              gold: heroGoldReward,
-              experience: heroExperienceReward,
-            }}
-          />
-        ))}
       </div>
     </div>
   );
