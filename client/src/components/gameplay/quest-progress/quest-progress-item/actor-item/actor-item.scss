@@ -1,0 +1,36 @@
+.actor-item {
+  display: flex;
+  flex-direction: column;
+  width: 30px;
+  height: 40px;
+  border: solid 1px black;
+  background-color: blanchedalmond;
+  border-radius: 3px;
+
+  &__portrait {
+    width: 30px;
+    height: 30px;
+
+    @each $type in "warrior" "mage" {
+      &--#{$type} {
+        height: 100%;
+        background-image: url(../../../../../img/portraits/portrait-#{$type}.png);
+        background-size: cover;
+      }
+    }
+
+    &--skeleton {
+      height: 100%;
+      background-image: url(../../../../../img/quest-progress/Skeleton_dead.png);
+      background-size: cover;
+    }
+  }
+
+  &__name {
+    align-self: center;
+  }
+
+  &__health {
+    align-self: center;
+  }
+}

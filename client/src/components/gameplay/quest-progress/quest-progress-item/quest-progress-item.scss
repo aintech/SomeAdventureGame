@@ -10,7 +10,7 @@
   cursor: default;
 
   display: grid;
-  grid-template-rows: 28px 1fr;
+  grid-template-rows: 28px 1fr 30px;
   grid-template-columns: to-gameplay-scale(84px) to-gameplay-scale(98px);
 
   &__title {
@@ -54,6 +54,11 @@
     &:hover {
       animation: pulsate 1s infinite;
     }
+  }
+
+  &__actors {
+    grid-row: 3;
+    transform: translateY(-10%);
   }
 
   &__btn--dismiss {

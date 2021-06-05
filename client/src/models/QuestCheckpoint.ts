@@ -1,5 +1,5 @@
 import {
-  CheckpointActorResponse,
+  CheckpointEnemyResponse,
   CheckpointResponse,
 } from "../services/QuestsService";
 
@@ -9,20 +9,20 @@ export enum CheckpointType {
 }
 
 export enum CheckpointActionType {
-  HERO_ATTACK_OPPONENT,
-  OPPONENT_ATTACK_HERO,
+  HERO_ATTACK,
+  ENEMY_ATTACK,
 }
 
-export class CheckpointActor {
-  constructor(public id: number, public name: string) {}
+export class CheckpointEnemy {
+  constructor(public id: number, public name: string, public health: number) {}
 }
 
 export class CheckpointAction {
   constructor(
-    public actorId: number | null,
-    public opponentId: number | null,
-    public type: CheckpointActionType | null,
-    public value: number
+    public heroId: number,
+    public enemyId: number,
+    public action: CheckpointActionType,
+    public damage: number
   ) {}
 }
 
@@ -36,7 +36,8 @@ export default class QuestCheckpoint {
     public duration: number,
     /** key of this Map is second on which action occures */
     public outcome: Map<number, CheckpointAction[]>,
-    public actors: CheckpointActor[]
+    public enemies: CheckpointEnemy[],
+    public tribute: number
   ) {}
 }
 
@@ -53,20 +54,20 @@ const convertType = (type: string): CheckpointType => {
 
 const convertActionType = (action: string): CheckpointActionType => {
   switch (action) {
-    case "hero_attack_opponent":
-      return CheckpointActionType.HERO_ATTACK_OPPONENT;
-    case "opponent_attack_hero":
-      return CheckpointActionType.OPPONENT_ATTACK_HERO;
+    case "hero_attack":
+      return CheckpointActionType.HERO_ATTACK;
+    case "enemy_attack":
+      return CheckpointActionType.ENEMY_ATTACK;
     default:
       throw new Error(`Unknown action type in converter ${action}`);
   }
 };
 
 type CheckpointActionResponse = {
-  actorId: number;
-  opponentId: number;
+  heroId: number;
+  enemyId: number;
   action: string;
-  value: number;
+  damage: number;
 };
 
 const convertOutcome = (
@@ -74,44 +75,33 @@ const convertOutcome = (
   outcome: string
 ): Map<number, CheckpointAction[]> => {
   const result: Map<number, CheckpointAction[]> = new Map();
+  const parsed: Map<number, CheckpointActionResponse[]> = new Map(
+    JSON.parse(outcome)
+  ) as Map<number, CheckpointActionResponse[]>;
 
-  switch (type) {
-    case CheckpointType.TREASURE:
-      result.set(0, [
-        new CheckpointAction(null, null, null, Number.parseInt(outcome)),
-      ]);
-      break;
-    case CheckpointType.BATTLE:
-      const parsed: Map<number, CheckpointActionResponse[]> = new Map(
-        JSON.parse(outcome)
-      ) as Map<number, CheckpointActionResponse[]>;
-      parsed.forEach((value, key) => {
-        result.set(
-          key,
-          value.map(
-            (v) =>
-              new CheckpointAction(
-                +v.actorId,
-                +v.opponentId,
-                convertActionType(v.action),
-                v.value
-              )
+  parsed.forEach((value, key) => {
+    result.set(
+      key,
+      value.map(
+        (v) =>
+          new CheckpointAction(
+            +v.heroId,
+            +v.enemyId,
+            convertActionType(v.action),
+            v.damage
           )
-        );
-      });
-      break;
-    default:
-      throw new Error(`Unknown checkpoint type in converter ${type}`);
-  }
+      )
+    );
+  });
 
   return result;
 };
 
-const convertActors = (actors: string): CheckpointActor[] => {
-  const parsed = JSON.parse(actors);
+const convertEnemies = (enemies: string): CheckpointEnemy[] => {
+  const parsed = JSON.parse(enemies);
   if (parsed) {
-    return (parsed as CheckpointActorResponse[]).map(
-      (a) => new CheckpointActor(+a.id, a.name)
+    return (parsed as CheckpointEnemyResponse[]).map(
+      (a) => new CheckpointEnemy(+a.id, a.name, +a.health)
     );
   }
   return [];
@@ -124,7 +114,8 @@ const convert = (response: CheckpointResponse): QuestCheckpoint => {
     convertType(response.type),
     +response.duration,
     convertOutcome(convertType(response.type), response.outcome),
-    convertActors(response.actors)
+    convertEnemies(response.enemies),
+    +response.tribute
   );
 };
 

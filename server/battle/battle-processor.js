@@ -1,49 +1,24 @@
-import { anyOf } from "../../shared/utils/arrays.js";
+import { anyOf } from "../../client/src/utils/arrays.js";
 
 const getBattleOutcome = (origMonsters, origHeroes) => {
-  const monsters = origMonsters.map((m) => convertChar(m));
-  const heroes = origHeroes.map((h) => convertChar(h));
+  const monsters = [...origMonsters];
+  const heroes = [...origHeroes];
 
   const battleSteps = new Map();
   for (let sec = 1; ; sec++) {
     battleSteps.set(sec, []);
 
     for (const hero of heroes) {
-      if (sec % hero.initiative === 0) {
-        const aliveMonsters = monsters.filter((m) => +m.health > 0);
-        const opponent = anyOf(aliveMonsters);
-        const hit = Math.max(+hero.power - +opponent.defence, 0);
-        opponent.health -= hit;
-        battleSteps.get(sec).push({
-          actorId: hero.id,
-          opponentId: opponent.id,
-          action: "hero_attack_opponent",
-          value: hit,
-        });
-
-        if (partyDefeated(monsters)) {
-          return removeEmptySteps(battleSteps);
-        }
+      checkAction(hero, null, null, monsters, sec, battleSteps);
+      if (partyDefeated(monsters)) {
+        return removeEmptySteps(battleSteps);
       }
     }
 
     for (const monster of monsters) {
-      if (sec % monster.initiative === 0) {
-        const aliveHeroes = heroes.filter((h) => +h.health > 0);
-        const opponent = anyOf(aliveHeroes);
-        const hit = Math.max(+monster.power - +opponent.defence, 0);
-        opponent.health -= hit;
-
-        battleSteps.get(sec).push({
-          actorId: monster.id,
-          opponentId: opponent.id,
-          action: "opponent_attack_hero",
-          value: hit,
-        });
-
-        if (partyDefeated(heroes)) {
-          return removeEmptySteps(battleSteps);
-        }
+      checkAction(null, monster, heroes, null, sec, battleSteps);
+      if (partyDefeated(heroes)) {
+        return removeEmptySteps(battleSteps);
       }
     }
 
@@ -53,18 +28,27 @@ const getBattleOutcome = (origMonsters, origHeroes) => {
   }
 };
 
-const removeEmptySteps = (steps) => {
-  return new Map([...steps].filter(([_, v]) => v.length > 0)); // steps.filter((value, key) => value.lenght > 0);
+const checkAction = (hero, monster, heroes, monsters, sec, battleSteps) => {
+  const actor = hero ?? monster;
+  const opponents = heroes ?? monsters;
+
+  if (sec % actor.initiative === 0) {
+    const aliveOpponents = opponents.filter((o) => +o.health > 0);
+    const opponent = anyOf(aliveOpponents);
+    const damage = Math.max(+actor.power - +opponent.defence, 0);
+    opponent.health -= damage;
+
+    battleSteps.get(sec).push({
+      heroId: hero ? hero.id : opponent.id,
+      enemyId: hero ? opponent.actorId : monster.actorId,
+      action: hero ? "hero_attack" : "enemy_attack",
+      damage,
+    });
+  }
 };
 
-const convertChar = (char) => {
-  return {
-    id: char.actorId ?? char.id,
-    power: char.power,
-    defence: char.defence,
-    health: char.health,
-    initiative: char.initiative,
-  };
+const removeEmptySteps = (steps) => {
+  return new Map([...steps].filter(([_, v]) => v.length > 0));
 };
 
 const partyDefeated = (party) => {

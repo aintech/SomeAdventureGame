@@ -38,6 +38,17 @@ const typeName = (type: HeroType) => {
   }
 };
 
+const nameToType = (name: string) => {
+  switch (name) {
+    case "Воин":
+      return HeroType.WARRIOR;
+    case "Маг":
+      return HeroType.MAGE;
+    default:
+      throw new Error(`Unknown hero type name ${name}`);
+  }
+};
+
 const calcHealthFraction = (hero: Hero): number => {
   return hero.health / (hero.stats.vitality * HEALTH_PER_VITALITY);
 };
@@ -95,4 +106,4 @@ const convert = (response: HeroResponse): Hero => {
   );
 };
 
-export { calcHealthFraction, typeName, convertType, convert };
+export { calcHealthFraction, typeName, nameToType, convertType, convert };

@@ -6,14 +6,13 @@ import AuthContext, { AuthProps } from "../../../contexts/AuthContext";
 import withApiService, {
   WithApiServiceProps,
 } from "../../../hoc/WithApiService";
+import goldImg from "../../../img/quest-reward/quest-reward_gold.png";
+import fameImg from "../../../img/quest-reward/quest-reward_star.png";
 import Hero from "../../../models/Hero";
 import Quest from "../../../models/Quest";
-import { CheckpointType } from "../../../models/QuestCheckpoint";
 import { GUILD_SHARE } from "../../../utils/variables";
 import HeroItem from "../guild-display/heroes/HeroItem";
 import "./quest-reward.scss";
-import fameImg from "../../../img/quest-reward/quest-reward_star.png";
-import goldImg from "../../../img/quest-reward/quest-reward_gold.png";
 
 type QuestRewardProps = {
   auth: AuthProps;
@@ -37,8 +36,7 @@ const QuestReward = ({
   };
 
   const checkpointsTribute = quest
-    .progress!.checkpoints.filter((c) => c.type === CheckpointType.TREASURE)
-    .map((c) => c.outcome.get(0)![0].value)
+    .progress!.checkpoints.map((c) => c.tribute)
     .reduce((a, b) => a + b, 0);
 
   const heroGoldReward = Math.floor(

@@ -33,7 +33,7 @@ const GuildDisplay = ({
 
   useEffect(() => {
     const idleHeroes = heroes
-      .filter((h) => showUnabledHeroes || h.embarkedQuest === null)
+      .filter((h) => showUnabledHeroes || (!h.embarkedQuest && h.health > 0))
       .sort((a, b) => a.id - b.id);
 
     const lPage = Math.max(0, Math.ceil(idleHeroes.length / 4) - 1);
@@ -102,7 +102,7 @@ const GuildDisplay = ({
         <i className="material-icons guild-display__btn--show-unabled-icon">
           {!showUnabledHeroes ? "check_box" : "check_box_outline_blank"}
         </i>
-        <span>Только свободные</span>
+        <span>Только доступные</span>
       </button>
       <button
         className="guild-display__btn--previous"

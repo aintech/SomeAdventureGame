@@ -169,8 +169,6 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       const embQuest = action.payload.quest;
       const embHeroes = action.payload.heroes;
 
-      console.log(action.payload);
-
       const qIdx = state.quests.findIndex((q) => q.id === +embQuest.id);
 
       let uHeroes = [...state.heroes];

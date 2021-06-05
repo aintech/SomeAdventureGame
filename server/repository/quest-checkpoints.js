@@ -7,23 +7,25 @@ const persistQuestCheckpoints = async (progressId, checkpoints) => {
     "persistQuestCheckpoints",
     checkpoints
       .map(
-        (c) => `insert into public.quest_checkpoint 
-            (quest_progress_id, type, occured_time, duration, outcome, actors)
-            values
-            (
-              ${progressId},
-              '${c.type}', 
-              ${c.occured_time}, 
-              ${c.duration},
-              '${
-                c.outcome instanceof Map
-                  ? JSON.stringify(Array.from(c.outcome.entries()))
-                  : c.outcome
-              }',
-              '${
-                c.actors ? JSON.stringify(Array.from(c.actors.entries())) : null
-              }');
-            `
+        (c) =>
+          `insert into public.quest_checkpoint 
+           (quest_progress_id, type, occured_time, duration, outcome, enemies, tribute, passed)
+           values
+           (
+            ${progressId},
+            '${c.type}', 
+            ${c.occured_time}, 
+            ${c.duration},
+            ${
+              c.outcome
+                ? `'${JSON.stringify(Array.from(c.outcome.entries()))}'`
+                : null
+            },
+            '${c.enemies ? JSON.stringify(c.enemies) : null}',
+            '${c.tribute}',
+            false
+           );
+          `
       )
       .join(" ")
   );
@@ -73,20 +75,20 @@ const checkpointPassed = async (userId, questId, checkpointId) => {
 
   if (checkpoint.type === "battle") {
     const outcome = JSON.parse(checkpoint.outcome);
-    const heroDamage = new Map();
+    const damages = new Map();
     const adjustments = [];
     for (const actions of outcome) {
       for (const action of actions[1]) {
-        if (action.action === "opponent_attack_hero") {
-          heroDamage.set(
-            action.opponentId,
-            (heroDamage.get(action.opponentId) ?? 0) - +action.value
+        if (action.action === "enemy_attack") {
+          damages.set(
+            action.herotId,
+            (damages.get(action.heroId) ?? 0) - +action.damage
           );
         }
       }
     }
 
-    for (const damage of heroDamage) {
+    for (const damage of damages) {
       adjustments.push(adjustHealth(damage[0], damage[1]));
     }
     await Promise.all(adjustments);

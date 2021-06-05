@@ -11,7 +11,7 @@ type QuestProgressListProps = {
 };
 
 const QuestProgressList = ({ quests, heroes }: QuestProgressListProps) => {
-  if (!quests || !heroes) {
+  if (!quests || quests.length === 0 || !heroes || heroes.length === 0) {
     return null;
   }
 

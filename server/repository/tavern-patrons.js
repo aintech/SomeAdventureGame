@@ -1,4 +1,4 @@
-import generateName from "../../shared/utils/hero-names-generator.js";
+import generateHeroes from "../hero-generator/hero-generator.js";
 import query from "./db.js";
 import { getNotHiredHeroes } from "./hero.js";
 
@@ -34,28 +34,9 @@ const seeingOffPatrons = async (heroIds) => {
 };
 
 const letInHeroes = async (userId) => {
-  const heroes = [];
-  const poolSize = 6; //Math.floor(Math.random() * 7) + 3;
-  for (let i = 0; i < poolSize; i++) {
-    heroes.push({
-      name: generateName(),
-      type: Math.random() > 0.5 ? "warrior" : "mage",
-      power: 10,
-      defence: 3,
-      vitality: 10,
-      initiative: 2,
-      health: 100,
-      experience: 50,
-      gold: 100,
-      index: i,
-    });
-  }
-
-  await persistPastrons(userId, heroes);
-
-  const newlyArrived = await getNotHiredHeroes(userId);
-
-  await givePatronsEqipment(newlyArrived);
+  await persistPastrons(userId, generateHeroes());
+  const generated = await getNotHiredHeroes(userId);
+  await givePatronsEqipment(generated);
 };
 
 const persistPastrons = async (userId, heroes) => {

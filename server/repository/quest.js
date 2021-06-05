@@ -87,9 +87,6 @@ const embarkOnQuest = async (userId, questId, heroIds) => {
 
   const embarkedQuests = await getQuestsByIds(userId, [questId]);
   const embarkedHeroes = await getHeroesByIds(heroIds);
-  // const questCheckpoints = await getQuestCheckpoints([progressId]);
-
-  // embarkedQuests[0].checkpoints = questCheckpoints;
 
   return Promise.resolve({ embarkedQuests, embarkedHeroes });
 };
@@ -100,8 +97,7 @@ const completeQuest = async (userId, questId, heroIds) => {
 
   const checkpoints = await getQuestCheckpointsByQuest(userId, questId);
   const checkpointsTribute = checkpoints
-    .filter((c) => c.type === "treasure")
-    .map((c) => +c.outcome)
+    .map((c) => +c.tribute)
     .reduce((a, b) => a + b, 0);
 
   const heroesTribute =

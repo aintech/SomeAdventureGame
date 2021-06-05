@@ -22,19 +22,20 @@ const generateCheckpoints = async (quest, heroes) => {
     const occured_time = addSec;
 
     let outcome;
-    let actors;
+    let tribute;
+    let enemies;
     let duration;
     switch (type) {
       case "treasure":
-        outcome = quest.level * Math.floor(Math.random() * 20 + 10);
+        outcome = null;
+        tribute = quest.level * Math.floor(Math.random() * 20 + 10);
         duration = 10;
         break;
       case "battle":
         const monsters = await getMonsterParty(quest.level);
         outcome = getBattleOutcome(monsters, heroes);
-        actors = monsters.map((m) => {
-          return { ...m };
-        });
+        tribute = quest.level * Math.floor(Math.random() * 5 + 5);
+        enemies = [...monsters];
         duration = Math.max(...outcome.keys());
         break;
       default:
@@ -43,7 +44,14 @@ const generateCheckpoints = async (quest, heroes) => {
 
     checkpointsDuration += duration;
 
-    checkpoints.push({ type, occured_time, duration, outcome, actors });
+    checkpoints.push({
+      type,
+      occured_time,
+      duration,
+      outcome,
+      enemies,
+      tribute,
+    });
   }
 
   return checkpoints;

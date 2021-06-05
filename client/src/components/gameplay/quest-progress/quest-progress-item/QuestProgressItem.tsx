@@ -2,6 +2,8 @@ import React, { Component, createRef } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { collectingQuestReward } from "../../../../actions/Actions";
+import { onCheckpointPassed } from "../../../../actions/ApiActions";
+import AuthContext, { AuthProps } from "../../../../contexts/AuthContext";
 import withApiService, {
   WithApiServiceProps,
 } from "../../../../hoc/WithApiService";
@@ -11,11 +13,11 @@ import progressBG from "../../../../img/quest-progress/quest-progress_background
 import heroImgSrc from "../../../../img/quest-progress/quest-progress_hero.png";
 import skeletonImgSrc from "../../../../img/quest-progress/Skeleton.png";
 import skeletonDeadImgSrc from "../../../../img/quest-progress/Skeleton_dead.png";
-import Hero from "../../../../models/Hero";
+import Hero, { calcHealthFraction, typeName } from "../../../../models/Hero";
 import Quest from "../../../../models/Quest";
 import QuestCheckpoint, {
   CheckpointActionType,
-  CheckpointActor,
+  CheckpointEnemy,
   CheckpointType,
 } from "../../../../models/QuestCheckpoint";
 import {
@@ -23,9 +25,9 @@ import {
   millisToSecs,
   toGameplayScale,
 } from "../../../../utils/Utils";
-import { onCheckpointPassed } from "../../../../actions/ApiActions";
+import ActorItemList from "./actor-item-list/ActorItemList";
+import { ActorItemType } from "./actor-item/ActorItem";
 import "./quest-progress-item.scss";
-import AuthContext, { AuthProps } from "../../../../contexts/AuthContext";
 
 enum Direction {
   LEFT,
@@ -66,6 +68,7 @@ type QuestProgressItemState = {
   activeCheckpoint: QuestCheckpoint | null;
   willBeSpendOnCheckpoints: number;
   spendedOnCheckpoints: number;
+  actors: ActorItemType[];
 };
 
 class QuestProgressItem extends Component<
@@ -96,6 +99,7 @@ class QuestProgressItem extends Component<
       activeCheckpoint: null,
       willBeSpendOnCheckpoints: 0,
       spendedOnCheckpoints: 0,
+      actors: [],
     };
     this.canvasRef = createRef();
     this.startTimers = this.startTimers.bind(this);
@@ -108,13 +112,25 @@ class QuestProgressItem extends Component<
     this.canvas = this.canvasRef.current!;
     this.canvasCtx = this.canvas.getContext("2d")!;
 
-    const { quest } = this.props;
+    const { quest, heroes } = this.props;
+
     const seconds = Math.floor(
       millisToSecs(new Date().getTime() - quest.progress!.embarkedTime)
     );
 
+    const actors = heroes.map((h) => {
+      return {
+        actorId: h.id,
+        isHero: true,
+        name: h.name,
+        type: typeName(h.type),
+        healthFraction: calcHealthFraction(h),
+      };
+    });
+
     this.setState({
       seconds,
+      actors,
       // currentX: 20 + Math.floor(160 - 160 * (seconds / quest.duration)),
     });
 
@@ -178,10 +194,8 @@ class QuestProgressItem extends Component<
       return;
     }
 
-    if (activeCheckpoint.type === CheckpointType.TREASURE) {
-      const msg = `+${activeCheckpoint!.outcome.get(0)![0].value} g`;
-      this.sendMessage(msg);
-    }
+    const msg = `+${activeCheckpoint!.tribute} g`;
+    this.sendMessage(msg);
 
     this.calcWillBeSpendOnCheckpoints(this.state.seconds);
     this.setState({
@@ -244,13 +258,13 @@ class QuestProgressItem extends Component<
     const checkpoint = this.state.activeCheckpoint!;
     if (checkpoint.type === CheckpointType.BATTLE) {
       const sec = this.state.seconds - checkpoint.occuredTime;
-      const actions = checkpoint.outcome.get(sec);
-      if (actions && actions.length > 0) {
+      const steps = checkpoint.outcome.get(sec);
+      if (steps && steps.length > 0) {
         const merged = new Map<CheckpointActionType, number>();
-        for (const action of actions) {
+        for (const step of steps) {
           merged.set(
-            action.type!,
-            (merged.get(action.type!) ?? 0) + action.value
+            step.action!,
+            (merged.get(step.action!) ?? 0) + step.damage
           );
         }
         merged.forEach(this.createBattleMessage.bind(this));
@@ -260,7 +274,7 @@ class QuestProgressItem extends Component<
 
   createBattleMessage(value: number, key: CheckpointActionType) {
     const direction =
-      key === CheckpointActionType.HERO_ATTACK_OPPONENT
+      key === CheckpointActionType.HERO_ATTACK
         ? Direction.RIGHT
         : Direction.LEFT;
     this.sendMessage(`-${value} hp`, "red", direction);
@@ -349,7 +363,7 @@ class QuestProgressItem extends Component<
           this.drawChest(diff, passed);
           break;
         case CheckpointType.BATTLE:
-          this.drawEnemy(checkpoint.actors, diff, passed);
+          this.drawEnemy(checkpoint.enemies, diff, passed);
           break;
         default:
           throw new Error(
@@ -434,7 +448,7 @@ class QuestProgressItem extends Component<
     }
   }
 
-  drawEnemy(actors: CheckpointActor[], diff: number, passed: boolean) {
+  drawEnemy(enemies: CheckpointEnemy[], diff: number, passed: boolean) {
     if (
       !this.canvasCtx ||
       !this.state.skeletonImg ||
@@ -444,7 +458,7 @@ class QuestProgressItem extends Component<
     }
 
     const offset = 80 + diff / 80;
-    for (let i = 0; i < actors.length; i++) {
+    for (let i = 0; i < enemies.length; i++) {
       if (!passed) {
         this.canvasCtx.drawImage(
           this.state.skeletonImg,
@@ -475,6 +489,7 @@ class QuestProgressItem extends Component<
 
   render() {
     const { quest } = this.props;
+    const { actors } = this.state;
     const remainSeconds =
       quest.progress!.duration -
       this.state.seconds -
@@ -513,6 +528,29 @@ class QuestProgressItem extends Component<
 
         <div className="quest-progress-item__duration">{description}</div>
 
+        <canvas
+          width={toGameplayScale(244)}
+          height={toGameplayScale(75)}
+          style={{
+            marginLeft: `${toGameplayScale(35)}px`,
+            zIndex: -1,
+            marginTop: `-5px`,
+          }}
+          ref={this.canvasRef}
+        ></canvas>
+
+        <div
+          className="quest-progress-item__chest"
+          style={{ display: questFinished ? "block" : "none" }}
+          onClick={this.collectReward.bind(this)}
+        ></div>
+
+        <button className="quest-progress-item__btn--dismiss"></button>
+
+        <div className="quest-progress-item__actors">
+          <ActorItemList actors={actors} />
+        </div>
+
         <img
           src={progressBG}
           onLoad={(e) => this.setState({ backImg: e.currentTarget })}
@@ -550,25 +588,6 @@ class QuestProgressItem extends Component<
           style={{ display: "none" }}
           alt=""
         />
-
-        <canvas
-          width={toGameplayScale(244)}
-          height={toGameplayScale(75)}
-          style={{
-            marginLeft: `${toGameplayScale(35)}px`,
-            zIndex: -1,
-            marginTop: `-5px`,
-          }}
-          ref={this.canvasRef}
-        ></canvas>
-
-        <div
-          className="quest-progress-item__chest"
-          style={{ display: questFinished ? "block" : "none" }}
-          onClick={this.collectReward.bind(this)}
-        ></div>
-
-        <button className="quest-progress-item__btn--dismiss"></button>
       </div>
     );
   }

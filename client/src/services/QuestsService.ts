@@ -6,9 +6,10 @@ import sendHttp from "./SendHttp";
 
 const baseUrl = "/api/quests";
 
-export interface CheckpointActorResponse {
+export interface CheckpointEnemyResponse {
   id: number;
   name: string;
+  health: number;
 }
 
 export interface CheckpointResponse {
@@ -17,7 +18,8 @@ export interface CheckpointResponse {
   type: string;
   duration: number;
   outcome: string;
-  actors: string;
+  enemies: string;
+  tribute: string;
 }
 
 export interface QuestResponse {
