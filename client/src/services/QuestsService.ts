@@ -8,18 +8,20 @@ const baseUrl = "/api/quests";
 
 export interface CheckpointEnemyResponse {
   id: number;
+  actorId: number;
   name: string;
   health: number;
 }
 
 export interface CheckpointResponse {
   id: number;
-  occured_time: number;
+  occured_at: number;
   type: string;
   duration: number;
   outcome: string;
   enemies: string;
   tribute: string;
+  passed: boolean;
 }
 
 export interface QuestResponse {

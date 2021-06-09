@@ -14,7 +14,12 @@ export enum CheckpointActionType {
 }
 
 export class CheckpointEnemy {
-  constructor(public id: number, public name: string, public health: number) {}
+  constructor(
+    public id: number,
+    public actorId: number,
+    public name: string,
+    public health: number
+  ) {}
 }
 
 export class CheckpointAction {
@@ -37,7 +42,8 @@ export default class QuestCheckpoint {
     /** key of this Map is second on which action occures */
     public outcome: Map<number, CheckpointAction[]>,
     public enemies: CheckpointEnemy[],
-    public tribute: number
+    public tribute: number,
+    public passed: boolean
   ) {}
 }
 
@@ -101,7 +107,7 @@ const convertEnemies = (enemies: string): CheckpointEnemy[] => {
   const parsed = JSON.parse(enemies);
   if (parsed) {
     return (parsed as CheckpointEnemyResponse[]).map(
-      (a) => new CheckpointEnemy(+a.id, a.name, +a.health)
+      (a) => new CheckpointEnemy(+a.id, +a.actorId, a.name, +a.health)
     );
   }
   return [];
@@ -110,12 +116,13 @@ const convertEnemies = (enemies: string): CheckpointEnemy[] => {
 const convert = (response: CheckpointResponse): QuestCheckpoint => {
   return new QuestCheckpoint(
     +response.id,
-    +response.occured_time,
+    +response.occured_at,
     convertType(response.type),
     +response.duration,
     convertOutcome(convertType(response.type), response.outcome),
     convertEnemies(response.enemies),
-    +response.tribute
+    +response.tribute,
+    response.passed
   );
 };
 

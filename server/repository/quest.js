@@ -49,13 +49,13 @@ const getQuests = async (userId) => {
     [userId]
   );
 
-  return addCheckpoints(quests);
+  return addCheckpoints(quests, true);
 };
 
-const addCheckpoints = async (quests) => {
+const addCheckpoints = async (quests, checkIfPassed = false) => {
   const checkpoints = await getQuestCheckpoints(
     quests.filter((q) => q.progress_id).map((q) => q.progress_id),
-    true
+    checkIfPassed
   );
 
   for (const quest of quests) {

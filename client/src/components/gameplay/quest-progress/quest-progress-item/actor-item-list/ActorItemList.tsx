@@ -15,7 +15,7 @@ const ActorItemList = ({ actors }: ActorItemListProps) => {
             <ActorItem key={`${a.actorId} ${a.isHero}`} actor={a} />
           ))}
       </div>
-      <div className="actor-item-list__opponents">
+      <div className="actor-item-list__enemies">
         {actors
           .filter((a) => !a.isHero)
           .map((a) => (

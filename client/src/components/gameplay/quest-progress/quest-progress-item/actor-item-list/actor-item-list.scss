@@ -1,8 +1,17 @@
+@import "../../../../../utils/variables.scss";
+@import "../../../../../utils/functions.scss";
+
 .actor-item-list {
-  display: flex;
+  display: inline-block;
+  width: to-gameplay-scale($progress-item_width);
 
   & > * {
-    display: flex;
+    display: inline-flex;
     gap: 3px;
+    width: fit-content;
+  }
+
+  &__enemies {
+    float: right;
   }
 }

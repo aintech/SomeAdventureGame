@@ -13,9 +13,10 @@ import progressBG from "../../../../img/quest-progress/quest-progress_background
 import heroImgSrc from "../../../../img/quest-progress/quest-progress_hero.png";
 import skeletonImgSrc from "../../../../img/quest-progress/Skeleton.png";
 import skeletonDeadImgSrc from "../../../../img/quest-progress/Skeleton_dead.png";
-import Hero, { calcHealthFraction, typeName } from "../../../../models/Hero";
+import Hero from "../../../../models/Hero";
 import Quest from "../../../../models/Quest";
 import QuestCheckpoint, {
+  CheckpointAction,
   CheckpointActionType,
   CheckpointEnemy,
   CheckpointType,
@@ -26,7 +27,7 @@ import {
   toGameplayScale,
 } from "../../../../utils/Utils";
 import ActorItemList from "./actor-item-list/ActorItemList";
-import { ActorItemType } from "./actor-item/ActorItem";
+import { ActorItemType, convertToActor } from "./actor-item/ActorItem";
 import "./quest-progress-item.scss";
 
 enum Direction {
@@ -118,25 +119,15 @@ class QuestProgressItem extends Component<
       millisToSecs(new Date().getTime() - quest.progress!.embarkedTime)
     );
 
-    const actors = heroes.map((h) => {
-      return {
-        actorId: h.id,
-        isHero: true,
-        name: h.name,
-        type: typeName(h.type),
-        healthFraction: calcHealthFraction(h),
-      };
-    });
-
     this.setState({
       seconds,
-      actors,
+      actors: heroes.map((h) => convertToActor(h)),
       // currentX: 20 + Math.floor(160 - 160 * (seconds / quest.duration)),
     });
 
     this.calcWillBeSpendOnCheckpoints(seconds);
 
-    this.checkIfCheckpointOccured();
+    this.checkIfCheckpointOccured(seconds);
 
     this.startTimers();
   }
@@ -181,9 +172,10 @@ class QuestProgressItem extends Component<
   /**
    * TODO: Активный чекпоинт рисовать отдельным экранчиком с анимацией боя или вскрытия сундука
    */
-  setAsActiveCheckpoint(checkpoint: QuestCheckpoint) {
+  setAsActiveCheckpoint(checkpoint: QuestCheckpoint, actors: ActorItemType[]) {
     this.setState({
       activeCheckpoint: checkpoint,
+      actors,
     });
   }
 
@@ -198,8 +190,12 @@ class QuestProgressItem extends Component<
     this.sendMessage(msg);
 
     this.calcWillBeSpendOnCheckpoints(this.state.seconds);
+
+    const actors = this.state.actors.filter((a) => a.isHero);
+
     this.setState({
       activeCheckpoint: null,
+      actors,
     });
 
     this.props.onCheckpointPassed(
@@ -218,7 +214,7 @@ class QuestProgressItem extends Component<
 
   countSeconds() {
     if (!this.state.activeCheckpoint) {
-      this.checkIfCheckpointOccured();
+      this.checkIfCheckpointOccured(this.state.seconds);
     }
     const seconds = this.state.seconds + 1;
     this.setState((state) => {
@@ -242,13 +238,31 @@ class QuestProgressItem extends Component<
     }
   }
 
-  checkIfCheckpointOccured() {
+  checkIfCheckpointOccured(seconds: number) {
     for (const checkpoint of this.props.quest.progress!.checkpoints) {
       if (
-        this.state.seconds >= checkpoint.occuredTime &&
-        this.state.seconds < checkpoint.occuredTime + checkpoint.duration
+        !checkpoint.passed &&
+        seconds >= checkpoint.occuredTime &&
+        seconds < checkpoint.occuredTime + checkpoint.duration
       ) {
-        this.setAsActiveCheckpoint(checkpoint);
+        let actors: ActorItemType[] = [];
+        if (checkpoint.type === CheckpointType.BATTLE) {
+          const secOffset = seconds - checkpoint.occuredTime;
+
+          const heroActors = this.props.heroes.map((h) => convertToActor(h));
+          const enemyActors = checkpoint.enemies.map((e) => convertToActor(e));
+          actors = [...heroActors, ...enemyActors];
+
+          checkpoint.outcome.forEach((value, key) => {
+            if (key <= secOffset && value) {
+              for (const action of value) {
+                this.actorReactAction(action, actors);
+              }
+            }
+          });
+        }
+
+        this.setAsActiveCheckpoint(checkpoint, actors);
         return;
       }
     }
@@ -257,18 +271,35 @@ class QuestProgressItem extends Component<
   checkCheckpointActions() {
     const checkpoint = this.state.activeCheckpoint!;
     if (checkpoint.type === CheckpointType.BATTLE) {
-      const sec = this.state.seconds - checkpoint.occuredTime;
-      const steps = checkpoint.outcome.get(sec);
-      if (steps && steps.length > 0) {
-        const merged = new Map<CheckpointActionType, number>();
-        for (const step of steps) {
-          merged.set(
-            step.action!,
-            (merged.get(step.action!) ?? 0) + step.damage
-          );
-        }
-        merged.forEach(this.createBattleMessage.bind(this));
+      const secOffset = this.state.seconds - checkpoint.occuredTime;
+      const steps = checkpoint.outcome.get(secOffset);
+      if (!steps) {
+        return;
       }
+
+      const mergedDamage = new Map<CheckpointActionType, number>();
+      for (const step of steps!) {
+        this.actorReactAction(step, this.state.actors);
+        mergedDamage.set(
+          step.action!,
+          (mergedDamage.get(step.action!) ?? 0) + step.damage
+        );
+      }
+      mergedDamage.forEach(this.createBattleMessage.bind(this));
+    }
+  }
+
+  actorReactAction(action: CheckpointAction, actors: ActorItemType[]) {
+    if (action.action === CheckpointActionType.HERO_ATTACK) {
+      const enemy = actors.find(
+        (a) => !a.isHero && a.actorId === action.enemyId
+      );
+      enemy!.currentHealth -= action.damage;
+    }
+
+    if (action.action === CheckpointActionType.ENEMY_ATTACK) {
+      const hero = actors.find((a) => a.isHero && a.actorId === action.heroId);
+      hero!.currentHealth -= action.damage;
     }
   }
 
@@ -490,6 +521,7 @@ class QuestProgressItem extends Component<
   render() {
     const { quest } = this.props;
     const { actors } = this.state;
+
     const remainSeconds =
       quest.progress!.duration -
       this.state.seconds -

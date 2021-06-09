@@ -33,4 +33,8 @@
   &__health {
     align-self: center;
   }
+
+  &--defeated {
+    opacity: 0.6;
+  }
 }

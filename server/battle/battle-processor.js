@@ -1,8 +1,8 @@
-import { anyOf } from "../../client/src/utils/arrays.js";
+import { anyOf, copy } from "../../client/src/utils/arrays.js";
 
 const getBattleOutcome = (origMonsters, origHeroes) => {
-  const monsters = [...origMonsters];
-  const heroes = [...origHeroes];
+  const monsters = copy(origMonsters);
+  const heroes = copy(origHeroes);
 
   const battleSteps = new Map();
   for (let sec = 1; ; sec++) {

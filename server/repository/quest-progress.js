@@ -19,7 +19,7 @@ const generateCheckpoints = async (quest, heroes) => {
     // Math.floor(questDuration * 0.5) +
     // i * Math.floor(Math.random() * 10) * 1000;
 
-    const occured_time = addSec;
+    const occured_at = addSec;
 
     let outcome;
     let tribute;
@@ -46,7 +46,7 @@ const generateCheckpoints = async (quest, heroes) => {
 
     checkpoints.push({
       type,
-      occured_time,
+      occured_at,
       duration,
       outcome,
       enemies,

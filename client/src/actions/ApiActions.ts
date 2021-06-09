@@ -26,6 +26,19 @@ export const fetchGameStats =
       .then((data) => dispatch(gameStatsLoaded(data)));
   };
 
+export const fetchInitials =
+  (apiService: ApiService) => (auth: AuthProps) => (dispatch: any) => {
+    apiService.getQuests(auth).then((data) => {
+      dispatch(questsLoaded(data));
+      apiService.getHeroes(auth).then((data) => {
+        dispatch(heroesLoaded(data));
+        apiService
+          .getTavernPatrons(auth)
+          .then((data) => dispatch(tavernPatronsLoaded(data)));
+      });
+    });
+  };
+
 export const fetchQuests =
   (apiService: ApiService) => (auth: AuthProps) => (dispatch: any) => {
     dispatch(questsRequested);

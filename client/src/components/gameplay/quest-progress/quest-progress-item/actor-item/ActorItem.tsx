@@ -1,5 +1,11 @@
 import { useEffect, useRef } from "react";
-import { HeroType, nameToType } from "../../../../../models/Hero";
+import Hero, {
+  HeroType,
+  nameToType,
+  typeName,
+} from "../../../../../models/Hero";
+import { HEALTH_PER_VITALITY } from "../../../../../utils/variables";
+import { CheckpointEnemy } from "../../../../../models/QuestCheckpoint";
 import "./actor-item.scss";
 
 export type ActorItemType = {
@@ -7,11 +13,38 @@ export type ActorItemType = {
   isHero: boolean;
   name: string;
   type: string;
-  healthFraction: number;
+  currentHealth: number;
+  totalHealth: number;
 };
 
 type ActorItemProps = {
   actor: ActorItemType;
+};
+
+export const convertToActor = (
+  actor: Hero | CheckpointEnemy
+): ActorItemType => {
+  if (actor instanceof Hero) {
+    return {
+      actorId: actor.id,
+      isHero: true,
+      name: actor.name,
+      type: typeName(actor.type),
+      currentHealth: actor.health,
+      totalHealth: actor.stats.vitality * HEALTH_PER_VITALITY,
+    };
+  }
+  if (actor instanceof CheckpointEnemy) {
+    return {
+      actorId: actor.actorId,
+      isHero: false,
+      name: actor.name,
+      type: actor.name,
+      currentHealth: actor.health,
+      totalHealth: actor.health,
+    };
+  }
+  throw new Error(`Unknown actor type ${actor}`);
 };
 
 const ActorItem = ({ actor }: ActorItemProps) => {
@@ -25,8 +58,13 @@ const ActorItem = ({ actor }: ActorItemProps) => {
     healthCtx.fillStyle = "lightgray";
     healthCtx.fillRect(0, 0, canvasW, canvasH);
     healthCtx.fillStyle = "red";
-    healthCtx.fillRect(0, 0, canvasW * actor.healthFraction, canvasH);
-  }, [actor.healthFraction]);
+    healthCtx.fillRect(
+      0,
+      0,
+      canvasW * (actor.currentHealth / actor.totalHealth),
+      canvasH
+    );
+  }, [actor.currentHealth, actor.totalHealth]);
 
   const portrait = (isHero: boolean, type: string) => {
     if (isHero) {
@@ -36,7 +74,11 @@ const ActorItem = ({ actor }: ActorItemProps) => {
   };
 
   return (
-    <div className="actor-item">
+    <div
+      className={`actor-item${
+        actor.currentHealth < 0 ? " actor-item--defeated" : ""
+      }`}
+    >
       <div
         className={`actor-item__portrait--${portrait(
           actor.isHero,

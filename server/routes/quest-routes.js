@@ -1,10 +1,12 @@
 import { Router } from "express";
 import AuthMiddleware from "../middleware/auth-middleware.js";
+import { getHeroesOnQuest } from "../repository/hero.js";
 import { checkpointPassed } from "../repository/quest-checkpoints.js";
 import {
   completeQuest,
   embarkOnQuest,
   getQuests,
+  getQuestsByIds,
 } from "../repository/quest.js";
 
 const questsRouter = Router();
@@ -33,12 +35,14 @@ questsRouter.post("/embark", AuthMiddleware, async (req, res) => {
 
 questsRouter.put("/checkpoint", AuthMiddleware, async (req, res) => {
   try {
-    const passed = await checkpointPassed(
-      req.query.user_id,
-      req.query.quest_id,
-      req.query.checkpoint_id
-    );
-    res.json(passed);
+    const { user_id, quest_id, checkpoint_id } = req.query;
+
+    await checkpointPassed(checkpoint_id);
+
+    const quests = await getQuestsByIds(user_id, [quest_id]);
+    const heroes = await getHeroesOnQuest(user_id, quest_id);
+
+    res.json({ quest: quests[0], heroes });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }

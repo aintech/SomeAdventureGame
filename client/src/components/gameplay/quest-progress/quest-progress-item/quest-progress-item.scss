@@ -1,9 +1,10 @@
+@import "../../../../utils/variables.scss";
 @import "../../../../utils/functions.scss";
 @import "../../../../utils/mixins.scss";
 @import "../../../../utils/animations.scss";
 
 .quest-progress-item {
-  width: to-gameplay-scale(312px);
+  width: to-gameplay-scale($progress-item_width);
   height: to-gameplay-scale(118px);
   background-image: url(../../../../img/quest-progress/quest-progress_holder.png);
   background-size: contain;

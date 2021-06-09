@@ -1,11 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
-import {
-  fetchHeroes,
-  fetchQuests,
-  fetchTavernPatrons,
-} from "../../actions/ApiActions";
+import { fetchInitials } from "../../actions/ApiActions";
 import BuildingContainer from "../../components/gameplay/building-container/BuildingContainer";
 import GameWorld from "../../components/gameplay/game-world/GameWorld";
 import HeroStats from "../../components/gameplay/hero-stats/HeroStats";
@@ -31,9 +27,10 @@ const GameplayPage = () => {
 };
 
 type GameplayPageContainerProps = {
-  fetchQuests: (auth: AuthProps) => Quest[];
-  fetchHeroes: (auth: AuthProps) => Hero[];
-  fetchTavernPatrons: (auth: AuthProps) => Hero[];
+  // fetchQuests: (auth: AuthProps) => Quest[];
+  // fetchHeroes: (auth: AuthProps) => Hero[];
+  // fetchTavernPatrons: (auth: AuthProps) => Hero[];
+  fetchInitials: (auth: AuthProps) => void;
   quests: Quest[];
   heroes: Hero[];
 };
@@ -43,9 +40,10 @@ class GameplayPageContainer extends Component<GameplayPageContainerProps> {
 
   componentDidMount() {
     const auth = this.context;
-    this.props.fetchQuests(auth);
-    this.props.fetchHeroes(auth);
-    this.props.fetchTavernPatrons(auth);
+    this.props.fetchInitials(auth);
+    // this.props.fetchQuests(auth);
+    // this.props.fetchHeroes(auth);
+    // this.props.fetchTavernPatrons(auth);
   }
 
   render() {
@@ -77,9 +75,10 @@ const mapDispatchToProps = (
   const { apiService } = customProps;
   return bindActionCreators(
     {
-      fetchQuests: fetchQuests(apiService),
-      fetchHeroes: fetchHeroes(apiService),
-      fetchTavernPatrons: fetchTavernPatrons(apiService),
+      fetchInitials: fetchInitials(apiService),
+      // fetchQuests: fetchQuests(apiService),
+      // fetchHeroes: fetchHeroes(apiService),
+      // fetchTavernPatrons: fetchTavernPatrons(apiService),
     },
     dispatch
   );

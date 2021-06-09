@@ -9,12 +9,12 @@ const persistQuestCheckpoints = async (progressId, checkpoints) => {
       .map(
         (c) =>
           `insert into public.quest_checkpoint 
-           (quest_progress_id, type, occured_time, duration, outcome, enemies, tribute, passed)
+           (quest_progress_id, type, occured_at, duration, outcome, enemies, tribute, passed)
            values
            (
             ${progressId},
             '${c.type}', 
-            ${c.occured_time}, 
+            ${c.occured_at}, 
             ${c.duration},
             ${
               c.outcome
@@ -42,11 +42,11 @@ const getQuestCheckpoint = (checkpointId) => {
   );
 };
 
-const getQuestCheckpoints = (progressIds) => {
+const getQuestCheckpoints = async (progressIds, checkIfPassed = false) => {
   if (progressIds.length === 0) {
     return [];
   }
-  return query(
+  const checkpoints = await query(
     "getQuestCheckpoints",
     `select 
           checkpoint.*, 
@@ -55,18 +55,38 @@ const getQuestCheckpoints = (progressIds) => {
      left join quest_progress progress on progress.id = checkpoint.quest_progress_id
      where quest_progress_id in (${progressIds.join(",")})`
   );
+
+  if (checkIfPassed) {
+    checkIfCheckpointPassed(checkpoints);
+  }
+
+  return checkpoints;
 };
 
-const getQuestCheckpointsByQuest = async (
-  userId,
-  questId,
-  checkIfPassed = false
-) => {
+const getQuestCheckpointsByQuest = async (userId, questId) => {
   const progress = await getQuestProgress(userId, questId);
-  return getQuestCheckpoints([progress.id], checkIfPassed);
+  return getQuestCheckpoints([progress.id]);
 };
 
-const checkpointPassed = async (userId, questId, checkpointId) => {
+const checkIfCheckpointPassed = async (checkpoints) => {
+  for (const checkpoint of checkpoints) {
+    if (checkpoints.passed) {
+      continue;
+    }
+
+    const endedIn =
+      new Date(checkpoint.embarked_time).getTime() +
+      +checkpoint.occured_at * 1000 +
+      +checkpoint.duration * 1000;
+
+    if (endedIn <= new Date().getTime()) {
+      await checkpointPassed(checkpoint.id);
+      checkpoint.passed = true;
+    }
+  }
+};
+
+const checkpointPassed = async (checkpointId) => {
   const checkpoint = await getQuestCheckpoint(checkpointId);
 
   if (checkpoint.passed) {
@@ -81,7 +101,7 @@ const checkpointPassed = async (userId, questId, checkpointId) => {
       for (const action of actions[1]) {
         if (action.action === "enemy_attack") {
           damages.set(
-            action.herotId,
+            action.heroId,
             (damages.get(action.heroId) ?? 0) - +action.damage
           );
         }
@@ -91,15 +111,11 @@ const checkpointPassed = async (userId, questId, checkpointId) => {
     for (const damage of damages) {
       adjustments.push(adjustHealth(damage[0], damage[1]));
     }
+
     await Promise.all(adjustments);
   }
 
   await markAsPassed(checkpointId);
-
-  const quests = await getQuestsByIds(userId, [questId]);
-  const heroes = await getHeroesOnQuest(userId, questId);
-
-  return { quest: quests[0], heroes };
 };
 
 const markAsPassed = (checkpointId) => {
