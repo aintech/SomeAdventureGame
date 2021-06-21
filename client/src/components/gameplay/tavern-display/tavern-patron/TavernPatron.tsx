@@ -1,4 +1,5 @@
-import Hero, { HeroType, typeName } from "../../../../models/Hero";
+import Hero from "../../../../models/hero/Hero";
+import { display, HeroType } from "../../../../models/hero/HeroType";
 import "./tavern-patron.scss";
 
 type TavernPatronProps = {
@@ -15,7 +16,7 @@ const TavernPatron = ({ patron, hirePatron }: TavernPatronProps) => {
         ></div>
       </div>
       <div className="tavern-patron__name">{patron.name}</div>
-      <div className="tavern-patron__type-level">{`${typeName(
+      <div className="tavern-patron__type-level">{`${display(
         patron.type
       )} lvl. ${patron.level}`}</div>
       <div className="tavern-patron__power">{patron.stats.power}</div>

@@ -1,6 +1,7 @@
 export enum BuildingType {
   GUILD,
   TAVERN,
+  HEALER,
 }
 
 export default class Building {

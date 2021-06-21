@@ -1,5 +1,5 @@
 import { EquipmentResponse } from "../services/HeroesService";
-import { HeroType } from "./Hero";
+import { HeroType } from "./hero/HeroType";
 import PersonageStats from "./PersonageStats";
 
 export enum EquipmentType {

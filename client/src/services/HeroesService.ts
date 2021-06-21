@@ -1,6 +1,7 @@
 import { AuthProps } from "../contexts/AuthContext";
 import GameStats from "../models/GameStats";
-import Hero from "../models/Hero";
+import Hero from "../models/hero/Hero";
+import { HeroOccupationType } from "../models/hero/HeroOccupationType";
 import sendHttp from "./SendHttp";
 
 const baseUrl = "/api/heroes";
@@ -34,6 +35,7 @@ export interface HeroResponse extends StatsHolder {
   progress: number;
   gold: number;
   embarked_quest: number | null;
+  occupation: string;
   equipment: EquipmentResponse[];
 }
 
@@ -58,5 +60,20 @@ const hireHero = async (auth: AuthProps, hero: Hero) => {
     "PUT"
   );
 };
+const updateHeroOccupation = async (
+  auth: AuthProps,
+  hero: Hero,
+  occupation: HeroOccupationType
+) => {
+  return await sendHttp<HeroResponse>(
+    `${baseUrl}/occupation`,
+    auth,
+    [
+      `hero_id=${hero.id}`,
+      `occupation=${HeroOccupationType[occupation].toLowerCase()}`,
+    ],
+    "PUT"
+  );
+};
 
-export { getHeroes, getTavernPatrons, hireHero };
+export { getHeroes, getTavernPatrons, hireHero, updateHeroOccupation };

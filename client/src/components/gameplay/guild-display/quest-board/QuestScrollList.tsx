@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import {
@@ -6,26 +6,21 @@ import {
   questScrollClosed,
 } from "../../../../actions/Actions";
 import { embarkHeroesOnQuest } from "../../../../actions/ApiActions";
-import AuthContext, { AuthProps } from "../../../../contexts/AuthContext";
 import withApiService, {
   WithApiServiceProps,
 } from "../../../../hoc/WithApiService";
-import Hero from "../../../../models/Hero";
+import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
+import "./quest-scroll-list.scss";
 import QuestDetails from "./QuestDetails";
 import QuestScrollItem from "./QuestScrollItem";
-import "./quest-scroll-list.scss";
 
 type QuestScrollListProps = {
   quests: Quest[];
   chosenQuest: Quest;
   questScrollChoosed: (quest: Quest) => void;
   questScrollClosed: () => void;
-  embarkHeroesOnQuest: (
-    auth: AuthProps,
-    quest: Quest,
-    heroesAssignedToQuest: Hero[]
-  ) => void;
+  embarkHeroesOnQuest: (quest: Quest, heroesAssignedToQuest: Hero[]) => void;
 };
 
 const QuestScrollList = ({
@@ -35,10 +30,8 @@ const QuestScrollList = ({
   questScrollClosed,
   embarkHeroesOnQuest,
 }: QuestScrollListProps) => {
-  const authCtx = useContext(AuthContext);
-
   const acceptQuest = (quest: Quest, heroesAssignedToQuest: Hero[]) => {
-    embarkHeroesOnQuest(authCtx, quest, heroesAssignedToQuest);
+    embarkHeroesOnQuest(quest, heroesAssignedToQuest);
   };
 
   const chooseQuest = (quest: Quest) => {
@@ -92,12 +85,12 @@ const mapDispatchToProps = (
   dispatch: Dispatch,
   customProps: WithApiServiceProps
 ) => {
-  const { apiService } = customProps;
+  const { apiService, auth } = customProps;
   return bindActionCreators(
     {
       questScrollChoosed,
       questScrollClosed,
-      embarkHeroesOnQuest: embarkHeroesOnQuest(apiService),
+      embarkHeroesOnQuest: embarkHeroesOnQuest(apiService, auth),
     },
     dispatch
   );

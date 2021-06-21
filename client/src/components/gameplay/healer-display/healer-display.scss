@@ -2,7 +2,7 @@
 @import "../../../utils/functions.scss";
 @import "../../../utils/mixins.scss";
 
-.tavern-display {
+.healer-display {
   @include absoluteCenter;
   display: block;
   width: $gameplay_width;
@@ -45,12 +45,16 @@
     @include strokeText;
   }
 
-  &__patrons-holder {
+  &__visitors-holder {
+    position: absolute;
+    top: to-gameplay-scale(200px);
+    left: to-gameplay-scale(180px);
+    width: to-gameplay-scale(460px);
+    height: to-gameplay-scale(500px);
+
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-    align-self: center;
-    transform: translateY(40px);
-    width: 80%;
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(5, 1fr);
+    gap: to-gameplay-scale(20px);
   }
 }

@@ -1,12 +1,9 @@
-import { HeroResponse, StatsHolder } from "../services/HeroesService";
-import { HEALTH_PER_VITALITY } from "../utils/variables";
-import Equipment, { convert as convertEquipment } from "./Equipment";
-import PersonageStats from "./PersonageStats";
-
-export enum HeroType {
-  WARRIOR,
-  MAGE,
-}
+import { HeroResponse, StatsHolder } from "../../services/HeroesService";
+import { HEALTH_PER_VITALITY } from "../../utils/variables";
+import Equipment, { convert as convertEquipment } from "../Equipment";
+import PersonageStats from "../PersonageStats";
+import { HeroOccupationType, occupationFromString } from "./HeroOccupationType";
+import { HeroType, heroTypeFromString } from "./HeroType";
 
 export default class Hero {
   constructor(
@@ -23,45 +20,13 @@ export default class Hero {
     public progress: number,
     public gold: number,
     public embarkedQuest: number | null,
+    public occupation: HeroOccupationType,
     public equipment: Equipment[]
   ) {}
 }
 
-const typeName = (type: HeroType) => {
-  switch (type) {
-    case HeroType.WARRIOR:
-      return "Воин";
-    case HeroType.MAGE:
-      return "Маг";
-    default:
-      throw new Error(`Unknown hero type ${HeroType[type]}`);
-  }
-};
-
-const nameToType = (name: string) => {
-  switch (name) {
-    case "Воин":
-      return HeroType.WARRIOR;
-    case "Маг":
-      return HeroType.MAGE;
-    default:
-      throw new Error(`Unknown hero type name ${name}`);
-  }
-};
-
 const calcHealthFraction = (hero: Hero): number => {
   return hero.health / (hero.stats.vitality * HEALTH_PER_VITALITY);
-};
-
-const convertType = (type: string): HeroType => {
-  switch (type) {
-    case "warrior":
-      return HeroType.WARRIOR;
-    case "mage":
-      return HeroType.MAGE;
-    default:
-      throw new Error(`Unknown hero class ${type}`);
-  }
 };
 
 /** Computes 'initial' hero stats without equipment surpluses */
@@ -83,7 +48,7 @@ const convert = (response: HeroResponse): Hero => {
   return new Hero(
     +response.id,
     response.name,
-    convertType(response.type),
+    heroTypeFromString(response.type),
     +response.level,
     new PersonageStats(
       +response.power,
@@ -102,8 +67,9 @@ const convert = (response: HeroResponse): Hero => {
     +response.progress,
     +response.gold,
     response.embarked_quest ? +response.embarked_quest : null,
+    occupationFromString(response.occupation),
     response.equipment.map((e) => convertEquipment(e))
   );
 };
 
-export { calcHealthFraction, typeName, nameToType, convertType, convert };
+export { calcHealthFraction, convert };

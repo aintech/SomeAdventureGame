@@ -1,14 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
+import { onHireHero } from "../../../actions/ApiActions";
 import withApiService, {
   WithApiServiceProps,
 } from "../../../hoc/WithApiService";
-import Hero from "../../../models/Hero";
+import Hero from "../../../models/hero/Hero";
 import "./tavern-display.scss";
 import TavernPatron from "./tavern-patron/TavernPatron";
-import { onHireHero } from "../../../actions/ApiActions";
-import AuthContext, { AuthProps } from "../../../contexts/AuthContext";
 
 type TavernDisplayProps = {
   patrons: Hero[];
@@ -28,7 +27,7 @@ const TavernDisplay = ({
         onClick={closeDisplay}
       ></button>
       <div className="tavern-display__container">
-        <div className="tavern-display__tavern-name">Таверна "Дикий вепрь"</div>
+        <div className="tavern-display__name">Таверна "Дикий вепрь"</div>
         <div className="tavern-display__patrons-holder">
           {patrons.map((p) => (
             <TavernPatron key={p.id} patron={p} hirePatron={hirePatron} />
@@ -42,14 +41,12 @@ const TavernDisplay = ({
 type TavernDisplayContainerProps = {
   tavernPatrons: Hero[];
   closeDisplay: () => void;
-  hirePatron: (auth: AuthProps, patron: Hero) => void;
+  hirePatron: (patron: Hero) => void;
 };
 
 class TavernDisplayContainer extends Component<TavernDisplayContainerProps> {
-  static contextType = AuthContext;
-
   onHirePatron(hero: Hero) {
-    this.props.hirePatron(this.context, hero);
+    this.props.hirePatron(hero);
   }
 
   render() {
@@ -77,10 +74,10 @@ const mapDispatchToProps = (
   dispatch: Dispatch,
   customProps: WithApiServiceProps
 ) => {
-  const { apiService } = customProps;
+  const { apiService, auth } = customProps;
   return bindActionCreators(
     {
-      hirePatron: onHireHero(apiService),
+      hirePatron: onHireHero(apiService, auth),
     },
     dispatch
   );

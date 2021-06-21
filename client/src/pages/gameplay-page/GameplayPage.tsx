@@ -8,9 +8,8 @@ import HeroStats from "../../components/gameplay/hero-stats/HeroStats";
 import QuestProgressList from "../../components/gameplay/quest-progress/quest-progress-list/QuestProgressList";
 import QuestRewardContainer from "../../components/gameplay/quest-reward/QuestReward";
 import Loader from "../../components/loader/Loader";
-import AuthContext, { AuthProps } from "../../contexts/AuthContext";
 import withApiService, { WithApiServiceProps } from "../../hoc/WithApiService";
-import Hero from "../../models/Hero";
+import Hero from "../../models/hero/Hero";
 import Quest from "../../models/Quest";
 import "./gameplay-page.scss";
 
@@ -27,23 +26,14 @@ const GameplayPage = () => {
 };
 
 type GameplayPageContainerProps = {
-  // fetchQuests: (auth: AuthProps) => Quest[];
-  // fetchHeroes: (auth: AuthProps) => Hero[];
-  // fetchTavernPatrons: (auth: AuthProps) => Hero[];
-  fetchInitials: (auth: AuthProps) => void;
+  fetchInitials: () => void;
   quests: Quest[];
   heroes: Hero[];
 };
 
 class GameplayPageContainer extends Component<GameplayPageContainerProps> {
-  static contextType = AuthContext;
-
   componentDidMount() {
-    const auth = this.context;
-    this.props.fetchInitials(auth);
-    // this.props.fetchQuests(auth);
-    // this.props.fetchHeroes(auth);
-    // this.props.fetchTavernPatrons(auth);
+    this.props.fetchInitials();
   }
 
   render() {
@@ -72,13 +62,10 @@ const mapDispatchToProps = (
   dispatch: Dispatch,
   customProps: WithApiServiceProps
 ) => {
-  const { apiService } = customProps;
+  const { apiService, auth } = customProps;
   return bindActionCreators(
     {
-      fetchInitials: fetchInitials(apiService),
-      // fetchQuests: fetchQuests(apiService),
-      // fetchHeroes: fetchHeroes(apiService),
-      // fetchTavernPatrons: fetchTavernPatrons(apiService),
+      fetchInitials: fetchInitials(apiService, auth),
     },
     dispatch
   );

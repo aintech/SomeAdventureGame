@@ -2,7 +2,7 @@ import { Action } from "redux";
 import { Message } from "../components/message-popup/MessagePopup";
 import Building from "../models/Building";
 import GameStats from "../models/GameStats";
-import Hero from "../models/Hero";
+import Hero from "../models/hero/Hero";
 import Quest from "../models/Quest";
 import { HeroResponse, HireHeroResponse } from "../services/HeroesService";
 import {
@@ -168,5 +168,12 @@ export const heroHired = (hiredResult: HireHeroResponse): PayloadedAction => {
   return {
     type: ActionType.HERO_HIRED,
     payload: hiredResult,
+  };
+};
+
+export const heroOccupationUpdated = (hero: HeroResponse): PayloadedAction => {
+  return {
+    type: ActionType.HERO_OCCUPATION_UPDATED,
+    payload: hero,
   };
 };

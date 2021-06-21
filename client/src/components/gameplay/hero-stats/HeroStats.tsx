@@ -3,7 +3,8 @@ import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsClosed } from "../../../actions/Actions";
 import Equipment, { EquipmentType } from "../../../models/Equipment";
-import Hero, { calcHealthFraction, HeroType } from "../../../models/Hero";
+import Hero, { calcHealthFraction } from "../../../models/hero/Hero";
+import { HeroType } from "../../../models/hero/HeroType";
 import PersonageStats from "../../../models/PersonageStats";
 import "./hero-stats.scss";
 

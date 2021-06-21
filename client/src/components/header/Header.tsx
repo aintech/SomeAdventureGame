@@ -2,17 +2,16 @@ import React, { useContext, useEffect } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { fetchGameStats } from "../../actions/ApiActions";
-import AuthContext, { AuthProps } from "../../contexts/AuthContext";
-import withApiService from "../../hoc/WithApiService";
+import AuthContext from "../../contexts/AuthContext";
+import withApiService, { WithApiServiceProps } from "../../hoc/WithApiService";
 import { useDisplayMessage } from "../../hooks/UseDisplayMessages";
 import GameStats from "../../models/GameStats";
-import ApiService from "../../services/ApiService";
 import "./header.scss";
 
 type HeaderProps = {
   gold: number;
   fame: number;
-  fetchGameStats: (auth: AuthProps) => void;
+  fetchGameStats: () => void;
   isAuthenticated: boolean;
   logout: () => void;
 };
@@ -29,7 +28,7 @@ const Header = ({
 
   useEffect(() => {
     if (authContext.userId) {
-      fetchGameStats(authContext);
+      fetchGameStats();
     }
   }, [fetchGameStats, authContext]);
 
@@ -66,11 +65,11 @@ const mapStateToProps = ({ gold, fame }: GameStats) => {
 
 const mapDispatchToProps = (
   dispatch: Dispatch,
-  customProps: { apiService: ApiService }
+  customProps: WithApiServiceProps
 ) => {
-  const { apiService } = customProps;
+  const { apiService, auth } = customProps;
   return bindActionCreators(
-    { fetchGameStats: fetchGameStats(apiService) },
+    { fetchGameStats: fetchGameStats(apiService, auth) },
     dispatch
   );
 };

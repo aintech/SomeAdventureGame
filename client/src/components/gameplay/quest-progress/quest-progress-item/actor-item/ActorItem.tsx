@@ -1,11 +1,12 @@
 import { useEffect, useRef } from "react";
-import Hero, {
+import Hero from "../../../../../models/hero/Hero";
+import {
+  display,
+  fromDisplay,
   HeroType,
-  nameToType,
-  typeName,
-} from "../../../../../models/Hero";
-import { HEALTH_PER_VITALITY } from "../../../../../utils/variables";
+} from "../../../../../models/hero/HeroType";
 import { CheckpointEnemy } from "../../../../../models/QuestCheckpoint";
+import { HEALTH_PER_VITALITY } from "../../../../../utils/variables";
 import "./actor-item.scss";
 
 export type ActorItemType = {
@@ -29,7 +30,7 @@ export const convertToActor = (
       actorId: actor.id,
       isHero: true,
       name: actor.name,
-      type: typeName(actor.type),
+      type: display(actor.type),
       currentHealth: actor.health,
       totalHealth: actor.stats.vitality * HEALTH_PER_VITALITY,
     };
@@ -68,7 +69,7 @@ const ActorItem = ({ actor }: ActorItemProps) => {
 
   const portrait = (isHero: boolean, type: string) => {
     if (isHero) {
-      return HeroType[nameToType(type)].toLowerCase();
+      return HeroType[fromDisplay(type)].toLowerCase();
     }
     return "skeleton";
   };

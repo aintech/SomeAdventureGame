@@ -2,7 +2,7 @@ import { PayloadedAction } from "../actions/Actions";
 import { ActionType } from "../actions/ActionType";
 import { Message } from "../components/message-popup/MessagePopup";
 import Building from "../models/Building";
-import Hero, { convert as convertHero } from "../models/Hero";
+import Hero, { convert as convertHero } from "../models/hero/Hero";
 import Quest, { convert as convertQuest } from "../models/Quest";
 import { HeroResponse, HireHeroResponse } from "../services/HeroesService";
 import { QuestResponse } from "../services/QuestsService";

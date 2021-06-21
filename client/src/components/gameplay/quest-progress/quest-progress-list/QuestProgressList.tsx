@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import Hero from "../../../../models/Hero";
+import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
 import QuestProgressItem from "../quest-progress-item/QuestProgressItem";
 import "./quest-progress-list.scss";

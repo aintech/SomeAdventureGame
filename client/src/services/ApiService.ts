@@ -1,12 +1,18 @@
 import { AuthProps } from "../contexts/AuthContext";
-import Hero from "../models/Hero";
+import Hero from "../models/hero/Hero";
+import { HeroOccupationType } from "../models/hero/HeroOccupationType";
 import Quest from "../models/Quest";
 import QuestCheckpoint from "../models/QuestCheckpoint";
-import { getHeroes, getTavernPatrons, hireHero } from "./HeroesService";
 import {
+  getHeroes,
+  getTavernPatrons,
+  hireHero,
+  updateHeroOccupation,
+} from "./HeroesService";
+import {
+  checkpointPassed,
   completeQuest,
   embarkOnQuest,
-  checkpointPassed,
   getQuests,
 } from "./QuestsService";
 import { getStats } from "./StatsService";
@@ -50,5 +56,13 @@ export default class ApiService {
 
   hireHero(auth: AuthProps, hero: Hero) {
     return hireHero(auth, hero);
+  }
+
+  updateHeroOccupation(
+    auth: AuthProps,
+    hero: Hero,
+    occupation: HeroOccupationType
+  ) {
+    return updateHeroOccupation(auth, hero, occupation);
   }
 }

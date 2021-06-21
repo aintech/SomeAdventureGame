@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { collectingQuestReward } from "../../../../actions/Actions";
 import { onCheckpointPassed } from "../../../../actions/ApiActions";
-import AuthContext, { AuthProps } from "../../../../contexts/AuthContext";
 import withApiService, {
   WithApiServiceProps,
 } from "../../../../hoc/WithApiService";
@@ -13,7 +12,7 @@ import progressBG from "../../../../img/quest-progress/quest-progress_background
 import heroImgSrc from "../../../../img/quest-progress/quest-progress_hero.png";
 import skeletonImgSrc from "../../../../img/quest-progress/Skeleton.png";
 import skeletonDeadImgSrc from "../../../../img/quest-progress/Skeleton_dead.png";
-import Hero from "../../../../models/Hero";
+import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
 import QuestCheckpoint, {
   CheckpointAction,
@@ -48,11 +47,7 @@ type QuestProgressItemProps = {
   quest: Quest;
   heroes: Hero[];
   collectingQuestReward: (quest: Quest) => void;
-  onCheckpointPassed: (
-    auth: AuthProps,
-    quest: Quest,
-    checkpoint: QuestCheckpoint
-  ) => void;
+  onCheckpointPassed: (quest: Quest, checkpoint: QuestCheckpoint) => void;
 };
 
 type QuestProgressItemState = {
@@ -76,9 +71,6 @@ class QuestProgressItem extends Component<
   QuestProgressItemProps,
   QuestProgressItemState
 > {
-  static contextType = AuthContext;
-
-  private auth: AuthProps | null = null;
   private secondsTimer: NodeJS.Timeout | null = null;
   private updateTimer: NodeJS.Timeout | null = null;
   private canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -109,7 +101,6 @@ class QuestProgressItem extends Component<
   }
 
   componentDidMount() {
-    this.auth = this.context;
     this.canvas = this.canvasRef.current!;
     this.canvasCtx = this.canvas.getContext("2d")!;
 
@@ -198,11 +189,7 @@ class QuestProgressItem extends Component<
       actors,
     });
 
-    this.props.onCheckpointPassed(
-      this.auth!,
-      this.props.quest,
-      activeCheckpoint
-    );
+    this.props.onCheckpointPassed(this.props.quest, activeCheckpoint);
   }
 
   sendMessage(message: string, color = "yellow", direction = Direction.LEFT) {
@@ -629,11 +616,11 @@ const mapDispatchToProps = (
   dispatch: Dispatch,
   customProps: WithApiServiceProps
 ) => {
-  const { apiService } = customProps;
+  const { apiService, auth } = customProps;
   return bindActionCreators(
     {
       collectingQuestReward,
-      onCheckpointPassed: onCheckpointPassed(apiService),
+      onCheckpointPassed: onCheckpointPassed(apiService, auth),
     },
     dispatch
   );

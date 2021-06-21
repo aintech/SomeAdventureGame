@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, MouseEvent } from "react";
-import Hero, {
-  calcHealthFraction,
-  HeroType,
-  typeName,
-} from "../../../../models/Hero";
+import Hero, { calcHealthFraction } from "../../../../models/hero/Hero";
+import { display, HeroType } from "../../../../models/hero/HeroType";
 import Quest from "../../../../models/Quest";
 import { toGameplayScale } from "../../../../utils/Utils";
 import "./hero-item.scss";
@@ -69,7 +66,7 @@ const HeroItem = ({
       </button>
       <div className={`hero-item__portrait--${HeroType[hero.type]}`}></div>
       <div className="hero-item__type-level">
-        {typeName(hero.type)} <br></br> {hero.level} ур.
+        {display(hero.type)} <br></br> {hero.level} ур.
       </div>
       <canvas
         className="hero-item__health-bar"

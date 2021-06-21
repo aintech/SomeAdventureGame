@@ -5,7 +5,7 @@ import {
   heroAssignedToQuest,
   heroStatsChoosed,
 } from "../../../../actions/Actions";
-import Hero from "../../../../models/Hero";
+import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
 import HeroItem from "./HeroItem";
 import "./hero-list.scss";

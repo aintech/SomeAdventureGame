@@ -4,6 +4,7 @@ import { Dispatch } from "redux";
 import { buildingClicked } from "../../../actions/Actions";
 import Building, { BuildingType } from "../../../models/Building";
 import GuildDisplay from "../guild-display/GuildDisplay";
+import HealerDisplay from "../healer-display/HealerDisplay";
 import TavernDisplay from "../tavern-display/TavernDisplay";
 import "./building-container.scss";
 
@@ -27,6 +28,9 @@ const BuildingDetails = ({
       break;
     case BuildingType.GUILD:
       display = <GuildDisplay closeDisplay={hideBuildingDisplay} />;
+      break;
+    case BuildingType.HEALER:
+      display = <HealerDisplay closeDisplay={hideBuildingDisplay} />;
       break;
     default:
       display = null;

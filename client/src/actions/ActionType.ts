@@ -28,4 +28,5 @@ export enum ActionType {
   DISMISS_USER_MESSAGE,
 
   HERO_HIRED,
+  HERO_OCCUPATION_UPDATED,
 }

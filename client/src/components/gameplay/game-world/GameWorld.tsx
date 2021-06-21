@@ -14,6 +14,7 @@ const GameWorld = ({ onBuildingClicked }: GameWorldProps) => {
   const [buildings] = useState([
     new Building(1, BuildingType.TAVERN),
     new Building(2, BuildingType.GUILD),
+    new Building(3, BuildingType.HEALER),
   ]);
 
   return (

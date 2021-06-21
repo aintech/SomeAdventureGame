@@ -168,6 +168,17 @@ const completeHeroesQuest = async (heroIds, heroesTribute, experience) => {
   );
 };
 
+const updateHeroOccupation = async (heroId, occupation) => {
+  await query(
+    "updateHeroOccupation",
+    `update public.hero
+     set occupation = $1
+     where id = $2`,
+    [occupation, heroId]
+  );
+  return getHeroesByIds[heroId];
+};
+
 export {
   getHeroes,
   getNotHiredHeroes,
@@ -177,4 +188,5 @@ export {
   adjustHealth,
   getHeroesOnQuest,
   completeHeroesQuest,
+  updateHeroOccupation,
 };
