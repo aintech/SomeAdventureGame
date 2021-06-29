@@ -34,12 +34,12 @@ const seeingOffPatrons = async (heroIds) => {
 };
 
 const letInHeroes = async (userId) => {
-  await persistPastrons(userId, generateHeroes());
+  await persistPatrons(userId, generateHeroes());
   const generated = await getNotHiredHeroes(userId);
   await givePatronsEqipment(generated);
 };
 
-const persistPastrons = async (userId, heroes) => {
+const persistPatrons = async (userId, heroes) => {
   const heroesData = heroes
     .map(
       (hero) =>

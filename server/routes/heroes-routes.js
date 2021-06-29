@@ -1,12 +1,9 @@
 import { Router } from "express";
 import AuthMiddleware from "../middleware/auth-middleware.js";
-import {
-  getHeroes,
-  hireHero,
-  updateHeroOccupation,
-} from "../repository/hero.js";
-import { getTavernPatrons } from "../repository/tavern-patrons.js";
+import { updateHeroOccupations } from "../repository/hero-occupation.js";
+import { getHeroes, hireHero } from "../repository/hero.js";
 import { getStats } from "../repository/stats.js";
+import { getTavernPatrons } from "../repository/tavern-patrons.js";
 
 const heroesRouter = Router();
 
@@ -40,11 +37,8 @@ heroesRouter.put("/hire", AuthMiddleware, async (req, res) => {
 
 heroesRouter.put("/occupation", AuthMiddleware, async (req, res) => {
   try {
-    const hero = await updateHeroOccupation(
-      req.query.hero_id,
-      req.query.occupation
-    );
-    res.json({ hero });
+    const heroes = await updateHeroOccupations(req.body);
+    res.json(heroes);
   } catch (e) {
     res.status(500).json({ message: e.message });
   }

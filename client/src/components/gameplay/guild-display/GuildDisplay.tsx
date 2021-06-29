@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { questScrollClosed } from "../../../actions/Actions";
 import Hero from "../../../models/hero/Hero";
+import { HeroOccupationType } from "../../../models/hero/HeroOccupationType";
 import Quest from "../../../models/Quest";
 import Loader from "../../loader/Loader";
 import "./guild-display.scss";
@@ -33,7 +34,13 @@ const GuildDisplay = ({
 
   useEffect(() => {
     const idleHeroes = heroes
-      .filter((h) => showUnabledHeroes || (!h.embarkedQuest && h.health > 0))
+      .filter(
+        (h) =>
+          showUnabledHeroes ||
+          (h.occupation!.type === HeroOccupationType.IDLE &&
+            !h.embarkedQuest &&
+            h.isAilve())
+      )
       .sort((a, b) => a.id - b.id);
 
     const lPage = Math.max(0, Math.ceil(idleHeroes.length / 4) - 1);

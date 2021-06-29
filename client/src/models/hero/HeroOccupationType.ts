@@ -7,6 +7,10 @@ export enum HeroOccupationType {
 export const occupationFromString = (
   occupation: string
 ): HeroOccupationType => {
+  if (!occupation) {
+    return HeroOccupationType.IDLE;
+  }
+
   switch (occupation) {
     case "idle":
       return HeroOccupationType.IDLE;

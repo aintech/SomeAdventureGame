@@ -7,7 +7,7 @@ import {
   getHeroes,
   getTavernPatrons,
   hireHero,
-  updateHeroOccupation,
+  updateHeroOccupations,
 } from "./HeroesService";
 import {
   checkpointPassed,
@@ -58,11 +58,10 @@ export default class ApiService {
     return hireHero(auth, hero);
   }
 
-  updateHeroOccupation(
+  updateHeroOccupations(
     auth: AuthProps,
-    hero: Hero,
-    occupation: HeroOccupationType
+    occupations: { heroId: number; type: HeroOccupationType }[]
   ) {
-    return updateHeroOccupation(auth, hero, occupation);
+    return updateHeroOccupations(auth, occupations);
   }
 }

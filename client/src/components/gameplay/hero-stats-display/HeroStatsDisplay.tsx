@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
-import { heroStatsClosed } from "../../../actions/Actions";
+import { heroStatsDisplayClosed } from "../../../actions/Actions";
 import Equipment, { EquipmentType } from "../../../models/Equipment";
 import Hero, { calcHealthFraction } from "../../../models/hero/Hero";
 import { HeroType } from "../../../models/hero/HeroType";
 import PersonageStats from "../../../models/PersonageStats";
-import "./hero-stats.scss";
+import "./hero-stats-display.scss";
 
 const calcEquipSurpluses = (equipment: Equipment[]): PersonageStats => {
   let power = 0;
@@ -24,12 +24,15 @@ const calcEquipSurpluses = (equipment: Equipment[]): PersonageStats => {
   return new PersonageStats(power, defence, vitality, initiative);
 };
 
-type HeroStatsProps = {
+type HeroStatsDisplayProps = {
   hero: Hero;
-  heroStatsClosed: () => void;
+  heroStatsDisplayClosed: () => void;
 };
 
-const HeroStats = ({ hero, heroStatsClosed }: HeroStatsProps) => {
+const HeroStatsDisplay = ({
+  hero,
+  heroStatsDisplayClosed,
+}: HeroStatsDisplayProps) => {
   const healthRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const expRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
 
@@ -74,7 +77,7 @@ const HeroStats = ({ hero, heroStatsClosed }: HeroStatsProps) => {
   }`;
 
   return (
-    <div className="hero-stats" onClick={heroStatsClosed}>
+    <div className="hero-stats" onClick={heroStatsDisplayClosed}>
       <div className="hero-stats__bg"></div>
       <div className="hero-stats__portrait">
         <div className={`hero-stats__portrait--${HeroType[hero.type]}`}></div>
@@ -142,7 +145,7 @@ const mapStateToProps = ({ chosenHero }: { chosenHero: Hero }) => {
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({ heroStatsClosed }, dispatch);
+  return bindActionCreators({ heroStatsDisplayClosed }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(HeroStats);
+export default connect(mapStateToProps, mapDispatchToProps)(HeroStatsDisplay);

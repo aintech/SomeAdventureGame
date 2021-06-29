@@ -8,7 +8,7 @@ import withApiService, {
 } from "../../../../hoc/WithApiService";
 import chestClosedImgSrc from "../../../../img/quest-progress/Chest_closed.png";
 import chestOpenImgSrc from "../../../../img/quest-progress/Chest_open.png";
-import progressBG from "../../../../img/quest-progress/quest-progress_background.png";
+import backgroundImgSrc from "../../../../img/quest-progress/quest-progress_background.png";
 import heroImgSrc from "../../../../img/quest-progress/quest-progress_hero.png";
 import skeletonImgSrc from "../../../../img/quest-progress/Skeleton.png";
 import skeletonDeadImgSrc from "../../../../img/quest-progress/Skeleton_dead.png";
@@ -54,12 +54,7 @@ type QuestProgressItemState = {
   /** Сколько секунд прошло с НАЧАЛА квеста */
   seconds: number;
   bgOffset: number;
-  backImg: HTMLImageElement | null;
-  heroImg: HTMLImageElement | null;
-  chestClosedImg: HTMLImageElement | null;
-  chestOpenImg: HTMLImageElement | null;
-  skeletonImg: HTMLImageElement | null;
-  skeletonDeadImg: HTMLImageElement | null;
+  images: Map<string, HTMLImageElement>;
   eventMessages: EventMessage[];
   activeCheckpoint: QuestCheckpoint | null;
   willBeSpendOnCheckpoints: number;
@@ -82,12 +77,7 @@ class QuestProgressItem extends Component<
     this.state = {
       seconds: 0,
       bgOffset: 0,
-      backImg: null,
-      heroImg: null,
-      chestClosedImg: null,
-      chestOpenImg: null,
-      skeletonImg: null,
-      skeletonDeadImg: null,
+      images: new Map(),
       eventMessages: [],
       activeCheckpoint: null,
       willBeSpendOnCheckpoints: 0,
@@ -103,6 +93,13 @@ class QuestProgressItem extends Component<
   componentDidMount() {
     this.canvas = this.canvasRef.current!;
     this.canvasCtx = this.canvas.getContext("2d")!;
+
+    this.loadImage("chest_closed", chestClosedImgSrc);
+    this.loadImage("chest_open", chestOpenImgSrc);
+    this.loadImage("background", backgroundImgSrc);
+    this.loadImage("hero", heroImgSrc);
+    this.loadImage("skeleton", skeletonImgSrc);
+    this.loadImage("skeleton_dead", skeletonDeadImgSrc);
 
     const { quest, heroes } = this.props;
 
@@ -130,6 +127,20 @@ class QuestProgressItem extends Component<
     if (this.updateTimer) {
       clearInterval(this.updateTimer);
     }
+  }
+
+  loadImage(name: string, src: string) {
+    const image = new Image();
+    image.src = src;
+    image.addEventListener(
+      "load",
+      (ev) => {
+        const images = new Map(this.state.images);
+        images.set(name, ev.currentTarget as HTMLImageElement);
+        this.setState({ images });
+      },
+      false
+    );
   }
 
   startTimers() {
@@ -215,6 +226,8 @@ class QuestProgressItem extends Component<
     }
 
     if (seconds <= 0) {
+      console.log("COUNTER");
+
       if (this.secondsTimer) {
         clearInterval(this.secondsTimer);
       }
@@ -336,16 +349,17 @@ class QuestProgressItem extends Component<
     this.canvasCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     /* Draw background */
-    if (this.state.backImg) {
+    const backImg = this.state.images.get("background");
+    if (backImg) {
       this.canvasCtx.drawImage(
-        this.state.backImg,
+        backImg,
         this.state.bgOffset,
         0,
         this.canvas.width,
         this.canvas.height
       );
       this.canvasCtx.drawImage(
-        this.state.backImg,
+        backImg,
         this.state.bgOffset + this.canvas.width - 1,
         0,
         this.canvas.width,
@@ -393,10 +407,11 @@ class QuestProgressItem extends Component<
     }
 
     /* Draw heroes */
-    if (this.state.heroImg && !this.questFinished()) {
+    const heroImg = this.state.images.get("hero");
+    if (heroImg && !this.questFinished()) {
       for (let i = 0; i < this.props.heroes.length; i++) {
         this.canvasCtx.drawImage(
-          this.state.heroImg,
+          heroImg,
           50 - i * 10,
           14 + i * 1,
           toGameplayScale(48),
@@ -440,8 +455,8 @@ class QuestProgressItem extends Component<
   drawChest(diff: number, passed: boolean) {
     if (
       !this.canvasCtx ||
-      !this.state.chestOpenImg ||
-      !this.state.chestClosedImg
+      !this.state.images.has("chest_open") ||
+      !this.state.images.has("chest_closed")
     ) {
       return;
     }
@@ -449,7 +464,7 @@ class QuestProgressItem extends Component<
     const offset = 80 + diff / 80;
     if (!passed) {
       this.canvasCtx.drawImage(
-        this.state.chestClosedImg,
+        this.state.images.get("chest_closed")!,
         offset,
         16,
         toGameplayScale(36),
@@ -457,7 +472,7 @@ class QuestProgressItem extends Component<
       );
     } else {
       this.canvasCtx.drawImage(
-        this.state.chestOpenImg,
+        this.state.images.get("chest_open")!,
         offset,
         16,
         toGameplayScale(36),
@@ -469,8 +484,8 @@ class QuestProgressItem extends Component<
   drawEnemy(enemies: CheckpointEnemy[], diff: number, passed: boolean) {
     if (
       !this.canvasCtx ||
-      !this.state.skeletonImg ||
-      !this.state.skeletonDeadImg
+      !this.state.images.has("skeleton") ||
+      !this.state.images.has("skeleton_dead")
     ) {
       return;
     }
@@ -479,7 +494,7 @@ class QuestProgressItem extends Component<
     for (let i = 0; i < enemies.length; i++) {
       if (!passed) {
         this.canvasCtx.drawImage(
-          this.state.skeletonImg,
+          this.state.images.get("skeleton")!,
           offset + i * 10,
           16 + i * 2,
           toGameplayScale(36),
@@ -487,7 +502,7 @@ class QuestProgressItem extends Component<
         );
       } else {
         this.canvasCtx.drawImage(
-          this.state.skeletonDeadImg,
+          this.state.images.get("skeleton_dead")!,
           offset + i * 10,
           16 + i * 2,
           toGameplayScale(36),
@@ -569,44 +584,6 @@ class QuestProgressItem extends Component<
         <div className="quest-progress-item__actors">
           <ActorItemList actors={actors} />
         </div>
-
-        <img
-          src={progressBG}
-          onLoad={(e) => this.setState({ backImg: e.currentTarget })}
-          style={{ display: "none" }}
-          alt=""
-        />
-        <img
-          src={heroImgSrc}
-          onLoad={(e) => this.setState({ heroImg: e.currentTarget })}
-          style={{ display: "none" }}
-          alt=""
-        />
-        <img
-          src={chestClosedImgSrc}
-          onLoad={(e) => this.setState({ chestClosedImg: e.currentTarget })}
-          style={{ display: "none" }}
-          alt=""
-        />
-        <img
-          src={chestOpenImgSrc}
-          onLoad={(e) => this.setState({ chestOpenImg: e.currentTarget })}
-          style={{ display: "none" }}
-          alt=""
-        />
-
-        <img
-          src={skeletonImgSrc}
-          onLoad={(e) => this.setState({ skeletonImg: e.currentTarget })}
-          style={{ display: "none" }}
-          alt=""
-        />
-        <img
-          src={skeletonDeadImgSrc}
-          onLoad={(e) => this.setState({ skeletonDeadImg: e.currentTarget })}
-          style={{ display: "none" }}
-          alt=""
-        />
       </div>
     );
   }

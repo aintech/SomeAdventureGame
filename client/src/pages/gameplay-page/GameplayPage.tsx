@@ -4,22 +4,24 @@ import { bindActionCreators, compose, Dispatch } from "redux";
 import { fetchInitials } from "../../actions/ApiActions";
 import BuildingContainer from "../../components/gameplay/building-container/BuildingContainer";
 import GameWorld from "../../components/gameplay/game-world/GameWorld";
-import HeroStats from "../../components/gameplay/hero-stats/HeroStats";
+import HeroStatsDisplay from "../../components/gameplay/hero-stats-display/HeroStatsDisplay";
 import QuestProgressList from "../../components/gameplay/quest-progress/quest-progress-list/QuestProgressList";
 import QuestRewardContainer from "../../components/gameplay/quest-reward/QuestReward";
 import Loader from "../../components/loader/Loader";
 import withApiService, { WithApiServiceProps } from "../../hoc/WithApiService";
 import Hero from "../../models/hero/Hero";
 import Quest from "../../models/Quest";
+import GameTimer from "../../components/gameplay/game-timer/GameTimer";
 import "./gameplay-page.scss";
 
 const GameplayPage = () => {
   return (
     <React.Fragment>
       <GameWorld />
+      <GameTimer />
       <BuildingContainer />
       <QuestRewardContainer />
-      <HeroStats />
+      <HeroStatsDisplay />
       <QuestProgressList />
     </React.Fragment>
   );

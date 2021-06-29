@@ -112,7 +112,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         chosenHero: action.payload,
       };
 
-    case ActionType.HERO_STATS_CLOSED:
+    case ActionType.HERO_STATS_DISPLAY_CLOSED:
       return {
         ...state,
         chosenHero: null,
@@ -245,6 +245,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
           ...state.messages.slice(messageIdx + 1),
         ],
       };
+
     case ActionType.HERO_HIRED:
       const hireResult = action.payload as HireHeroResponse;
       const hero: Hero = convertHero(hireResult.hired);
@@ -259,6 +260,24 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
           ...state.tavernPatrons.slice(0, patronIdx),
           ...state.tavernPatrons.slice(patronIdx + 1),
         ],
+      };
+
+    case ActionType.HEROES_OCCUPATION_UPDATED:
+      const occupHeroes = action.payload as HeroResponse[];
+
+      let replacedHeroes = [...state.heroes];
+      for (const hr of occupHeroes) {
+        const hero = convertHero(hr);
+        const heroIdx = replacedHeroes.findIndex((h) => h.id === hero.id);
+        replacedHeroes = [
+          ...replacedHeroes.slice(0, heroIdx),
+          hero,
+          ...replacedHeroes.slice(heroIdx + 1),
+        ];
+      }
+      return {
+        ...state,
+        heroes: replacedHeroes,
       };
 
     default:

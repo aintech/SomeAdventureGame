@@ -1,12 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators, compose, Dispatch } from "redux";
+import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsChoosed } from "../../../actions/Actions";
-import { onHeroOccupation } from "../../../actions/ApiActions";
-import withApiService, {
-  WithApiServiceProps,
-} from "../../../hoc/WithApiService";
-import Hero, { calcHealthFraction } from "../../../models/hero/Hero";
+import Hero from "../../../models/hero/Hero";
 import { HeroOccupationType } from "../../../models/hero/HeroOccupationType";
 import Loader from "../../loader/Loader";
 import HeroItem from "../guild-display/heroes/HeroItem";
@@ -63,32 +59,10 @@ const HealerDisplay = ({
 type HealerDisplayContainerProps = {
   heroes: Hero[];
   heroClicked: (hero: Hero) => void;
-  onHeroOccupation: (hero: Hero, occupation: HeroOccupationType) => void;
   closeDisplay: () => void;
 };
 
 class HealerDisplayContainer extends Component<HealerDisplayContainerProps> {
-  checkIfHeroesNeedHealer() {
-    const idleDamagedHeroes = this.props.heroes.filter(
-      (h) =>
-        h.occupation === HeroOccupationType.IDLE && calcHealthFraction(h) < 1
-    );
-
-    for (const hero of idleDamagedHeroes) {
-      this.props.onHeroOccupation(hero, HeroOccupationType.HEALER);
-    }
-
-    return idleDamagedHeroes;
-  }
-
-  findVisitors(): Hero[] {
-    this.checkIfHeroesNeedHealer();
-
-    return this.props.heroes.filter(
-      (h) => h.occupation === HeroOccupationType.HEALER
-    );
-  }
-
   render() {
     const { heroes, heroClicked, closeDisplay } = this.props;
 
@@ -96,7 +70,9 @@ class HealerDisplayContainer extends Component<HealerDisplayContainerProps> {
       return <Loader message={`Wating for heroes`} />;
     }
 
-    const visitors = this.findVisitors();
+    const visitors = heroes.filter(
+      (h) => h.occupation!.type === HeroOccupationType.HEALER
+    );
 
     return (
       <HealerDisplay
@@ -116,22 +92,16 @@ const mapStateToProps = ({ heroes }: HealerDisplayContainerState) => {
   return { heroes };
 };
 
-const mapDispatchToProps = (
-  dispatch: Dispatch,
-  customProps: WithApiServiceProps
-) => {
-  const { apiService, auth } = customProps;
-
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(
     {
       heroClicked: heroStatsChoosed,
-      onHeroOccupation: onHeroOccupation(apiService, auth),
     },
     dispatch
   );
 };
 
-export default compose(
-  withApiService(),
-  connect(mapStateToProps, mapDispatchToProps)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(HealerDisplayContainer);

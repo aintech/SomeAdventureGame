@@ -9,6 +9,7 @@ import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
 import HeroItem from "./HeroItem";
 import "./hero-list.scss";
+import { HeroOccupationType } from "../../../../models/hero/HeroOccupationType";
 
 type HeroListProps = {
   heroes: Hero[];
@@ -44,10 +45,11 @@ const HeroList = ({
     <div className="hero-list">
       {heroes.map((hero) => {
         const enabled =
-          heroesAssignedToQuest?.length < 4 &&
-          heroesAssignedToQuest?.findIndex((h) => h.id === hero.id) === -1 &&
+          hero.isAilve() &&
+          hero.occupation!.type === HeroOccupationType.IDLE &&
           !hero.embarkedQuest &&
-          hero.health > 0;
+          heroesAssignedToQuest?.length < 4 &&
+          heroesAssignedToQuest?.findIndex((h) => h.id === hero.id) === -1;
 
         return (
           <div key={hero.id}>

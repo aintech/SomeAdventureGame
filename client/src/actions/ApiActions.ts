@@ -1,24 +1,24 @@
-import { AuthProps } from "../contexts/AuthContext";
-import ApiService from "../services/ApiService";
 import {
-  gameStatsRequested,
-  gameStatsLoaded,
-  questsRequested,
-  questsLoaded,
-  heroesRequested,
-  heroesLoaded,
-  heroesEmbarkedOnQuest,
-  completeQuest,
-  tavernPatronsRequested,
-  tavernPatronsLoaded,
-  heroHired,
   checkpointPassed,
-  heroOccupationUpdated,
+  completeQuest,
+  gameStatsLoaded,
+  gameStatsRequested,
+  heroesEmbarkedOnQuest,
+  heroesLoaded,
+  heroesRequested,
+  heroHired,
+  heroOccupationsUpdated,
+  questsLoaded,
+  questsRequested,
+  tavernPatronsLoaded,
+  tavernPatronsRequested,
 } from "../actions/Actions";
-import Quest from "../models/Quest";
+import { AuthProps } from "../contexts/AuthContext";
 import Hero from "../models/hero/Hero";
-import QuestCheckpoint from "../models/QuestCheckpoint";
 import { HeroOccupationType } from "../models/hero/HeroOccupationType";
+import Quest from "../models/Quest";
+import QuestCheckpoint from "../models/QuestCheckpoint";
+import ApiService from "../services/ApiService";
 
 export const fetchGameStats =
   (apiService: ApiService, auth: AuthProps) => () => (dispatch: any) => {
@@ -93,11 +93,11 @@ export const onHireHero =
     apiService.hireHero(auth, hero).then((data) => dispatch(heroHired(data)));
   };
 
-export const onHeroOccupation =
+export const onHeroOccupations =
   (apiService: ApiService, auth: AuthProps) =>
-  (hero: Hero, occupation: HeroOccupationType) =>
+  (occupations: { heroId: number; type: HeroOccupationType }[]) =>
   (dispatch: any) => {
     apiService
-      .updateHeroOccupation(auth, hero, occupation)
-      .then((data) => dispatch(heroOccupationUpdated(data)));
+      .updateHeroOccupations(auth, occupations)
+      .then((data) => dispatch(heroOccupationsUpdated(data)));
   };

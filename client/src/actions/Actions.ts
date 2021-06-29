@@ -98,9 +98,9 @@ export const heroStatsChoosed = (hero: Hero): PayloadedAction => {
   };
 };
 
-export const heroStatsClosed = (): PayloadedAction => {
+export const heroStatsDisplayClosed = (): PayloadedAction => {
   return {
-    type: ActionType.HERO_STATS_CLOSED,
+    type: ActionType.HERO_STATS_DISPLAY_CLOSED,
   };
 };
 
@@ -171,9 +171,11 @@ export const heroHired = (hiredResult: HireHeroResponse): PayloadedAction => {
   };
 };
 
-export const heroOccupationUpdated = (hero: HeroResponse): PayloadedAction => {
+export const heroOccupationsUpdated = (
+  heroes: HeroResponse[]
+): PayloadedAction => {
   return {
-    type: ActionType.HERO_OCCUPATION_UPDATED,
-    payload: hero,
+    type: ActionType.HEROES_OCCUPATION_UPDATED,
+    payload: heroes,
   };
 };

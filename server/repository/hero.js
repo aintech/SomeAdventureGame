@@ -1,6 +1,11 @@
 import { HEALTH_PER_VITALITY } from "../../client/src/utils/variables.js";
 import query from "./db.js";
 
+const selectQuery = `
+     select *
+     from public.hero h 
+     left join public.hero_occupation o on o.hero_id = h.id`;
+
 let _maxLevel = 0;
 const _levels = [];
 const _fetchLevels = () => {
@@ -83,7 +88,7 @@ const getHeroes = async (userId) => {
   await _checkLevelsLoaded();
   return query(
     "getHeroes",
-    "select * from public.hero where user_id = $1 and hired = true",
+    `${selectQuery} where user_id = $1 and hired = true`,
     [userId],
     _prepareHeroes
   );
@@ -93,7 +98,7 @@ const getNotHiredHeroes = async (userId) => {
   await _checkLevelsLoaded();
   return query(
     "getNotHiredHeroes",
-    `select * from public.hero where user_id = $1 and hired = false`,
+    `${selectQuery} where user_id = $1 and hired = false`,
     [userId],
     _prepareHeroes
   );
@@ -103,14 +108,20 @@ const hireHero = async (userId, heroId) => {
   await query(
     "hireHero - stats",
     `update public.stats 
-       set gold = gold - (select gold from public.hero where id = $2)
-       where user_id = $1`,
+     set gold = gold - (select gold from public.hero where id = $2)
+     where user_id = $1`,
     [userId, heroId]
   );
 
   await query(
     "hireHero - hired",
     `update public.hero set hired = true where id = $1`,
+    [heroId]
+  );
+
+  await query(
+    "hireHero - occupation",
+    `insert into public.hero_occupation (hero_id) values ($1)`,
     [heroId]
   );
 
@@ -121,7 +132,7 @@ const getHeroesByIds = async (heroIds) => {
   await _checkLevelsLoaded();
   return query(
     "getHeroesByIds",
-    `select * from public.hero where id in (${heroIds.join(",")})`,
+    `${selectQuery} where id in (${heroIds.join(",")})`,
     [],
     _prepareHeroes
   );
@@ -149,7 +160,7 @@ const adjustHealth = (heroId, amount) => {
 const getHeroesOnQuest = (userId, questId) => {
   return query(
     "getHeroesOnQuest",
-    `select * from public.hero where user_id = $1 and embarked_quest = $2`,
+    `${selectQuery} where user_id = $1 and embarked_quest = $2`,
     [userId, questId],
     _prepareHeroes
   );
@@ -168,17 +179,6 @@ const completeHeroesQuest = async (heroIds, heroesTribute, experience) => {
   );
 };
 
-const updateHeroOccupation = async (heroId, occupation) => {
-  await query(
-    "updateHeroOccupation",
-    `update public.hero
-     set occupation = $1
-     where id = $2`,
-    [occupation, heroId]
-  );
-  return getHeroesByIds[heroId];
-};
-
 export {
   getHeroes,
   getNotHiredHeroes,
@@ -188,5 +188,4 @@ export {
   adjustHealth,
   getHeroesOnQuest,
   completeHeroesQuest,
-  updateHeroOccupation,
 };

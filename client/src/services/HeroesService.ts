@@ -34,9 +34,12 @@ export interface HeroResponse extends StatsHolder {
   experience: number;
   progress: number;
   gold: number;
-  embarked_quest: number | null;
-  occupation: string;
   equipment: EquipmentResponse[];
+  embarked_quest: number | null;
+  occupation_id: number | null;
+  occupation_type: string;
+  started_at: string;
+  duration: number | null;
 }
 
 const getHeroes = async (auth: AuthProps) => {
@@ -60,20 +63,23 @@ const hireHero = async (auth: AuthProps, hero: Hero) => {
     "PUT"
   );
 };
-const updateHeroOccupation = async (
+
+const updateHeroOccupations = async (
   auth: AuthProps,
-  hero: Hero,
-  occupation: HeroOccupationType
+  occupations: { heroId: number; type: HeroOccupationType }[]
 ) => {
-  return await sendHttp<HeroResponse>(
+  return await sendHttp<HeroResponse[]>(
     `${baseUrl}/occupation`,
     auth,
-    [
-      `hero_id=${hero.id}`,
-      `occupation=${HeroOccupationType[occupation].toLowerCase()}`,
-    ],
-    "PUT"
+    [],
+    "PUT",
+    occupations.map((o) => {
+      return {
+        heroId: o.heroId,
+        type: HeroOccupationType[o.type].toLowerCase(),
+      };
+    })
   );
 };
 
-export { getHeroes, getTavernPatrons, hireHero, updateHeroOccupation };
+export { getHeroes, getTavernPatrons, hireHero, updateHeroOccupations };

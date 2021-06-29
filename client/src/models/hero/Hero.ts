@@ -2,7 +2,7 @@ import { HeroResponse, StatsHolder } from "../../services/HeroesService";
 import { HEALTH_PER_VITALITY } from "../../utils/variables";
 import Equipment, { convert as convertEquipment } from "../Equipment";
 import PersonageStats from "../PersonageStats";
-import { HeroOccupationType, occupationFromString } from "./HeroOccupationType";
+import HeroOccupation, { convertOccupation } from "./HeroOccupation";
 import { HeroType, heroTypeFromString } from "./HeroType";
 
 export default class Hero {
@@ -20,9 +20,13 @@ export default class Hero {
     public progress: number,
     public gold: number,
     public embarkedQuest: number | null,
-    public occupation: HeroOccupationType,
+    public occupation: HeroOccupation | null,
     public equipment: Equipment[]
   ) {}
+
+  public isAilve() {
+    return this.health > 0;
+  }
 }
 
 const calcHealthFraction = (hero: Hero): number => {
@@ -67,7 +71,7 @@ const convert = (response: HeroResponse): Hero => {
     +response.progress,
     +response.gold,
     response.embarked_quest ? +response.embarked_quest : null,
-    occupationFromString(response.occupation),
+    convertOccupation(response),
     response.equipment.map((e) => convertEquipment(e))
   );
 };
