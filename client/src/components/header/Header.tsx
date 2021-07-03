@@ -38,7 +38,7 @@ const Header = ({
   };
 
   const headerBar = (
-    <React.Fragment>
+    <>
       <div className="header__resources">
         <div className="header__resources-fame--img"></div>
         <div className="header__resources-fame">Слава: {fame}</div>
@@ -48,7 +48,7 @@ const Header = ({
       <button className="header__btn-logout" onClick={onLogout}>
         LOGOUT
       </button>
-    </React.Fragment>
+    </>
   );
 
   return (

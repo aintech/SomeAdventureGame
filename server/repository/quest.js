@@ -1,9 +1,6 @@
 import query, { single } from "./db.js";
-import {
-  completeHeroesQuest,
-  embarkHeroesOnQuest,
-  getHeroesByIds,
-} from "./hero.js";
+import { updateHeroActivities } from "./hero-activity.js";
+import { completeHeroesQuest, getHeroesByIds } from "./hero.js";
 import {
   deleteCheckpoints,
   getQuestCheckpoints,
@@ -67,15 +64,6 @@ const addCheckpoints = async (quests, checkIfPassed = false) => {
   return quests;
 };
 
-const getQuestProgress = (userId, questId) => {
-  return query(
-    "getQuestProgress",
-    `select * from public.quest_progress where user_id = $1 and quest_id = $2`,
-    [userId, questId],
-    single
-  );
-};
-
 const embarkOnQuest = async (userId, questId, heroIds) => {
   const fetchedQuests = await getQuestsByIds(userId, [questId], false);
   const quest = fetchedQuests[0];
@@ -83,7 +71,15 @@ const embarkOnQuest = async (userId, questId, heroIds) => {
 
   await createQuestProgress(userId, quest, heroes);
 
-  await embarkHeroesOnQuest(questId, heroIds);
+  await updateHeroActivities(
+    heroIds.map((id) => {
+      return {
+        heroId: id,
+        type: "quest",
+        activity_id: questId,
+      };
+    })
+  );
 
   const embarkedQuests = await getQuestsByIds(userId, [questId]);
   const embarkedHeroes = await getHeroesByIds(heroIds);
@@ -119,10 +115,4 @@ const completeQuest = async (userId, questId, heroIds) => {
   return Promise.resolve({ quest, stats, heroes });
 };
 
-export {
-  getQuests,
-  getQuestsByIds,
-  getQuestProgress,
-  embarkOnQuest,
-  completeQuest,
-};
+export { getQuests, getQuestsByIds, embarkOnQuest, completeQuest };

@@ -1,10 +1,11 @@
 import { HEALTH_PER_VITALITY } from "../../client/src/utils/variables.js";
 import query from "./db.js";
+import { updateHeroActivities } from "./hero-activity.js";
 
 const selectQuery = `
      select *
      from public.hero h 
-     left join public.hero_occupation o on o.hero_id = h.id`;
+     left join public.hero_activity a on a.hero_id = h.id`;
 
 let _maxLevel = 0;
 const _levels = [];
@@ -120,8 +121,8 @@ const hireHero = async (userId, heroId) => {
   );
 
   await query(
-    "hireHero - occupation",
-    `insert into public.hero_occupation (hero_id) values ($1)`,
+    "hireHero - activity",
+    `insert into public.hero_activity (hero_id) values ($1)`,
     [heroId]
   );
 
@@ -138,15 +139,6 @@ const getHeroesByIds = async (heroIds) => {
   );
 };
 
-const embarkHeroesOnQuest = (questId, heroIds) => {
-  return query(
-    "embarkHeroesOnQuest",
-    `update public.hero set embarked_quest = $1 
-     where id in (${heroIds.join(",")})`,
-    [questId]
-  );
-};
-
 const adjustHealth = (heroId, amount) => {
   return query(
     "adjustHealth",
@@ -160,7 +152,7 @@ const adjustHealth = (heroId, amount) => {
 const getHeroesOnQuest = (userId, questId) => {
   return query(
     "getHeroesOnQuest",
-    `${selectQuery} where user_id = $1 and embarked_quest = $2`,
+    `${selectQuery} where user_id = $1 and a.activity_id = $2`,
     [userId, questId],
     _prepareHeroes
   );
@@ -170,12 +162,21 @@ const completeHeroesQuest = async (heroIds, heroesTribute, experience) => {
   const tributePerHero = Math.floor(heroesTribute / heroIds.length);
   const experiencePerHero = Math.floor(experience / heroIds.length);
 
-  return query(
+  await query(
     "completeHeroesQuest",
     `update public.hero
-     set gold = (gold + $1), experience = (experience + $2), embarked_quest = null
+     set gold = (gold + $1), experience = (experience + $2)
      where id in (${heroIds.join(",")})`,
     [tributePerHero, experiencePerHero]
+  );
+
+  await updateHeroActivities(
+    heroIds.map((id) => {
+      return {
+        heroId: id,
+        type: "idle",
+      };
+    })
   );
 };
 
@@ -184,7 +185,6 @@ export {
   getNotHiredHeroes,
   hireHero,
   getHeroesByIds,
-  embarkHeroesOnQuest,
   adjustHealth,
   getHeroesOnQuest,
   completeHeroesQuest,

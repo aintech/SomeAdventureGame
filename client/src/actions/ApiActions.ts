@@ -7,7 +7,7 @@ import {
   heroesLoaded,
   heroesRequested,
   heroHired,
-  heroOccupationsUpdated,
+  heroActivitiesUpdated,
   questsLoaded,
   questsRequested,
   tavernPatronsLoaded,
@@ -15,7 +15,7 @@ import {
 } from "../actions/Actions";
 import { AuthProps } from "../contexts/AuthContext";
 import Hero from "../models/hero/Hero";
-import { HeroOccupationType } from "../models/hero/HeroOccupationType";
+import { HeroActivityType } from "../models/hero/HeroActivityType";
 import Quest from "../models/Quest";
 import QuestCheckpoint from "../models/QuestCheckpoint";
 import ApiService from "../services/ApiService";
@@ -93,11 +93,11 @@ export const onHireHero =
     apiService.hireHero(auth, hero).then((data) => dispatch(heroHired(data)));
   };
 
-export const onHeroOccupations =
+export const onHeroActivities =
   (apiService: ApiService, auth: AuthProps) =>
-  (occupations: { heroId: number; type: HeroOccupationType }[]) =>
+  (activities: { heroId: number; type: HeroActivityType }[]) =>
   (dispatch: any) => {
     apiService
-      .updateHeroOccupations(auth, occupations)
-      .then((data) => dispatch(heroOccupationsUpdated(data)));
+      .updateHeroActivities(auth, activities)
+      .then((data) => dispatch(heroActivitiesUpdated(data)));
   };

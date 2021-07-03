@@ -1,5 +1,5 @@
 import getBattleOutcome from "../battle/battle-processor.js";
-import query from "./db.js";
+import query, { single } from "./db.js";
 import { getMonsterParty } from "./monster.js";
 import { persistQuestCheckpoints } from "./quest-checkpoints.js";
 
@@ -81,6 +81,15 @@ const createQuestProgress = async (userId, quest, heroes) => {
   return progressId;
 };
 
+const getQuestProgress = (userId, questId) => {
+  return query(
+    "getQuestProgress",
+    `select * from public.quest_progress where user_id = $1 and quest_id = $2`,
+    [userId, questId],
+    single
+  );
+};
+
 const completeProgress = (userId, questId) => {
   return query(
     "completeProgress",
@@ -91,4 +100,4 @@ const completeProgress = (userId, questId) => {
   );
 };
 
-export { createQuestProgress, completeProgress };
+export { createQuestProgress, getQuestProgress, completeProgress };

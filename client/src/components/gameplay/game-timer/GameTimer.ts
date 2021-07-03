@@ -1,17 +1,18 @@
 import { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
-import { onHeroOccupations } from "../../../actions/ApiActions";
+import { onHeroActivities } from "../../../actions/ApiActions";
 import withApiService, {
   WithApiServiceProps,
 } from "../../../hoc/WithApiService";
-import Hero, { calcHealthFraction } from "../../../models/hero/Hero";
-import { HeroOccupationType } from "../../../models/hero/HeroOccupationType";
+import Hero from "../../../models/hero/Hero";
+import { HeroActivityType } from "../../../models/hero/HeroActivityType";
+import checkHeroActivity from "./Checker";
 
 type GameTimerProps = {
   heroes: Hero[];
-  onHeroOccupations: (
-    occupations: { heroId: number; type: HeroOccupationType }[]
+  onHeroActivities: (
+    activities: { heroId: number; type: HeroActivityType }[]
   ) => void;
 };
 
@@ -46,21 +47,17 @@ class GameTimer extends Component<GameTimerProps> {
 
   checkHeroes() {
     const { heroes } = this.props;
-    const occupations: { heroId: number; type: HeroOccupationType }[] = [];
+    const activities: { heroId: number; type: HeroActivityType }[] = [];
 
-    heroes
-      .filter(
-        (h) =>
-          h.occupation!.type === HeroOccupationType.IDLE &&
-          !h.embarkedQuest &&
-          calcHealthFraction(h) < 1
-      )
-      .forEach((h) =>
-        occupations.push({ heroId: h.id, type: HeroOccupationType.HEALER })
-      );
+    for (const hero of heroes) {
+      const activity = checkHeroActivity(hero);
+      if (activity) {
+        activities.push({ heroId: hero.id, type: activity });
+      }
+    }
 
-    if (occupations.length > 0) {
-      this.props.onHeroOccupations(occupations);
+    if (activities.length > 0) {
+      this.props.onHeroActivities(activities);
     }
   }
 
@@ -85,7 +82,7 @@ const mapDispatchToProps = (
 
   return bindActionCreators(
     {
-      onHeroOccupations: onHeroOccupations(apiService, auth),
+      onHeroActivities: onHeroActivities(apiService, auth),
     },
     dispatch
   );

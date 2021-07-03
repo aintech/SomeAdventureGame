@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsChoosed } from "../../../actions/Actions";
 import Hero from "../../../models/hero/Hero";
-import { HeroOccupationType } from "../../../models/hero/HeroOccupationType";
+import { HeroActivityType } from "../../../models/hero/HeroActivityType";
 import Loader from "../../loader/Loader";
 import HeroItem from "../guild-display/heroes/HeroItem";
 import "./healer-display.scss";
@@ -71,7 +71,7 @@ class HealerDisplayContainer extends Component<HealerDisplayContainerProps> {
     }
 
     const visitors = heroes.filter(
-      (h) => h.occupation!.type === HeroOccupationType.HEALER
+      (h) => h.activity!.type === HeroActivityType.HEALER
     );
 
     return (

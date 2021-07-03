@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { fetchInitials } from "../../actions/ApiActions";
 import BuildingContainer from "../../components/gameplay/building-container/BuildingContainer";
+import GameTimer from "../../components/gameplay/game-timer/GameTimer";
 import GameWorld from "../../components/gameplay/game-world/GameWorld";
 import HeroStatsDisplay from "../../components/gameplay/hero-stats-display/HeroStatsDisplay";
 import QuestProgressList from "../../components/gameplay/quest-progress/quest-progress-list/QuestProgressList";
@@ -11,19 +12,18 @@ import Loader from "../../components/loader/Loader";
 import withApiService, { WithApiServiceProps } from "../../hoc/WithApiService";
 import Hero from "../../models/hero/Hero";
 import Quest from "../../models/Quest";
-import GameTimer from "../../components/gameplay/game-timer/GameTimer";
 import "./gameplay-page.scss";
 
 const GameplayPage = () => {
   return (
-    <React.Fragment>
+    <>
       <GameWorld />
       <GameTimer />
       <BuildingContainer />
       <QuestRewardContainer />
       <HeroStatsDisplay />
       <QuestProgressList />
-    </React.Fragment>
+    </>
   );
 };
 

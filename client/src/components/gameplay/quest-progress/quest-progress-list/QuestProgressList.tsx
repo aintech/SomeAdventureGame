@@ -20,7 +20,7 @@ const QuestProgressList = ({ quests, heroes }: QuestProgressListProps) => {
     if (quest.progress?.embarkedTime) {
       embarked.push({
         key: quest,
-        value: heroes.filter((h) => h.embarkedQuest === quest.id),
+        value: heroes.filter((h) => h.activity?.activityId === quest.id),
       });
     }
   }

@@ -262,7 +262,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         ],
       };
 
-    case ActionType.HEROES_OCCUPATION_UPDATED:
+    case ActionType.HERO_ACTIVITIES_UPDATED:
       const occupHeroes = action.payload as HeroResponse[];
 
       let replacedHeroes = [...state.heroes];

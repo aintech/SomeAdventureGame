@@ -252,7 +252,6 @@ class QuestProgressItem extends Component<
           const heroActors = this.props.heroes.map((h) => convertToActor(h));
           const enemyActors = checkpoint.enemies.map((e) => convertToActor(e));
           actors = [...heroActors, ...enemyActors];
-
           checkpoint.outcome.forEach((value, key) => {
             if (key <= secOffset && value) {
               for (const action of value) {

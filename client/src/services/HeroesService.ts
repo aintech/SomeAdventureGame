@@ -1,7 +1,7 @@
 import { AuthProps } from "../contexts/AuthContext";
 import GameStats from "../models/GameStats";
 import Hero from "../models/hero/Hero";
-import { HeroOccupationType } from "../models/hero/HeroOccupationType";
+import { HeroActivityType } from "../models/hero/HeroActivityType";
 import sendHttp from "./SendHttp";
 
 const baseUrl = "/api/heroes";
@@ -35,9 +35,8 @@ export interface HeroResponse extends StatsHolder {
   progress: number;
   gold: number;
   equipment: EquipmentResponse[];
-  embarked_quest: number | null;
-  occupation_id: number | null;
-  occupation_type: string;
+  activity_id: number | null;
+  activity_type: string;
   started_at: string;
   duration: number | null;
 }
@@ -64,22 +63,22 @@ const hireHero = async (auth: AuthProps, hero: Hero) => {
   );
 };
 
-const updateHeroOccupations = async (
+const updateHeroActivities = async (
   auth: AuthProps,
-  occupations: { heroId: number; type: HeroOccupationType }[]
+  activities: { heroId: number; type: HeroActivityType }[]
 ) => {
   return await sendHttp<HeroResponse[]>(
-    `${baseUrl}/occupation`,
+    `${baseUrl}/activity`,
     auth,
     [],
     "PUT",
-    occupations.map((o) => {
+    activities.map((o) => {
       return {
         heroId: o.heroId,
-        type: HeroOccupationType[o.type].toLowerCase(),
+        type: HeroActivityType[o.type].toLowerCase(),
       };
     })
   );
 };
 
-export { getHeroes, getTavernPatrons, hireHero, updateHeroOccupations };
+export { getHeroes, getTavernPatrons, hireHero, updateHeroActivities };

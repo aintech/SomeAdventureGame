@@ -87,7 +87,9 @@ class QuestRewardContainer extends Component<QuestRewardContainerProps, {}> {
       return null;
     }
 
-    const questHeroes = heroes.filter((h) => h.embarkedQuest === quest.id);
+    const questHeroes = heroes.filter(
+      (h) => h.activity?.activityId === quest.id
+    );
 
     return (
       <QuestReward

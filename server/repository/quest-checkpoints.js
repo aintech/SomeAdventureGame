@@ -1,6 +1,6 @@
 import query, { single } from "./db.js";
-import { adjustHealth, getHeroesOnQuest } from "./hero.js";
-import { getQuestProgress, getQuestsByIds } from "./quest.js";
+import { adjustHealth } from "./hero.js";
+import { getQuestProgress } from "./quest-progress.js";
 
 const persistQuestCheckpoints = async (progressId, checkpoints) => {
   await query(

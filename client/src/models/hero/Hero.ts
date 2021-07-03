@@ -2,7 +2,7 @@ import { HeroResponse, StatsHolder } from "../../services/HeroesService";
 import { HEALTH_PER_VITALITY } from "../../utils/variables";
 import Equipment, { convert as convertEquipment } from "../Equipment";
 import PersonageStats from "../PersonageStats";
-import HeroOccupation, { convertOccupation } from "./HeroOccupation";
+import HeroActivity, { convertActivity } from "./HeroActivity";
 import { HeroType, heroTypeFromString } from "./HeroType";
 
 export default class Hero {
@@ -19,8 +19,7 @@ export default class Hero {
     /** Relation of hero current experience to experience hero must acquire to reach next level */
     public progress: number,
     public gold: number,
-    public embarkedQuest: number | null,
-    public occupation: HeroOccupation | null,
+    public activity: HeroActivity | null,
     public equipment: Equipment[]
   ) {}
 
@@ -70,8 +69,7 @@ const convert = (response: HeroResponse): Hero => {
     +response.experience,
     +response.progress,
     +response.gold,
-    response.embarked_quest ? +response.embarked_quest : null,
-    convertOccupation(response),
+    convertActivity(response),
     response.equipment.map((e) => convertEquipment(e))
   );
 };

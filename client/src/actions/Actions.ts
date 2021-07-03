@@ -171,11 +171,11 @@ export const heroHired = (hiredResult: HireHeroResponse): PayloadedAction => {
   };
 };
 
-export const heroOccupationsUpdated = (
+export const heroActivitiesUpdated = (
   heroes: HeroResponse[]
 ): PayloadedAction => {
   return {
-    type: ActionType.HEROES_OCCUPATION_UPDATED,
+    type: ActionType.HERO_ACTIVITIES_UPDATED,
     payload: heroes,
   };
 };
