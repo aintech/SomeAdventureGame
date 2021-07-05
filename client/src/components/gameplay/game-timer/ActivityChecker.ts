@@ -16,7 +16,18 @@ const checkHeroActivity = (hero: Hero): HeroActivityType | null => {
 };
 
 const checkActivityEnded = (hero: Hero): boolean => {
-  return false;
+  const { activity } = hero;
+  if (!activity) {
+    return false;
+  }
+  if (!activity.startedAt || !activity.duration) {
+    return false;
+  }
+
+  return (
+    activity.startedAt.getTime() + activity.duration * 1000 <
+    new Date().getTime()
+  );
 };
 
 export default checkHeroActivity;

@@ -5,6 +5,7 @@ import { onHireHero } from "../../../actions/ApiActions";
 import withApiService, {
   WithApiServiceProps,
 } from "../../../hoc/WithApiService";
+import { BuildingType, buildingTypeToName } from "../../../models/Building";
 import Hero from "../../../models/hero/Hero";
 import "./tavern-display.scss";
 import TavernPatron from "./tavern-patron/TavernPatron";
@@ -27,7 +28,9 @@ const TavernDisplay = ({
         onClick={closeDisplay}
       ></button>
       <div className="tavern-display__container">
-        <div className="tavern-display__name">Таверна "Дикий вепрь"</div>
+        <div className="tavern-display__name">
+          {buildingTypeToName(BuildingType.TAVERN)}
+        </div>
         <div className="tavern-display__patrons-holder">
           {patrons.map((p) => (
             <TavernPatron key={p.id} patron={p} hirePatron={hirePatron} />

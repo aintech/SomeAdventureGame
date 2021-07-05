@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { fetchInitials } from "../../actions/ApiActions";
-import BuildingContainer from "../../components/gameplay/building-container/BuildingContainer";
+import GameplayTooltip from "../../components/gameplay-tooltip/GameplayTooltip";
+import BuildingContainer from "../../components/gameplay/building-details/BuildingDetails";
 import GameTimer from "../../components/gameplay/game-timer/GameTimer";
 import GameWorld from "../../components/gameplay/game-world/GameWorld";
 import HeroStatsDisplay from "../../components/gameplay/hero-stats-display/HeroStatsDisplay";
@@ -17,6 +18,7 @@ import "./gameplay-page.scss";
 const GameplayPage = () => {
   return (
     <>
+      <GameplayTooltip tooltip={{ message: "", appear: false }} />
       <GameWorld />
       <GameTimer />
       <BuildingContainer />

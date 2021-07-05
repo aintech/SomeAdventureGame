@@ -72,6 +72,7 @@ const embarkOnQuest = async (userId, questId, heroIds) => {
   await createQuestProgress(userId, quest, heroes);
 
   await updateHeroActivities(
+    userId,
     heroIds.map((id) => {
       return {
         heroId: id,
@@ -100,16 +101,14 @@ const completeQuest = async (userId, questId, heroIds) => {
     Math.floor(quest.tribute * (1 - GUILD_SHARE)) + checkpointsTribute;
   const playerTribute = Math.floor(quest.tribute * GUILD_SHARE);
 
-  await completeHeroesQuest(heroIds, heroesTribute, quest.experience);
-
-  await addStats(userId, playerTribute, quest.fame);
-
-  await completeProgress(userId, questId);
-
-  await deleteCheckpoints(userId, questId);
+  await Promise.all([
+    completeHeroesQuest(userId, heroIds, heroesTribute, quest.experience),
+    completeProgress(userId, questId),
+    deleteCheckpoints(userId, questId),
+    addStats(userId, playerTribute, quest.fame),
+  ]);
 
   const stats = await getStats(userId);
-
   const heroes = await getHeroesByIds(heroIds);
 
   return Promise.resolve({ quest, stats, heroes });

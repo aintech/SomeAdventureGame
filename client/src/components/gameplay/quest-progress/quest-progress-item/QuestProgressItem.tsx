@@ -62,6 +62,7 @@ type QuestProgressItemState = {
   actors: ActorItemType[];
 };
 
+//FIXME: Во время взлома ящика пропадают иконки героев
 class QuestProgressItem extends Component<
   QuestProgressItemProps,
   QuestProgressItemState
@@ -214,7 +215,6 @@ class QuestProgressItem extends Component<
     if (!this.state.activeCheckpoint) {
       this.checkIfCheckpointOccured(this.state.seconds);
     }
-    const seconds = this.state.seconds + 1;
     this.setState((state) => {
       return {
         seconds: state.seconds + 1,
@@ -223,18 +223,6 @@ class QuestProgressItem extends Component<
 
     if (this.state.activeCheckpoint) {
       this.checkCheckpointActions();
-    }
-
-    if (seconds <= 0) {
-      console.log("COUNTER");
-
-      if (this.secondsTimer) {
-        clearInterval(this.secondsTimer);
-      }
-      if (this.updateTimer) {
-        clearInterval(this.updateTimer);
-      }
-      this.draw();
     }
   }
 

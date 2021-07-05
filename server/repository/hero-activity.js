@@ -1,66 +1,52 @@
 import { HEALTH_PER_VITALITY } from "../../client/src/utils/variables.js";
 import query from "./db.js";
-import { getHeroesByIds } from "./hero.js";
+import { adjustHeroGold, adjustHeroHealth, getHeroesByIds } from "./hero.js";
+import { addStatsGold } from "./stats.js";
 
-const updateHeroActivities = async (heroActivities) => {
-  const enrichedActivities = await enrichHeroActivities(heroActivities);
-  let sql = `
-      update public.hero_activity ho
-      set 
-        activity_type = o.type, 
-        activity_id = o.activity_id, 
-        started_at = now(), 
-        duration = o.duration
-      from (values `;
-
-  const values = [];
-  enrichedActivities.forEach((activity) => {
-    const act = activity.activity;
-    values.push(`
-      (
-        ${activity.hero_id},
-        '${act.type}',
-        ${act.activity_id ?? null}::integer,
-        ${act.duration ?? null}::integer
-      )
-    `);
-  });
-  sql += `
-    ${values.join(",")}
-    )  as o(hero_id, type, activity_id, duration)
-    where ho.hero_id = o.hero_id`;
-
-  await query("updateHeroActivity", sql);
-
-  const heroIds = heroActivities.map((o) => o.heroId);
-  return getHeroesByIds(heroIds);
-};
-
-const enrichHeroActivities = async (activities) => {
-  const enrichedActivities = [];
-
-  const heroIds = activities.map((o) => o.heroId);
+const updateHeroActivities = async (userId, heroActivities) => {
+  const heroIds = heroActivities.map((a) => a.heroId);
   const heroes = await getHeroesByIds(heroIds);
-  for (const hero of heroes) {
-    const activity = activities.filter((o) => o.heroId === +hero.id)[0];
-    switch (activity.type) {
+
+  for (const heroActivity of heroActivities) {
+    const hero = heroes.filter((h) => +h.id === +heroActivity.heroId)[0];
+    switch (heroActivity.type) {
       case "idle":
+        if (hero.activity_type === "healer") {
+          //adding max health
+          await adjustHeroHealth(hero.id, +hero.vitality * HEALTH_PER_VITALITY);
+        }
         break;
       case "quest":
+        //all done in complete quest methods
         break;
       case "healer":
-        activity.duration = +hero.vitality * HEALTH_PER_VITALITY - +hero.health;
+        const healthDiff = +hero.vitality * HEALTH_PER_VITALITY - +hero.health;
+        heroActivity.duration = healthDiff * 60;
+        await Promise.all([
+          adjustHeroGold(hero.id, -healthDiff),
+          addStatsGold(userId, healthDiff),
+        ]);
         break;
       default:
         throw new Error(`Unknown activity type - ${type}`);
     }
-    enrichedActivities.push({
-      hero_id: hero.id,
-      activity,
-    });
+    await updateHeroActivity(hero.id, heroActivity);
   }
 
-  return enrichedActivities;
+  return getHeroesByIds(heroIds);
+};
+
+const updateHeroActivity = async (heroId, activity) => {
+  await query(
+    "updateHeroActivity",
+    `update public.hero_activity set 
+      activity_type = '${activity.type}', 
+      activity_id = ${activity.activity_id ?? null}, 
+      duration = ${activity.duration ?? null},
+      started_at = now() 
+     where hero_id = $1`,
+    [heroId]
+  );
 };
 
 export { updateHeroActivities };

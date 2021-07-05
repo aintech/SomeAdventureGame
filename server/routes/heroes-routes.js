@@ -37,7 +37,7 @@ heroesRouter.put("/hire", AuthMiddleware, async (req, res) => {
 
 heroesRouter.put("/activity", AuthMiddleware, async (req, res) => {
   try {
-    const heroes = await updateHeroActivities(req.body);
+    const heroes = await updateHeroActivities(req.query.user_id, req.body);
     res.json(heroes);
   } catch (e) {
     res.status(500).json({ message: e.message });

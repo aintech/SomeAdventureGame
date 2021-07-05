@@ -1,5 +1,5 @@
 import query, { single } from "./db.js";
-import { adjustHealth } from "./hero.js";
+import { adjustHeroHealth } from "./hero.js";
 import { getQuestProgress } from "./quest-progress.js";
 
 const persistQuestCheckpoints = async (progressId, checkpoints) => {
@@ -109,7 +109,7 @@ const checkpointPassed = async (checkpointId) => {
     }
 
     for (const damage of damages) {
-      adjustments.push(adjustHealth(damage[0], damage[1]));
+      adjustments.push(adjustHeroHealth(damage[0], damage[1]));
     }
 
     await Promise.all(adjustments);

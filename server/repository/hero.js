@@ -34,14 +34,17 @@ const _calcHeroLevel = (hero) => {
 };
 
 const _calcLevelProgress = (hero) => {
-  const prevLvlExp = _levels.filter((l) => l.lvl === hero.level)[0].exp;
+  const prevLvlExp = _levels.filter((l) => l.lvl === hero.level)[0];
+  if (!prevLvlExp) {
+    console.log(hero);
+  }
   const nextLvlExp =
     hero.level === _maxLevel
       ? Number.MAX_SAFE_INTEGER
       : _levels.filter((l) => l.lvl === hero.level + 1)[0].exp;
 
-  const lvlsScope = nextLvlExp - prevLvlExp;
-  const heroScope = hero.experience - prevLvlExp;
+  const lvlsScope = nextLvlExp - prevLvlExp.exp;
+  const heroScope = hero.experience - prevLvlExp.exp;
   return heroScope / lvlsScope;
 };
 
@@ -139,13 +142,21 @@ const getHeroesByIds = async (heroIds) => {
   );
 };
 
-const adjustHealth = (heroId, amount) => {
+const adjustHeroHealth = (heroId, amount) => {
   return query(
-    "adjustHealth",
+    "adjustHeroHealth",
     `update public.hero 
-     set health = greatest(0, least(vitality * ${HEALTH_PER_VITALITY}, health + ${amount})) 
+     set health = greatest(0, least(health + $2, vitality * $3)) 
      where id = $1`,
-    [heroId]
+    [heroId, amount, HEALTH_PER_VITALITY]
+  );
+};
+
+const adjustHeroGold = (heroId, amount) => {
+  return query(
+    "adjustGold",
+    `update public.hero set gold = (gold + $2) where id = $1`,
+    [heroId, amount]
   );
 };
 
@@ -158,7 +169,12 @@ const getHeroesOnQuest = (userId, questId) => {
   );
 };
 
-const completeHeroesQuest = async (heroIds, heroesTribute, experience) => {
+const completeHeroesQuest = async (
+  userId,
+  heroIds,
+  heroesTribute,
+  experience
+) => {
   const tributePerHero = Math.floor(heroesTribute / heroIds.length);
   const experiencePerHero = Math.floor(experience / heroIds.length);
 
@@ -171,6 +187,7 @@ const completeHeroesQuest = async (heroIds, heroesTribute, experience) => {
   );
 
   await updateHeroActivities(
+    userId,
     heroIds.map((id) => {
       return {
         heroId: id,
@@ -185,7 +202,8 @@ export {
   getNotHiredHeroes,
   hireHero,
   getHeroesByIds,
-  adjustHealth,
+  adjustHeroHealth,
+  adjustHeroGold,
   getHeroesOnQuest,
   completeHeroesQuest,
 };

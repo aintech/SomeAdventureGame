@@ -1,3 +1,4 @@
+import { MouseEvent } from "react";
 import Hero from "../../../../models/hero/Hero";
 import { display, HeroType } from "../../../../models/hero/HeroType";
 import "./tavern-patron.scss";
@@ -8,6 +9,11 @@ type TavernPatronProps = {
 };
 
 const TavernPatron = ({ patron, hirePatron }: TavernPatronProps) => {
+  const onHirePatron = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    hirePatron(patron);
+  };
+
   return (
     <div className="tavern-patron">
       <div className="tavern-patron__portrait">
@@ -25,7 +31,7 @@ const TavernPatron = ({ patron, hirePatron }: TavernPatronProps) => {
       <div className="tavern-patron__initiative">{patron.stats.initiative}</div>
       <button
         className="tavern-patron__btn--hire"
-        onClick={() => hirePatron(patron)}
+        onClick={(e) => onHirePatron(e)}
       >
         <span className="tavern-patron__btn--hire__price">{patron.gold} g</span>
       </button>

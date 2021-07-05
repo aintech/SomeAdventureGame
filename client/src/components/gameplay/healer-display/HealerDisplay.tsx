@@ -6,6 +6,7 @@ import Hero from "../../../models/hero/Hero";
 import { HeroActivityType } from "../../../models/hero/HeroActivityType";
 import Loader from "../../loader/Loader";
 import HeroItem from "../guild-display/heroes/HeroItem";
+import { BuildingType, buildingTypeToName } from "../../../models/Building";
 import "./healer-display.scss";
 
 type HealerDisplayProps = {
@@ -40,7 +41,9 @@ const HealerDisplay = ({
         onClick={closeDisplay}
       ></button>
       <div className="healer-display__container">
-        <div className="healer-display__name">Домик врачевателя</div>
+        <div className="healer-display__name">
+          {buildingTypeToName(BuildingType.HEALER)}
+        </div>
         <div className="healer-display__visitors-holder">
           {visitors.map((visitor) => (
             <HeroItem

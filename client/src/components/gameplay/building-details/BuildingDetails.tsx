@@ -6,7 +6,7 @@ import Building, { BuildingType } from "../../../models/Building";
 import GuildDisplay from "../guild-display/GuildDisplay";
 import HealerDisplay from "../healer-display/HealerDisplay";
 import TavernDisplay from "../tavern-display/TavernDisplay";
-import "./building-container.scss";
+import "./building-details.scss";
 
 type BuildingDetailsProps = {
   chosenBuilding: Building;
@@ -21,7 +21,7 @@ const BuildingDetails = ({
     return null;
   }
 
-  let display;
+  let display = null;
   switch (chosenBuilding.type) {
     case BuildingType.TAVERN:
       display = <TavernDisplay closeDisplay={hideBuildingDisplay} />;
@@ -32,23 +32,20 @@ const BuildingDetails = ({
     case BuildingType.HEALER:
       display = <HealerDisplay closeDisplay={hideBuildingDisplay} />;
       break;
-    default:
-      display = null;
-      break;
   }
 
   return (
-    <div className="building-container">
+    <div className="building-details">
       <div>{display}</div>
     </div>
   );
 };
 
-type BuildingContainerState = {
+type BuildingDetailsState = {
   chosenBuilding: Building;
 };
 
-const mapStateToProps = ({ chosenBuilding }: BuildingContainerState) => {
+const mapStateToProps = ({ chosenBuilding }: BuildingDetailsState) => {
   return { chosenBuilding };
 };
 

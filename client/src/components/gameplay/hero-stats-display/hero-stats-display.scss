@@ -28,7 +28,8 @@
     [vitality-row] 30px [vitality-row]
     8px
     [initiative-row] 30px [initiative-row]
-    26px 1fr;
+    26px
+    1fr;
 
   & > * {
     color: white;
@@ -187,6 +188,13 @@
       transform: translateY(2px);
       @include strokeText;
     }
+  }
+
+  &__activity {
+    grid-row: 17;
+    grid-column: 2 / 6;
+    // align-self: center;
+    justify-self: center;
   }
 
   &__equipment {

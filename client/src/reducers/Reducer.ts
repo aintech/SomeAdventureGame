@@ -1,5 +1,6 @@
 import { PayloadedAction } from "../actions/Actions";
 import { ActionType } from "../actions/ActionType";
+import { Tooltip } from "../components/gameplay-tooltip/GameplayTooltip";
 import { Message } from "../components/message-popup/MessagePopup";
 import Building from "../models/Building";
 import Hero, { convert as convertHero } from "../models/hero/Hero";
@@ -19,6 +20,7 @@ export type State = {
   heroesAssignedToQuest: Hero[];
   collectingQuestReward: Quest | null;
   messages: Message[];
+  tooltip: Tooltip;
 };
 
 const intialState = {
@@ -33,6 +35,7 @@ const intialState = {
   heroesAssignedToQuest: [],
   collectingQuestReward: null,
   messages: [],
+  tooltip: { message: "", appear: false },
 };
 
 const reducer = (state: State = intialState, action: PayloadedAction) => {
@@ -278,6 +281,17 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       return {
         ...state,
         heroes: replacedHeroes,
+      };
+
+    case ActionType.SHOW_TOOLTIP:
+      const tooltip = action.payload as Tooltip;
+      const message = tooltip.appear ? tooltip.message : state.tooltip.message;
+      return {
+        ...state,
+        tooltip: {
+          message,
+          appear: tooltip.appear,
+        },
       };
 
     default:

@@ -27,4 +27,14 @@ const addStats = (userId, gold, fame) => {
   );
 };
 
-export { createStats, getStats, addStats };
+const addStatsGold = (userId, gold) => {
+  return query(
+    "addStatsGold",
+    `update public.stats
+     set gold = (gold + $2)
+     where user_id = $1`,
+    [userId, gold]
+  );
+};
+
+export { createStats, getStats, addStats, addStatsGold };

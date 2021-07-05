@@ -4,6 +4,7 @@ import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsDisplayClosed } from "../../../actions/Actions";
 import Equipment, { EquipmentType } from "../../../models/Equipment";
 import Hero, { calcHealthFraction } from "../../../models/hero/Hero";
+import { HeroActivityType } from "../../../models/hero/HeroActivityType";
 import { HeroType } from "../../../models/hero/HeroType";
 import PersonageStats from "../../../models/PersonageStats";
 import "./hero-stats-display.scss";
@@ -76,12 +77,28 @@ const HeroStatsDisplay = ({
     accessory ? "--" + accessory.imgAvatar : ""
   }`;
 
+  let activity;
+  switch (hero.activity!.type) {
+    case HeroActivityType.IDLE:
+      activity = "Отдыхает";
+      break;
+    case HeroActivityType.QUEST:
+      activity = "Выполняет задание";
+      break;
+    case HeroActivityType.HEALER:
+      activity = "Лечится у знахаря";
+      break;
+    default:
+      activity = null;
+  }
+
   return (
     <div className="hero-stats" onClick={heroStatsDisplayClosed}>
       <div className="hero-stats__bg"></div>
       <div className="hero-stats__portrait">
         <div className={`hero-stats__portrait--${HeroType[hero.type]}`}></div>
       </div>
+      <div className="hero-stats__activity">{activity}</div>
       <div className="hero-stats__gold">{hero.gold}</div>
       <div className="hero-stats__name">{hero.name}</div>
       <div className="hero-stats__level">{hero.level}</div>

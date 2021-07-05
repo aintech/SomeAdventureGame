@@ -179,3 +179,13 @@ export const heroActivitiesUpdated = (
     payload: heroes,
   };
 };
+
+export const showTooltip = (
+  appear: boolean = false,
+  message: string = ""
+): PayloadedAction => {
+  return {
+    type: ActionType.SHOW_TOOLTIP,
+    payload: { message, appear },
+  };
+};

@@ -7,7 +7,7 @@ import withApiService, {
 } from "../../../hoc/WithApiService";
 import Hero from "../../../models/hero/Hero";
 import { HeroActivityType } from "../../../models/hero/HeroActivityType";
-import checkHeroActivity from "./Checker";
+import checkHeroActivity from "./ActivityChecker";
 
 type GameTimerProps = {
   heroes: Hero[];
@@ -51,7 +51,7 @@ class GameTimer extends Component<GameTimerProps> {
 
     for (const hero of heroes) {
       const activity = checkHeroActivity(hero);
-      if (activity) {
+      if (activity != null) {
         activities.push({ heroId: hero.id, type: activity });
       }
     }

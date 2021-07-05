@@ -29,4 +29,6 @@ export enum ActionType {
 
   HERO_HIRED,
   HERO_ACTIVITIES_UPDATED,
+
+  SHOW_TOOLTIP,
 }
