@@ -45,6 +45,37 @@
     background-size: cover;
   }
 
+  &__dismiss-btn {
+    font-family: inherit;
+    font-size: 2rem;
+    width: fit-content;
+    height: fit-content;
+    color: red;
+    border-color: red;
+    border-radius: 5px;
+    z-index: inherit;
+    cursor: pointer;
+
+    grid-row: 17;
+    grid-column: 2 / 6;
+    justify-self: center;
+    margin-top: 50px;
+
+    &:hover {
+      transform: scale(1.1);
+      background-color: lightcoral;
+      color: black;
+    }
+
+    &--text {
+      margin: 10px;
+    }
+
+    &__hidden {
+      display: none;
+    }
+  }
+
   &__name {
     grid-row: name-row;
     grid-column: 2/6;
@@ -193,8 +224,9 @@
   &__activity {
     grid-row: 17;
     grid-column: 2 / 6;
-    // align-self: center;
     justify-self: center;
+    width: fit-content;
+    height: fit-content;
   }
 
   &__equipment {

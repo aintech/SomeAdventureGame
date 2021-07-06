@@ -1,7 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { MouseEvent, useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
+import { bindActionCreators, compose, Dispatch } from "redux";
 import { heroStatsDisplayClosed } from "../../../actions/Actions";
+import { onDismissHero } from "../../../actions/ApiActions";
+import withApiService, {
+  WithApiServiceProps,
+} from "../../../hoc/WithApiService";
 import Equipment, { EquipmentType } from "../../../models/Equipment";
 import Hero, { calcHealthFraction } from "../../../models/hero/Hero";
 import { HeroActivityType } from "../../../models/hero/HeroActivityType";
@@ -28,11 +32,13 @@ const calcEquipSurpluses = (equipment: Equipment[]): PersonageStats => {
 type HeroStatsDisplayProps = {
   hero: Hero;
   heroStatsDisplayClosed: () => void;
+  onDismissHero: (hero: Hero) => void;
 };
 
 const HeroStatsDisplay = ({
   hero,
   heroStatsDisplayClosed,
+  onDismissHero,
 }: HeroStatsDisplayProps) => {
   const healthRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const expRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
@@ -54,6 +60,12 @@ const HeroStatsDisplay = ({
   if (!hero) {
     return null;
   }
+
+  const dismissHero = (e: MouseEvent) => {
+    e.stopPropagation();
+    heroStatsDisplayClosed();
+    onDismissHero(hero);
+  };
 
   const equipmentSurplus = calcEquipSurpluses(hero.equipment);
 
@@ -98,6 +110,16 @@ const HeroStatsDisplay = ({
       <div className="hero-stats__portrait">
         <div className={`hero-stats__portrait--${HeroType[hero.type]}`}></div>
       </div>
+      <button
+        className={`hero-stats__dismiss-btn ${
+          hero.activity!.type !== HeroActivityType.IDLE
+            ? "hero-stats__dismiss-btn__hidden"
+            : ""
+        }`}
+        onClick={(e) => dismissHero(e)}
+      >
+        <span className="hero-stats__dismiss-btn--text">Отпустить Героя</span>
+      </button>
       <div className="hero-stats__activity">{activity}</div>
       <div className="hero-stats__gold">{hero.gold}</div>
       <div className="hero-stats__name">{hero.name}</div>
@@ -161,8 +183,21 @@ const mapStateToProps = ({ chosenHero }: { chosenHero: Hero }) => {
   return { hero: chosenHero };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({ heroStatsDisplayClosed }, dispatch);
+const mapDispatchToProps = (
+  dispatch: Dispatch,
+  customProps: WithApiServiceProps
+) => {
+  const { apiService, auth } = customProps;
+  return bindActionCreators(
+    {
+      heroStatsDisplayClosed,
+      onDismissHero: onDismissHero(apiService, auth),
+    },
+    dispatch
+  );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(HeroStatsDisplay);
+export default compose(
+  withApiService(),
+  connect(mapStateToProps, mapDispatchToProps)
+)(HeroStatsDisplay);

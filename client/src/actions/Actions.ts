@@ -171,6 +171,15 @@ export const heroHired = (hiredResult: HireHeroResponse): PayloadedAction => {
   };
 };
 
+export const heroDismissed = (dismissResult: {
+  heroId: number;
+}): PayloadedAction => {
+  return {
+    type: ActionType.HERO_DISMISSED,
+    payload: dismissResult.heroId,
+  };
+};
+
 export const heroActivitiesUpdated = (
   heroes: HeroResponse[]
 ): PayloadedAction => {

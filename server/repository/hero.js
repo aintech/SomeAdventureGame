@@ -109,27 +109,45 @@ const getNotHiredHeroes = async (userId) => {
 };
 
 const hireHero = async (userId, heroId) => {
-  await query(
-    "hireHero - stats",
-    `update public.stats 
-     set gold = gold - (select gold from public.hero where id = $2)
-     where user_id = $1`,
-    [userId, heroId]
-  );
-
-  await query(
-    "hireHero - hired",
-    `update public.hero set hired = true where id = $1`,
-    [heroId]
-  );
-
-  await query(
-    "hireHero - activity",
-    `insert into public.hero_activity (hero_id) values ($1)`,
-    [heroId]
-  );
+  await Promise.all([
+    query(
+      "hireHero - stats",
+      `update public.stats 
+       set gold = gold - (select gold from public.hero where id = $2)
+       where user_id = $1`,
+      [userId, heroId]
+    ),
+    query(
+      "hireHero - hired",
+      `update public.hero set hired = true where id = $1`,
+      [heroId]
+    ),
+    query(
+      "hireHero - activity",
+      `insert into public.hero_activity (hero_id) values ($1)`,
+      [heroId]
+    ),
+  ]);
 
   return getHeroesByIds([heroId]);
+};
+
+const dismissHero = async (heroId) => {
+  await query(
+    "dismissHero - equipment",
+    `delete from public.hero_equipment where hero_id = $1`,
+    [heroId]
+  );
+
+  await query(
+    "dismissHero - activity",
+    `delete from public.hero_activity where hero_id = $1`,
+    [heroId]
+  );
+
+  await query("dismissHero - hero", `delete from public.hero where id = $1`, [
+    heroId,
+  ]);
 };
 
 const getHeroesByIds = async (heroIds) => {
@@ -201,6 +219,7 @@ export {
   getHeroes,
   getNotHiredHeroes,
   hireHero,
+  dismissHero,
   getHeroesByIds,
   adjustHeroHealth,
   adjustHeroGold,

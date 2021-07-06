@@ -12,6 +12,7 @@ import {
   questsRequested,
   tavernPatronsLoaded,
   tavernPatronsRequested,
+  heroDismissed,
 } from "../actions/Actions";
 import { AuthProps } from "../contexts/AuthContext";
 import Hero from "../models/hero/Hero";
@@ -91,6 +92,15 @@ export const onHireHero =
   (hero: Hero) =>
   (dispatch: any) => {
     apiService.hireHero(auth, hero).then((data) => dispatch(heroHired(data)));
+  };
+
+export const onDismissHero =
+  (apiService: ApiService, auth: AuthProps) =>
+  (hero: Hero) =>
+  (dispatch: any) => {
+    apiService
+      .dismissHero(auth, hero)
+      .then((data) => dispatch(heroDismissed(data)));
   };
 
 export const onHeroActivities =

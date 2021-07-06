@@ -265,6 +265,16 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         ],
       };
 
+    case ActionType.HERO_DISMISSED:
+      const heroIdx = state.heroes.findIndex((h) => +h.id === +action.payload);
+      return {
+        ...state,
+        heroes: [
+          ...state.heroes.slice(0, heroIdx),
+          ...state.heroes.slice(heroIdx + 1),
+        ],
+      };
+
     case ActionType.HERO_ACTIVITIES_UPDATED:
       const occupHeroes = action.payload as HeroResponse[];
 

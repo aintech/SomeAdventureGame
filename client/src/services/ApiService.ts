@@ -4,6 +4,7 @@ import { HeroActivityType } from "../models/hero/HeroActivityType";
 import Quest from "../models/Quest";
 import QuestCheckpoint from "../models/QuestCheckpoint";
 import {
+  dismissHero,
   getHeroes,
   getTavernPatrons,
   hireHero,
@@ -56,6 +57,10 @@ export default class ApiService {
 
   hireHero(auth: AuthProps, hero: Hero) {
     return hireHero(auth, hero);
+  }
+
+  dismissHero(auth: AuthProps, hero: Hero) {
+    return dismissHero(auth, hero);
   }
 
   updateHeroActivities(

@@ -63,6 +63,15 @@ const hireHero = async (auth: AuthProps, hero: Hero) => {
   );
 };
 
+const dismissHero = async (auth: AuthProps, hero: Hero) => {
+  return await sendHttp<{ heroId: number }>(
+    `${baseUrl}/dismiss`,
+    auth,
+    [`hero_id=${hero.id}`],
+    "PUT"
+  );
+};
+
 const updateHeroActivities = async (
   auth: AuthProps,
   activities: { heroId: number; type: HeroActivityType }[]
@@ -81,4 +90,10 @@ const updateHeroActivities = async (
   );
 };
 
-export { getHeroes, getTavernPatrons, hireHero, updateHeroActivities };
+export {
+  getHeroes,
+  getTavernPatrons,
+  hireHero,
+  dismissHero,
+  updateHeroActivities,
+};
