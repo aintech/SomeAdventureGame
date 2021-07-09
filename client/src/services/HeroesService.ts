@@ -35,10 +35,22 @@ export interface HeroResponse extends StatsHolder {
   progress: number;
   gold: number;
   equipment: EquipmentResponse[];
+  items: HeroItemResponse[];
   activity_id: number | null;
   activity_type: string;
   started_at: string;
   duration: number | null;
+}
+
+export interface HeroItemResponse {
+  id: number;
+  type: string;
+  amount: number;
+}
+
+export interface HireHeroResponse {
+  stats: GameStats;
+  hired: HeroResponse;
 }
 
 const getHeroes = async (auth: AuthProps) => {
@@ -48,11 +60,6 @@ const getHeroes = async (auth: AuthProps) => {
 const getTavernPatrons = async (auth: AuthProps) => {
   return await sendHttp<HeroResponse[]>(`${baseUrl}/tavern`, auth);
 };
-
-export interface HireHeroResponse {
-  stats: GameStats;
-  hired: HeroResponse;
-}
 
 const hireHero = async (auth: AuthProps, hero: Hero) => {
   return await sendHttp<HireHeroResponse>(

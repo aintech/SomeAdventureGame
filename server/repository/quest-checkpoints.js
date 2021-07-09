@@ -1,5 +1,7 @@
+import { HEALTH_PER_VITALITY } from "../../client/src/utils/variables.js";
 import query, { single } from "./db.js";
-import { adjustHeroHealth } from "./hero.js";
+import { adjustHeroHealth, setHeroHealth } from "./hero.js";
+import { adjustItemsById } from "./item.js";
 import { getQuestProgress } from "./quest-progress.js";
 
 const persistQuestCheckpoints = async (progressId, checkpoints) => {
@@ -33,10 +35,16 @@ const persistQuestCheckpoints = async (progressId, checkpoints) => {
   return getQuestCheckpoints([progressId]);
 };
 
-const getQuestCheckpoint = (checkpointId) => {
+const getQuestCheckpoint = async (checkpointId) => {
   return query(
-    "getQuestCheckpoint",
-    `select * from public.quest_checkpoint where id = $1`,
+    "getQuestCheckpoints",
+    `select 
+          checkpoint.*, 
+          progress.quest_id,
+          progress.embarked_time 
+     from public.quest_checkpoint checkpoint
+     left join quest_progress progress on progress.id = checkpoint.quest_progress_id
+     where checkpoint.id = $1`,
     [checkpointId],
     single
   );
@@ -50,6 +58,7 @@ const getQuestCheckpoints = async (progressIds, checkIfPassed = false) => {
     "getQuestCheckpoints",
     `select 
           checkpoint.*, 
+          progress.quest_id,
           progress.embarked_time 
      from public.quest_checkpoint checkpoint
      left join quest_progress progress on progress.id = checkpoint.quest_progress_id
@@ -80,42 +89,84 @@ const checkIfCheckpointPassed = async (checkpoints) => {
       +checkpoint.duration * 1000;
 
     if (endedIn <= new Date().getTime()) {
-      await checkpointPassed(checkpoint.id);
+      await checkpointPassed(checkpoint);
       checkpoint.passed = true;
     }
   }
 };
 
-const checkpointPassed = async (checkpointId) => {
-  const checkpoint = await getQuestCheckpoint(checkpointId);
-
+const checkpointPassed = async (checkpoint) => {
   if (checkpoint.passed) {
     return;
   }
 
   if (checkpoint.type === "battle") {
-    const outcome = JSON.parse(checkpoint.outcome);
-    const damages = new Map();
     const adjustments = [];
-    for (const actions of outcome) {
-      for (const action of actions[1]) {
-        if (action.action === "enemy_attack") {
-          damages.set(
-            action.heroId,
-            (damages.get(action.heroId) ?? 0) - +action.damage
-          );
+
+    const outcome = JSON.parse(checkpoint.outcome);
+    const heroesHP = await getHeroesHP(checkpoint.quest_id);
+    const healthValues = new Map();
+    const totalHPs = new Map();
+    const usedItems = new Map();
+
+    heroesHP.forEach((h) => {
+      healthValues.set(h.id, h.health);
+      totalHPs.set(h.id, h.total);
+    });
+
+    let maxSec = 0;
+    outcome.forEach((out) => {
+      if (out[0] > maxSec) {
+        maxSec = out[0];
+      }
+    });
+
+    for (let sec = 0; sec <= maxSec; sec++) {
+      const actions = outcome.filter((o) => o[0] === sec);
+
+      if (actions.length === 0) {
+        continue;
+      }
+
+      for (const action of actions) {
+        const steps = action[1];
+        for (const step of steps) {
+          if (step.action === "enemy_attack") {
+            healthValues.set(
+              step.heroId,
+              healthValues.get(step.heroId) - +step.damage
+            );
+          }
+          if (step.action === "use_potion") {
+            usedItems.set(step.itemId, usedItems.get(step.itemId) ?? 0 - 1);
+            healthValues.set(step.heroId, totalHPs.get(step.heroId));
+          }
         }
       }
     }
 
-    for (const damage of damages) {
-      adjustments.push(adjustHeroHealth(damage[0], damage[1]));
-    }
+    healthValues.forEach((v, k) => adjustments.push(setHeroHealth(k, v)));
+    usedItems.forEach((v, k) => adjustments.push(adjustItemsById(k, v)));
 
     await Promise.all(adjustments);
+  } else if (checkpoint.type === "treasure") {
+    //do nothing
+  } else {
+    throw new Error(`Unknown checkpoint type! ${checkpoint}`);
   }
 
-  await markAsPassed(checkpointId);
+  await markAsPassed(checkpoint.id);
+};
+
+const getHeroesHP = async (questId) => {
+  return query(
+    "getHeroesHP",
+    `select h.id, h.health, (h.vitality * $2) as total
+     from public.hero h
+     left join public.hero_activity a on a.hero_id = h.id
+     where a.activity_id = $1 and a.activity_type = 'quest'`,
+    [questId, HEALTH_PER_VITALITY]
+  );
 };
 
 const markAsPassed = (checkpointId) => {
@@ -138,6 +189,7 @@ const deleteCheckpoints = (userId, questId) => {
 
 export {
   persistQuestCheckpoints,
+  getQuestCheckpoint,
   getQuestCheckpoints,
   getQuestCheckpointsByQuest,
   checkpointPassed,

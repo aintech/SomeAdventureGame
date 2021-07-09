@@ -45,4 +45,19 @@
       transform: scale(1.05);
     }
   }
+
+  &-TREASURY {
+    position: absolute;
+    top: calc(130px / #{$gameplay_scale});
+    left: calc(353px / #{$gameplay_scale});
+    width: calc(312px / 3);
+    height: calc(264px / 3);
+    background-image: url(../../../../img/village_treasury.png);
+    background-size: cover;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
 }

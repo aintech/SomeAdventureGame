@@ -6,6 +6,7 @@ import Building, { BuildingType } from "../../../models/Building";
 import GuildDisplay from "../guild-display/GuildDisplay";
 import HealerDisplay from "../healer-display/HealerDisplay";
 import TavernDisplay from "../tavern-display/TavernDisplay";
+import TreasuryDisplay from "../treasury-display/TreasuryDisplay";
 import "./building-details.scss";
 
 type BuildingDetailsProps = {
@@ -32,6 +33,13 @@ const BuildingDetails = ({
     case BuildingType.HEALER:
       display = <HealerDisplay closeDisplay={hideBuildingDisplay} />;
       break;
+    case BuildingType.TREASURY:
+      display = <TreasuryDisplay closeDisplay={hideBuildingDisplay} />;
+      break;
+    default:
+      throw new Error(
+        `Unknown building type ${BuildingType[chosenBuilding.type]}`
+      );
   }
 
   return (

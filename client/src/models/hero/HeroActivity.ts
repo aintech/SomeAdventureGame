@@ -10,7 +10,9 @@ export default class HeroActivity {
   ) {}
 }
 
-const convertActivity = (response: HeroResponse): HeroActivity | null => {
+export const convertActivity = (
+  response: HeroResponse
+): HeroActivity | null => {
   if (!response.activity_type) {
     return null;
   }
@@ -22,5 +24,3 @@ const convertActivity = (response: HeroResponse): HeroActivity | null => {
     response.activity_id ? +response.activity_id : null
   );
 };
-
-export { convertActivity };

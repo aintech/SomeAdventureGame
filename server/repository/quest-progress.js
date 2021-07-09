@@ -6,7 +6,7 @@ import { persistQuestCheckpoints } from "./quest-checkpoints.js";
 const generateCheckpoints = async (quest, heroes) => {
   const checkpoints = [];
 
-  const checkpointsCount = Math.floor(quest.duration * 0.5 * 0.1);
+  const checkpointsCount = 1; //Math.floor(quest.duration * 0.5 * 0.1);
 
   let checkpointsDuration = 0;
   for (let i = 0; i < checkpointsCount; i++) {

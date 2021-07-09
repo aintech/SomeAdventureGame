@@ -9,16 +9,14 @@ import GameStats from "../../models/GameStats";
 import "./header.scss";
 
 type HeaderProps = {
-  gold: number;
-  fame: number;
+  stats: GameStats;
   fetchGameStats: () => void;
   isAuthenticated: boolean;
   logout: () => void;
 };
 
 const Header = ({
-  gold,
-  fame,
+  stats,
   fetchGameStats,
   isAuthenticated,
   logout,
@@ -41,9 +39,9 @@ const Header = ({
     <>
       <div className="header__resources">
         <div className="header__resources-fame--img"></div>
-        <div className="header__resources-fame">Слава: {fame}</div>
+        <div className="header__resources-fame">Слава: {stats.fame}</div>
         <div className="header__resources-gold--img"></div>
-        <div className="header__resources-gold">Золото: {gold}</div>
+        <div className="header__resources-gold">Золото: {stats.gold}</div>
       </div>
       <button className="header__btn-logout" onClick={onLogout}>
         LOGOUT
@@ -59,8 +57,12 @@ const Header = ({
   );
 };
 
-const mapStateToProps = ({ gold, fame }: GameStats) => {
-  return { gold, fame };
+type HeaderState = {
+  stats: GameStats;
+};
+
+const mapStateToProps = ({ stats }: HeaderState) => {
+  return { stats };
 };
 
 const mapDispatchToProps = (

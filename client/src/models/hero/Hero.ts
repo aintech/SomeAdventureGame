@@ -3,6 +3,7 @@ import { HEALTH_PER_VITALITY } from "../../utils/variables";
 import Equipment, { convert as convertEquipment } from "../Equipment";
 import PersonageStats from "../PersonageStats";
 import HeroActivity, { convertActivity } from "./HeroActivity";
+import HeroItem, { convertItem } from "./HeroItem";
 import { HeroType, heroTypeFromString } from "./HeroType";
 
 export default class Hero {
@@ -20,7 +21,8 @@ export default class Hero {
     public progress: number,
     public gold: number,
     public activity: HeroActivity | null,
-    public equipment: Equipment[]
+    public equipment: Equipment[],
+    public items: HeroItem[]
   ) {}
 
   public isAilve() {
@@ -70,7 +72,8 @@ const convert = (response: HeroResponse): Hero => {
     +response.progress,
     +response.gold,
     convertActivity(response),
-    response.equipment.map((e) => convertEquipment(e))
+    response.equipment.map((e) => convertEquipment(e)),
+    response.items.map((i) => convertItem(i))
   );
 };
 

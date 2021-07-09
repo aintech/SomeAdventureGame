@@ -2,6 +2,7 @@ export enum BuildingType {
   GUILD,
   TAVERN,
   HEALER,
+  TREASURY,
 }
 
 export default class Building {
@@ -16,6 +17,8 @@ export const buildingTypeToName = (type: BuildingType) => {
       return "Таверна 'Пьяный вепрь'";
     case BuildingType.HEALER:
       return "Палатка целителя";
+    case BuildingType.TREASURY:
+      return "Сокровищница";
     default:
       throw new Error(`Unknown building type ${BuildingType[type]}`);
   }

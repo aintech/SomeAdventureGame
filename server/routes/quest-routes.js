@@ -1,7 +1,10 @@
 import { Router } from "express";
 import AuthMiddleware from "../middleware/auth-middleware.js";
 import { getHeroesOnQuest } from "../repository/hero.js";
-import { checkpointPassed } from "../repository/quest-checkpoints.js";
+import {
+  checkpointPassed,
+  getQuestCheckpoint,
+} from "../repository/quest-checkpoints.js";
 import {
   completeQuest,
   embarkOnQuest,
@@ -37,7 +40,8 @@ questsRouter.put("/checkpoint", AuthMiddleware, async (req, res) => {
   try {
     const { user_id, quest_id, checkpoint_id } = req.query;
 
-    await checkpointPassed(checkpoint_id);
+    const checkpoint = await getQuestCheckpoint(checkpoint_id);
+    await checkpointPassed(checkpoint);
 
     const quests = await getQuestsByIds(user_id, [quest_id]);
     const heroes = await getHeroesOnQuest(user_id, quest_id);

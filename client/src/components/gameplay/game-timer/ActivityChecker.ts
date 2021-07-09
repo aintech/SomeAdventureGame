@@ -1,9 +1,10 @@
 import Hero, { calcHealthFraction } from "../../../models/hero/Hero";
 import { HeroActivityType } from "../../../models/hero/HeroActivityType";
+import { HEALTH_PER_VITALITY } from "../../../utils/variables";
 
 const checkHeroActivity = (hero: Hero): HeroActivityType | null => {
   if (hero.activity!.type === HeroActivityType.IDLE) {
-    if (calcHealthFraction(hero) < 1) {
+    if (needHealer(hero)) {
       return HeroActivityType.HEALER;
     }
   } else {
@@ -13,6 +14,13 @@ const checkHeroActivity = (hero: Hero): HeroActivityType | null => {
   }
 
   return null;
+};
+
+const needHealer = (hero: Hero) => {
+  return (
+    calcHealthFraction(hero) < 1 &&
+    hero.gold >= hero.stats.vitality * HEALTH_PER_VITALITY - hero.health
+  );
 };
 
 const checkActivityEnded = (hero: Hero): boolean => {

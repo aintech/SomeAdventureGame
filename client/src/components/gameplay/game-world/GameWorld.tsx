@@ -15,6 +15,7 @@ const GameWorld = ({ onBuildingClicked }: GameWorldProps) => {
     new Building(1, BuildingType.TAVERN),
     new Building(2, BuildingType.GUILD),
     new Building(3, BuildingType.HEALER),
+    new Building(4, BuildingType.TREASURY),
   ]);
 
   return (

@@ -11,6 +11,7 @@ export enum CheckpointType {
 export enum CheckpointActionType {
   HERO_ATTACK,
   ENEMY_ATTACK,
+  USE_POTION,
 }
 
 export class CheckpointEnemy {
@@ -24,10 +25,11 @@ export class CheckpointEnemy {
 
 export class CheckpointAction {
   constructor(
-    public heroId: number,
-    public enemyId: number,
     public action: CheckpointActionType,
-    public damage: number
+    public heroId: number,
+    public enemyId: number | null,
+    public itemId: number | null,
+    public damage: number | null
   ) {}
 }
 
@@ -64,16 +66,19 @@ const convertActionType = (action: string): CheckpointActionType => {
       return CheckpointActionType.HERO_ATTACK;
     case "enemy_attack":
       return CheckpointActionType.ENEMY_ATTACK;
+    case "use_potion":
+      return CheckpointActionType.USE_POTION;
     default:
       throw new Error(`Unknown action type in converter ${action}`);
   }
 };
 
 type CheckpointActionResponse = {
-  heroId: number;
-  enemyId: number;
   action: string;
-  damage: number;
+  heroId: number;
+  enemyId: number | null;
+  itemId: number | null;
+  damage: number | null;
 };
 
 const convertOutcome = (
@@ -91,9 +96,10 @@ const convertOutcome = (
       value.map(
         (v) =>
           new CheckpointAction(
-            +v.heroId,
-            +v.enemyId,
             convertActionType(v.action),
+            +v.heroId,
+            v.enemyId === null ? null : +v.enemyId,
+            v.itemId === null ? null : +v.itemId,
             v.damage
           )
       )

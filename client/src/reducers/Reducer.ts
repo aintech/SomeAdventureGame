@@ -3,14 +3,14 @@ import { ActionType } from "../actions/ActionType";
 import { Tooltip } from "../components/gameplay-tooltip/GameplayTooltip";
 import { Message } from "../components/message-popup/MessagePopup";
 import Building from "../models/Building";
+import GameStats from "../models/GameStats";
 import Hero, { convert as convertHero } from "../models/hero/Hero";
 import Quest, { convert as convertQuest } from "../models/Quest";
 import { HeroResponse, HireHeroResponse } from "../services/HeroesService";
 import { QuestResponse } from "../services/QuestsService";
 
 export type State = {
-  gold: number;
-  fame: number;
+  stats: GameStats;
   quests: Quest[];
   heroes: Hero[];
   tavernPatrons: Hero[];
@@ -24,8 +24,7 @@ export type State = {
 };
 
 const intialState = {
-  gold: 0,
-  fame: 0,
+  stats: { gold: 0, fame: 0 },
   quests: [],
   heroes: [],
   tavernPatrons: [],
@@ -43,15 +42,13 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
     case ActionType.FETCH_GAME_STATS_REQUEST:
       return {
         ...state,
-        gold: 0,
-        fame: 0,
+        stats: { gold: 0, fame: 0 },
       };
 
     case ActionType.FETCH_GAME_STATS_SUCCESS:
       return {
         ...state,
-        gold: action.payload.gold,
-        fame: action.payload.fame,
+        stats: { ...action.payload },
       };
 
     case ActionType.FETCH_QUESTS_REQUEST:
@@ -220,8 +217,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
 
       return {
         ...state,
-        gold: stats.gold,
-        fame: stats.fame,
+        stats,
         quests: [
           ...state.quests.slice(0, completeQuestIdx),
           ...state.quests.slice(completeQuestIdx + 1),
@@ -256,8 +252,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
 
       return {
         ...state,
-        gold: hireResult.stats.gold,
-        fame: hireResult.stats.fame,
+        stats: hireResult.stats,
         heroes: [...state.heroes, hero],
         tavernPatrons: [
           ...state.tavernPatrons.slice(0, patronIdx),

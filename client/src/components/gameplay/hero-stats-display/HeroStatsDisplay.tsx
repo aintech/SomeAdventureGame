@@ -9,6 +9,7 @@ import withApiService, {
 import Equipment, { EquipmentType } from "../../../models/Equipment";
 import Hero, { calcHealthFraction } from "../../../models/hero/Hero";
 import { HeroActivityType } from "../../../models/hero/HeroActivityType";
+import { getItemName } from "../../../models/hero/HeroItem";
 import { HeroType } from "../../../models/hero/HeroType";
 import PersonageStats from "../../../models/PersonageStats";
 import "./hero-stats-display.scss";
@@ -118,7 +119,10 @@ const HeroStatsDisplay = ({
         }`}
         onClick={(e) => dismissHero(e)}
       >
-        <span className="hero-stats__dismiss-btn--text">Отпустить Героя</span>
+        <span className="hero-stats__dismiss-btn--text">
+          {" "}
+          <span style={{ color: "red" }}>X</span> Расформировать
+        </span>
       </button>
       <div className="hero-stats__activity">{activity}</div>
       <div className="hero-stats__gold">{hero.gold}</div>
@@ -160,6 +164,22 @@ const HeroStatsDisplay = ({
           <div className="hero-stats__equipment--level">
             {accessory ? `lv. ${accessory.level}` : null}
           </div>
+        </div>
+      </div>
+      <div className="hero-stats__items">
+        <div className="hero-stats__items--header">Инвентарь</div>
+        <div className="hero-stats__items--list">
+          <li>
+            {hero.items
+              .filter((i) => i.amount > 0)
+              .map((i) => {
+                return (
+                  <ul key={i.id}>
+                    {getItemName(i.type)} - {i.amount}
+                  </ul>
+                );
+              })}
+          </li>
         </div>
       </div>
 

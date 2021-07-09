@@ -266,31 +266,51 @@ class QuestProgressItem extends Component<
 
       const mergedDamage = new Map<CheckpointActionType, number>();
       for (const step of steps!) {
+        switch (step.action) {
+          case CheckpointActionType.USE_POTION:
+            this.sendMessage("potion", "lightskyblue");
+            break;
+          case CheckpointActionType.HERO_ATTACK:
+          case CheckpointActionType.ENEMY_ATTACK:
+            mergedDamage.set(
+              step.action!,
+              (mergedDamage.get(step.action!) ?? 0) + step.damage!
+            );
+            break;
+          default:
+            throw new Error(
+              `Unknown action type ${CheckpointActionType[step.action]}`
+            );
+        }
         this.actorReactAction(step, this.state.actors);
-        mergedDamage.set(
-          step.action!,
-          (mergedDamage.get(step.action!) ?? 0) + step.damage
-        );
       }
-      mergedDamage.forEach(this.createBattleMessage.bind(this));
+      mergedDamage.forEach(this.createAttackMessage.bind(this));
     }
   }
 
   actorReactAction(action: CheckpointAction, actors: ActorItemType[]) {
-    if (action.action === CheckpointActionType.HERO_ATTACK) {
-      const enemy = actors.find(
-        (a) => !a.isHero && a.actorId === action.enemyId
-      );
-      enemy!.currentHealth -= action.damage;
-    }
-
-    if (action.action === CheckpointActionType.ENEMY_ATTACK) {
-      const hero = actors.find((a) => a.isHero && a.actorId === action.heroId);
-      hero!.currentHealth -= action.damage;
+    let hero: ActorItemType, enemy: ActorItemType;
+    switch (action.action) {
+      case CheckpointActionType.HERO_ATTACK:
+        enemy = actors.find((a) => !a.isHero && a.actorId === action.enemyId)!;
+        enemy.currentHealth -= action.damage!;
+        break;
+      case CheckpointActionType.ENEMY_ATTACK:
+        hero = actors.find((a) => a.isHero && a.actorId === action.heroId)!;
+        hero.currentHealth -= action.damage!;
+        break;
+      case CheckpointActionType.USE_POTION:
+        hero = actors.find((a) => a.isHero && a.actorId === action.heroId)!;
+        hero.currentHealth = hero.totalHealth;
+        break;
+      default:
+        throw new Error(
+          `Unknown action type ${CheckpointActionType[action.action]}`
+        );
     }
   }
 
-  createBattleMessage(value: number, key: CheckpointActionType) {
+  createAttackMessage(value: number, key: CheckpointActionType) {
     const direction =
       key === CheckpointActionType.HERO_ATTACK
         ? Direction.RIGHT

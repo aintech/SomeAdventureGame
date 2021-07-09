@@ -48,7 +48,8 @@ const _calcLevelProgress = (hero) => {
   return heroScope / lvlsScope;
 };
 
-const _addLevelInfo = (heroes) => {
+const _addLevelInfo = async (heroes) => {
+  await _checkLevelsLoaded();
   if (heroes.length === 0) {
     return [];
   }
@@ -62,6 +63,7 @@ const _addLevelInfo = (heroes) => {
 };
 
 const _addEquipment = async (heroes) => {
+  await _checkLevelsLoaded();
   if (heroes.length === 0) {
     return [];
   }
@@ -79,8 +81,23 @@ const _addEquipment = async (heroes) => {
   return heroes;
 };
 
-const _prepareHeroes = (heroes) => {
-  return _addEquipment(_addLevelInfo(heroes));
+const _addItems = async (heroes) => {
+  if (heroes.length === 0) {
+    return [];
+  }
+  const items = await query(
+    "addItems",
+    `select * from public.hero_item 
+     where hero_id in (${heroes.map((h) => h.id).join(",")})`
+  );
+
+  heroes.forEach((h) => (h.items = items.filter((i) => i.hero_id === h.id)));
+
+  return heroes;
+};
+
+const _prepareHeroes = async (heroes) => {
+  return _addItems(await _addEquipment(await _addLevelInfo(heroes)));
 };
 
 /**
@@ -89,7 +106,6 @@ const _prepareHeroes = (heroes) => {
  * характеристик героя.
  */
 const getHeroes = async (userId) => {
-  await _checkLevelsLoaded();
   return query(
     "getHeroes",
     `${selectQuery} where user_id = $1 and hired = true`,
@@ -98,8 +114,16 @@ const getHeroes = async (userId) => {
   );
 };
 
+const getHeroesByIds = async (heroIds) => {
+  return query(
+    "getHeroesByIds",
+    `${selectQuery} where id in (${heroIds.join(",")})`,
+    [],
+    _prepareHeroes
+  );
+};
+
 const getNotHiredHeroes = async (userId) => {
-  await _checkLevelsLoaded();
   return query(
     "getNotHiredHeroes",
     `${selectQuery} where user_id = $1 and hired = false`,
@@ -150,13 +174,13 @@ const dismissHero = async (heroId) => {
   ]);
 };
 
-const getHeroesByIds = async (heroIds) => {
-  await _checkLevelsLoaded();
+const setHeroHealth = (heroId, amount) => {
   return query(
-    "getHeroesByIds",
-    `${selectQuery} where id in (${heroIds.join(",")})`,
-    [],
-    _prepareHeroes
+    "adjustHeroHealth",
+    `update public.hero 
+     set health = $2
+     where id = $1`,
+    [heroId, amount]
   );
 };
 
@@ -217,10 +241,11 @@ const completeHeroesQuest = async (
 
 export {
   getHeroes,
+  getHeroesByIds,
   getNotHiredHeroes,
   hireHero,
   dismissHero,
-  getHeroesByIds,
+  setHeroHealth,
   adjustHeroHealth,
   adjustHeroGold,
   getHeroesOnQuest,

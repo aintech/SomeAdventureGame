@@ -50,7 +50,7 @@
     font-size: 2rem;
     width: fit-content;
     height: fit-content;
-    color: red;
+    color: black;
     border-color: red;
     border-radius: 5px;
     z-index: inherit;
@@ -62,9 +62,8 @@
     margin-top: 50px;
 
     &:hover {
-      transform: scale(1.1);
+      transform: scale(1.05);
       background-color: lightcoral;
-      color: black;
     }
 
     &--text {
@@ -291,6 +290,22 @@
     &-accessory {
       grid-row: 2;
       grid-column: 2;
+    }
+  }
+
+  &__items {
+    grid-column: 6;
+    grid-row: 3;
+    @include strokeText;
+
+    &--header {
+      color: lightskyblue;
+      margin-bottom: 10px;
+    }
+
+    &--list {
+      font-size: 2rem;
+      list-style: none;
     }
   }
 }

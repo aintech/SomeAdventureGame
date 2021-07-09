@@ -1,4 +1,5 @@
 import { anyOf, copy } from "../../client/src/utils/arrays.js";
+import { HEALTH_PER_VITALITY } from "../../client/src/utils/variables.js";
 
 const getBattleOutcome = (origMonsters, origHeroes) => {
   const monsters = copy(origMonsters);
@@ -33,18 +34,64 @@ const checkAction = (hero, monster, heroes, monsters, sec, battleSteps) => {
   const opponents = heroes ?? monsters;
 
   if (sec % actor.initiative === 0) {
-    const aliveOpponents = opponents.filter((o) => +o.health > 0);
-    const opponent = anyOf(aliveOpponents);
-    const damage = Math.max(+actor.power - +opponent.defence, 0);
-    opponent.health -= damage;
+    let usePotion;
 
-    battleSteps.get(sec).push({
-      heroId: hero ? hero.id : opponent.id,
-      enemyId: hero ? opponent.actorId : monster.actorId,
-      action: hero ? "hero_attack" : "enemy_attack",
-      damage,
-    });
+    if (lowHealth(actor)) {
+      const action = potionAction(actor);
+      if (action) {
+        battleSteps.get(sec).push(action);
+        actor.health = actor.vitality * HEALTH_PER_VITALITY;
+        usePotion = true;
+      }
+    }
+
+    if (!usePotion) {
+      battleSteps.get(sec).push(attackAction(actor, opponents, hero, monster));
+    }
   }
+};
+
+const attackAction = (actor, opponents, hero, monster) => {
+  const aliveOpponents = opponents.filter((o) => +o.health > 0);
+  const opponent = anyOf(aliveOpponents);
+  const damage = Math.max(+actor.power - +opponent.defence, 0);
+  opponent.health -= damage;
+
+  const result = {
+    heroId: hero ? hero.id : opponent.id,
+    enemyId: hero ? opponent.actorId : monster.actorId,
+    action: hero ? "hero_attack" : "enemy_attack",
+    damage,
+  };
+
+  return result;
+};
+
+const potionAction = (actor) => {
+  if (actor.items?.length > 0) {
+    let potions = actor.items.filter((i) => i.type == "health_potion");
+    if (potions.length === 0) {
+      potions = actor.items.filter((i) => i.type == "health_elixir");
+    }
+    if (potions.length > 0) {
+      const potion = potions[0];
+      return {
+        heroId: actor.hero_id,
+        action: "use_potion",
+        itemId: potion.id,
+      };
+    }
+  }
+
+  return null;
+};
+
+/** Check if health below 30% */
+const lowHealth = (actor) => {
+  if (!actor.hero_id) {
+    return false;
+  }
+  return actor.health < actor.vitality * HEALTH_PER_VITALITY * 0.3;
 };
 
 const removeEmptySteps = (steps) => {
