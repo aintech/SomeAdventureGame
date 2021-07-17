@@ -1,7 +1,10 @@
 import React, { MouseEvent, useEffect, useRef } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
-import { heroStatsDisplayClosed } from "../../../actions/Actions";
+import {
+  heroStatsDisplayClosed,
+  showConfirmDialog,
+} from "../../../actions/Actions";
 import { onDismissHero } from "../../../actions/ApiActions";
 import withApiService, {
   WithApiServiceProps,
@@ -41,6 +44,7 @@ const HeroStatsDisplay = ({
   heroStatsDisplayClosed,
   onDismissHero,
 }: HeroStatsDisplayProps) => {
+  const dispatch = useDispatch();
   const healthRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const expRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
 
@@ -63,7 +67,7 @@ const HeroStatsDisplay = ({
   }
 
   const dismissHero = (e: MouseEvent) => {
-    e.stopPropagation();
+    e.preventDefault();
     heroStatsDisplayClosed();
     onDismissHero(hero);
   };
@@ -96,10 +100,10 @@ const HeroStatsDisplay = ({
       activity = "Отдыхает";
       break;
     case HeroActivityType.QUEST:
-      activity = "Выполняет задание";
+      activity = `Выполняет задание`;
       break;
     case HeroActivityType.HEALER:
-      activity = "Лечится у знахаря";
+      activity = `Лечится у знахаря`;
       break;
     default:
       activity = null;
@@ -117,7 +121,17 @@ const HeroStatsDisplay = ({
             ? "hero-stats__dismiss-btn__hidden"
             : ""
         }`}
-        onClick={(e) => dismissHero(e)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dispatch(
+            showConfirmDialog(
+              `${hero.name} отправится на поиски новых приключений в другие гильдии`,
+              dismissHero,
+              e
+            )
+          );
+        }}
       >
         <span className="hero-stats__dismiss-btn--text">
           {" "}

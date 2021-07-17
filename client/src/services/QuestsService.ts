@@ -36,6 +36,7 @@ export interface QuestResponse {
   progress_id: number;
   progress_duration: number;
   embarked_time: string;
+  completed: boolean;
   checkpoints: CheckpointResponse[];
 }
 
@@ -81,25 +82,34 @@ const checkpointPassed = async (
   );
 };
 
-export interface CompleteQuestResponse {
-  stats: GameStats;
+export interface CompleteCancelQuestResponse {
+  stats: GameStats | null;
   quest: QuestResponse;
   heroes: HeroResponse[];
 }
 
-const completeQuest = async (
-  auth: AuthProps,
-  questId: number,
-  heroIds: number[]
-) => {
-  const body = { questId, heroIds };
-  return await sendHttp<CompleteQuestResponse>(
+const completeQuest = async (auth: AuthProps, questId: number) => {
+  return await sendHttp<CompleteCancelQuestResponse>(
     `${baseUrl}/complete`,
     auth,
-    [],
-    "POST",
-    body
+    [`quest_id=${questId}`],
+    "PUT"
   );
 };
 
-export { getQuests, embarkOnQuest, checkpointPassed, completeQuest };
+const cancelQuest = async (auth: AuthProps, questId: number) => {
+  return await sendHttp<CompleteCancelQuestResponse>(
+    `${baseUrl}/cancel`,
+    auth,
+    [`quest_id=${questId}`],
+    "PUT"
+  );
+};
+
+export {
+  getQuests,
+  embarkOnQuest,
+  checkpointPassed,
+  completeQuest,
+  cancelQuest,
+};

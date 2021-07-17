@@ -11,6 +11,7 @@ import {
   updateHeroActivities,
 } from "./HeroesService";
 import {
+  cancelQuest,
   checkpointPassed,
   completeQuest,
   embarkOnQuest,
@@ -47,12 +48,12 @@ export default class ApiService {
     return checkpointPassed(auth, quest.id, checkpoint.id);
   }
 
-  completeQuest(auth: AuthProps, quest: Quest, heroes: Hero[]) {
-    return completeQuest(
-      auth,
-      quest.id,
-      heroes.map((h) => h.id)
-    );
+  completeQuest(auth: AuthProps, quest: Quest) {
+    return completeQuest(auth, quest.id);
+  }
+
+  cancelQuest(auth: AuthProps, quest: Quest) {
+    return cancelQuest(auth, quest.id);
   }
 
   hireHero(auth: AuthProps, hero: Hero) {

@@ -211,7 +211,7 @@ const getHeroesOnQuest = (userId, questId) => {
   );
 };
 
-const completeHeroesQuest = async (
+const rewardHeroesForQuest = async (
   userId,
   heroIds,
   heroesTribute,
@@ -227,16 +227,6 @@ const completeHeroesQuest = async (
      where id in (${heroIds.join(",")})`,
     [tributePerHero, experiencePerHero]
   );
-
-  await updateHeroActivities(
-    userId,
-    heroIds.map((id) => {
-      return {
-        heroId: id,
-        type: "idle",
-      };
-    })
-  );
 };
 
 export {
@@ -249,5 +239,5 @@ export {
   adjustHeroHealth,
   adjustHeroGold,
   getHeroesOnQuest,
-  completeHeroesQuest,
+  rewardHeroesForQuest,
 };

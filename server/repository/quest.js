@@ -1,12 +1,20 @@
-import query, { single } from "./db.js";
+import query from "./db.js";
 import { updateHeroActivities } from "./hero-activity.js";
-import { completeHeroesQuest, getHeroesByIds } from "./hero.js";
+import {
+  getHeroesByIds,
+  getHeroesOnQuest,
+  rewardHeroesForQuest,
+} from "./hero.js";
 import {
   deleteCheckpoints,
   getQuestCheckpoints,
   getQuestCheckpointsByQuest,
 } from "./quest-checkpoints.js";
-import { completeProgress, createQuestProgress } from "./quest-progress.js";
+import {
+  completeProgress,
+  createQuestProgress,
+  deleteProgress,
+} from "./quest-progress.js";
 import { addStats, getStats } from "./stats.js";
 
 const GUILD_SHARE = 0.5;
@@ -18,7 +26,8 @@ const getQuestsByIds = async (userId, questIds, withCheckpoints = true) => {
           quest.*, 
           progress.id as progress_id,
           progress.embarked_time, 
-          progress.duration as progress_duration 
+          progress.duration as progress_duration,
+          progress.completed 
      from public.quest quest 
      left join public.quest_progress progress 
           on progress.quest_id = quest.id and progress.user_id = $1
@@ -88,26 +97,44 @@ const embarkOnQuest = async (userId, questId, heroIds) => {
   return Promise.resolve({ embarkedQuests, embarkedHeroes });
 };
 
-const completeQuest = async (userId, questId, heroIds) => {
-  const quests = await getQuestsByIds(userId, [questId]);
-  const quest = quests[0];
+const completeQuest = async (userId, questId, canceled = false) => {
+  let quest = (await getQuestsByIds(userId, [questId]))[0];
+  const heroIds = (await getHeroesOnQuest(userId, questId)).map((h) => h.id);
+  const queries = [];
 
-  const checkpoints = await getQuestCheckpointsByQuest(userId, questId);
-  const checkpointsTribute = checkpoints
-    .map((c) => +c.tribute)
-    .reduce((a, b) => a + b, 0);
+  if (canceled) {
+    queries.push(deleteProgress(userId, questId));
+  } else {
+    const checkpointsTribute = quest.checkpoints
+      .map((c) => +c.tribute)
+      .reduce((a, b) => a + b, 0);
+    const heroesTribute =
+      Math.floor(quest.tribute * (1 - GUILD_SHARE)) + checkpointsTribute;
+    const playerTribute = Math.floor(quest.tribute * GUILD_SHARE);
 
-  const heroesTribute =
-    Math.floor(quest.tribute * (1 - GUILD_SHARE)) + checkpointsTribute;
-  const playerTribute = Math.floor(quest.tribute * GUILD_SHARE);
+    queries.push(
+      rewardHeroesForQuest(userId, heroIds, heroesTribute, quest.experience)
+    );
+    queries.push(completeProgress(userId, questId));
+    queries.push(addStats(userId, playerTribute, quest.fame));
+  }
 
-  await Promise.all([
-    completeHeroesQuest(userId, heroIds, heroesTribute, quest.experience),
-    completeProgress(userId, questId),
-    deleteCheckpoints(userId, questId),
-    addStats(userId, playerTribute, quest.fame),
-  ]);
+  queries.push(deleteCheckpoints(userId, questId));
+  queries.push(
+    updateHeroActivities(
+      userId,
+      heroIds.map((id) => {
+        return {
+          heroId: id,
+          type: "idle",
+        };
+      })
+    )
+  );
 
+  await Promise.all(queries);
+
+  quest = (await getQuestsByIds(userId, [questId]))[0];
   const stats = await getStats(userId);
   const heroes = await getHeroesByIds(heroIds);
 

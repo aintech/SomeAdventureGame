@@ -16,7 +16,7 @@ import "./quest-reward.scss";
 type QuestRewardProps = {
   quest: Quest;
   heroes: Hero[];
-  onCompleteQuest: (quest: Quest, heroes: Hero[]) => void;
+  onCompleteQuest: (quest: Quest) => void;
 };
 
 /**
@@ -25,7 +25,7 @@ type QuestRewardProps = {
 
 const QuestReward = ({ quest, heroes, onCompleteQuest }: QuestRewardProps) => {
   const clickHandler = () => {
-    onCompleteQuest(quest, heroes);
+    onCompleteQuest(quest);
   };
 
   const checkpointsTribute = quest
@@ -76,7 +76,7 @@ const QuestReward = ({ quest, heroes, onCompleteQuest }: QuestRewardProps) => {
 type QuestRewardContainerProps = {
   quest: Quest;
   heroes: Hero[];
-  onCompleteQuest: (quest: Quest, heroes: Hero[]) => void;
+  onCompleteQuest: (quest: Quest) => void;
 };
 
 class QuestRewardContainer extends Component<QuestRewardContainerProps, {}> {

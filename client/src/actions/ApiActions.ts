@@ -13,6 +13,7 @@ import {
   tavernPatronsLoaded,
   tavernPatronsRequested,
   heroDismissed,
+  cancelQuest,
 } from "../actions/Actions";
 import { AuthProps } from "../contexts/AuthContext";
 import Hero from "../models/hero/Hero";
@@ -80,11 +81,20 @@ export const onCheckpointPassed =
 
 export const onCompleteQuest =
   (apiService: ApiService, auth: AuthProps) =>
-  (quest: Quest, heroes: Hero[]) =>
+  (quest: Quest) =>
   (dispatch: any) => {
     apiService
-      .completeQuest(auth, quest, heroes)
+      .completeQuest(auth, quest)
       .then((data) => dispatch(completeQuest(data)));
+  };
+
+export const onCancelQuest =
+  (apiService: ApiService, auth: AuthProps) =>
+  (quest: Quest) =>
+  (dispatch: any) => {
+    apiService
+      .cancelQuest(auth, quest)
+      .then((data) => dispatch(cancelQuest(data)));
   };
 
 export const onHireHero =

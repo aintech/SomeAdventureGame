@@ -19,7 +19,7 @@ export const getItemName = (type: HeroItemType) => {
     case HeroItemType.HEALTH_POTION:
       return "Зелье здоровья";
     case HeroItemType.HEALTH_ELIXIR:
-      return "Элексир здоровья";
+      return "Эликсир здоровья";
     case HeroItemType.MANA_POTION:
       return "Зелье маны";
     default:

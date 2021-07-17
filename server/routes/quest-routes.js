@@ -52,14 +52,26 @@ questsRouter.put("/checkpoint", AuthMiddleware, async (req, res) => {
   }
 });
 
-questsRouter.post("/complete", AuthMiddleware, async (req, res) => {
+questsRouter.put("/complete", AuthMiddleware, async (req, res) => {
   try {
     const completed = await completeQuest(
       req.query.user_id,
-      req.body.questId,
-      req.body.heroIds
+      req.query.quest_id
     );
     res.json(completed);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+questsRouter.put("/cancel", AuthMiddleware, async (req, res) => {
+  try {
+    const cancelled = await completeQuest(
+      req.query.user_id,
+      req.query.quest_id,
+      true
+    );
+    res.json(cancelled);
   } catch (e) {
     res.status(500).json({ message: e.message });
   }

@@ -1,8 +1,14 @@
-import React, { Component, createRef } from "react";
+import React, { Component, createRef, MouseEvent } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
-import { collectingQuestReward } from "../../../../actions/Actions";
-import { onCheckpointPassed } from "../../../../actions/ApiActions";
+import {
+  collectingQuestReward,
+  showConfirmDialog,
+} from "../../../../actions/Actions";
+import {
+  onCancelQuest,
+  onCheckpointPassed,
+} from "../../../../actions/ApiActions";
 import withApiService, {
   WithApiServiceProps,
 } from "../../../../hoc/WithApiService";
@@ -20,6 +26,7 @@ import QuestCheckpoint, {
   CheckpointEnemy,
   CheckpointType,
 } from "../../../../models/QuestCheckpoint";
+import store from "../../../../Store";
 import {
   convertDuration,
   millisToSecs,
@@ -48,6 +55,7 @@ type QuestProgressItemProps = {
   heroes: Hero[];
   collectingQuestReward: (quest: Quest) => void;
   onCheckpointPassed: (quest: Quest, checkpoint: QuestCheckpoint) => void;
+  onCancelQuest: (quest: Quest) => void;
 };
 
 type QuestProgressItemState = {
@@ -527,6 +535,11 @@ class QuestProgressItem extends Component<
     this.props.collectingQuestReward(this.props.quest);
   }
 
+  cancelQuest(e: MouseEvent) {
+    e.preventDefault();
+    this.props.onCancelQuest(this.props.quest);
+  }
+
   render() {
     const { quest } = this.props;
     const { actors } = this.state;
@@ -561,6 +574,11 @@ class QuestProgressItem extends Component<
       description = convertDuration(remainSeconds);
     }
 
+    //FIXME: убирать диалог если начался чекпоинт пока диалог был активен
+    const dismissBtnClass =
+      "quest-progress-item__btn--dismiss" +
+      (this.state.activeCheckpoint !== null || questFinished ? "__hidden" : "");
+
     return (
       <div className="quest-progress-item">
         <div className="quest-progress-item__title">{quest.title}</div>
@@ -586,7 +604,18 @@ class QuestProgressItem extends Component<
           onClick={this.collectReward.bind(this)}
         ></div>
 
-        <button className="quest-progress-item__btn--dismiss"></button>
+        <button
+          className={dismissBtnClass}
+          onClick={(e) =>
+            store.dispatch(
+              showConfirmDialog(
+                "Герои вернутся в гильдию а квест на доску, все найденные сокровища будут потеряны",
+                this.cancelQuest.bind(this),
+                e
+              )
+            )
+          }
+        ></button>
 
         <div className="quest-progress-item__actors">
           <ActorItemList actors={actors} />
@@ -605,6 +634,7 @@ const mapDispatchToProps = (
     {
       collectingQuestReward,
       onCheckpointPassed: onCheckpointPassed(apiService, auth),
+      onCancelQuest: onCancelQuest(apiService, auth),
     },
     dispatch
   );

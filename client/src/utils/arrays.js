@@ -13,4 +13,9 @@ const remove = (array, value, id = "id") => {
   return [...array.slice(0, idx), ...array.slice(idx + 1)];
 };
 
-export { anyOf, copy, remove };
+const replace = (array, value, id = "id") => {
+  const idx = array.findIndex((v) => v[id] === value[id]);
+  return [...array.slice(0, idx), value, ...array.slice(idx + 1)];
+};
+
+export { anyOf, copy, remove, replace };

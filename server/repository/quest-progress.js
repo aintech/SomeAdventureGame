@@ -90,6 +90,14 @@ const getQuestProgress = (userId, questId) => {
   );
 };
 
+const deleteProgress = (userId, questId) => {
+  return query(
+    "deleteProgress",
+    "delete from public.quest_progress where user_id = $1 and quest_id = $2",
+    [userId, questId]
+  );
+};
+
 const completeProgress = (userId, questId) => {
   return query(
     "completeProgress",
@@ -100,4 +108,9 @@ const completeProgress = (userId, questId) => {
   );
 };
 
-export { createQuestProgress, getQuestProgress, completeProgress };
+export {
+  createQuestProgress,
+  getQuestProgress,
+  deleteProgress,
+  completeProgress,
+};

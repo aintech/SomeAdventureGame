@@ -69,9 +69,13 @@ const attackAction = (actor, opponents, hero, monster) => {
 
 const potionAction = (actor) => {
   if (actor.items?.length > 0) {
-    let potions = actor.items.filter((i) => i.type == "health_potion");
+    let potions = actor.items.filter(
+      (i) => i.type == "health_potion" && i.amount > 0
+    );
     if (potions.length === 0) {
-      potions = actor.items.filter((i) => i.type == "health_elixir");
+      potions = actor.items.filter(
+        (i) => i.type == "health_elixir" && i.amount > 0
+      );
     }
     if (potions.length > 0) {
       const potion = potions[0];

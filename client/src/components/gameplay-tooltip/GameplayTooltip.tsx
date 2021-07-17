@@ -34,4 +34,4 @@ const mapStateToProps = ({ tooltip }: GameplayTooltipState) => {
   return { tooltip };
 };
 
-export default connect(mapStateToProps, null)(GameplayTooltip);
+export default connect(mapStateToProps)(GameplayTooltip);

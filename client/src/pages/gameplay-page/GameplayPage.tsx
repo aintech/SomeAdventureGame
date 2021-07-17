@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { fetchInitials } from "../../actions/ApiActions";
+import ConfirmDialog from "../../components/confirm-dialog/ConfirmDialog";
 import GameplayTooltip from "../../components/gameplay-tooltip/GameplayTooltip";
 import BuildingDisplay from "../../components/gameplay/building-details/BuildingDetails";
 import GameTimer from "../../components/gameplay/game-timer/GameTimer";
@@ -18,13 +19,14 @@ import "./gameplay-page.scss";
 const GameplayPage = () => {
   return (
     <>
-      <GameplayTooltip tooltip={{ message: "", appear: false }} />
+      <GameplayTooltip />
       <GameWorld />
       <GameTimer />
       <BuildingDisplay />
       <QuestRewardContainer />
       <HeroStatsDisplay />
       <QuestProgressList />
+      <ConfirmDialog />
     </>
   );
 };

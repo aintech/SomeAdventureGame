@@ -1,4 +1,7 @@
-import { HEALTH_PER_VITALITY } from "../../client/src/utils/variables.js";
+import {
+  CURE_COST_PER_HP,
+  HEALTH_PER_VITALITY,
+} from "../../client/src/utils/variables.js";
 import query from "./db.js";
 import { adjustHeroGold, adjustHeroHealth, getHeroesByIds } from "./hero.js";
 import { addStatsGold } from "./stats.js";
@@ -20,11 +23,11 @@ const updateHeroActivities = async (userId, heroActivities) => {
         //all done in complete quest methods
         break;
       case "healer":
-        const healthDiff = +hero.vitality * HEALTH_PER_VITALITY - +hero.health;
-        heroActivity.duration = healthDiff * 60;
+        const hpLoss = +hero.vitality * HEALTH_PER_VITALITY - +hero.health;
+        heroActivity.duration = hpLoss * 5;
         await Promise.all([
-          adjustHeroGold(hero.id, -healthDiff),
-          addStatsGold(userId, healthDiff),
+          adjustHeroGold(hero.id, -hpLoss * CURE_COST_PER_HP),
+          addStatsGold(userId, hpLoss * CURE_COST_PER_HP),
         ]);
         break;
       default:

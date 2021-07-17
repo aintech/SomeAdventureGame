@@ -1,5 +1,6 @@
 import { PayloadedAction } from "../actions/Actions";
 import { ActionType } from "../actions/ActionType";
+import { ConfirmDialogType } from "../components/confirm-dialog/ConfirmDialog";
 import { Tooltip } from "../components/gameplay-tooltip/GameplayTooltip";
 import { Message } from "../components/message-popup/MessagePopup";
 import Building from "../models/Building";
@@ -8,6 +9,7 @@ import Hero, { convert as convertHero } from "../models/hero/Hero";
 import Quest, { convert as convertQuest } from "../models/Quest";
 import { HeroResponse, HireHeroResponse } from "../services/HeroesService";
 import { QuestResponse } from "../services/QuestsService";
+import { remove, replace } from "../utils/arrays";
 
 export type State = {
   stats: GameStats;
@@ -21,6 +23,7 @@ export type State = {
   collectingQuestReward: Quest | null;
   messages: Message[];
   tooltip: Tooltip;
+  confirmDialog: ConfirmDialogType | null;
 };
 
 const intialState = {
@@ -35,6 +38,7 @@ const intialState = {
   collectingQuestReward: null,
   messages: [],
   tooltip: { message: "", appear: false },
+  confirmDialog: null,
 };
 
 const reducer = (state: State = intialState, action: PayloadedAction) => {
@@ -198,31 +202,23 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       };
 
     case ActionType.COMPLETE_QUEST:
+    case ActionType.CANCEL_QUEST:
       const { stats, quest, heroes } = action.payload;
 
-      const completeQuestIdx = state.quests.findIndex(
-        (q) => q.id === +quest.id
-      );
-
-      let doneHeroes = [...state.heroes];
+      let changeHeroes = [...state.heroes];
       for (const hr of heroes) {
-        const hero = convertHero(hr);
-        const heroIdx = doneHeroes.findIndex((h) => h.id === hero.id);
-        doneHeroes = [
-          ...doneHeroes.slice(0, heroIdx),
-          hero,
-          ...doneHeroes.slice(heroIdx + 1),
-        ];
+        changeHeroes = replace(changeHeroes, convertHero(hr));
       }
+
+      let changeQuest = quest.completed
+        ? remove(state.quests, convertQuest(quest))
+        : replace(state.quests, convertQuest(quest));
 
       return {
         ...state,
         stats,
-        quests: [
-          ...state.quests.slice(0, completeQuestIdx),
-          ...state.quests.slice(completeQuestIdx + 1),
-        ],
-        heroes: doneHeroes,
+        quests: changeQuest,
+        heroes: changeHeroes,
         collectingQuestReward: null,
       };
 
@@ -297,6 +293,16 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
           message,
           appear: tooltip.appear,
         },
+      };
+
+    case ActionType.SHOW_CONFIRM_DIALOG:
+      return {
+        ...state,
+        confirmDialog: action.payload
+          ? {
+              ...action.payload,
+            }
+          : null,
       };
 
     default:

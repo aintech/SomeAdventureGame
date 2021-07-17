@@ -1,3 +1,4 @@
+import { MouseEvent } from "react";
 import { Action } from "redux";
 import { Message } from "../components/message-popup/MessagePopup";
 import Building from "../models/Building";
@@ -7,7 +8,7 @@ import Quest from "../models/Quest";
 import { HeroResponse, HireHeroResponse } from "../services/HeroesService";
 import {
   CheckpointPassedResponse,
-  CompleteQuestResponse,
+  CompleteCancelQuestResponse,
   EmbarkOnQuestResponse,
   QuestResponse,
 } from "../services/QuestsService";
@@ -142,10 +143,19 @@ export const collectingQuestReward = (quest: Quest): PayloadedAction => {
 };
 
 export const completeQuest = (
-  questResponse: CompleteQuestResponse
+  questResponse: CompleteCancelQuestResponse
 ): PayloadedAction => {
   return {
     type: ActionType.COMPLETE_QUEST,
+    payload: questResponse,
+  };
+};
+
+export const cancelQuest = (
+  questResponse: CompleteCancelQuestResponse
+): PayloadedAction => {
+  return {
+    type: ActionType.CANCEL_QUEST,
     payload: questResponse,
   };
 };
@@ -196,5 +206,16 @@ export const showTooltip = (
   return {
     type: ActionType.SHOW_TOOLTIP,
     payload: { message, appear },
+  };
+};
+
+export const showConfirmDialog = (
+  message: string | null = null,
+  callback: ((e: MouseEvent) => void) | null = null,
+  event: MouseEvent | null = null
+): PayloadedAction => {
+  return {
+    type: ActionType.SHOW_CONFIRM_DIALOG,
+    payload: message === null ? null : { message, callback, event },
   };
 };
