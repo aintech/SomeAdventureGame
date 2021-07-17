@@ -1,6 +1,6 @@
-import { HEALTH_PER_VITALITY } from "../../client/src/utils/variables.js";
+import { HEALTH_PER_VITALITY } from "../../../client/src/utils/variables.js";
 import query, { single } from "./db.js";
-import { adjustHeroHealth, setHeroHealth } from "./hero.js";
+import { setHeroHealth } from "./hero.js";
 import { adjustItemsById } from "./item.js";
 import { getQuestProgress } from "./quest-progress.js";
 

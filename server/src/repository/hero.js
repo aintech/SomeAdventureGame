@@ -1,6 +1,5 @@
-import { HEALTH_PER_VITALITY } from "../../client/src/utils/variables.js";
+import { HEALTH_PER_VITALITY } from "../../../client/src/utils/variables.js";
 import query from "./db.js";
-import { updateHeroActivities } from "./hero-activity.js";
 
 const selectQuery = `
      select *

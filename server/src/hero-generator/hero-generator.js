@@ -1,4 +1,4 @@
-import { anyOf } from "../../client/src/utils/arrays.js";
+import { anyOf } from "../../../client/src/utils/arrays.js";
 
 const names = [
   "Потер",

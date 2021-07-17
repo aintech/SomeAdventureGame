@@ -1,5 +1,5 @@
-import { anyOf, copy } from "../../client/src/utils/arrays.js";
-import { HEALTH_PER_VITALITY } from "../../client/src/utils/variables.js";
+import { anyOf, copy } from "../../../client/src/utils/arrays.js";
+import { HEALTH_PER_VITALITY } from "../../../client/src/utils/variables.js";
 
 const getBattleOutcome = (origMonsters, origHeroes) => {
   const monsters = copy(origMonsters);

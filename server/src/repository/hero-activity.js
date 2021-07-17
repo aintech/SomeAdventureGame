@@ -1,7 +1,7 @@
 import {
   CURE_COST_PER_HP,
   HEALTH_PER_VITALITY,
-} from "../../client/src/utils/variables.js";
+} from "../../../client/src/utils/variables.js";
 import query from "./db.js";
 import { adjustHeroGold, adjustHeroHealth, getHeroesByIds } from "./hero.js";
 import { addStatsGold } from "./stats.js";
