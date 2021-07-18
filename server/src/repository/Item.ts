@@ -1,7 +1,7 @@
-import query from "./db.js";
+import query from "./Db";
 
-const adjustItems = (heroId, type, amount) => {
-  return query(
+const adjustItems = (heroId: number, type: string, amount: number) => {
+  return query<void>(
     "adjustItems",
     `merge into public.hero_item hi 
      values ($1 as hero_id, $2 as type, $3 as amount) v
@@ -14,8 +14,8 @@ const adjustItems = (heroId, type, amount) => {
   );
 };
 
-const adjustItemsById = (itemId, amount) => {
-  return query(
+const adjustItemsById = (itemId: number, amount: number) => {
+  return query<void>(
     "adjustItems",
     `update public.hero_item set amount = amount + $2 where id = $1`,
     [itemId, amount]

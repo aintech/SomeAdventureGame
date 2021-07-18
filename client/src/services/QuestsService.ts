@@ -54,13 +54,11 @@ const embarkOnQuest = async (
   questId: number,
   heroIds: number[]
 ) => {
-  const body = { questId, heroIds };
   return await sendHttp<EmbarkOnQuestResponse>(
     `${baseUrl}/embark`,
     auth,
-    [],
-    "POST",
-    body
+    [`quest_id=${questId}`, `hero_ids=${heroIds.join(",")}`],
+    "POST"
   );
 };
 

@@ -1,4 +1,4 @@
-import { anyOf } from "../../../client/src/utils/arrays.js";
+import { anyOf } from "../utils/Arrays";
 
 const names = [
   "Потер",
@@ -17,8 +17,21 @@ const names = [
   "Ровер",
 ];
 
+export type GeneratedHero = {
+  name: string;
+  type: string;
+  power: number;
+  defence: number;
+  vitality: number;
+  initiative: number;
+  health: number;
+  experience: number;
+  gold: number;
+  index: number;
+};
+
 const generateHeroes = () => {
-  const heroes = [];
+  const heroes: GeneratedHero[] = [];
   const poolSize = 6; //Math.floor(Math.random() * 7) + 3;
   for (let i = 0; i < poolSize; i++) {
     heroes.push({

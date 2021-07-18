@@ -8,11 +8,16 @@ const pool = new pg.Pool({
   port: 5432,
 });
 
-export const single = (val) => {
+export const single = <T>(val: T[]) => {
   return val ? (val.length > 0 ? val[0] : null) : null;
 };
 
-const query = (logName, sql, params = [], wrapper) => {
+const query = <T>(
+  logName: string,
+  sql: string,
+  params: any[] = [],
+  wrapper: any | null = null
+): Promise<T> => {
   return new Promise((resolve, reject) => {
     pool.query(sql, params, (error, result) => {
       if (error) {

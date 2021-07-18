@@ -1,0 +1,21 @@
+const anyOf = (array: any[]) => {
+  return array[Math.floor(Math.random() * array.length)];
+};
+
+const copy = (array: any[]) => {
+  return array.map((v) => {
+    return { ...v };
+  });
+};
+
+const remove = (array: any[], value: any, id = "id") => {
+  const idx = array.findIndex((v) => v[id] === value[id]);
+  return [...array.slice(0, idx), ...array.slice(idx + 1)];
+};
+
+const replace = (array: any[], value: any, id = "id") => {
+  const idx = array.findIndex((v) => v[id] === value[id]);
+  return [...array.slice(0, idx), value, ...array.slice(idx + 1)];
+};
+
+export { anyOf, copy, remove, replace };

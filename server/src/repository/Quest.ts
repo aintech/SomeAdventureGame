@@ -1,26 +1,29 @@
-import query from "./db.js";
-import { updateHeroActivities } from "./hero-activity.js";
-import {
-  getHeroesByIds,
-  getHeroesOnQuest,
-  rewardHeroesForQuest,
-} from "./hero.js";
-import {
-  deleteCheckpoints,
-  getQuestCheckpoints,
-  getQuestCheckpointsByQuest,
-} from "./quest-checkpoints.js";
-import {
-  completeProgress,
-  createQuestProgress,
-  deleteProgress,
-} from "./quest-progress.js";
-import { addStats, getStats } from "./stats.js";
+import { GUILD_SHARE } from "../utils/Variables";
+import query from "./Db";
+import { getHeroesByIds, getHeroesOnQuest, rewardHeroesForQuest } from "./Hero";
+import { HeroActivityType, updateHeroActivities } from "./HeroActivity";
+import { deleteCheckpoints, getQuestCheckpoints, QuestCheckpointWithProgress } from "./QuestCheckpoints";
+import { completeProgress, createQuestProgress, deleteProgress } from "./QuestProgress";
+import { addStats, getStats } from "./Stats";
 
-const GUILD_SHARE = 0.5;
+export type Quest = {
+  id: number;
+  level: number;
+  title: string;
+  description: string;
+  duration: number;
+  fame: number;
+  tribute: number;
+  experience: number;
+  progress_id: number | null;
+  embarket_time: Date | null;
+  progress_duration: number | null;
+  completed: boolean | null;
+  checkpoints: QuestCheckpointWithProgress[] | null;
+};
 
-const getQuestsByIds = async (userId, questIds, withCheckpoints = true) => {
-  const quests = await query(
+const getQuestsByIds = async (userId: number, questIds: number[], withCheckpoints = true) => {
+  const quests = await query<Quest[]>(
     "getQuestsByIds",
     `select 
           quest.*, 
@@ -38,8 +41,8 @@ const getQuestsByIds = async (userId, questIds, withCheckpoints = true) => {
   return withCheckpoints ? addCheckpoints(quests) : quests;
 };
 
-const getQuests = async (userId) => {
-  const quests = await query(
+const getQuests = async (userId: number) => {
+  const quests = await query<Quest[]>(
     "getQuests",
     `select 
             quest.*, 
@@ -58,22 +61,18 @@ const getQuests = async (userId) => {
   return addCheckpoints(quests, true);
 };
 
-const addCheckpoints = async (quests, checkIfPassed = false) => {
-  const checkpoints = await getQuestCheckpoints(
-    quests.filter((q) => q.progress_id).map((q) => q.progress_id),
-    checkIfPassed
-  );
+const addCheckpoints = async (quests: Quest[], checkIfPassed = false) => {
+  const progressIds = quests.filter((q) => q.progress_id !== null).map((q) => q.progress_id) as number[];
+  const checkpoints = await getQuestCheckpoints(progressIds, checkIfPassed);
 
   for (const quest of quests) {
-    quest.checkpoints = checkpoints.filter(
-      (c) => c.quest_progress_id === quest.progress_id
-    );
+    quest.checkpoints = checkpoints.filter((c) => c.quest_progress_id === quest.progress_id);
   }
 
   return quests;
 };
 
-const embarkOnQuest = async (userId, questId, heroIds) => {
+const embarkOnQuest = async (userId: number, questId: number, heroIds: number[]) => {
   const fetchedQuests = await getQuestsByIds(userId, [questId], false);
   const quest = fetchedQuests[0];
   const heroes = await getHeroesByIds(heroIds);
@@ -85,8 +84,9 @@ const embarkOnQuest = async (userId, questId, heroIds) => {
     heroIds.map((id) => {
       return {
         heroId: id,
-        type: "quest",
+        type: HeroActivityType.QUEST,
         activity_id: questId,
+        duration: null,
       };
     })
   );
@@ -97,24 +97,19 @@ const embarkOnQuest = async (userId, questId, heroIds) => {
   return Promise.resolve({ embarkedQuests, embarkedHeroes });
 };
 
-const completeQuest = async (userId, questId, canceled = false) => {
+const completeQuest = async (userId: number, questId: number, canceled = false) => {
   let quest = (await getQuestsByIds(userId, [questId]))[0];
   const heroIds = (await getHeroesOnQuest(userId, questId)).map((h) => h.id);
-  const queries = [];
+  const queries: Promise<any>[] = [];
 
   if (canceled) {
     queries.push(deleteProgress(userId, questId));
   } else {
-    const checkpointsTribute = quest.checkpoints
-      .map((c) => +c.tribute)
-      .reduce((a, b) => a + b, 0);
-    const heroesTribute =
-      Math.floor(quest.tribute * (1 - GUILD_SHARE)) + checkpointsTribute;
+    const checkpointsTribute = quest.checkpoints!.map((c) => +c.tribute).reduce((a, b) => a + b, 0);
+    const heroesTribute = Math.floor(quest.tribute * (1 - GUILD_SHARE)) + checkpointsTribute;
     const playerTribute = Math.floor(quest.tribute * GUILD_SHARE);
 
-    queries.push(
-      rewardHeroesForQuest(userId, heroIds, heroesTribute, quest.experience)
-    );
+    queries.push(rewardHeroesForQuest(userId, heroIds, heroesTribute, quest.experience));
     queries.push(completeProgress(userId, questId));
     queries.push(addStats(userId, playerTribute, quest.fame));
   }
@@ -126,7 +121,9 @@ const completeQuest = async (userId, questId, canceled = false) => {
       heroIds.map((id) => {
         return {
           heroId: id,
-          type: "idle",
+          type: HeroActivityType.IDLE,
+          activity_id: null,
+          duration: null,
         };
       })
     )

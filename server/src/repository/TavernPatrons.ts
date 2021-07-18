@@ -1,8 +1,8 @@
-import generateHeroes from "../hero-generator/hero-generator.js";
-import query from "./db.js";
-import { getNotHiredHeroes } from "./hero.js";
+import generateHeroes, { GeneratedHero } from "../hero-generator/HeroGenerator";
+import query from "./Db";
+import { getNotHiredHeroes, HeroWithItems } from "./Hero";
 
-const getTavernPatrons = async (userId) => {
+const getTavernPatrons = async (userId: number) => {
   let patrons = await getNotHiredHeroes(userId);
   if (isItTimeToReplenishPatrons(patrons)) {
     if (patrons.length > 0) {
@@ -14,32 +14,32 @@ const getTavernPatrons = async (userId) => {
   return patrons;
 };
 
-const isItTimeToReplenishPatrons = (heroes) => {
+const isItTimeToReplenishPatrons = (heroes: HeroWithItems[]) => {
   const dayAgo = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
   return heroes.length === 0 || heroes.some((h) => h.appear_at < dayAgo);
 };
 
-const seeingOffPatrons = async (heroIds) => {
+const seeingOffPatrons = async (heroIds: number[]) => {
   const ids = heroIds.join(",");
   return Promise.all([
-    query(
+    query<void>(
       "seeingOffPatrons - equip",
       `delete from public.hero_equipment where hero_id in (${ids})`
     ),
-    query(
+    query<void>(
       "seeingOffPatrons - heroes",
       `delete from public.hero where id in (${ids})`
     ),
   ]);
 };
 
-const letInHeroes = async (userId) => {
+const letInHeroes = async (userId: number) => {
   await persistPatrons(userId, generateHeroes());
   const generated = await getNotHiredHeroes(userId);
   await givePatronsEqipment(generated);
 };
 
-const persistPatrons = async (userId, heroes) => {
+const persistPatrons = async (userId: number, heroes: GeneratedHero[]) => {
   const heroesData = heroes
     .map(
       (hero) =>
@@ -60,7 +60,7 @@ const persistPatrons = async (userId, heroes) => {
   );
 };
 
-const givePatronsEqipment = async (heroes) => {
+const givePatronsEqipment = async (heroes: HeroWithItems[]) => {
   const defaultArmor = heroes
     .map((hero) => `select ${hero.id}, 3`)
     .join(" union ");

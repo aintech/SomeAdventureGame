@@ -1,11 +1,16 @@
 import bcrypt from "bcryptjs";
 import config from "config";
-import { Router } from "express";
+import { Request, Response, Router } from "express";
 import { check, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
-import { createUser, getUser } from "../repository/user.js";
+import { createUser, getUser } from "../repository/User";
 
 const authRouter = Router();
+
+export type LoginUser = {
+  login: string;
+  password: string;
+};
 
 authRouter.post(
   "/register",
@@ -14,7 +19,7 @@ authRouter.post(
       min: 3,
     }),
   ],
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -24,7 +29,7 @@ authRouter.post(
         });
       }
 
-      const { login, password } = req.body;
+      const { login, password } = req.body as LoginUser;
 
       const candidate = await getUser(login);
 
@@ -54,7 +59,7 @@ authRouter.post(
       min: 3,
     }),
   ],
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
 
@@ -65,7 +70,7 @@ authRouter.post(
         });
       }
 
-      const { login, password } = req.body;
+      const { login, password } = req.body as LoginUser;
 
       const user = await getUser(login);
 

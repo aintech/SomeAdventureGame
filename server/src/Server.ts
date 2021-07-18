@@ -1,13 +1,13 @@
 import config from "config";
 import express from "express";
-import authRouter from "./routes/auth-routes.js";
-import heroesRouter from "./routes/heroes-routes.js";
-import questsRouter from "./routes/quest-routes.js";
-import statsRouter from "./routes/stats-routes.js";
+import authRouter from "./routes/AuthRoutes";
+import heroesRouter from "./routes/HeroesRoutes";
+import questsRouter from "./routes/QuestRoutes";
+import statsRouter from "./routes/StatsRoutes";
 
 const server = express();
 
-server.use(express.json({ extended: true }));
+server.use(express.json());
 
 server.use("/api/ping", async (_, res) => {
   res.json({ message: "ok" });
