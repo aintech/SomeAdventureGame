@@ -4,6 +4,7 @@ import { HeroActivityType, mapHeroActivityType } from "./HeroActivity";
 import { Item, withItems } from "./Item";
 import { withEquipment, Equipment } from "./Equipment";
 import { withLevelInfo } from "./Level";
+import { Perk, withPerks } from "./Perk";
 
 export enum HeroType {
   WARRIOR,
@@ -39,13 +40,15 @@ export type HeroWithEquipment = HeroWithLevelProgress & { equipment: Equipment[]
 
 export type HeroWithItems = HeroWithEquipment & { items: Item[] };
 
+export type HeroWithPerks = HeroWithItems & { perks: Perk[] };
+
 const selectQuery = `
      select *
      from public.hero h 
      left join public.hero_activity a on a.hero_id = h.id`;
 
 const prepareHeroes = async (heroes: Hero[]) => {
-  return withItems(await withEquipment(await withLevelInfo(heroes)));
+  return withPerks(await withItems(await withEquipment(await withLevelInfo(heroes))));
 };
 
 /**
@@ -54,7 +57,7 @@ const prepareHeroes = async (heroes: Hero[]) => {
  * характеристик героя.
  */
 export const getHeroes = async (userId: number) => {
-  return query<HeroWithItems[]>(
+  return query<HeroWithPerks[]>(
     "getHeroes",
     `${selectQuery} where user_id = $1 and hired = true`,
     [userId],
@@ -64,7 +67,7 @@ export const getHeroes = async (userId: number) => {
 };
 
 export const getHeroesByIds = async (heroIds: number[]) => {
-  return query<HeroWithItems[]>(
+  return query<HeroWithPerks[]>(
     "getHeroesByIds",
     `${selectQuery} where id in (${heroIds.join(",")})`,
     [],
@@ -74,7 +77,7 @@ export const getHeroesByIds = async (heroIds: number[]) => {
 };
 
 export const getNotHiredHeroes = async (userId: number) => {
-  return query<HeroWithItems[]>(
+  return query<HeroWithPerks[]>(
     "getNotHiredHeroes",
     `${selectQuery} where user_id = $1 and hired = false`,
     [userId],
@@ -102,6 +105,8 @@ export const hireHero = async (userId: number, heroId: number) => {
 export const dismissHero = async (heroId: number) => {
   await query<void>("dismissHero - equipment", `delete from public.hero_equipment where hero_id = $1`, [heroId]);
   await query<void>("dismissHero - activity", `delete from public.hero_activity where hero_id = $1`, [heroId]);
+  await query<void>("dismissHero - items", `delete from public.hero_item where hero_id = $1`, [heroId]);
+  await query<void>("dismissHero - perks", `delete from public.hero_perk where hero_id = $1`, [heroId]);
   await query<void>("dismissHero - hero", `delete from public.hero where id = $1`, [heroId]);
 };
 
@@ -148,7 +153,7 @@ export const adjustHeroGold = (heroId: number, amount: number) => {
 };
 
 export const getHeroesOnQuest = (userId: number, questId: number) => {
-  return query<HeroWithItems[]>(
+  return query<HeroWithPerks[]>(
     "getHeroesOnQuest",
     `${selectQuery} where user_id = $1 and a.activity_id = $2`,
     [userId, questId],

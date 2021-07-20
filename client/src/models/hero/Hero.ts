@@ -2,8 +2,9 @@ import { HeroResponse, StatsHolder } from "../../services/HeroesService";
 import { HEALTH_PER_VITALITY } from "../../utils/variables";
 import Equipment, { convert as convertEquipment } from "../Equipment";
 import PersonageStats from "../PersonageStats";
-import HeroActivity, { convertActivity } from "./HeroActivity";
-import HeroItem, { convertItem } from "./HeroItem";
+import HeroActivity, { convert as convertActivity } from "./HeroActivity";
+import HeroItem, { convert as convertItem } from "./HeroItem";
+import HeroPerk, { convert as convertPerk } from "./HeroPerk";
 import { HeroType } from "./HeroType";
 
 export default class Hero {
@@ -23,6 +24,7 @@ export default class Hero {
     public activity: HeroActivity | null,
     public equipment: Equipment[],
     public items: HeroItem[],
+    public perks: HeroPerk[],
     public isHero: boolean = true
   ) {}
 
@@ -62,6 +64,7 @@ export const convert = (response: HeroResponse): Hero => {
     response.gold,
     convertActivity(response),
     response.equipment.map((e) => convertEquipment(e)),
-    response.items.map((i) => convertItem(i))
+    response.items.map((i) => convertItem(i)),
+    response.perks.map((p) => convertPerk(p))
   );
 };

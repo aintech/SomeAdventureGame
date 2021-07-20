@@ -23,6 +23,6 @@ export const getItemName = (type: HeroItemType) => {
   }
 };
 
-export const convertItem = (response: HeroItemResponse): HeroItem => {
+export const convert = (response: HeroItemResponse): HeroItem => {
   return new HeroItem(response.id, response.type, response.amount);
 };

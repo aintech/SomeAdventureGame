@@ -306,6 +306,34 @@
     &--list {
       font-size: 2rem;
       list-style: none;
+
+      & ul {
+        margin-bottom: 10px;
+      }
+    }
+  }
+
+  &__perks {
+    grid-column: 6;
+    grid-row: 9;
+    @include strokeText;
+
+    &--header {
+      color: lightskyblue;
+      margin-bottom: 10px;
+    }
+
+    &--name {
+      color: yellowgreen;
+    }
+
+    &--list {
+      font-size: 2rem;
+      list-style: none;
+
+      & ul {
+        margin-bottom: 10px;
+      }
     }
   }
 }

@@ -10,6 +10,6 @@ export default class HeroActivity {
   ) {}
 }
 
-export const convertActivity = (response: HeroResponse): HeroActivity => {
+export const convert = (response: HeroResponse): HeroActivity => {
   return new HeroActivity(response.activityType, new Date(response.startedAt), response.duration, response.activityId);
 };
