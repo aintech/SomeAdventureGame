@@ -14,10 +14,10 @@ export type Monster = {
 
 let monsters: Monster[] = [];
 const fetchMonsters = () => {
-  return query<Monster[]>("fetchMonsters", "select * from public.monster");
+  return query<Monster[]>("fetchMonsters", "select * from public.monster", [], mapMonster);
 };
 
-const getMonsterParty = async (level: number) => {
+export const getMonsterParty = async (level: number) => {
   if (monsters.length === 0) {
     monsters = await fetchMonsters();
   }
@@ -35,4 +35,24 @@ const getMonsterParty = async (level: number) => {
   return suitable;
 };
 
-export { getMonsterParty };
+type MonsterRow = {
+  id: string;
+  level: string;
+  name: string;
+  power: string;
+  health: string;
+  initiative: string;
+  defence: string;
+};
+
+const mapMonster = (row: MonsterRow) => {
+  return {
+    id: +row.id,
+    level: +row.level,
+    name: row.name,
+    power: +row.power,
+    health: +row.health,
+    initiative: +row.initiative,
+    defence: +row.defence,
+  };
+};

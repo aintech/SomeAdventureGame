@@ -1,29 +1,24 @@
 import query, { single } from "./Db";
 
 type Stats = {
-  user_id: number;
+  userId: number;
   gold: number;
   fame: number;
 };
 
-const createStats = (userId: number) => {
-  return query<void>(
-    "createStats",
-    "insert into public.stats (user_id, gold, fame) values ($1, $2, $3)",
-    [userId, 1000, 0]
-  );
+export const createStats = (userId: number) => {
+  return query<void>("createStats", "insert into public.stats (user_id, gold, fame) values ($1, $2, $3)", [
+    userId,
+    1000,
+    0,
+  ]);
 };
 
-const getStats = (userId: number) => {
-  return query<Stats>(
-    "getStats",
-    "select * from public.stats where user_id = $1",
-    [userId],
-    single
-  );
+export const getStats = (userId: number) => {
+  return query<Stats>("getStats", "select * from public.stats where user_id = $1", [userId], mapStats, single);
 };
 
-const addStats = (userId: number, gold: number, fame: number = 0) => {
+export const addStats = (userId: number, gold: number, fame: number = 0) => {
   return query<void>(
     "addStats",
     `update public.stats
@@ -33,4 +28,16 @@ const addStats = (userId: number, gold: number, fame: number = 0) => {
   );
 };
 
-export { createStats, getStats, addStats };
+type StatsRow = {
+  user_id: string;
+  gold: string;
+  fame: string;
+};
+
+const mapStats = (row: StatsRow): Stats => {
+  return {
+    userId: +row.user_id,
+    gold: +row.gold,
+    fame: +row.fame,
+  };
+};

@@ -27,19 +27,19 @@ export default class Quest {
 
 const convert = (response: QuestResponse): Quest => {
   return new Quest(
-    +response.id,
-    +response.level,
+    response.id,
+    response.level,
     response.title,
     response.description,
-    +response.experience,
-    +response.duration,
-    +response.tribute,
-    +response.fame,
-    response.progress_id
+    response.experience,
+    response.duration,
+    response.tribute,
+    response.fame,
+    response.progressId
       ? new Progress(
-          +response.progress_id,
-          +response.progress_duration,
-          Date.parse(response.embarked_time),
+          response.progressId,
+          response.progressDuration,
+          Date.parse(response.embarkedTime),
           (response.checkpoints as any[]).map((c) => convertCheckpoint(c))
         )
       : null

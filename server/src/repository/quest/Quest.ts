@@ -1,10 +1,10 @@
-import { GUILD_SHARE } from "../utils/Variables";
-import query from "./Db";
-import { getHeroesByIds, getHeroesOnQuest, rewardHeroesForQuest } from "./Hero";
-import { HeroActivityType, updateHeroActivities } from "./HeroActivity";
+import { GUILD_SHARE } from "../../utils/Variables";
+import query from "../Db";
+import { getHeroesByIds, getHeroesOnQuest, rewardHeroesForQuest } from "../hero/Hero";
+import { HeroActivityType, updateHeroActivities } from "../hero/HeroActivity";
 import { deleteCheckpoints, getQuestCheckpoints, QuestCheckpointWithProgress } from "./QuestCheckpoints";
 import { completeProgress, createQuestProgress, deleteProgress } from "./QuestProgress";
-import { addStats, getStats } from "./Stats";
+import { addStats, getStats } from "../Stats";
 
 export type Quest = {
   id: number;
@@ -15,15 +15,21 @@ export type Quest = {
   fame: number;
   tribute: number;
   experience: number;
-  progress_id: number | null;
-  embarket_time: Date | null;
-  progress_duration: number | null;
+};
+
+export type QuestWithProgress = Quest & {
+  progressId: number | null;
+  embarkedTime: Date | null;
+  progressDuration: number | null;
   completed: boolean | null;
+};
+
+export type QuestWithCheckpoints = QuestWithProgress & {
   checkpoints: QuestCheckpointWithProgress[] | null;
 };
 
-const getQuestsByIds = async (userId: number, questIds: number[], withCheckpoints = true) => {
-  const quests = await query<Quest[]>(
+export const getQuestsByIds = async (userId: number, questIds: number[], withCheckpoints = true) => {
+  const quests = await query<QuestWithProgress[]>(
     "getQuestsByIds",
     `select 
           quest.*, 
@@ -35,44 +41,50 @@ const getQuestsByIds = async (userId: number, questIds: number[], withCheckpoint
      left join public.quest_progress progress 
           on progress.quest_id = quest.id and progress.user_id = $1
      where quest.id in (${questIds.join(",")});`,
-    [userId]
+    [userId],
+    mapQuestWithProgress
   );
 
   return withCheckpoints ? addCheckpoints(quests) : quests;
 };
 
-const getQuests = async (userId: number) => {
-  const quests = await query<Quest[]>(
+export const getQuests = async (userId: number) => {
+  const quests = await query<QuestWithProgress[]>(
     "getQuests",
     `select 
             quest.*, 
             progress.id as progress_id, 
             progress.embarked_time, 
-            progress.duration as progress_duration
+            progress.duration as progress_duration,
+            progress.completed
      from public.quest quest
      left join public.quest_progress progress 
             on progress.quest_id = quest.id and progress.user_id = $1
      where 
      quest.id not in (select quest_id from public.quest_progress where user_id = $1) 
      or progress.completed = false;`,
-    [userId]
+    [userId],
+    mapQuestWithProgress
   );
 
   return addCheckpoints(quests, true);
 };
 
-const addCheckpoints = async (quests: Quest[], checkIfPassed = false) => {
-  const progressIds = quests.filter((q) => q.progress_id !== null).map((q) => q.progress_id) as number[];
+const addCheckpoints = async (quests: QuestWithProgress[], checkIfPassed = false) => {
+  const progressIds = quests.filter((q) => q.progressId !== null).map((q) => q.progressId) as number[];
   const checkpoints = await getQuestCheckpoints(progressIds, checkIfPassed);
 
-  for (const quest of quests) {
-    quest.checkpoints = checkpoints.filter((c) => c.quest_progress_id === quest.progress_id);
-  }
-
-  return quests;
+  const questWithCheckpoints: QuestWithCheckpoints[] = [];
+  quests.forEach((q) =>
+    questWithCheckpoints.push({
+      ...q,
+      checkpoints: checkpoints.filter((c) => c.progressId === q.progressId),
+    })
+  );
+  return questWithCheckpoints;
 };
 
-const embarkOnQuest = async (userId: number, questId: number, heroIds: number[]) => {
+export const embarkOnQuest = async (userId: number, questId: number, heroIds: number[]) => {
   const fetchedQuests = await getQuestsByIds(userId, [questId], false);
   const quest = fetchedQuests[0];
   const heroes = await getHeroesByIds(heroIds);
@@ -85,7 +97,7 @@ const embarkOnQuest = async (userId: number, questId: number, heroIds: number[])
       return {
         heroId: id,
         type: HeroActivityType.QUEST,
-        activity_id: questId,
+        activityId: questId,
         duration: null,
       };
     })
@@ -97,8 +109,8 @@ const embarkOnQuest = async (userId: number, questId: number, heroIds: number[])
   return Promise.resolve({ embarkedQuests, embarkedHeroes });
 };
 
-const completeQuest = async (userId: number, questId: number, canceled = false) => {
-  let quest = (await getQuestsByIds(userId, [questId]))[0];
+export const completeQuest = async (userId: number, questId: number, canceled = false) => {
+  let quest = ((await getQuestsByIds(userId, [questId])) as QuestWithCheckpoints[])[0];
   const heroIds = (await getHeroesOnQuest(userId, questId)).map((h) => h.id);
   const queries: Promise<any>[] = [];
 
@@ -122,7 +134,7 @@ const completeQuest = async (userId: number, questId: number, canceled = false) 
         return {
           heroId: id,
           type: HeroActivityType.IDLE,
-          activity_id: null,
+          activityId: null,
           duration: null,
         };
       })
@@ -131,11 +143,41 @@ const completeQuest = async (userId: number, questId: number, canceled = false) 
 
   await Promise.all(queries);
 
-  quest = (await getQuestsByIds(userId, [questId]))[0];
+  quest = ((await getQuestsByIds(userId, [questId])) as QuestWithCheckpoints[])[0];
   const stats = await getStats(userId);
   const heroes = await getHeroesByIds(heroIds);
 
   return Promise.resolve({ quest, stats, heroes });
 };
 
-export { getQuests, getQuestsByIds, embarkOnQuest, completeQuest };
+type QuestWithProgressRow = {
+  id: string;
+  level: string;
+  title: string;
+  description: string;
+  duration: string;
+  fame: string;
+  tribute: string;
+  experience: string;
+  progress_id: string | null;
+  embarked_time: Date | null;
+  progress_duration: string | null;
+  completed: boolean | null;
+};
+
+const mapQuestWithProgress = (row: QuestWithProgressRow) => {
+  return {
+    id: +row.id,
+    level: +row.level,
+    title: row.title,
+    description: row.description,
+    duration: +row.duration,
+    fame: +row.fame,
+    tribute: +row.tribute,
+    experience: +row.experience,
+    progressId: row.progress_id ? +row.progress_id : null,
+    embarkedTime: row.embarked_time,
+    progressDuration: row.progress_duration ? +row.progress_duration : null,
+    completed: row.completed,
+  };
+};

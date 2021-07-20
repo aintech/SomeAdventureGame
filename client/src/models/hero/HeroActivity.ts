@@ -1,5 +1,5 @@
 import { HeroResponse } from "../../services/HeroesService";
-import { HeroActivityType, activityFromString } from "./HeroActivityType";
+import { HeroActivityType } from "./HeroActivityType";
 
 export default class HeroActivity {
   constructor(
@@ -10,17 +10,6 @@ export default class HeroActivity {
   ) {}
 }
 
-export const convertActivity = (
-  response: HeroResponse
-): HeroActivity | null => {
-  if (!response.activity_type) {
-    return null;
-  }
-
-  return new HeroActivity(
-    activityFromString(response.activity_type),
-    new Date(response.started_at),
-    response.duration ? +response.duration : null,
-    response.activity_id ? +response.activity_id : null
-  );
+export const convertActivity = (response: HeroResponse): HeroActivity => {
+  return new HeroActivity(response.activityType, new Date(response.startedAt), response.duration, response.activityId);
 };

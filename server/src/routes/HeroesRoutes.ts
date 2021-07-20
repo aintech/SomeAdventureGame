@@ -1,7 +1,7 @@
 import { Router } from "express";
 import AuthMiddleware from "../middleware/AuthMiddleware";
-import { updateHeroActivities } from "../repository/HeroActivity";
-import { dismissHero, getHeroes, hireHero } from "../repository/Hero";
+import { updateHeroActivities } from "../repository/hero/HeroActivity";
+import { dismissHero, getHeroes, hireHero } from "../repository/hero/Hero";
 import { getStats } from "../repository/Stats";
 import { getTavernPatrons } from "../repository/TavernPatrons";
 

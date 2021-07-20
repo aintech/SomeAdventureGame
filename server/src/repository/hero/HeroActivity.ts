@@ -1,7 +1,7 @@
-import { CURE_COST_PER_HP, HEALTH_PER_VITALITY } from "../utils/Variables";
-import query from "./Db";
-import { adjustHeroGold, adjustHeroHealth, getHeroesByIds } from "./Hero";
-import { addStats } from "./Stats";
+import { CURE_COST_PER_HP, HEALTH_PER_VITALITY } from "../../utils/Variables";
+import query from "../Db";
+import { adjustHeroGold, adjustHeroHealth, getHeroesByIds } from "../hero/Hero";
+import { addStats } from "../Stats";
 
 export enum HeroActivityType {
   IDLE,
@@ -9,14 +9,14 @@ export enum HeroActivityType {
   HEALER,
 }
 
-type HeroActivity = {
+export type HeroActivity = {
   heroId: number;
   type: HeroActivityType;
-  activity_id: number | null;
+  activityId: number | null;
   duration: number | null;
 };
 
-const updateHeroActivities = async (userId: number, heroActivities: HeroActivity[]) => {
+export const updateHeroActivities = async (userId: number, heroActivities: HeroActivity[]) => {
   const heroIds = heroActivities.map((a) => a.heroId);
   const heroes = await getHeroesByIds(heroIds);
 
@@ -24,7 +24,7 @@ const updateHeroActivities = async (userId: number, heroActivities: HeroActivity
     const hero = heroes.filter((h) => +h.id === +heroActivity.heroId)[0];
     switch (heroActivity.type) {
       case HeroActivityType.IDLE:
-        if (hero.activity_type === HeroActivityType.HEALER) {
+        if (hero.activityType === HeroActivityType.HEALER) {
           //adding max health
           await adjustHeroHealth(hero.id, +hero.vitality * HEALTH_PER_VITALITY);
         }
@@ -54,7 +54,7 @@ const updateHeroActivity = async (heroId: number, activity: HeroActivity) => {
     "updateHeroActivity",
     `update public.hero_activity set 
       activity_type = '${HeroActivityType[activity.type].toLowerCase()}', 
-      activity_id = ${activity.activity_id ?? null}, 
+      activity_id = ${activity.activityId ?? null}, 
       duration = ${activity.duration ?? null},
       started_at = now() 
      where hero_id = $1`,
@@ -62,4 +62,15 @@ const updateHeroActivity = async (heroId: number, activity: HeroActivity) => {
   );
 };
 
-export { updateHeroActivities };
+export const mapHeroActivityType = (type: string) => {
+  switch (type) {
+    case "idle":
+      return HeroActivityType.IDLE;
+    case "quest":
+      return HeroActivityType.QUEST;
+    case "healer":
+      return HeroActivityType.HEALER;
+    default:
+      throw new Error(`Unknown hero activity type ${type}`);
+  }
+};

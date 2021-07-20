@@ -1,8 +1,8 @@
 import { Router } from "express";
 import AuthMiddleware from "../middleware/AuthMiddleware";
-import { getHeroesOnQuest } from "../repository/Hero";
-import { checkpointPassed, getQuestCheckpoint } from "../repository/QuestCheckpoints";
-import { completeQuest, embarkOnQuest, getQuests, getQuestsByIds } from "../repository/Quest";
+import { getHeroesOnQuest } from "../repository/hero/Hero";
+import { checkpointPassed, getQuestCheckpoint } from "../repository/quest/QuestCheckpoints";
+import { completeQuest, embarkOnQuest, getQuests, getQuestsByIds } from "../repository/quest/Quest";
 
 const questsRouter = Router();
 

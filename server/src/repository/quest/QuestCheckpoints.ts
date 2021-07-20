@@ -1,8 +1,8 @@
-import getBattleSteps, { BattleStep, BattleStepActionType } from "../battle/BattleProcessor";
-import query, { single } from "./Db";
-import { getHeroesHP, HeroWithItems, setHeroHealth } from "./Hero";
-import { adjustItemsById } from "./Item";
-import { getMonsterParty, Monster } from "./Monster";
+import getBattleSteps, { BattleStep, BattleStepActionType } from "../../battle/BattleProcessor";
+import query, { single } from "../Db";
+import { getHeroesHP, HeroWithItems, setHeroHealth } from "../hero/Hero";
+import { adjustItemsById } from "../hero/Item";
+import { getMonsterParty, Monster } from "../Monster";
 import { Quest } from "./Quest";
 import { getQuestProgress } from "./QuestProgress";
 
@@ -13,22 +13,23 @@ enum CheckpointType {
 
 export type QuestCheckpoint = {
   id: number | null /** null when checkpoint not persist yet */;
-  quest_progress_id: number | null /** null when progress not persist yet */;
   type: CheckpointType;
-  occured_at: number;
+  occuredAt: number;
   duration: number;
   passed: boolean;
   tribute: number;
   steps: Map<number, BattleStep[]> | null;
+  stringifiedSteps: string | null /** map steps are not sending through http, send them as string */;
   enemies: Monster[] | null;
 };
 
 export type QuestCheckpointWithProgress = QuestCheckpoint & {
-  quest_id: number;
-  embarked_time: Date;
+  progressId: number | null /** null when progress not persist yet */;
+  questId: number;
+  embarkedTime: Date;
 };
 
-const generateCheckpoints = async (quest: Quest, heroes: HeroWithItems[]) => {
+export const generateCheckpoints = async (quest: Quest, heroes: HeroWithItems[]) => {
   const checkpoints: QuestCheckpoint[] = [];
 
   const checkpointsCount = 1; //Math.floor(quest.duration * 0.5 * 0.1);
@@ -44,7 +45,7 @@ const generateCheckpoints = async (quest: Quest, heroes: HeroWithItems[]) => {
     // Math.floor(questDuration * 0.5) +
     // i * Math.floor(Math.random() * 10) * 1000;
 
-    const occured_at = addSec;
+    const occuredAt = addSec;
 
     let tribute: number;
     let duration: number;
@@ -70,13 +71,13 @@ const generateCheckpoints = async (quest: Quest, heroes: HeroWithItems[]) => {
 
     checkpoints.push({
       type,
-      occured_at,
+      occuredAt,
       duration,
       steps,
       enemies,
       tribute,
       id: null,
-      quest_progress_id: null,
+      stringifiedSteps: null,
       passed: false,
     });
   }
@@ -84,35 +85,32 @@ const generateCheckpoints = async (quest: Quest, heroes: HeroWithItems[]) => {
   return checkpoints;
 };
 
-const persistQuestCheckpoints = async (progressId: number, checkpoints: QuestCheckpoint[]) => {
-  await query<void>(
-    "persistQuestCheckpoints",
-    checkpoints
-      .map(
-        (c) =>
-          `insert into public.quest_checkpoint 
-           (quest_progress_id, type, occured_at, duration, steps, enemies, tribute, passed)
-           values
-           (
-            ${progressId},
-            '${CheckpointType[c.type].toLowerCase()}', 
-            ${c.occured_at}, 
-            ${c.duration},
-            ${c.steps ? `'${JSON.stringify(Array.from(c.steps.entries()))}'` : null},
-            '${c.enemies ? JSON.stringify(c.enemies) : null}',
-            '${c.tribute}',
-            ${c.passed}
-           );
-          `
-      )
-      .join(" ")
-  );
+export const persistQuestCheckpoints = async (progressId: number, checkpoints: QuestCheckpoint[]) => {
+  const sql = checkpoints
+    .map(
+      (c) =>
+        `insert into public.quest_checkpoint 
+         (quest_progress_id, type, occured_at, duration, steps, enemies, tribute, passed)
+         values
+         (
+           ${progressId},
+           '${CheckpointType[c.type].toLowerCase()}', 
+           ${c.occuredAt}, 
+           ${c.duration},
+           ${c.steps ? `'${stringifySteps(c.steps)}'` : null},
+           ${c.enemies ? `'${JSON.stringify(c.enemies)}'` : null},
+           ${c.tribute},
+           ${c.passed}
+         )`
+    )
+    .join(" ");
+
+  await query<void>("persistQuestCheckpoints", sql);
 
   return getQuestCheckpoints([progressId]);
 };
 
-//TODO: конверсия steps в объект
-const getQuestCheckpoint = async (checkpointId: number) => {
+export const getQuestCheckpoint = async (checkpointId: number) => {
   return query<QuestCheckpointWithProgress>(
     "getQuestCheckpoints",
     `select 
@@ -123,11 +121,12 @@ const getQuestCheckpoint = async (checkpointId: number) => {
      left join quest_progress progress on progress.id = checkpoint.quest_progress_id
      where checkpoint.id = $1`,
     [checkpointId],
+    mapQuestCheckpointWithProgress,
     single
   );
 };
 
-const getQuestCheckpoints = async (progressIds: number[], checkIfPassed = false) => {
+export const getQuestCheckpoints = async (progressIds: number[], checkIfPassed = false) => {
   if (progressIds.length === 0) {
     return [];
   }
@@ -139,7 +138,9 @@ const getQuestCheckpoints = async (progressIds: number[], checkIfPassed = false)
           progress.embarked_time 
      from public.quest_checkpoint checkpoint
      left join quest_progress progress on progress.id = checkpoint.quest_progress_id
-     where quest_progress_id in (${progressIds.join(",")})`
+     where quest_progress_id in (${progressIds.join(",")})`,
+    [],
+    mapQuestCheckpointWithProgress
   );
 
   if (checkIfPassed) {
@@ -149,7 +150,7 @@ const getQuestCheckpoints = async (progressIds: number[], checkIfPassed = false)
   return checkpoints;
 };
 
-const getQuestCheckpointsByQuest = async (userId: number, questId: number) => {
+export const getQuestCheckpointsByQuest = async (userId: number, questId: number) => {
   const progress = await getQuestProgress(userId, questId);
   return getQuestCheckpoints([progress.id]);
 };
@@ -161,7 +162,7 @@ const checkIfCheckpointPassed = async (checkpoints: QuestCheckpointWithProgress[
     }
 
     const endedIn =
-      new Date(checkpoint.embarked_time).getTime() + +checkpoint.occured_at * 1000 + +checkpoint.duration * 1000;
+      new Date(checkpoint.embarkedTime).getTime() + +checkpoint.occuredAt * 1000 + +checkpoint.duration * 1000;
 
     if (endedIn <= new Date().getTime()) {
       await checkpointPassed(checkpoint);
@@ -170,7 +171,7 @@ const checkIfCheckpointPassed = async (checkpoints: QuestCheckpointWithProgress[
   }
 };
 
-const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress) => {
+export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress) => {
   if (checkpoint.passed) {
     return;
   }
@@ -180,7 +181,7 @@ const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress) => {
 
     // const outcome = JSON.parse(checkpoint.outcome);
     const steps = checkpoint.steps!;
-    const heroesHP = await getHeroesHP(checkpoint.quest_id);
+    const heroesHP = await getHeroesHP(checkpoint.questId);
     const healthValues = new Map<number, number>();
     const totalHPs = new Map<number, number>();
     const usedItems = new Map<number, number>();
@@ -231,7 +232,7 @@ const markAsPassed = (checkpointId: number) => {
   return query<void>("markAsPassed", `update public.quest_checkpoint set passed = true where id = $1`, [checkpointId]);
 };
 
-const deleteCheckpoints = (userId: number, questId: number) => {
+export const deleteCheckpoints = (userId: number, questId: number) => {
   return query<void>(
     "deleteCheckpoint",
     `delete from public.quest_checkpoint 
@@ -241,12 +242,72 @@ const deleteCheckpoints = (userId: number, questId: number) => {
   );
 };
 
-export {
-  generateCheckpoints,
-  persistQuestCheckpoints,
-  getQuestCheckpoint,
-  getQuestCheckpoints,
-  getQuestCheckpointsByQuest,
-  checkpointPassed,
-  deleteCheckpoints,
+type CheckpointWithProgressRow = {
+  id: string;
+  type: string;
+  occured_at: string;
+  duration: string;
+  steps: string | null;
+  enemies: string | null;
+  passed: boolean;
+  tribute: string;
+  quest_progress_id: string;
+  quest_id: string;
+  embarked_time: Date;
+};
+
+const mapQuestCheckpointWithProgress = (row: CheckpointWithProgressRow): QuestCheckpointWithProgress => {
+  return {
+    id: +row.id,
+    type: mapCheckpointType(row.type),
+    occuredAt: +row.occured_at,
+    duration: +row.duration,
+    steps: mapSteps(row.steps),
+    stringifiedSteps: row.steps,
+    enemies: mapEnemies(row.enemies),
+    passed: row.passed,
+    tribute: +row.tribute,
+    progressId: +row.quest_progress_id,
+    questId: +row.quest_id,
+    embarkedTime: row.embarked_time,
+  };
+};
+
+const mapCheckpointType = (type: string) => {
+  switch (type) {
+    case "treasure":
+      return CheckpointType.TREASURE;
+    case "battle":
+      return CheckpointType.BATTLE;
+    default:
+      throw new Error(`Unknown checkpoint type ${type}`);
+  }
+};
+
+/** duplicate code in client */
+const mapSteps = (steps: string | null) => {
+  if (!steps) {
+    return null;
+  }
+  const result: Map<number, BattleStep[]> = new Map();
+  steps.split(",\n").forEach((s) => {
+    const secStep = s.split("::");
+    result.set(+secStep[0], JSON.parse(secStep[1]));
+  });
+  return result;
+};
+
+const mapEnemies = (enemies: string | null) => {
+  if (!enemies) {
+    return null;
+  }
+  return JSON.parse(enemies) as Monster[];
+};
+
+const stringifySteps = (steps: Map<number, BattleStep[]>) => {
+  let result = "";
+  steps.forEach((v, k) => {
+    result += `${k}::${JSON.stringify(v)},\n`;
+  });
+  return result.slice(0, -2); /** removing last ,\n */
 };

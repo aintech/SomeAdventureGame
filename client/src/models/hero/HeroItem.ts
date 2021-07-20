@@ -7,11 +7,7 @@ export enum HeroItemType {
 }
 
 export default class HeroItem {
-  constructor(
-    public id: number,
-    public type: HeroItemType,
-    public amount: number
-  ) {}
+  constructor(public id: number, public type: HeroItemType, public amount: number) {}
 }
 
 export const getItemName = (type: HeroItemType) => {
@@ -27,23 +23,6 @@ export const getItemName = (type: HeroItemType) => {
   }
 };
 
-const convertItemType = (type: string): HeroItemType => {
-  switch (type) {
-    case "health_potion":
-      return HeroItemType.HEALTH_POTION;
-    case "health_elixir":
-      return HeroItemType.HEALTH_ELIXIR;
-    case "mana_potion":
-      return HeroItemType.MANA_POTION;
-    default:
-      throw new Error(`Unknown item type ${type}`);
-  }
-};
-
 export const convertItem = (response: HeroItemResponse): HeroItem => {
-  return new HeroItem(
-    +response.id,
-    convertItemType(response.type),
-    +response.amount
-  );
+  return new HeroItem(response.id, response.type, response.amount);
 };

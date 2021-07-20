@@ -1,14 +1,11 @@
-import {
-  CheckpointEnemyResponse,
-  CheckpointResponse,
-} from "../services/QuestsService";
+import { CheckpointResponse } from "../services/QuestsService";
 
 export enum CheckpointType {
   TREASURE,
   BATTLE,
 }
 
-export enum CheckpointActionType {
+export enum BattleStepActionType {
   HERO_ATTACK,
   ENEMY_ATTACK,
   USE_POTION,
@@ -19,14 +16,15 @@ export class CheckpointEnemy {
     public id: number,
     public actorId: number,
     public name: string,
-    public health: number
+    public health: number,
+    public isHero: boolean = false
   ) {}
 }
 
-export class CheckpointAction {
+export class BattleStep {
   constructor(
-    public action: CheckpointActionType,
     public heroId: number,
+    public action: BattleStepActionType,
     public enemyId: number | null,
     public itemId: number | null,
     public damage: number | null
@@ -42,94 +40,36 @@ export default class QuestCheckpoint {
     /** duration of checkpoint in seconds */
     public duration: number,
     /** key of this Map is second on which action occures */
-    public outcome: Map<number, CheckpointAction[]>,
-    public enemies: CheckpointEnemy[],
+    public steps: Map<number, BattleStep[]> | null,
+    public enemies: CheckpointEnemy[] | null,
     public tribute: number,
     public passed: boolean
   ) {}
 }
 
-const convertType = (type: string): CheckpointType => {
-  switch (type) {
-    case "treasure":
-      return CheckpointType.TREASURE;
-    case "battle":
-      return CheckpointType.BATTLE;
-    default:
-      throw new Error(`Unknown checkpoint type ${type}`);
-  }
-};
-
-const convertActionType = (action: string): CheckpointActionType => {
-  switch (action) {
-    case "hero_attack":
-      return CheckpointActionType.HERO_ATTACK;
-    case "enemy_attack":
-      return CheckpointActionType.ENEMY_ATTACK;
-    case "use_potion":
-      return CheckpointActionType.USE_POTION;
-    default:
-      throw new Error(`Unknown action type in converter ${action}`);
-  }
-};
-
-type CheckpointActionResponse = {
-  action: string;
-  heroId: number;
-  enemyId: number | null;
-  itemId: number | null;
-  damage: number | null;
-};
-
-const convertOutcome = (
-  type: CheckpointType,
-  outcome: string
-): Map<number, CheckpointAction[]> => {
-  const result: Map<number, CheckpointAction[]> = new Map();
-  const parsed: Map<number, CheckpointActionResponse[]> = new Map(
-    JSON.parse(outcome)
-  ) as Map<number, CheckpointActionResponse[]>;
-
-  parsed.forEach((value, key) => {
-    result.set(
-      key,
-      value.map(
-        (v) =>
-          new CheckpointAction(
-            convertActionType(v.action),
-            +v.heroId,
-            v.enemyId === null ? null : +v.enemyId,
-            v.itemId === null ? null : +v.itemId,
-            v.damage
-          )
-      )
-    );
-  });
-
-  return result;
-};
-
-const convertEnemies = (enemies: string): CheckpointEnemy[] => {
-  const parsed = JSON.parse(enemies);
-  if (parsed) {
-    return (parsed as CheckpointEnemyResponse[]).map(
-      (a) => new CheckpointEnemy(+a.id, +a.actorId, a.name, +a.health)
-    );
-  }
-  return [];
-};
-
-const convert = (response: CheckpointResponse): QuestCheckpoint => {
+export const convert = (response: CheckpointResponse): QuestCheckpoint => {
   return new QuestCheckpoint(
-    +response.id,
-    +response.occured_at,
-    convertType(response.type),
-    +response.duration,
-    convertOutcome(convertType(response.type), response.outcome),
-    convertEnemies(response.enemies),
-    +response.tribute,
+    response.id,
+    response.occuredAt,
+    response.type,
+    response.duration,
+    response.stringifiedSteps ? mapSteps(response.stringifiedSteps) : null,
+    response.enemies,
+    response.tribute,
     response.passed
   );
 };
 
-export { convert };
+/** duplicate code in server */
+const mapSteps = (steps: string | null) => {
+  if (!steps) {
+    return null;
+  }
+  const result: Map<number, BattleStep[]> = new Map();
+  steps.split(",\n").forEach((s) => {
+    const secStep = s.split("::");
+    result.set(+secStep[0], JSON.parse(secStep[1]));
+  });
+
+  return result;
+};

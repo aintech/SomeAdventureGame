@@ -1,6 +1,7 @@
 import { AuthProps } from "../contexts/AuthContext";
 import GameStats from "../models/GameStats";
 import Quest from "../models/Quest";
+import { BattleStep, CheckpointEnemy, CheckpointType } from "../models/QuestCheckpoint";
 import { HeroResponse } from "./HeroesService";
 import sendHttp from "./SendHttp";
 
@@ -15,12 +16,13 @@ export interface CheckpointEnemyResponse {
 
 export interface CheckpointResponse {
   id: number;
-  occured_at: number;
-  type: string;
+  occuredAt: number;
+  type: CheckpointType;
   duration: number;
-  outcome: string;
-  enemies: string;
-  tribute: string;
+  steps: Map<number, BattleStep[]> | null;
+  stringifiedSteps: string | null;
+  enemies: CheckpointEnemy[] | null;
+  tribute: number;
   passed: boolean;
 }
 
@@ -33,14 +35,14 @@ export interface QuestResponse {
   duration: number;
   tribute: number;
   fame: number;
-  progress_id: number;
-  progress_duration: number;
-  embarked_time: string;
+  progressId: number;
+  progressDuration: number;
+  embarkedTime: string;
   completed: boolean;
   checkpoints: CheckpointResponse[];
 }
 
-const getQuests = async (auth: AuthProps) => {
+export const getQuests = async (auth: AuthProps) => {
   return await sendHttp<QuestResponse[]>(`${baseUrl}`, auth);
 };
 
@@ -49,11 +51,7 @@ export interface EmbarkOnQuestResponse {
   embarkedHeroes: HeroResponse[];
 }
 
-const embarkOnQuest = async (
-  auth: AuthProps,
-  questId: number,
-  heroIds: number[]
-) => {
+export const embarkOnQuest = async (auth: AuthProps, questId: number, heroIds: number[]) => {
   return await sendHttp<EmbarkOnQuestResponse>(
     `${baseUrl}/embark`,
     auth,
@@ -67,11 +65,7 @@ export interface CheckpointPassedResponse {
   embarkedHeroes: HeroResponse[];
 }
 
-const checkpointPassed = async (
-  auth: AuthProps,
-  questId: number,
-  checkpointId: number
-) => {
+export const checkpointPassed = async (auth: AuthProps, questId: number, checkpointId: number) => {
   return await sendHttp<CheckpointPassedResponse>(
     `${baseUrl}/checkpoint`,
     auth,
@@ -86,28 +80,10 @@ export interface CompleteCancelQuestResponse {
   heroes: HeroResponse[];
 }
 
-const completeQuest = async (auth: AuthProps, questId: number) => {
-  return await sendHttp<CompleteCancelQuestResponse>(
-    `${baseUrl}/complete`,
-    auth,
-    [`quest_id=${questId}`],
-    "PUT"
-  );
+export const completeQuest = async (auth: AuthProps, questId: number) => {
+  return await sendHttp<CompleteCancelQuestResponse>(`${baseUrl}/complete`, auth, [`quest_id=${questId}`], "PUT");
 };
 
-const cancelQuest = async (auth: AuthProps, questId: number) => {
-  return await sendHttp<CompleteCancelQuestResponse>(
-    `${baseUrl}/cancel`,
-    auth,
-    [`quest_id=${questId}`],
-    "PUT"
-  );
-};
-
-export {
-  getQuests,
-  embarkOnQuest,
-  checkpointPassed,
-  completeQuest,
-  cancelQuest,
+export const cancelQuest = async (auth: AuthProps, questId: number) => {
+  return await sendHttp<CompleteCancelQuestResponse>(`${baseUrl}/cancel`, auth, [`quest_id=${questId}`], "PUT");
 };

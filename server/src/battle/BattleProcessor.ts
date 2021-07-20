@@ -1,4 +1,5 @@
-import { HeroWithItems, Item } from "../repository/Hero";
+import { HeroWithItems } from "../repository/hero/Hero";
+import { Item, ItemType } from "../repository/hero/Item";
 import { Monster } from "../repository/Monster";
 import { anyOf, copy } from "../utils/Arrays";
 import { HEALTH_PER_VITALITY } from "../utils/Variables";
@@ -113,9 +114,9 @@ const attackStep = (actor: Actor, opponents: Actor[]): BattleStep => {
 const potionStep = (actor: Actor): BattleStep | null => {
   const items = actor.items!;
   if (items.length > 0) {
-    let potions = items.filter((i) => i.type == "health_potion" && i.amount > 0);
+    let potions = items.filter((i) => i.type == ItemType.HEALTH_POTION && i.amount > 0);
     if (potions.length === 0) {
-      potions = items.filter((i) => i.type == "health_elixir" && i.amount > 0);
+      potions = items.filter((i) => i.type == ItemType.HEALTH_ELIXIR && i.amount > 0);
     }
     if (potions.length > 0) {
       const potion = potions[0];

@@ -1,19 +1,19 @@
-import query, { single } from "./Db";
-import { HeroWithItems } from "./Hero";
-import { Quest } from "./Quest";
-import { generateCheckpoints, persistQuestCheckpoints, QuestCheckpoint } from "./QuestCheckpoints";
+import query, { defaultMapper, single } from "../Db";
+import { HeroWithItems } from "../hero/Hero";
+import { Quest } from "../quest/Quest";
+import { generateCheckpoints, persistQuestCheckpoints, QuestCheckpoint } from "../quest/QuestCheckpoints";
 
 type QuestProgress = {
   id: number;
-  user_id: number;
-  quest_id: number;
-  embarked_time: Date;
+  userId: number;
+  questId: number;
+  embarkedTime: Date;
   completed: boolean;
   duration: number;
 };
 
 const persistProgress = (userId: number, questId: number, checkpoints: QuestCheckpoint[]) => {
-  const checkpointsDuration = checkpoints.map((c) => +c.duration).reduce((a, b) => a + b);
+  const checkpointsDuration = checkpoints.map((c) => c.duration).reduce((a, b) => a + b);
 
   return query<number>(
     "persistProgress",
@@ -23,34 +23,36 @@ const persistProgress = (userId: number, questId: number, checkpoints: QuestChec
      values ($1, $2, (select d from quest_duration) + $3, now()) 
      returning id`,
     [userId, questId, checkpointsDuration],
+    defaultMapper,
     (res: { id: number }[]) => res[0].id
   );
 };
 
-const createQuestProgress = async (userId: number, quest: Quest, heroes: HeroWithItems[]) => {
+export const createQuestProgress = async (userId: number, quest: Quest, heroes: HeroWithItems[]) => {
   const checkpoints = await generateCheckpoints(quest, heroes);
   const progressId = await persistProgress(userId, quest.id, checkpoints);
   await persistQuestCheckpoints(progressId, checkpoints);
   return progressId;
 };
 
-const getQuestProgress = (userId: number, questId: number) => {
+export const getQuestProgress = (userId: number, questId: number) => {
   return query<QuestProgress>(
     "getQuestProgress",
     `select * from public.quest_progress where user_id = $1 and quest_id = $2`,
     [userId, questId],
+    mapQuestProgress,
     single
   );
 };
 
-const deleteProgress = (userId: number, questId: number) => {
+export const deleteProgress = (userId: number, questId: number) => {
   return query<void>("deleteProgress", "delete from public.quest_progress where user_id = $1 and quest_id = $2", [
     userId,
     questId,
   ]);
 };
 
-const completeProgress = (userId: number, questId: number) => {
+export const completeProgress = (userId: number, questId: number) => {
   return query<void>(
     "completeProgress",
     `update public.quest_progress 
@@ -60,4 +62,22 @@ const completeProgress = (userId: number, questId: number) => {
   );
 };
 
-export { createQuestProgress, getQuestProgress, deleteProgress, completeProgress };
+type QuestProgressRow = {
+  id: string;
+  user_id: string;
+  quest_id: string;
+  embarked_time: Date;
+  completed: boolean;
+  duration: string;
+};
+
+const mapQuestProgress = (row: QuestProgressRow) => {
+  return {
+    id: +row.id,
+    userId: +row.user_id,
+    questId: +row.quest_id,
+    embarkedTime: row.embarked_time,
+    completed: row.completed,
+    duration: +row.duration,
+  };
+};

@@ -8,7 +8,7 @@ type User = {
   password: string;
 };
 
-const createUser = async (user: LoginUser) => {
+export const createUser = async (user: LoginUser) => {
   await persistUser(user);
 
   const persisted = await getUser(user.login);
@@ -20,20 +20,23 @@ const createUser = async (user: LoginUser) => {
 
 const persistUser = async (user: LoginUser) => {
   const { login, password } = user;
-  return query<void>(
-    "persistUser",
-    "insert into public.user (login, password) values ($1, $2)",
-    [login, password]
-  );
+  return query<void>("persistUser", "insert into public.user (login, password) values ($1, $2)", [login, password]);
 };
 
-const getUser = (login: string) => {
-  return query<User>(
-    "getUser",
-    "select * from public.user where login = $1",
-    [login],
-    single
-  );
+export const getUser = (login: string) => {
+  return query<User>("getUser", "select * from public.user where login = $1", [login], mapUser, single);
 };
 
-export { createUser, getUser };
+type UserRow = {
+  id: string;
+  login: string;
+  password: string;
+};
+
+const mapUser = (row: UserRow) => {
+  return {
+    id: +row.id,
+    login: row.login,
+    password: row.password,
+  };
+};

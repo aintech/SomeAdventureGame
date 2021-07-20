@@ -4,7 +4,7 @@ import Equipment, { convert as convertEquipment } from "../Equipment";
 import PersonageStats from "../PersonageStats";
 import HeroActivity, { convertActivity } from "./HeroActivity";
 import HeroItem, { convertItem } from "./HeroItem";
-import { HeroType, heroTypeFromString } from "./HeroType";
+import { HeroType } from "./HeroType";
 
 export default class Hero {
   constructor(
@@ -22,7 +22,8 @@ export default class Hero {
     public gold: number,
     public activity: HeroActivity | null,
     public equipment: Equipment[],
-    public items: HeroItem[]
+    public items: HeroItem[],
+    public isHero: boolean = true
   ) {}
 
   public isAilve() {
@@ -30,7 +31,7 @@ export default class Hero {
   }
 }
 
-const calcHealthFraction = (hero: Hero): number => {
+export const calcHealthFraction = (hero: Hero): number => {
   return hero.health / (hero.stats.vitality * HEALTH_PER_VITALITY);
 };
 
@@ -39,42 +40,28 @@ const getRawStat =
   <T extends StatsHolder, U extends keyof T>(stat: U) =>
   (hero: T) =>
   (equipment: T[]): number => {
-    return (
-      +hero[stat] - equipment.map((e: T) => +e[stat]).reduce((a, b) => a + b)
-    );
+    return +hero[stat] - equipment.map((e: T) => +e[stat]).reduce((a, b) => a + b);
   };
 
-/**
- * FIXME: когда бэк переедет на PG и Typescript то через АПИ начнут
- * приходить числа в нормальном формате вместо строки,
- * и можно будет поубирать плюсики из конвертеров
- */
-const convert = (response: HeroResponse): Hero => {
+export const convert = (response: HeroResponse): Hero => {
   return new Hero(
-    +response.id,
+    response.id,
     response.name,
-    heroTypeFromString(response.type),
-    +response.level,
-    new PersonageStats(
-      +response.power,
-      +response.defence,
-      +response.vitality,
-      +response.initiative
-    ),
+    response.type,
+    response.level,
+    new PersonageStats(response.power, response.defence, response.vitality, response.initiative),
     new PersonageStats(
       getRawStat("power")(response)(response.equipment),
       getRawStat("defence")(response)(response.equipment),
       getRawStat("vitality")(response)(response.equipment),
       getRawStat("initiative")(response)(response.equipment)
     ),
-    +response.health,
-    +response.experience,
-    +response.progress,
-    +response.gold,
+    response.health,
+    response.experience,
+    response.progress,
+    response.gold,
     convertActivity(response),
     response.equipment.map((e) => convertEquipment(e)),
     response.items.map((i) => convertItem(i))
   );
 };
-
-export { calcHealthFraction, convert };

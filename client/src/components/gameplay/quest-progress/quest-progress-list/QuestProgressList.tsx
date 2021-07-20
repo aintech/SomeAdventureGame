@@ -29,9 +29,7 @@ const QuestProgressList = ({ quests, heroes }: QuestProgressListProps) => {
     <div className="quest-progress-list">
       {embarked.map((eq) => {
         const { key: quest, value: heroes } = eq;
-        return (
-          <QuestProgressItem key={quest.id} quest={quest} heroes={heroes} />
-        );
+        return <QuestProgressItem key={quest.id} quest={quest} heroes={heroes} />;
       })}
     </div>
   );
