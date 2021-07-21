@@ -16,16 +16,17 @@ const GameWorld = ({ onBuildingClicked }: GameWorldProps) => {
     new Building(2, BuildingType.GUILD),
     new Building(3, BuildingType.HEALER),
     new Building(4, BuildingType.TREASURY),
+    new Building(5, BuildingType.TRAINING_GROUND),
+    new Building(6, BuildingType.MARKET),
+    new Building(7, BuildingType.TEMPLE),
+    new Building(8, BuildingType.BLACKSMITH),
   ]);
 
   return (
     <div className="game-world">
       {buildings.map((building) => (
         <div key={building.id}>
-          <GameWorldItem
-            building={building}
-            onBuildingClicked={() => onBuildingClicked(building)}
-          />
+          <GameWorldItem building={building} onBuildingClicked={() => onBuildingClicked(building)} />
         </div>
       ))}
     </div>

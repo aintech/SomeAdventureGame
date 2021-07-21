@@ -2,37 +2,37 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsChoosed } from "../../../actions/Actions";
+import { BuildingType, buildingTypeToName } from "../../../models/Building";
 import Hero from "../../../models/hero/Hero";
 import { HeroActivityType } from "../../../models/hero/HeroActivityType";
 import Loader from "../../loader/Loader";
 import HeroItem from "../guild-display/heroes/HeroItem";
-import { BuildingType, buildingTypeToName } from "../../../models/Building";
-import "./healer-display.scss";
+import "./market-display.scss";
 
-type HealerDisplayProps = {
+type MarketDisplayProps = {
   visitors: Hero[];
   visitorClicked: (visitor: Hero) => void;
   closeDisplay: () => void;
 };
 
-const HealerDisplay = ({ visitors, visitorClicked, closeDisplay }: HealerDisplayProps) => {
+const MarketDisplay = ({ visitors, visitorClicked, closeDisplay }: MarketDisplayProps) => {
   const visitorClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     visitorClicked(hero);
   };
 
   const clickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLDivElement).id === "healer-display") {
+    if ((event.target as HTMLDivElement).id === "market-display") {
       closeDisplay();
     }
   };
 
   return (
-    <div className="healer-display" id="healer-display" onClick={clickHandler}>
-      <button className="healer-display__btn--close" onClick={closeDisplay}></button>
-      <div className="healer-display__container">
-        <div className="healer-display__name">{buildingTypeToName(BuildingType.HEALER)}</div>
-        <div className="healer-display__visitors-holder">
+    <div className="market-display" id="market-display" onClick={clickHandler}>
+      <button className="market-display__btn--close" onClick={closeDisplay}></button>
+      <div className="market-display__container">
+        <div className="market-display__name">{buildingTypeToName(BuildingType.MARKET)}</div>
+        <div className="market-display__visitors-holder">
           {visitors.map((visitor) => (
             <HeroItem
               key={visitor.id}
@@ -47,13 +47,13 @@ const HealerDisplay = ({ visitors, visitorClicked, closeDisplay }: HealerDisplay
   );
 };
 
-type HealerDisplayContainerProps = {
+type MarketDisplayContainerProps = {
   heroes: Hero[];
   heroClicked: (hero: Hero) => void;
   closeDisplay: () => void;
 };
 
-class HealerDisplayContainer extends Component<HealerDisplayContainerProps> {
+class MarketDisplayContainer extends Component<MarketDisplayContainerProps> {
   render() {
     const { heroes, heroClicked, closeDisplay } = this.props;
 
@@ -61,17 +61,17 @@ class HealerDisplayContainer extends Component<HealerDisplayContainerProps> {
       return <Loader message={`Wating for heroes`} />;
     }
 
-    const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.HEALING);
+    const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.PURCHASING);
 
-    return <HealerDisplay visitors={visitors} closeDisplay={closeDisplay} visitorClicked={heroClicked} />;
+    return <MarketDisplay visitors={visitors} closeDisplay={closeDisplay} visitorClicked={heroClicked} />;
   }
 }
 
-type HealerDisplayContainerState = {
+type MarketDisplayContainerState = {
   heroes: Hero[];
 };
 
-const mapStateToProps = ({ heroes }: HealerDisplayContainerState) => {
+const mapStateToProps = ({ heroes }: MarketDisplayContainerState) => {
   return { heroes };
 };
 
@@ -84,4 +84,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(HealerDisplayContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(MarketDisplayContainer);

@@ -3,9 +3,13 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { buildingClicked } from "../../../actions/Actions";
 import Building, { BuildingType } from "../../../models/Building";
+import BlacksmithDisplay from "../blacksmith-display/BlacksmithDisplay";
 import GuildDisplay from "../guild-display/GuildDisplay";
 import HealerDisplay from "../healer-display/HealerDisplay";
+import MarketDisplay from "../market-display/MarketDisplay";
 import TavernDisplay from "../tavern-display/TavernDisplay";
+import TempleDisplay from "../temple-display/TempleDisplay";
+import TrainingGroundDisplay from "../training-ground-display/TrainingGroundDisplay";
 import TreasuryDisplay from "../treasury-display/TreasuryDisplay";
 import "./building-details.scss";
 
@@ -14,10 +18,7 @@ type BuildingDetailsProps = {
   hideBuildingDisplay: () => void;
 };
 
-const BuildingDetails = ({
-  chosenBuilding,
-  hideBuildingDisplay,
-}: BuildingDetailsProps) => {
+const BuildingDetails = ({ chosenBuilding, hideBuildingDisplay }: BuildingDetailsProps) => {
   if (!chosenBuilding) {
     return null;
   }
@@ -36,10 +37,20 @@ const BuildingDetails = ({
     case BuildingType.TREASURY:
       display = <TreasuryDisplay closeDisplay={hideBuildingDisplay} />;
       break;
+    case BuildingType.TRAINING_GROUND:
+      display = <TrainingGroundDisplay closeDisplay={hideBuildingDisplay} />;
+      break;
+    case BuildingType.MARKET:
+      display = <MarketDisplay closeDisplay={hideBuildingDisplay} />;
+      break;
+    case BuildingType.TEMPLE:
+      display = <TempleDisplay closeDisplay={hideBuildingDisplay} />;
+      break;
+    case BuildingType.BLACKSMITH:
+      display = <BlacksmithDisplay closeDisplay={hideBuildingDisplay} />;
+      break;
     default:
-      throw new Error(
-        `Unknown building type ${BuildingType[chosenBuilding.type]}`
-      );
+      throw new Error(`Unknown building type ${BuildingType[chosenBuilding.type]}`);
   }
 
   return (

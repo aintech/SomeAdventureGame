@@ -75,7 +75,7 @@ const givePatronsItems = async (heroes: Hero[]) => {
   const defaultPotions = heroes.map((hero) => `select ${hero.id}, 'health_potion', 3`).join(" union ");
 
   const additionalPotions = heroes
-    .map((hero) => `select ${hero.id}, ${hero.type === HeroType.MAGE ? "mana_potion" : "health_elixir"}, 3`)
+    .map((hero) => `select ${hero.id}, ${hero.type === HeroType.MAGE ? `'mana_potion'` : `'health_elixir'`}, 3`)
     .join(" union ");
 
   return query<void>(

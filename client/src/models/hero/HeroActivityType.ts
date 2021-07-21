@@ -1,5 +1,8 @@
 export enum HeroActivityType {
-  IDLE,
-  QUEST,
-  HEALER,
+  IDLE /** Do nothing */,
+  QUEST /** Embarked on Quest */,
+  HEALING /** Heal wounds in Healer tent */,
+  TRAINIG /** Training new level in Trainig ground */,
+  PURCHASING /** Buying potions in Market */,
+  PRAYING /** Seeking buffs in Temple */,
 }

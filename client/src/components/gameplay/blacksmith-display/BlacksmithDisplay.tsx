@@ -2,37 +2,37 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsChoosed } from "../../../actions/Actions";
+import { BuildingType, buildingTypeToName } from "../../../models/Building";
 import Hero from "../../../models/hero/Hero";
 import { HeroActivityType } from "../../../models/hero/HeroActivityType";
 import Loader from "../../loader/Loader";
 import HeroItem from "../guild-display/heroes/HeroItem";
-import { BuildingType, buildingTypeToName } from "../../../models/Building";
-import "./healer-display.scss";
+import "./blacksmith-display.scss";
 
-type HealerDisplayProps = {
+type BlacksmithDisplayProps = {
   visitors: Hero[];
   visitorClicked: (visitor: Hero) => void;
   closeDisplay: () => void;
 };
 
-const HealerDisplay = ({ visitors, visitorClicked, closeDisplay }: HealerDisplayProps) => {
+const BlacksmithDisplay = ({ visitors, visitorClicked, closeDisplay }: BlacksmithDisplayProps) => {
   const visitorClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     visitorClicked(hero);
   };
 
   const clickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLDivElement).id === "healer-display") {
+    if ((event.target as HTMLDivElement).id === "blacksmith-display") {
       closeDisplay();
     }
   };
 
   return (
-    <div className="healer-display" id="healer-display" onClick={clickHandler}>
-      <button className="healer-display__btn--close" onClick={closeDisplay}></button>
-      <div className="healer-display__container">
-        <div className="healer-display__name">{buildingTypeToName(BuildingType.HEALER)}</div>
-        <div className="healer-display__visitors-holder">
+    <div className="blacksmith-display" id="blacksmith-display" onClick={clickHandler}>
+      <button className="blacksmith-display__btn--close" onClick={closeDisplay}></button>
+      <div className="blacksmith-display__container">
+        <div className="blacksmith-display__name">{buildingTypeToName(BuildingType.BLACKSMITH)}</div>
+        <div className="blacksmith-display__visitors-holder">
           {visitors.map((visitor) => (
             <HeroItem
               key={visitor.id}
@@ -47,13 +47,13 @@ const HealerDisplay = ({ visitors, visitorClicked, closeDisplay }: HealerDisplay
   );
 };
 
-type HealerDisplayContainerProps = {
+type BlacksmithDisplayContainerProps = {
   heroes: Hero[];
   heroClicked: (hero: Hero) => void;
   closeDisplay: () => void;
 };
 
-class HealerDisplayContainer extends Component<HealerDisplayContainerProps> {
+class BlacksmithDisplayContainer extends Component<BlacksmithDisplayContainerProps> {
   render() {
     const { heroes, heroClicked, closeDisplay } = this.props;
 
@@ -61,17 +61,17 @@ class HealerDisplayContainer extends Component<HealerDisplayContainerProps> {
       return <Loader message={`Wating for heroes`} />;
     }
 
-    const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.HEALING);
+    const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.PURCHASING);
 
-    return <HealerDisplay visitors={visitors} closeDisplay={closeDisplay} visitorClicked={heroClicked} />;
+    return <BlacksmithDisplay visitors={visitors} closeDisplay={closeDisplay} visitorClicked={heroClicked} />;
   }
 }
 
-type HealerDisplayContainerState = {
+type BlacksmithDisplayContainerState = {
   heroes: Hero[];
 };
 
-const mapStateToProps = ({ heroes }: HealerDisplayContainerState) => {
+const mapStateToProps = ({ heroes }: BlacksmithDisplayContainerState) => {
   return { heroes };
 };
 
@@ -84,4 +84,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(HealerDisplayContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(BlacksmithDisplayContainer);

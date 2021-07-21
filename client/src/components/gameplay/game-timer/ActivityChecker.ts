@@ -1,14 +1,11 @@
 import Hero from "../../../models/hero/Hero";
 import { HeroActivityType } from "../../../models/hero/HeroActivityType";
-import {
-  CURE_COST_PER_HP,
-  HEALTH_PER_VITALITY,
-} from "../../../utils/variables";
+import { CURE_COST_PER_HP, HEALTH_PER_VITALITY } from "../../../utils/variables";
 
 const checkHeroActivity = (hero: Hero): HeroActivityType | null => {
   if (hero.activity!.type === HeroActivityType.IDLE) {
     if (needHealer(hero)) {
-      return HeroActivityType.HEALER;
+      return HeroActivityType.HEALING;
     }
   } else {
     if (checkActivityEnded(hero)) {
@@ -33,10 +30,7 @@ const checkActivityEnded = (hero: Hero): boolean => {
     return false;
   }
 
-  return (
-    activity.startedAt.getTime() + activity.duration * 1000 <
-    new Date().getTime()
-  );
+  return activity.startedAt.getTime() + activity.duration * 1000 < new Date().getTime();
 };
 
 export default checkHeroActivity;

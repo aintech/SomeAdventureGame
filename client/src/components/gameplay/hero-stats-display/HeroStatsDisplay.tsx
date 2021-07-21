@@ -83,7 +83,7 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
     case HeroActivityType.QUEST:
       activity = `Выполняет задание`;
       break;
-    case HeroActivityType.HEALER:
+    case HeroActivityType.HEALING:
       activity = `Лечится у знахаря`;
       break;
     default:
