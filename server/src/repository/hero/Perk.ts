@@ -11,17 +11,17 @@ export type HeroPerk = Perk & {
   heroId: number;
 };
 
-const perks: Perk[] = [];
+const _p: Perk[] = [];
 export const getPerks = async () => {
-  if (perks.length === 0) {
-    const dbPerks = await query<Perk[]>("getPerks", "select * from public.hero_perk", [], (row: PerkRow): Perk => {
+  if (_p.length === 0) {
+    const dbPerks = await query<Perk[]>("getPerks", "select * from public.perk", [], (row: PerkRow): Perk => {
       return { id: +row.id, name: row.name, description: row.description };
     });
-    if (perks.length === 0) {
-      perks.push(...dbPerks);
+    if (_p.length === 0) {
+      _p.push(...dbPerks);
     }
   }
-  return perks;
+  return _p;
 };
 
 export const withPerks = async (heroes: HeroWithItems[]) => {

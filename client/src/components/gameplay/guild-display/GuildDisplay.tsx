@@ -21,12 +21,7 @@ type GuildDisplayProps = {
  * TODO: Переключалка setShowUnabledHeroes сбрасывается если переоткрыть гильдию -
  * лучше сделать через редюсер чтобы запоминалась
  */
-const GuildDisplay = ({
-  quests,
-  heroes,
-  heroesAssignedToQuest,
-  closeDisplay,
-}: GuildDisplayProps) => {
+const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest, closeDisplay }: GuildDisplayProps) => {
   const [page, setPage] = useState<number>(0);
   const [lastPage, setLastPage] = useState<number>(0);
   const [heroesOnPage, setHeroesOnPage] = useState<Hero[]>([]);
@@ -34,11 +29,7 @@ const GuildDisplay = ({
 
   useEffect(() => {
     const idleHeroes = heroes
-      .filter(
-        (h) =>
-          showUnabledHeroes ||
-          (h.activity!.type === HeroActivityType.IDLE && h.isAilve())
-      )
+      .filter((h) => showUnabledHeroes || (h.activity!.type === HeroActivityType.IDLE && h.isAilve()))
       .sort((a, b) => a.id - b.id);
 
     const lPage = Math.max(0, Math.ceil(idleHeroes.length / 4) - 1);
@@ -92,28 +83,15 @@ const GuildDisplay = ({
   return (
     <div className="guild-display" id="guild-display" onClick={clickHandler}>
       <QuestScrollList quests={quests} />
-      <HeroList
-        heroes={heroesOnPage}
-        heroesAssignedToQuest={heroesAssignedToQuest}
-      />
-      <button
-        className="guild-display__btn--close"
-        onClick={closeDisplay}
-      ></button>
-      <button
-        className="guild-display__btn--show-unabled"
-        onClick={switchShowUnabled}
-      >
+      <HeroList heroes={heroesOnPage} heroesAssignedToQuest={heroesAssignedToQuest} />
+      <button className="guild-display__btn--close" onClick={closeDisplay}></button>
+      <button className="guild-display__btn--show-unabled" onClick={switchShowUnabled}>
         <i className="material-icons guild-display__btn--show-unabled-icon">
           {!showUnabledHeroes ? "check_box" : "check_box_outline_blank"}
         </i>
         <span>Только доступные</span>
       </button>
-      <button
-        className="guild-display__btn--previous"
-        style={prevStyle}
-        onClick={() => switchPage(-1)}
-      ></button>
+      <button className="guild-display__btn--previous" style={prevStyle} onClick={() => switchPage(-1)}></button>
       <button
         className="guild-display__btn--next"
         style={nextStyle}
@@ -135,13 +113,7 @@ type GuildDisplayContainerProps = {
 
 class GuildDisplayContainer extends Component<GuildDisplayContainerProps> {
   render() {
-    const {
-      quests,
-      heroes,
-      heroesAssignedToQuest,
-      closeDisplay,
-      closeQuestScroll,
-    } = this.props;
+    const { quests, heroes, heroesAssignedToQuest, closeDisplay, closeQuestScroll } = this.props;
 
     if (!quests) {
       return <Loader message={"Fetching quests for guild..."} />;
@@ -169,11 +141,7 @@ type GUildDisplayState = {
   heroesAssignedToQuest: Hero[];
 };
 
-const mapStateToProps = ({
-  quests,
-  heroes,
-  heroesAssignedToQuest,
-}: GUildDisplayState) => {
+const mapStateToProps = ({ quests, heroes, heroesAssignedToQuest }: GUildDisplayState) => {
   return { quests, heroes, heroesAssignedToQuest };
 };
 
@@ -181,7 +149,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators({ closeQuestScroll: questScrollClosed }, dispatch);
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(GuildDisplayContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(GuildDisplayContainer);

@@ -4,7 +4,7 @@ export enum BuildingType {
   HEALER /** Healing heroes */,
   TREASURY /** Management village accounts */,
   TRAINING_GROUND /** Level up heroes */,
-  MARKET /** Selling potions to heroes */,
+  ALCHEMIST /** Selling potions to heroes */,
   TEMPLE /** Buff heroes */,
   BLACKSMITH /** Upgrade heroes equipment*/,
 }
@@ -25,7 +25,7 @@ export const buildingTypeToName = (type: BuildingType) => {
       return "Сокровищница";
     case BuildingType.TRAINING_GROUND:
       return "Тренировочная площадка";
-    case BuildingType.MARKET:
+    case BuildingType.ALCHEMIST:
       return "Лавка 'Зелья Мёбиуса'";
     case BuildingType.TEMPLE:
       return "Храм Солнца и Луны";

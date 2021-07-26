@@ -6,7 +6,7 @@ import Building, { BuildingType } from "../../../models/Building";
 import BlacksmithDisplay from "../blacksmith-display/BlacksmithDisplay";
 import GuildDisplay from "../guild-display/GuildDisplay";
 import HealerDisplay from "../healer-display/HealerDisplay";
-import MarketDisplay from "../market-display/MarketDisplay";
+import AlchemistDisplay from "../alchemist-display/AlchemistDisplay";
 import TavernDisplay from "../tavern-display/TavernDisplay";
 import TempleDisplay from "../temple-display/TempleDisplay";
 import TrainingGroundDisplay from "../training-ground-display/TrainingGroundDisplay";
@@ -40,8 +40,8 @@ const BuildingDetails = ({ chosenBuilding, hideBuildingDisplay }: BuildingDetail
     case BuildingType.TRAINING_GROUND:
       display = <TrainingGroundDisplay closeDisplay={hideBuildingDisplay} />;
       break;
-    case BuildingType.MARKET:
-      display = <MarketDisplay closeDisplay={hideBuildingDisplay} />;
+    case BuildingType.ALCHEMIST:
+      display = <AlchemistDisplay closeDisplay={hideBuildingDisplay} />;
       break;
     case BuildingType.TEMPLE:
       display = <TempleDisplay closeDisplay={hideBuildingDisplay} />;

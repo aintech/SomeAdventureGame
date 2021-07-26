@@ -5,10 +5,14 @@ import { Item, withItems } from "./Item";
 import { withEquipment, Equipment } from "./Equipment";
 import { withLevelInfo } from "./Level";
 import { Perk, withPerks } from "./Perk";
+import { Skill, withSkills } from "./Skill";
 
 export enum HeroType {
   WARRIOR,
   MAGE,
+  THIEF,
+  HEALER,
+  PALADIN,
 }
 
 export type Hero = {
@@ -42,13 +46,15 @@ export type HeroWithItems = HeroWithEquipment & { items: Item[] };
 
 export type HeroWithPerks = HeroWithItems & { perks: Perk[] };
 
+export type HeroWithSkills = HeroWithPerks & { skills: Skill[] };
+
 const selectQuery = `
      select *
      from public.hero h 
      left join public.hero_activity a on a.hero_id = h.id`;
 
 const prepareHeroes = async (heroes: Hero[]) => {
-  return withPerks(await withItems(await withEquipment(await withLevelInfo(heroes))));
+  return withSkills(await withPerks(await withItems(await withEquipment(await withLevelInfo(heroes)))));
 };
 
 /**
@@ -224,10 +230,16 @@ const mapHero = (row: HeroRow): Hero => {
 
 const mapHeroType = (type: string) => {
   switch (type) {
-    case "mage":
-      return HeroType.MAGE;
     case "warrior":
       return HeroType.WARRIOR;
+    case "mage":
+      return HeroType.MAGE;
+    case "thief":
+      return HeroType.THIEF;
+    case "healer":
+      return HeroType.HEALER;
+    case "paladin":
+      return HeroType.PALADIN;
     default:
       throw new Error(`Unknown hero type ${type}`);
   }

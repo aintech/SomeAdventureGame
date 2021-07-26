@@ -24,6 +24,8 @@ const seeingOffPatrons = async (heroIds: number[]) => {
   const ids = heroIds.join(",");
   return Promise.all([
     query<void>("seeingOffPatrons - equip", `delete from public.hero_equipment where hero_id in (${ids})`),
+    query<void>("seeingOffPatrons - items", `delete from public.hero_item where hero_id in (${ids})`),
+    query<void>("seeingOffPatrons - perks", `delete from public.hero_perk where hero_id in (${ids})`),
     query<void>("seeingOffPatrons - heroes", `delete from public.hero where id in (${ids})`),
   ]);
 };
@@ -75,12 +77,17 @@ const givePatronsItems = async (heroes: Hero[]) => {
   const defaultPotions = heroes.map((hero) => `select ${hero.id}, 'health_potion', 3`).join(" union ");
 
   const additionalPotions = heroes
-    .map((hero) => `select ${hero.id}, ${hero.type === HeroType.MAGE ? `'mana_potion'` : `'health_elixir'`}, 3`)
+    .map(
+      (hero) =>
+        `select ${hero.id}, ${
+          hero.type === HeroType.MAGE || hero.type === HeroType.HEALER ? `'mana_potion'` : `'health_elixir'`
+        }, 3`
+    )
     .join(" union ");
 
   return query<void>(
     "givePatronsItems",
-    `insert into public.hero_equipment (hero_id, equipment_id)
+    `insert into public.hero_item (hero_id, equipment_id, amount)
      select * from (${defaultPotions} union ${additionalPotions}) as vals;`
   );
 };
@@ -111,7 +118,7 @@ const givePatronsPerks = async (heroes: Hero[]) => {
 
   return query<void>(
     "givePatronsItems",
-    `insert into public.hero_equipment (hero_id, equipment_id)
+    `insert into public.hero_perk (hero_id, perk_id)
      select * from (${insertPerks}) as vals;`
   );
 };

@@ -40,6 +40,7 @@ export interface HeroResponse extends StatsHolder {
   equipment: EquipmentResponse[];
   items: HeroItemResponse[];
   perks: HeroPerkResponse[];
+  skills: HeroSkillResponse[];
   activityId: number;
   activityType: HeroActivityType;
   startedAt: string;
@@ -60,6 +61,12 @@ export interface HireHeroResponse {
 export interface HeroPerkResponse {
   id: number;
   heroId: number;
+  name: string;
+  description: string;
+}
+
+export interface HeroSkillResponse {
+  level: number;
   name: string;
   description: string;
 }

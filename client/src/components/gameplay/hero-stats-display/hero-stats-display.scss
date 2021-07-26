@@ -297,10 +297,12 @@
     grid-column: 6;
     grid-row: 3;
     @include strokeText;
+    margin-right: 30%;
 
     &--header {
       color: lightskyblue;
       margin-bottom: 10px;
+      text-align: center;
     }
 
     &--list {
@@ -317,10 +319,12 @@
     grid-column: 6;
     grid-row: 9;
     @include strokeText;
+    margin-right: 30%;
 
     &--header {
       color: lightskyblue;
       margin-bottom: 10px;
+      text-align: center;
     }
 
     &--name {
@@ -334,6 +338,36 @@
       & ul {
         margin-bottom: 10px;
       }
+    }
+  }
+
+  &__skills {
+    grid-column: 1;
+    grid-row: 3;
+    @include strokeText;
+    margin-left: 30%;
+
+    &--header {
+      color: lightskyblue;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    &--name {
+      color: yellowgreen;
+    }
+
+    &--list {
+      font-size: 2rem;
+      list-style: none;
+
+      & ul {
+        margin-bottom: 10px;
+      }
+    }
+
+    &--disabled {
+      opacity: 0.2;
     }
   }
 }

@@ -87,7 +87,7 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
       activity = `Лечится у знахаря`;
       break;
     default:
-      activity = null;
+      throw new Error(`Unknown activity type ${HeroActivityType[hero.activity!.type]}`);
   }
 
   return (
@@ -110,7 +110,7 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
       >
         <span className="hero-stats__dismiss-btn--text">
           {" "}
-          <span style={{ color: "red" }}>X</span> Расформировать
+          <span style={{ color: "red" }}>X</span> Отпустить
         </span>
       </button>
       <div className="hero-stats__activity">{activity}</div>
@@ -165,6 +165,23 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
               return (
                 <ul key={perk.id}>
                   <span className="hero-stats__perks--name">{perk.name}</span> - {perk.description}
+                </ul>
+              );
+            })}
+          </li>
+        </div>
+      </div>
+      <div className="hero-stats__skills">
+        <div className="hero-stats__skills--header">Умения</div>
+        <div className="hero-stats__skills--list">
+          <li>
+            {hero.skills.map((skill) => {
+              return (
+                <ul key={skill.name} className={`${skill.level > hero.level ? "hero-stats__skills--disabled" : ""}`}>
+                  <span className="hero-stats__skills--name">
+                    {skill.name} ({skill.level} ур)
+                  </span>{" "}
+                  - {skill.description}
                 </ul>
               );
             })}

@@ -3,11 +3,11 @@
 .game-world__building {
   &-TAVERN {
     position: absolute;
-    top: calc(445px / #{$gameplay_scale});
-    left: calc(413px / #{$gameplay_scale});
-    width: calc(312px / 3);
-    height: calc(264px / 3);
-    background-image: url(../../../../img/village_tavern.png);
+    top: 85px;
+    left: 918px;
+    width: 86px;
+    height: 83px;
+    background-image: url(../../../../img/map/Tavern.png);
     background-size: cover;
     cursor: pointer;
 
@@ -18,11 +18,11 @@
 
   &-GUILD {
     position: absolute;
-    top: calc(300px / #{$gameplay_scale});
-    left: calc(700px / #{$gameplay_scale});
-    width: calc(512px / 3);
-    height: calc(512px / 3);
-    background-image: url(../../../../img/village_guild.png);
+    top: 10px;
+    left: 478px;
+    width: 174px;
+    height: 159px;
+    background-image: url(../../../../img/map/Guild.png);
     background-size: cover;
     cursor: pointer;
 
@@ -33,11 +33,11 @@
 
   &-HEALER {
     position: absolute;
-    top: calc(122px / #{$gameplay_scale});
-    left: calc(803px / #{$gameplay_scale});
-    width: calc(312px / 3);
-    height: calc(264px / 3);
-    background-image: url(../../../../img/village_healer.png);
+    top: 430px;
+    left: 545px;
+    width: 114px;
+    height: 89px;
+    background-image: url(../../../../img/map/Healer.png);
     background-size: cover;
     cursor: pointer;
 
@@ -48,11 +48,11 @@
 
   &-TREASURY {
     position: absolute;
-    top: calc(130px / #{$gameplay_scale});
-    left: calc(353px / #{$gameplay_scale});
-    width: calc(312px / 3);
-    height: calc(264px / 3);
-    background-image: url(../../../../img/village_treasury.png);
+    top: 30px;
+    left: 261px;
+    width: 170px;
+    height: 110px;
+    background-image: url(../../../../img/map/Treasury.png);
     background-size: cover;
     cursor: pointer;
 
@@ -63,11 +63,11 @@
 
   &-TRAINING_GROUND {
     position: absolute;
-    top: calc(150px / #{$gameplay_scale});
-    left: calc(1162px / #{$gameplay_scale});
-    width: calc(512px / 3);
-    height: calc(512px / 3);
-    background-image: url(../../../../img/village_training_ground.png);
+    top: 30px;
+    left: 671px;
+    width: 164px;
+    height: 89px;
+    background-image: url(../../../../img/map/Training_ground.png);
     background-size: cover;
     cursor: pointer;
 
@@ -76,13 +76,13 @@
     }
   }
 
-  &-MARKET {
+  &-ALCHEMIST {
     position: absolute;
-    top: calc(700px / #{$gameplay_scale});
-    left: calc(300px / #{$gameplay_scale});
-    width: calc(312px / 3);
-    height: calc(264px / 3);
-    background-image: url(../../../../img/village_market.png);
+    top: 317px;
+    left: 766px;
+    width: 45px;
+    height: 102px;
+    background-image: url(../../../../img/map/Alchemist.png);
     background-size: cover;
     cursor: pointer;
 
@@ -93,11 +93,11 @@
 
   &-TEMPLE {
     position: absolute;
-    top: calc(700px / #{$gameplay_scale});
-    left: calc(800px / #{$gameplay_scale});
-    width: calc(312px / 3);
-    height: calc(264px / 3);
-    background-image: url(../../../../img/village_temple.png);
+    top: 34px;
+    left: 45px;
+    width: 198px;
+    height: 190px;
+    background-image: url(../../../../img/map/Temple.png);
     background-size: cover;
     cursor: pointer;
 
@@ -108,11 +108,11 @@
 
   &-BLACKSMITH {
     position: absolute;
-    top: calc(600px / #{$gameplay_scale});
-    left: calc(1230px / #{$gameplay_scale});
-    width: calc(312px / 3);
-    height: calc(264px / 3);
-    background-image: url(../../../../img/village_blacksmith.png);
+    top: 428px;
+    left: 304px;
+    width: 83px;
+    height: 76px;
+    background-image: url(../../../../img/map/Blacksmith.png);
     background-size: cover;
     cursor: pointer;
 
