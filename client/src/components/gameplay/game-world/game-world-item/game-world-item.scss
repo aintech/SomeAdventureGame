@@ -91,13 +91,13 @@
     }
   }
 
-  &-SHAMAN {
+  &-TEMPLE {
     position: absolute;
     top: 34px;
     left: 45px;
     width: 198px;
     height: 190px;
-    background-image: url(../../../../img/map/Shaman.png);
+    background-image: url(../../../../img/map/Temple.png);
     background-size: cover;
     cursor: pointer;
 
@@ -113,6 +113,21 @@
     width: 83px;
     height: 76px;
     background-image: url(../../../../img/map/Blacksmith.png);
+    background-size: cover;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  &-STABLES {
+    position: absolute;
+    top: 378px;
+    left: 904px;
+    width: 83px;
+    height: 76px;
+    background-image: url(../../../../img/map/Stables.png);
     background-size: cover;
     cursor: pointer;
 

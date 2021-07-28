@@ -18,8 +18,9 @@ const GameWorld = ({ onBuildingClicked }: GameWorldProps) => {
     new Building(4, BuildingType.TREASURY),
     new Building(5, BuildingType.TRAINING_GROUND),
     new Building(6, BuildingType.ALCHEMIST),
-    new Building(7, BuildingType.SHAMAN),
+    new Building(7, BuildingType.TEMPLE),
     new Building(8, BuildingType.BLACKSMITH),
+    new Building(9, BuildingType.STABLES),
   ]);
 
   return (

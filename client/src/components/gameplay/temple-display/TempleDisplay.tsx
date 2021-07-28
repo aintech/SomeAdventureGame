@@ -7,32 +7,32 @@ import Hero from "../../../models/hero/Hero";
 import { HeroActivityType } from "../../../models/hero/HeroActivityType";
 import Loader from "../../loader/Loader";
 import HeroItem from "../guild-display/heroes/HeroItem";
-import "./shaman-display.scss";
+import "./temple-display.scss";
 
-type ShamanDisplayProps = {
+type TempleDisplayProps = {
   visitors: Hero[];
   visitorClicked: (visitor: Hero) => void;
   closeDisplay: () => void;
 };
 
-const ShamanDisplay = ({ visitors, visitorClicked, closeDisplay }: ShamanDisplayProps) => {
+const TempleDisplay = ({ visitors, visitorClicked, closeDisplay }: TempleDisplayProps) => {
   const visitorClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     visitorClicked(hero);
   };
 
   const clickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLDivElement).id === "shaman-display") {
+    if ((event.target as HTMLDivElement).id === "temple-display") {
       closeDisplay();
     }
   };
 
   return (
-    <div className="shaman-display" id="shaman-display" onClick={clickHandler}>
-      <button className="shaman-display__btn--close" onClick={closeDisplay}></button>
-      <div className="shaman-display__container">
-        <div className="shaman-display__name">{buildingTypeToName(BuildingType.SHAMAN)}</div>
-        <div className="shaman-display__visitors-holder">
+    <div className="temple-display" id="temple-display" onClick={clickHandler}>
+      <button className="temple-display__btn--close" onClick={closeDisplay}></button>
+      <div className="temple-display__container">
+        <div className="temple-display__name">{buildingTypeToName(BuildingType.TEMPLE)}</div>
+        <div className="temple-display__visitors-holder">
           {visitors.map((visitor) => (
             <HeroItem
               key={visitor.id}
@@ -47,13 +47,13 @@ const ShamanDisplay = ({ visitors, visitorClicked, closeDisplay }: ShamanDisplay
   );
 };
 
-type ShamanDisplayContainerProps = {
+type TempleDisplayContainerProps = {
   heroes: Hero[];
   heroClicked: (hero: Hero) => void;
   closeDisplay: () => void;
 };
 
-class ShamanDisplayContainer extends Component<ShamanDisplayContainerProps> {
+class TempleDisplayContainer extends Component<TempleDisplayContainerProps> {
   render() {
     const { heroes, heroClicked, closeDisplay } = this.props;
 
@@ -63,15 +63,15 @@ class ShamanDisplayContainer extends Component<ShamanDisplayContainerProps> {
 
     const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.PRAYING);
 
-    return <ShamanDisplay visitors={visitors} closeDisplay={closeDisplay} visitorClicked={heroClicked} />;
+    return <TempleDisplay visitors={visitors} closeDisplay={closeDisplay} visitorClicked={heroClicked} />;
   }
 }
 
-type ShamanDisplayContainerState = {
+type TempleDisplayContainerState = {
   heroes: Hero[];
 };
 
-const mapStateToProps = ({ heroes }: ShamanDisplayContainerState) => {
+const mapStateToProps = ({ heroes }: TempleDisplayContainerState) => {
   return { heroes };
 };
 
@@ -84,4 +84,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ShamanDisplayContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(TempleDisplayContainer);

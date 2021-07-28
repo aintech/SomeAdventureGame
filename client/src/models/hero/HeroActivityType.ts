@@ -4,5 +4,5 @@ export enum HeroActivityType {
   HEALING /** Heal wounds in Healer tent */,
   TRAINIG /** Training new level in Trainig ground */,
   PURCHASING /** Buying potions in Alchemist */,
-  PRAYING /** Seeking buffs in Shaman tent */,
+  PRAYING /** Seeking buffs in Temple */,
 }
