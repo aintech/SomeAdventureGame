@@ -3,7 +3,7 @@ import query from "../Db";
 import { HeroActivityType, mapHeroActivityType } from "./HeroActivity";
 import { Item, withItems } from "./Item";
 import { withEquipment, Equipment } from "./Equipment";
-import { withLevelInfo } from "./Level";
+import { withLevelUpInfo } from "./Level";
 import { Perk, withPerks } from "./Perk";
 import { Skill, withSkills } from "./Skill";
 
@@ -20,6 +20,7 @@ export type Hero = {
   userId: number;
   name: string;
   type: HeroType;
+  level: number;
   power: number;
   defence: number;
   health: number;
@@ -36,9 +37,9 @@ export type Hero = {
   duration: number | null;
 };
 
-export type HeroWithLevel = Hero & { level: number };
+export type HeroWithLevelUp = Hero & { levelUp: boolean };
 
-export type HeroWithLevelProgress = HeroWithLevel & { progress: number };
+export type HeroWithLevelProgress = HeroWithLevelUp & { progress: number };
 
 export type HeroWithEquipment = HeroWithLevelProgress & { equipment: Equipment[] };
 
@@ -54,7 +55,7 @@ const selectQuery = `
      left join public.hero_activity a on a.hero_id = h.id`;
 
 const prepareHeroes = async (heroes: Hero[]) => {
-  return withSkills(await withPerks(await withItems(await withEquipment(await withLevelInfo(heroes)))));
+  return withSkills(await withPerks(await withItems(await withEquipment(await withLevelUpInfo(heroes)))));
 };
 
 /**
@@ -191,6 +192,7 @@ type HeroRow = {
   user_id: string;
   name: string;
   type: string;
+  level: string;
   power: string;
   defence: string;
   health: string;
@@ -212,6 +214,7 @@ const mapHero = (row: HeroRow): Hero => {
     userId: +row.user_id,
     name: row.name,
     type: mapHeroType(row.type),
+    level: +row.level,
     power: +row.power,
     defence: +row.defence,
     health: +row.health,

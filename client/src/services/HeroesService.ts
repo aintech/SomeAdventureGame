@@ -33,6 +33,7 @@ export interface HeroResponse extends StatsHolder {
   name: string;
   type: HeroType;
   level: number;
+  levelUp: boolean;
   health: number;
   experience: number;
   progress: number;

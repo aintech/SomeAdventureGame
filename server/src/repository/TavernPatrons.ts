@@ -87,7 +87,7 @@ const givePatronsItems = async (heroes: Hero[]) => {
 
   return query<void>(
     "givePatronsItems",
-    `insert into public.hero_item (hero_id, equipment_id, amount)
+    `insert into public.hero_item (hero_id, type, amount)
      select * from (${defaultPotions} union ${additionalPotions}) as vals;`
   );
 };

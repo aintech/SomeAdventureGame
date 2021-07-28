@@ -14,6 +14,7 @@ export default class Hero {
     public name: string,
     public type: HeroType,
     public level: number,
+    public levelUp: boolean,
     public stats: PersonageStats,
     /** Stats without equipment surpluses */
     public rawStats: PersonageStats,
@@ -30,7 +31,7 @@ export default class Hero {
     public isHero: boolean = true
   ) {}
 
-  public isAilve() {
+  public isAlive() {
     return this.health > 0;
   }
 }
@@ -53,6 +54,7 @@ export const convert = (response: HeroResponse): Hero => {
     response.name,
     response.type,
     response.level,
+    response.levelUp,
     new PersonageStats(response.power, response.defence, response.vitality, response.initiative),
     new PersonageStats(
       getRawStat("power")(response)(response.equipment),

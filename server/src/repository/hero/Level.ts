@@ -1,5 +1,5 @@
 import query from "../Db";
-import { Hero, HeroWithLevel, HeroWithLevelProgress } from "./Hero";
+import { Hero, HeroWithLevelProgress, HeroWithLevelUp } from "./Hero";
 
 export type Level = {
   level: number;
@@ -9,13 +9,16 @@ export type Level = {
 let maxLevel = 0;
 const levels: Level[] = [];
 const fetchLevels = () => {
-  return query<Level[]>("fetchLevels", "select * from public.hero_level", [], mapLevel);
+  return query<Level[]>("fetchLevels", "select * from public.level_exp", [], mapLevel);
 };
 
 const checkLevelsLoaded = async () => {
   if (levels.length === 0) {
-    await fetchLevels().then((data) => levels.push(...data));
-    maxLevel = Math.max(...levels.map((l) => l.level));
+    const lvls = await fetchLevels();
+    if (levels.length === 0) {
+      levels.push(...lvls);
+      maxLevel = Math.max(...levels.map((l) => l.level));
+    }
   }
 };
 
@@ -23,7 +26,7 @@ const calcHeroLevel = (hero: Hero) => {
   return Math.max(...levels.filter((l) => l.experience < hero.experience).map((l) => l.level));
 };
 
-const calcLevelProgress = (hero: HeroWithLevel) => {
+const calcLevelProgress = (hero: HeroWithLevelUp) => {
   const prevLvlExp = levels.filter((l) => l.level === hero.level)[0];
   if (!prevLvlExp) {
     console.log(hero);
@@ -36,14 +39,14 @@ const calcLevelProgress = (hero: HeroWithLevel) => {
   return heroScope / lvlsScope;
 };
 
-export const withLevelInfo = async (heroes: Hero[]) => {
+export const withLevelUpInfo = async (heroes: Hero[]) => {
   await checkLevelsLoaded();
   if (heroes.length === 0) {
     return [];
   }
   return heroes
     .map((h) => {
-      return { ...h, level: calcHeroLevel(h) } as HeroWithLevel;
+      return { ...h, levelUp: calcHeroLevel(h) > h.level } as HeroWithLevelUp;
     })
     .map((h) => {
       return { ...h, progress: calcLevelProgress(h) } as HeroWithLevelProgress;

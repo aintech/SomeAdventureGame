@@ -8,7 +8,7 @@ import GuildDisplay from "../guild-display/GuildDisplay";
 import HealerDisplay from "../healer-display/HealerDisplay";
 import AlchemistDisplay from "../alchemist-display/AlchemistDisplay";
 import TavernDisplay from "../tavern-display/TavernDisplay";
-import TempleDisplay from "../temple-display/TempleDisplay";
+import ShamanDisplay from "../shaman-display/ShamanDisplay";
 import TrainingGroundDisplay from "../training-ground-display/TrainingGroundDisplay";
 import TreasuryDisplay from "../treasury-display/TreasuryDisplay";
 import "./building-details.scss";
@@ -43,8 +43,8 @@ const BuildingDetails = ({ chosenBuilding, hideBuildingDisplay }: BuildingDetail
     case BuildingType.ALCHEMIST:
       display = <AlchemistDisplay closeDisplay={hideBuildingDisplay} />;
       break;
-    case BuildingType.TEMPLE:
-      display = <TempleDisplay closeDisplay={hideBuildingDisplay} />;
+    case BuildingType.SHAMAN:
+      display = <ShamanDisplay closeDisplay={hideBuildingDisplay} />;
       break;
     case BuildingType.BLACKSMITH:
       display = <BlacksmithDisplay closeDisplay={hideBuildingDisplay} />;

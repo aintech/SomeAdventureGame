@@ -1,10 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import {
-  heroAssignedToQuest,
-  heroStatsChoosed,
-} from "../../../../actions/Actions";
+import { heroAssignedToQuest, heroStatsChoosed } from "../../../../actions/Actions";
 import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
 import HeroItem from "./HeroItem";
@@ -19,22 +16,10 @@ type HeroListProps = {
   heroesAssignedToQuest: Hero[];
 };
 
-const HeroList = ({
-  heroes,
-  chosenQuest,
-  heroClicked,
-  assignHeroToQuest,
-  heroesAssignedToQuest,
-}: HeroListProps) => {
-  const heroClickHandler = (
-    hero: Hero,
-    event: React.MouseEvent<HTMLDivElement>
-  ) => {
+const HeroList = ({ heroes, chosenQuest, heroClicked, assignHeroToQuest, heroesAssignedToQuest }: HeroListProps) => {
+  const heroClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
-    if (
-      event.target instanceof HTMLButtonElement &&
-      event.target.id === "hero_assigned_btn"
-    ) {
+    if (event.target instanceof HTMLButtonElement && event.target.id === "hero_assigned_btn") {
       assignHeroToQuest(hero);
     } else {
       heroClicked(hero);
@@ -45,7 +30,7 @@ const HeroList = ({
     <div className="hero-list">
       {heroes.map((hero) => {
         const enabled =
-          hero.isAilve() &&
+          hero.isAlive() &&
           hero.activity!.type === HeroActivityType.IDLE &&
           heroesAssignedToQuest?.length < 4 &&
           heroesAssignedToQuest?.findIndex((h) => h.id === hero.id) === -1;

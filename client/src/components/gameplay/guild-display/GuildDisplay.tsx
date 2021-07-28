@@ -29,7 +29,7 @@ const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest, closeDisplay }: G
 
   useEffect(() => {
     const idleHeroes = heroes
-      .filter((h) => showUnabledHeroes || (h.activity!.type === HeroActivityType.IDLE && h.isAilve()))
+      .filter((h) => showUnabledHeroes || (h.activity!.type === HeroActivityType.IDLE && h.isAlive()))
       .sort((a, b) => a.id - b.id);
 
     const lPage = Math.max(0, Math.ceil(idleHeroes.length / 4) - 1);

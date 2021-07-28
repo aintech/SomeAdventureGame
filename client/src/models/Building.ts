@@ -1,11 +1,13 @@
 export enum BuildingType {
   GUILD /** Send heroes to quest */,
   TAVERN /** Hiring heroes */,
+  DWELLING /** Limit number of hired heroes at the same time */,
+  BEETLE_CAMP /** Limit number of simultaneous embarked quests */,
   HEALER /** Healing heroes */,
   TREASURY /** Management village accounts */,
   TRAINING_GROUND /** Level up heroes */,
   ALCHEMIST /** Selling potions to heroes */,
-  TEMPLE /** Buff heroes */,
+  SHAMAN /** Buff heroes */,
   BLACKSMITH /** Upgrade heroes equipment*/,
 }
 
@@ -18,7 +20,11 @@ export const buildingTypeToName = (type: BuildingType) => {
     case BuildingType.GUILD:
       return "Гильдия героев";
     case BuildingType.TAVERN:
-      return "Таверна 'Пьяный вепрь'";
+      return "Таверна 'Пьяная мушка'";
+    case BuildingType.DWELLING:
+      return "Жилище";
+    case BuildingType.BEETLE_CAMP:
+      return "Стоянка жуков";
     case BuildingType.HEALER:
       return "Палатка целителя";
     case BuildingType.TREASURY:
@@ -26,11 +32,11 @@ export const buildingTypeToName = (type: BuildingType) => {
     case BuildingType.TRAINING_GROUND:
       return "Тренировочная площадка";
     case BuildingType.ALCHEMIST:
-      return "Лавка 'Зелья Мёбиуса'";
-    case BuildingType.TEMPLE:
-      return "Храм Солнца и Луны";
+      return "Грибочек алхимика";
+    case BuildingType.SHAMAN:
+      return "Хибарка шамана";
     case BuildingType.BLACKSMITH:
-      return "Кузница братьев Гномс";
+      return "Кузница Гномсов";
     default:
       throw new Error(`Unknown building type ${BuildingType[type]}`);
   }
