@@ -7,21 +7,19 @@ import HeroItem, { convert as convertItem } from "./HeroItem";
 import HeroPerk, { convert as convertPerk } from "./HeroPerk";
 import HeroSkill, { convert as convertSkill } from "./HeroSkill";
 import { HeroType } from "./HeroType";
+import HeroLevel, { convert as convertLevel } from "./HeroLevel";
 
 export default class Hero {
   constructor(
     public id: number,
     public name: string,
     public type: HeroType,
-    public level: number,
-    public levelUp: boolean,
+    public level: HeroLevel,
     public stats: PersonageStats,
     /** Stats without equipment surpluses */
     public rawStats: PersonageStats,
     public health: number,
     public experience: number,
-    /** Relation of hero current experience to experience hero must acquire to reach next level */
-    public progress: number,
     public gold: number,
     public activity: HeroActivity | null,
     public equipment: Equipment[],
@@ -53,8 +51,7 @@ export const convert = (response: HeroResponse): Hero => {
     response.id,
     response.name,
     response.type,
-    response.level,
-    response.levelUp,
+    convertLevel(response.level),
     new PersonageStats(response.power, response.defence, response.vitality, response.initiative),
     new PersonageStats(
       getRawStat("power")(response)(response.equipment),
@@ -64,7 +61,6 @@ export const convert = (response: HeroResponse): Hero => {
     ),
     response.health,
     response.experience,
-    response.progress,
     response.gold,
     convertActivity(response),
     response.equipment.map((e) => convertEquipment(e)),

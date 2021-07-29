@@ -98,7 +98,7 @@ const givePatronsPerks = async (heroes: Hero[]) => {
   let insertPerks = "";
   heroes.forEach((hero) => {
     let rand = Math.random();
-    const perksCount = rand > 0.9 ? 3 : rand > 0.75 ? 2 : rand > 0.5 ? 1 : 0;
+    const perksCount = rand > 0.75 ? 3 : rand > 0.5 ? 2 : 1; // rand > 0.5 ? 1 : 0;
 
     const perks: Perk[] = [];
     for (let i = 0; i < perksCount; i++) {

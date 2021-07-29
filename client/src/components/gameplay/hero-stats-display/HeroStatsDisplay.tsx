@@ -49,7 +49,7 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
       const expBar = expRef.current.getContext("2d")!;
       expBar.clearRect(0, 0, 124, 21);
       expBar.fillStyle = "yellow";
-      expBar.fillRect(0, 0, 124 * hero.progress, 21);
+      expBar.fillRect(0, 0, 124 * hero.level.progress, 21);
     }
   }, [hero]);
 
@@ -116,7 +116,7 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
       <div className="hero-stats__activity">{activity}</div>
       <div className="hero-stats__gold">{hero.gold}</div>
       <div className="hero-stats__name">{hero.name}</div>
-      <div className="hero-stats__level">{hero.level}</div>
+      <div className="hero-stats__level">{hero.level.lvl}</div>
       <div className="hero-stats__health">{hero.health}</div>
       <div className="hero-stats__experience">{hero.experience}</div>
       <div className="hero-stats__power">{hero.rawStats.power}</div>
@@ -177,7 +177,10 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
           <li>
             {hero.skills.map((skill) => {
               return (
-                <ul key={skill.name} className={`${skill.level > hero.level ? "hero-stats__skills--disabled" : ""}`}>
+                <ul
+                  key={skill.name}
+                  className={`${skill.level > hero.level.lvl ? "hero-stats__skills--disabled" : ""}`}
+                >
                   <span className="hero-stats__skills--name">
                     {skill.name} ({skill.level} ур)
                   </span>{" "}

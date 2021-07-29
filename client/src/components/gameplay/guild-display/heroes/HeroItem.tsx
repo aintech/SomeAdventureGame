@@ -13,13 +13,7 @@ type HeroItemProps = {
   reward?: { gold: number; experience: number };
 };
 
-const HeroItem = ({
-  hero,
-  chosenQuest,
-  itemClickHandler,
-  enabled,
-  reward,
-}: HeroItemProps) => {
+const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, reward }: HeroItemProps) => {
   const healthRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const expRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const canvasW = toGameplayScale(80);
@@ -38,7 +32,7 @@ const HeroItem = ({
     expCtx.fillStyle = "lightgray";
     expCtx.fillRect(0, 0, canvasW, canvasH);
     expCtx.fillStyle = "yellow";
-    expCtx.fillRect(0, 0, canvasW * hero.progress, canvasH);
+    expCtx.fillRect(0, 0, canvasW * hero.level.progress, canvasH);
   });
 
   const assignBtnStyle = {
@@ -57,29 +51,15 @@ const HeroItem = ({
 
   return (
     <div className={className} style={style} onClick={itemClickHandler}>
-      <button
-        id="hero_assigned_btn"
-        className="hero-item__btn--assign"
-        style={assignBtnStyle}
-      >
+      <button id="hero_assigned_btn" className="hero-item__btn--assign" style={assignBtnStyle}>
         Назначить
       </button>
       <div className={`hero-item__portrait--${HeroType[hero.type]}`}></div>
       <div className="hero-item__type-level">
-        {display(hero.type)} <br></br> {hero.level} ур.
+        {display(hero.type)} <br></br> {hero.level.lvl} ур.
       </div>
-      <canvas
-        className="hero-item__health-bar"
-        ref={healthRef}
-        width={canvasW}
-        height={canvasH}
-      />
-      <canvas
-        className="hero-item__exp-bar"
-        ref={expRef}
-        width={canvasW}
-        height={canvasH}
-      />
+      <canvas className="hero-item__health-bar" ref={healthRef} width={canvasW} height={canvasH} />
+      <canvas className="hero-item__exp-bar" ref={expRef} width={canvasW} height={canvasH} />
       <div className="hero-item__name">{hero.name}</div>
       <div className="hero-item__power">{hero.stats.power}</div>
       <div className="hero-item__health">{hero.health}</div>

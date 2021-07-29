@@ -1,5 +1,5 @@
 import query from "../Db";
-import { HeroWithEquipment, HeroWithLevelProgress } from "./Hero";
+import { HeroWithEquipment, Hero } from "./Hero";
 
 export enum EquipmentType {
   WEAPON,
@@ -26,7 +26,7 @@ export type Equipment = {
   avatar: string;
 };
 
-export const withEquipment = async (heroes: HeroWithLevelProgress[]) => {
+export const withEquipment = async (heroes: Hero[]) => {
   if (heroes.length === 0) {
     return [];
   }

@@ -3,7 +3,7 @@ import query from "../Db";
 import { HeroActivityType, mapHeroActivityType } from "./HeroActivity";
 import { Item, withItems } from "./Item";
 import { withEquipment, Equipment } from "./Equipment";
-import { withLevelUpInfo } from "./Level";
+import { HeroLevel, withLevelUpInfo } from "./Level";
 import { Perk, withPerks } from "./Perk";
 import { Skill, withSkills } from "./Skill";
 
@@ -20,7 +20,7 @@ export type Hero = {
   userId: number;
   name: string;
   type: HeroType;
-  level: number;
+  level: HeroLevel;
   power: number;
   defence: number;
   health: number;
@@ -37,11 +37,7 @@ export type Hero = {
   duration: number | null;
 };
 
-export type HeroWithLevelUp = Hero & { levelUp: boolean };
-
-export type HeroWithLevelProgress = HeroWithLevelUp & { progress: number };
-
-export type HeroWithEquipment = HeroWithLevelProgress & { equipment: Equipment[] };
+export type HeroWithEquipment = Hero & { equipment: Equipment[] };
 
 export type HeroWithItems = HeroWithEquipment & { items: Item[] };
 
@@ -214,7 +210,7 @@ const mapHero = (row: HeroRow): Hero => {
     userId: +row.user_id,
     name: row.name,
     type: mapHeroType(row.type),
-    level: +row.level,
+    level: { lvl: +row.level, progress: 0, levelUp: false, cost: 0 },
     power: +row.power,
     defence: +row.defence,
     health: +row.health,

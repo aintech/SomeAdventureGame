@@ -32,11 +32,9 @@ export interface HeroResponse extends StatsHolder {
   id: number;
   name: string;
   type: HeroType;
-  level: number;
-  levelUp: boolean;
+  level: HeroLevelResponse;
   health: number;
   experience: number;
-  progress: number;
   gold: number;
   equipment: EquipmentResponse[];
   items: HeroItemResponse[];
@@ -57,6 +55,13 @@ export interface HeroItemResponse {
 export interface HireHeroResponse {
   stats: GameStats;
   hired: HeroResponse;
+}
+
+export interface HeroLevelResponse {
+  lvl: number;
+  progress: number;
+  levelUp: boolean;
+  cost: number;
 }
 
 export interface HeroPerkResponse {
