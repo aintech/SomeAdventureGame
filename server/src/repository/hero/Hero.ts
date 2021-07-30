@@ -15,6 +15,7 @@ export enum HeroType {
   PALADIN,
 }
 
+//TODO: Добавить аттрибут Luck
 export type Hero = {
   id: number;
   userId: number;
@@ -24,7 +25,6 @@ export type Hero = {
   power: number;
   defence: number;
   health: number;
-  experience: number;
   gold: number;
   vitality: number;
   initiative: number;
@@ -210,11 +210,10 @@ const mapHero = (row: HeroRow): Hero => {
     userId: +row.user_id,
     name: row.name,
     type: mapHeroType(row.type),
-    level: { lvl: +row.level, progress: 0, levelUp: false, cost: 0 },
+    level: { lvl: +row.level, experience: +row.experience, tier: "", progress: 0, levelUp: null },
     power: +row.power,
     defence: +row.defence,
     health: +row.health,
-    experience: +row.experience,
     gold: +row.gold,
     vitality: +row.vitality,
     initiative: +row.initiative,

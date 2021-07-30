@@ -116,9 +116,11 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
       <div className="hero-stats__activity">{activity}</div>
       <div className="hero-stats__gold">{hero.gold}</div>
       <div className="hero-stats__name">{hero.name}</div>
-      <div className="hero-stats__level">{hero.level.lvl}</div>
+      <div className="hero-stats__level">
+        {hero.level.lvl} - {hero.level.tier}
+      </div>
       <div className="hero-stats__health">{hero.health}</div>
-      <div className="hero-stats__experience">{hero.experience}</div>
+      <div className="hero-stats__experience">{hero.level.experience}</div>
       <div className="hero-stats__power">{hero.rawStats.power}</div>
       <div className="hero-stats__power-surplus">+{equipmentSurplus.power}</div>
       <div className="hero-stats__defence">{hero.rawStats.defence}</div>

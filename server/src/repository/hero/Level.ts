@@ -5,9 +5,22 @@ export type LevelExp = {
   level: number;
   experience: number;
   cost: number;
+  duration: number;
+  tier: string;
 };
 
-export type HeroLevel = { lvl: number; progress: number; levelUp: boolean; cost: number };
+export type LevelUp = {
+  cost: number;
+  duration: number;
+};
+
+export type HeroLevel = {
+  lvl: number;
+  tier: string;
+  experience: number;
+  progress: number;
+  levelUp: LevelUp | null;
+};
 
 let maxLevel = 0;
 const levels: LevelExp[] = [];
@@ -27,12 +40,7 @@ const checkLevelsLoaded = async () => {
 
 const calcLevelProgress = (hero: Hero): HeroLevel => {
   if (hero.level.lvl === maxLevel) {
-    return {
-      lvl: maxLevel,
-      progress: 0,
-      levelUp: false,
-      cost: 0,
-    };
+    hero.level;
   }
   const currentLevelExp = levels.filter((l) => l.level === hero.level.lvl)[0];
   const nextLevelExp = levels.filter((l) => l.level === hero.level.lvl + 1)[0];
@@ -41,17 +49,20 @@ const calcLevelProgress = (hero: Hero): HeroLevel => {
   }
 
   const nextToCurrDiff = nextLevelExp.experience - currentLevelExp.experience;
-  const heroToCurrDiff = hero.experience - currentLevelExp.experience;
+  const heroToCurrDiff = hero.level.experience - currentLevelExp.experience;
   const progress = heroToCurrDiff / nextToCurrDiff;
 
-  const levelUp = hero.experience > nextLevelExp.experience;
-  const cost = levelUp ? nextLevelExp.cost : 0;
+  const levelUp = hero.level.experience > nextLevelExp.experience;
 
   return {
-    lvl: hero.level.lvl,
+    ...hero.level,
+    tier: currentLevelExp.tier,
     progress,
-    levelUp,
-    cost,
+    levelUp: levelUp
+      ? {
+          ...nextLevelExp,
+        }
+      : null,
   };
 };
 
@@ -69,6 +80,8 @@ type LevelRow = {
   level: string;
   experience: string;
   cost: string;
+  duration: string;
+  tier: string;
 };
 
 const mapLevel = (row: LevelRow): LevelExp => {
@@ -76,5 +89,7 @@ const mapLevel = (row: LevelRow): LevelExp => {
     level: +row.level,
     experience: +row.experience,
     cost: +row.cost,
+    duration: +row.duration,
+    tier: row.tier,
   };
 };

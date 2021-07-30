@@ -7,6 +7,9 @@ const checkHeroActivity = (hero: Hero): HeroActivityType | null => {
     if (needHealer(hero)) {
       return HeroActivityType.HEALING;
     }
+    if (readyToLevelUp(hero)) {
+      return HeroActivityType.TRAINING;
+    }
   } else {
     if (checkActivityEnded(hero)) {
       return HeroActivityType.IDLE;
@@ -19,6 +22,10 @@ const checkHeroActivity = (hero: Hero): HeroActivityType | null => {
 const needHealer = (hero: Hero) => {
   const hpLost = hero.stats.vitality * HEALTH_PER_VITALITY - hero.health;
   return hpLost > 0 && hero.gold >= hpLost * CURE_COST_PER_HP;
+};
+
+const readyToLevelUp = (hero: Hero) => {
+  return false;
 };
 
 const checkActivityEnded = (hero: Hero): boolean => {

@@ -9,13 +9,13 @@ import HeroItem from "../guild-display/heroes/HeroItem";
 import { BuildingType, buildingTypeToName } from "../../../models/Building";
 import "./training-ground-display.scss";
 
-type TrainigGroundDisplayProps = {
+type TrainingGroundDisplayProps = {
   trainies: Hero[];
   traineeClicked: (visitor: Hero) => void;
   closeDisplay: () => void;
 };
 
-const TrainingGroundDisplay = ({ trainies, traineeClicked, closeDisplay }: TrainigGroundDisplayProps) => {
+const TrainingGroundDisplay = ({ trainies, traineeClicked, closeDisplay }: TrainingGroundDisplayProps) => {
   const traineeClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     traineeClicked(hero);
@@ -61,7 +61,7 @@ class TrainingGroundDisplayContainer extends Component<TrainingGroundDisplayCont
       return <Loader message={`Wating for heroes`} />;
     }
 
-    const trainies = heroes.filter((h) => h.activity!.type === HeroActivityType.TRAINIG);
+    const trainies = heroes.filter((h) => h.activity!.type === HeroActivityType.TRAINING);
 
     return <TrainingGroundDisplay trainies={trainies} closeDisplay={closeDisplay} traineeClicked={heroClicked} />;
   }

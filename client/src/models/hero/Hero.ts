@@ -19,7 +19,6 @@ export default class Hero {
     /** Stats without equipment surpluses */
     public rawStats: PersonageStats,
     public health: number,
-    public experience: number,
     public gold: number,
     public activity: HeroActivity | null,
     public equipment: Equipment[],
@@ -60,7 +59,6 @@ export const convert = (response: HeroResponse): Hero => {
       getRawStat("initiative")(response)(response.equipment)
     ),
     response.health,
-    response.experience,
     response.gold,
     convertActivity(response),
     response.equipment.map((e) => convertEquipment(e)),
