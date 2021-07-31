@@ -5,8 +5,8 @@ export default class HeroActivity {
   constructor(
     public type: HeroActivityType,
     public startedAt: Date,
-    public duration: number | null,
-    public activityId: number | null
+    public duration?: number,
+    public activityId?: number
   ) {}
 }
 

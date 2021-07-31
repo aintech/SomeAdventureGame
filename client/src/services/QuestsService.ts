@@ -19,11 +19,11 @@ export interface CheckpointResponse {
   occuredAt: number;
   type: CheckpointType;
   duration: number;
-  steps: Map<number, BattleStep[]> | null;
-  stringifiedSteps: string | null;
-  enemies: CheckpointEnemy[] | null;
   tribute: number;
   passed: boolean;
+  steps?: Map<number, BattleStep[]>;
+  stringifiedSteps?: string;
+  enemies?: CheckpointEnemy[];
 }
 
 export interface QuestResponse {
@@ -75,7 +75,7 @@ export const checkpointPassed = async (auth: AuthProps, questId: number, checkpo
 };
 
 export interface CompleteCancelQuestResponse {
-  stats: GameStats | null;
+  stats?: GameStats;
   quest: QuestResponse;
   heroes: HeroResponse[];
 }

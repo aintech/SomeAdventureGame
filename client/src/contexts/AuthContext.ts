@@ -1,8 +1,8 @@
 import { Context, createContext } from "react";
 
 export interface AuthProps {
-  userId: number | null;
-  token: string | null;
+  userId?: number;
+  token?: string;
 }
 
 interface AuthContextProps extends AuthProps {
@@ -11,8 +11,6 @@ interface AuthContextProps extends AuthProps {
   isAuthenticated: boolean;
 }
 
-const AuthContext: Context<AuthContextProps> = createContext(
-  {} as AuthContextProps
-);
+const AuthContext: Context<AuthContextProps> = createContext({} as AuthContextProps);
 
 export default AuthContext;

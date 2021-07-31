@@ -20,11 +20,11 @@ export default class Hero {
     public rawStats: PersonageStats,
     public health: number,
     public gold: number,
-    public activity: HeroActivity | null,
     public equipment: Equipment[],
     public items: HeroItem[],
     public perks: HeroPerk[],
     public skills: HeroSkill[],
+    public activity?: HeroActivity,
     public isHero: boolean = true
   ) {}
 
@@ -60,10 +60,10 @@ export const convert = (response: HeroResponse): Hero => {
     ),
     response.health,
     response.gold,
-    convertActivity(response),
     response.equipment.map((e) => convertEquipment(e)),
     response.items.map((i) => convertItem(i)),
     response.perks.map((p) => convertPerk(p)),
-    response.skills.map((s) => convertSkill(s))
+    response.skills.map((s) => convertSkill(s)),
+    convertActivity(response)
   );
 };

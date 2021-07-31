@@ -1,4 +1,4 @@
-import query from "../Db";
+import query, { single } from "../Db";
 import { Hero } from "./Hero";
 
 export type LevelExp = {
@@ -16,10 +16,10 @@ export type LevelUp = {
 
 export type HeroLevel = {
   lvl: number;
-  tier: string;
   experience: number;
-  progress: number;
-  levelUp: LevelUp | null;
+  tier?: string;
+  progress?: number;
+  levelUp?: LevelUp;
 };
 
 let maxLevel = 0;
@@ -36,6 +36,10 @@ const checkLevelsLoaded = async () => {
       maxLevel = Math.max(...levels.map((l) => l.level));
     }
   }
+};
+
+export const getLevelExp = (level: number) => {
+  return levels.filter((l) => l.level === level)[0];
 };
 
 const calcLevelProgress = (hero: Hero): HeroLevel => {
@@ -62,7 +66,7 @@ const calcLevelProgress = (hero: Hero): HeroLevel => {
       ? {
           ...nextLevelExp,
         }
-      : null,
+      : undefined,
   };
 };
 
@@ -74,6 +78,10 @@ export const withLevelUpInfo = async (heroes: Hero[]) => {
   return heroes.map((h) => {
     return { ...h, level: calcLevelProgress(h) };
   });
+};
+
+export const getHeroLevel = (heroId: number) => {
+  return query<number>("getHeroLevel", "select level from public.hero where id = $1", [heroId], single);
 };
 
 type LevelRow = {

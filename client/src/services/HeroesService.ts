@@ -42,7 +42,7 @@ export interface HeroResponse extends StatsHolder {
   activityId: number;
   activityType: HeroActivityType;
   startedAt: string;
-  duration: number | null;
+  duration?: number;
 }
 
 export interface HeroItemResponse {

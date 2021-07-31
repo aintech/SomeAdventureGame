@@ -18,14 +18,14 @@ export type Quest = {
 };
 
 export type QuestWithProgress = Quest & {
-  progressId: number | null;
-  embarkedTime: Date | null;
-  progressDuration: number | null;
-  completed: boolean | null;
+  progressId?: number;
+  embarkedTime?: Date;
+  progressDuration?: number;
+  completed?: boolean;
 };
 
 export type QuestWithCheckpoints = QuestWithProgress & {
-  checkpoints: QuestCheckpointWithProgress[] | null;
+  checkpoints?: QuestCheckpointWithProgress[];
 };
 
 export const getQuestsByIds = async (userId: number, questIds: number[], withCheckpoints = true) => {
@@ -71,7 +71,7 @@ export const getQuests = async (userId: number) => {
 };
 
 const addCheckpoints = async (quests: QuestWithProgress[], checkIfPassed = false) => {
-  const progressIds = quests.filter((q) => q.progressId !== null).map((q) => q.progressId) as number[];
+  const progressIds = quests.filter((q) => q.progressId !== undefined).map((q) => q.progressId) as number[];
   const checkpoints = await getQuestCheckpoints(progressIds, checkIfPassed);
 
   const questWithCheckpoints: QuestWithCheckpoints[] = [];
@@ -98,7 +98,6 @@ export const embarkOnQuest = async (userId: number, questId: number, heroIds: nu
         heroId: id,
         type: HeroActivityType.QUEST,
         activityId: questId,
-        duration: null,
       };
     })
   );
@@ -134,8 +133,6 @@ export const completeQuest = async (userId: number, questId: number, canceled = 
         return {
           heroId: id,
           type: HeroActivityType.IDLE,
-          activityId: null,
-          duration: null,
         };
       })
     )
@@ -165,7 +162,7 @@ type QuestWithProgressRow = {
   completed: boolean | null;
 };
 
-const mapQuestWithProgress = (row: QuestWithProgressRow) => {
+const mapQuestWithProgress = (row: QuestWithProgressRow): QuestWithProgress => {
   return {
     id: +row.id,
     level: +row.level,
@@ -175,9 +172,9 @@ const mapQuestWithProgress = (row: QuestWithProgressRow) => {
     fame: +row.fame,
     tribute: +row.tribute,
     experience: +row.experience,
-    progressId: row.progress_id ? +row.progress_id : null,
-    embarkedTime: row.embarked_time,
-    progressDuration: row.progress_duration ? +row.progress_duration : null,
-    completed: row.completed,
+    progressId: row.progress_id ? +row.progress_id : undefined,
+    embarkedTime: row.embarked_time ?? undefined,
+    progressDuration: row.progress_duration ? +row.progress_duration : undefined,
+    completed: row.completed ?? undefined,
   };
 };

@@ -2,15 +2,13 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { onCompleteQuest } from "../../../actions/ApiActions";
-import withApiService, {
-  WithApiServiceProps,
-} from "../../../hoc/WithApiService";
+import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService";
 import goldImg from "../../../img/quest-reward/quest-reward_gold.png";
 import fameImg from "../../../img/quest-reward/quest-reward_star.png";
 import Hero from "../../../models/hero/Hero";
 import Quest from "../../../models/Quest";
 import { GUILD_SHARE } from "../../../utils/variables";
-import HeroItem from "../guild-display/heroes/HeroItem";
+import HeroItem from "../guild-display/heroes/hero-item/HeroItem";
 import "./quest-reward.scss";
 
 type QuestRewardProps = {
@@ -28,13 +26,10 @@ const QuestReward = ({ quest, heroes, onCompleteQuest }: QuestRewardProps) => {
     onCompleteQuest(quest);
   };
 
-  const checkpointsTribute = quest
-    .progress!.checkpoints.map((c) => c.tribute)
-    .reduce((a, b) => a + b, 0);
+  const checkpointsTribute = quest.progress!.checkpoints.map((c) => c.tribute).reduce((a, b) => a + b, 0);
 
   const heroGoldReward = Math.floor(
-    Math.floor(quest.tribute * (1 - GUILD_SHARE)) / heroes.length +
-      Math.floor(checkpointsTribute / heroes.length)
+    Math.floor(quest.tribute * (1 - GUILD_SHARE)) / heroes.length + Math.floor(checkpointsTribute / heroes.length)
   );
 
   const heroExperienceReward = Math.floor(quest.experience / heroes.length);
@@ -46,9 +41,7 @@ const QuestReward = ({ quest, heroes, onCompleteQuest }: QuestRewardProps) => {
           <div className="quest-reward__title">{quest.title}</div>
           <div className="quest-reward__tribute">
             <img src={goldImg} alt="gold" />
-            <span className="quest-reward__tribute--text">
-              {Math.floor(quest.tribute * GUILD_SHARE)} g
-            </span>
+            <span className="quest-reward__tribute--text">{Math.floor(quest.tribute * GUILD_SHARE)} g</span>
           </div>
           <div className="quest-reward__fame">
             <img src={fameImg} alt="fame" />
@@ -87,17 +80,9 @@ class QuestRewardContainer extends Component<QuestRewardContainerProps, {}> {
       return null;
     }
 
-    const questHeroes = heroes.filter(
-      (h) => h.activity?.activityId === quest.id
-    );
+    const questHeroes = heroes.filter((h) => h.activity?.activityId === quest.id);
 
-    return (
-      <QuestReward
-        quest={quest}
-        heroes={questHeroes}
-        onCompleteQuest={onCompleteQuest}
-      />
-    );
+    return <QuestReward quest={quest} heroes={questHeroes} onCompleteQuest={onCompleteQuest} />;
   }
 }
 
@@ -106,17 +91,11 @@ type QuestRewardState = {
   heroes: Hero[];
 };
 
-const mapStateToProps = ({
-  collectingQuestReward,
-  heroes,
-}: QuestRewardState) => {
+const mapStateToProps = ({ collectingQuestReward, heroes }: QuestRewardState) => {
   return { quest: collectingQuestReward, heroes };
 };
 
-const mapDispatchToProps = (
-  dispatch: Dispatch,
-  custonProps: WithApiServiceProps
-) => {
+const mapDispatchToProps = (dispatch: Dispatch, custonProps: WithApiServiceProps) => {
   const { apiService, auth } = custonProps;
   return bindActionCreators(
     {
@@ -126,7 +105,4 @@ const mapDispatchToProps = (
   );
 };
 
-export default compose(
-  withApiService(),
-  connect(mapStateToProps, mapDispatchToProps)
-)(QuestRewardContainer);
+export default compose(withApiService(), connect(mapStateToProps, mapDispatchToProps))(QuestRewardContainer);

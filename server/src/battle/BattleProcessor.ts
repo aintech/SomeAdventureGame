@@ -15,10 +15,10 @@ type Actor = {
   power: number;
   defence: number;
   initiative: number;
-  actorId: number | null /** actual for monster */;
-  vitality: number | null /** actual for hero */;
-  items: Item[] | null /** actual for hero */;
   type: ActorType;
+  actorId?: number /** actual for monster */;
+  vitality?: number /** actual for hero */;
+  items?: Item[] /** actual for hero */;
 };
 
 export enum BattleStepActionType {
@@ -30,17 +30,17 @@ export enum BattleStepActionType {
 export type BattleStep = {
   heroId: number;
   action: BattleStepActionType;
-  enemyId: number | null;
-  itemId: number | null;
-  damage: number | null;
+  enemyId?: number;
+  itemId?: number;
+  damage?: number;
 };
 
 const map = (actor: HeroWithItems | Monster, type: ActorType): Actor => {
   return {
     ...actor,
-    actorId: type === ActorType.MONSTER ? (actor as Monster).actorId : null,
-    vitality: type === ActorType.HERO ? (actor as HeroWithItems).vitality : null,
-    items: type === ActorType.HERO ? (actor as HeroWithItems).items : null,
+    actorId: type === ActorType.MONSTER ? (actor as Monster).actorId : undefined,
+    vitality: type === ActorType.HERO ? (actor as HeroWithItems).vitality : undefined,
+    items: type === ActorType.HERO ? (actor as HeroWithItems).items : undefined,
     type,
   };
 };
@@ -94,18 +94,17 @@ const defineStep = (sec: number, actor: Actor, opponents: Actor[], battleSteps: 
   }
 };
 
-const attackStep = (actor: Actor, opponents: Actor[]): BattleStep => {
+const attackStep = (actor: Actor, opponents: Actor[]) => {
   const aliveOpponents = opponents.filter((o) => +o.health > 0);
   const opponent = anyOf(aliveOpponents);
   const damage = Math.max(+actor.power - +opponent.defence, 0);
   opponent.health -= damage;
 
-  const result = {
+  const result: BattleStep = {
     heroId: actor.type === ActorType.HERO ? actor.id : opponent.id,
     enemyId: actor.type === ActorType.MONSTER ? actor.actorId : opponent.actorId,
     action: actor.type === ActorType.HERO ? BattleStepActionType.HERO_ATTACK : BattleStepActionType.ENEMY_ATTACK,
     damage,
-    itemId: null,
   };
 
   return result;
@@ -124,8 +123,6 @@ const potionStep = (actor: Actor): BattleStep | null => {
         heroId: actor.id,
         action: BattleStepActionType.USE_POTION,
         itemId: potion.id,
-        enemyId: null,
-        damage: null,
       };
     }
   }

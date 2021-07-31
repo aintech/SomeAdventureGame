@@ -12,19 +12,19 @@ enum CheckpointType {
 }
 
 export type QuestCheckpoint = {
-  id: number | null /** null when checkpoint not persist yet */;
+  id?: number /** empty when checkpoint not persist yet */;
   type: CheckpointType;
   occuredAt: number;
   duration: number;
   passed: boolean;
   tribute: number;
-  steps: Map<number, BattleStep[]> | null;
-  stringifiedSteps: string | null /** map steps are not sending through http, send them as string */;
-  enemies: Monster[] | null;
+  steps?: Map<number, BattleStep[]>;
+  stringifiedSteps?: string /** steps as Map are not sending properly through http, send them as string */;
+  enemies?: Monster[];
 };
 
 export type QuestCheckpointWithProgress = QuestCheckpoint & {
-  progressId: number | null /** null when progress not persist yet */;
+  progressId?: number /** empty when progress not persist yet */;
   questId: number;
   embarkedTime: Date;
 };
@@ -49,8 +49,8 @@ export const generateCheckpoints = async (quest: Quest, heroes: HeroWithItems[])
 
     let tribute: number;
     let duration: number;
-    let steps: Map<number, BattleStep[]> | null = null;
-    let enemies: Monster[] | null = null;
+    let steps: Map<number, BattleStep[]> | undefined;
+    let enemies: Monster[] | undefined;
     switch (type) {
       case CheckpointType.TREASURE:
         tribute = quest.level * Math.floor(Math.random() * 20 + 10);
@@ -76,8 +76,6 @@ export const generateCheckpoints = async (quest: Quest, heroes: HeroWithItems[])
       steps,
       enemies,
       tribute,
-      id: null,
-      stringifiedSteps: null,
       passed: false,
     });
   }
@@ -112,7 +110,7 @@ export const persistQuestCheckpoints = async (progressId: number, checkpoints: Q
 
 export const getQuestCheckpoint = async (checkpointId: number) => {
   return query<QuestCheckpointWithProgress>(
-    "getQuestCheckpoints",
+    "getQuestCheckpoint",
     `select 
           checkpoint.*, 
           progress.quest_id,
@@ -263,7 +261,7 @@ const mapQuestCheckpointWithProgress = (row: CheckpointWithProgressRow): QuestCh
     occuredAt: +row.occured_at,
     duration: +row.duration,
     steps: mapSteps(row.steps),
-    stringifiedSteps: row.steps,
+    stringifiedSteps: row.steps ?? undefined,
     enemies: mapEnemies(row.enemies),
     passed: row.passed,
     tribute: +row.tribute,
@@ -287,7 +285,7 @@ const mapCheckpointType = (type: string) => {
 /** duplicate code in client */
 const mapSteps = (steps: string | null) => {
   if (!steps) {
-    return null;
+    return undefined;
   }
   const result: Map<number, BattleStep[]> = new Map();
   steps.split(",\n").forEach((s) => {
@@ -299,7 +297,7 @@ const mapSteps = (steps: string | null) => {
 
 const mapEnemies = (enemies: string | null) => {
   if (!enemies) {
-    return null;
+    return undefined;
   }
   return JSON.parse(enemies) as Monster[];
 };

@@ -47,7 +47,7 @@ type QuestProgressItemState = {
   bgOffset: number;
   images: Map<string, HTMLImageElement>;
   eventMessages: EventMessage[];
-  activeCheckpoint: QuestCheckpoint | null;
+  activeCheckpoint?: QuestCheckpoint;
   willBeSpendOnCheckpoints: number;
   spendedOnCheckpoints: number;
   actors: ActorItemType[];
@@ -55,11 +55,11 @@ type QuestProgressItemState = {
 
 //FIXME: Во время взлома ящика пропадают иконки героев
 class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressItemState> {
-  private secondsTimer: NodeJS.Timeout | null = null;
-  private updateTimer: NodeJS.Timeout | null = null;
+  private secondsTimer?: NodeJS.Timeout;
+  private updateTimer?: NodeJS.Timeout;
   private canvasRef: React.RefObject<HTMLCanvasElement>;
-  private canvas: HTMLCanvasElement | null = null;
-  private canvasCtx: CanvasRenderingContext2D | null = null;
+  private canvas?: HTMLCanvasElement;
+  private canvasCtx?: CanvasRenderingContext2D;
 
   constructor(props: QuestProgressItemProps) {
     super(props);
@@ -68,7 +68,6 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
       bgOffset: 0,
       images: new Map(),
       eventMessages: [],
-      activeCheckpoint: null,
       willBeSpendOnCheckpoints: 0,
       spendedOnCheckpoints: 0,
       actors: [],
@@ -183,7 +182,7 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     const actors = this.state.actors.filter((a) => a.isHero);
 
     this.setState({
-      activeCheckpoint: null,
+      activeCheckpoint: undefined,
       actors,
     });
 
@@ -497,7 +496,8 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
 
     //FIXME: убирать диалог если начался чекпоинт пока диалог был активен
     const dismissBtnClass =
-      "quest-progress-item__btn--dismiss" + (this.state.activeCheckpoint !== null || questFinished ? "__hidden" : "");
+      "quest-progress-item__btn--dismiss" +
+      (this.state.activeCheckpoint !== undefined || questFinished ? "__hidden" : "");
 
     return (
       <div className="quest-progress-item">

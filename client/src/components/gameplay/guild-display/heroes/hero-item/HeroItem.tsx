@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, MouseEvent } from "react";
-import Hero, { calcHealthFraction } from "../../../../models/hero/Hero";
-import { display, HeroType } from "../../../../models/hero/HeroType";
-import Quest from "../../../../models/Quest";
-import { toGameplayScale } from "../../../../utils/Utils";
+import Hero, { calcHealthFraction } from "../../../../../models/hero/Hero";
+import { display, HeroType } from "../../../../../models/hero/HeroType";
+import Quest from "../../../../../models/Quest";
+import { toGameplayScale } from "../../../../../utils/Utils";
 import "./hero-item.scss";
 
 type HeroItemProps = {
@@ -11,9 +11,10 @@ type HeroItemProps = {
   itemClickHandler?: (event: React.MouseEvent<HTMLDivElement>) => void;
   enabled: boolean;
   reward?: { gold: number; experience: number };
+  embarkedLimit?: boolean;
 };
 
-const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, reward }: HeroItemProps) => {
+const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, reward, embarkedLimit }: HeroItemProps) => {
   const healthRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const expRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const canvasW = toGameplayScale(80);
@@ -36,7 +37,7 @@ const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, reward }: Hero
   });
 
   const assignBtnStyle = {
-    display: chosenQuest && enabled ? "block" : "none",
+    display: chosenQuest && enabled && !embarkedLimit ? "block" : "none",
   };
 
   const style = {

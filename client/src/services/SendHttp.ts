@@ -2,7 +2,7 @@ import { AuthProps } from "../contexts/AuthContext";
 
 async function sendHttp<T>(
   path: string,
-  auth: AuthProps | null,
+  auth?: AuthProps,
   params: string[] = [],
   method = "GET",
   body: any = null
@@ -28,9 +28,7 @@ async function sendHttp<T>(
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(
-        data.message || "Server is overloaded, try again later please!"
-      );
+      throw new Error(data.message || "Server is overloaded, try again later please!");
     }
 
     return data;

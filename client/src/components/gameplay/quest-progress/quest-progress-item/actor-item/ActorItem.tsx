@@ -66,7 +66,7 @@ const ActorItem = ({ actor }: ActorItemProps) => {
   return (
     <div className={`actor-item${actor.currentHealth < 0 ? " actor-item--defeated" : ""}`}>
       <div className={`actor-item__portrait--${portrait(actor.isHero, actor.type)}`}></div>
-      <div className="actor-item__name">{actor.name}</div>
+      <div className="actor-item__name">{actor.name.substring(0, 6)}</div>
       <div className="actor-item__health">
         <canvas ref={healthRef} width={canvasW} height={canvasH}></canvas>
       </div>

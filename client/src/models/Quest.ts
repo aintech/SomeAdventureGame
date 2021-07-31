@@ -21,7 +21,7 @@ export default class Quest {
     public duration: number,
     public tribute: number,
     public fame: number,
-    public progress: Progress | null
+    public progress?: Progress
   ) {}
 }
 
@@ -42,7 +42,7 @@ const convert = (response: QuestResponse): Quest => {
           Date.parse(response.embarkedTime),
           (response.checkpoints as any[]).map((c) => convertCheckpoint(c))
         )
-      : null
+      : undefined
   );
 };
 

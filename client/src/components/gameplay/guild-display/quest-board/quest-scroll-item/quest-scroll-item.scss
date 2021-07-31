@@ -1,4 +1,4 @@
-@import "../../../../utils/functions.scss";
+@import "../../../../../utils/functions.scss";
 
 .quest-scroll-item {
   display: grid;
@@ -7,7 +7,7 @@
 
   width: to-gameplay-scale(190px);
   height: to-gameplay-scale(126px);
-  background-image: url(../../../../img/guild-display/guild-quest_scroll.png);
+  background-image: url(../../../../../img/guild-display/guild-quest_scroll.png);
   background-repeat: no-repeat;
   background-size: contain;
   cursor: pointer;
@@ -30,18 +30,6 @@
     grid-column: 2;
     align-self: flex-end;
   }
-
-  // &__duration {
-  //   grid-column: 2;
-  //   grid-row: 2;
-  //   margin-top: -1px;
-  // }
-
-  // &__tribute {
-  //   grid-column: 2;
-  //   grid-row: 3;
-  //   margin-top: -6px;
-  // }
 
   &:hover {
     margin-top: -5px;

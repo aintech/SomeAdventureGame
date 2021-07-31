@@ -63,16 +63,14 @@ export const tavernPatronsRequested = (): PayloadedAction => {
   };
 };
 
-export const tavernPatronsLoaded = (
-  patrons: HeroResponse[]
-): PayloadedAction => {
+export const tavernPatronsLoaded = (patrons: HeroResponse[]): PayloadedAction => {
   return {
     type: ActionType.FETCH_TAVERN_PATRONS_SUCCESS,
     payload: patrons,
   };
 };
 
-export const buildingClicked = (building: Building | null): PayloadedAction => {
+export const buildingClicked = (building?: Building): PayloadedAction => {
   return {
     type: ActionType.BUILDING_CLICKED,
     payload: building,
@@ -119,9 +117,7 @@ export const heroDismissedFromQuest = (hero: Hero): PayloadedAction => {
   };
 };
 
-export const heroesEmbarkedOnQuest = (
-  embarkedQuestAndHeroes: EmbarkOnQuestResponse
-): PayloadedAction => {
+export const heroesEmbarkedOnQuest = (embarkedQuestAndHeroes: EmbarkOnQuestResponse): PayloadedAction => {
   return {
     type: ActionType.HEROES_EMBARKED_ON_QUEST,
     payload: embarkedQuestAndHeroes,
@@ -142,18 +138,14 @@ export const collectingQuestReward = (quest: Quest): PayloadedAction => {
   };
 };
 
-export const completeQuest = (
-  questResponse: CompleteCancelQuestResponse
-): PayloadedAction => {
+export const completeQuest = (questResponse: CompleteCancelQuestResponse): PayloadedAction => {
   return {
     type: ActionType.COMPLETE_QUEST,
     payload: questResponse,
   };
 };
 
-export const cancelQuest = (
-  questResponse: CompleteCancelQuestResponse
-): PayloadedAction => {
+export const cancelQuest = (questResponse: CompleteCancelQuestResponse): PayloadedAction => {
   return {
     type: ActionType.CANCEL_QUEST,
     payload: questResponse,
@@ -181,28 +173,21 @@ export const heroHired = (hiredResult: HireHeroResponse): PayloadedAction => {
   };
 };
 
-export const heroDismissed = (dismissResult: {
-  heroId: number;
-}): PayloadedAction => {
+export const heroDismissed = (dismissResult: { heroId: number }): PayloadedAction => {
   return {
     type: ActionType.HERO_DISMISSED,
     payload: dismissResult.heroId,
   };
 };
 
-export const heroActivitiesUpdated = (
-  heroes: HeroResponse[]
-): PayloadedAction => {
+export const heroActivitiesUpdated = (heroes: HeroResponse[]): PayloadedAction => {
   return {
     type: ActionType.HERO_ACTIVITIES_UPDATED,
     payload: heroes,
   };
 };
 
-export const showTooltip = (
-  appear: boolean = false,
-  message: string = ""
-): PayloadedAction => {
+export const showTooltip = (appear: boolean = false, message: string = ""): PayloadedAction => {
   return {
     type: ActionType.SHOW_TOOLTIP,
     payload: { message, appear },
@@ -210,12 +195,12 @@ export const showTooltip = (
 };
 
 export const showConfirmDialog = (
-  message: string | null = null,
-  callback: ((e: MouseEvent) => void) | null = null,
-  event: MouseEvent | null = null
+  message?: string,
+  callback?: (e: MouseEvent) => void,
+  event?: MouseEvent
 ): PayloadedAction => {
   return {
     type: ActionType.SHOW_CONFIRM_DIALOG,
-    payload: message === null ? null : { message, callback, event },
+    payload: message ? { message, callback, event } : null,
   };
 };

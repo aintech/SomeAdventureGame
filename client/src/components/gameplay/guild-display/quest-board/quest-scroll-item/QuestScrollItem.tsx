@@ -1,5 +1,5 @@
 import React from "react";
-import Quest from "../../../../models/Quest";
+import Quest from "../../../../../models/Quest";
 import "./quest-scroll-item.scss";
 
 const random = (range: number) => {
@@ -7,16 +7,11 @@ const random = (range: number) => {
 };
 
 const storeRotation = (index: number, questId: number, rotation: number) => {
-  sessionStorage.setItem(
-    `some-adventure-game--quest-scroll-${index}`,
-    JSON.stringify({ questId, rotation })
-  );
+  sessionStorage.setItem(`some-adventure-game--quest-scroll-${index}`, JSON.stringify({ questId, rotation }));
 };
 
 const getStoredRotation = (index: number, questId: number) => {
-  const storedRotation = sessionStorage.getItem(
-    `some-adventure-game--quest-scroll-${index}`
-  );
+  const storedRotation = sessionStorage.getItem(`some-adventure-game--quest-scroll-${index}`);
   let rotation = 0;
 
   if (storedRotation) {

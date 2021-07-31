@@ -10,7 +10,7 @@ export type ConfirmDialogType = {
 };
 
 export type ConfirmDialogProps = {
-  confirmDialog: ConfirmDialogType | null;
+  confirmDialog?: ConfirmDialogType;
 };
 
 const ConfirmDialog = ({ confirmDialog }: ConfirmDialogProps) => {
@@ -40,16 +40,10 @@ const ConfirmDialog = ({ confirmDialog }: ConfirmDialogProps) => {
           {confirmDialog.message}
           <hr />
         </div>
-        <div
-          className="confirm-dialog__accept-btn"
-          onClick={(e) => acceptHandler(e)}
-        >
+        <div className="confirm-dialog__accept-btn" onClick={(e) => acceptHandler(e)}>
           <span className="confirm-dialog__accept-btn__text">Подтвердить</span>
         </div>
-        <div
-          className="confirm-dialog__cancel-btn"
-          onClick={(e) => cancelHandler(e)}
-        >
+        <div className="confirm-dialog__cancel-btn" onClick={(e) => cancelHandler(e)}>
           <span className="confirm-dialog__cancel-btn__text">Отменить</span>
         </div>
       </div>
@@ -58,7 +52,7 @@ const ConfirmDialog = ({ confirmDialog }: ConfirmDialogProps) => {
 };
 
 type ConfirmDialogState = {
-  confirmDialog: ConfirmDialogType | null;
+  confirmDialog?: ConfirmDialogType;
 };
 
 const mapStateToProps = ({ confirmDialog }: ConfirmDialogState) => {

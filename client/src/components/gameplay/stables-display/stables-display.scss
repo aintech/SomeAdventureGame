@@ -44,4 +44,22 @@
     align-self: center;
     @include strokeText;
   }
+
+  &__stats {
+    display: flex;
+    flex-flow: column;
+    gap: 10px;
+    font-family: inherit;
+    font-size: 2.4rem;
+    color: white;
+    @include strokeText;
+    margin-left: 100px;
+    margin-top: 50px;
+
+    & li {
+      margin-top: 15px;
+      gap: 10px;
+      list-style: none;
+    }
+  }
 }

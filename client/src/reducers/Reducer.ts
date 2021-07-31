@@ -129,9 +129,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       };
 
     case ActionType.HERO_DISMISSED_FROM_QUEST:
-      const idx = state.heroesAssignedToQuest.findIndex(
-        (hero) => hero.id === action.payload.id
-      );
+      const idx = state.heroesAssignedToQuest.findIndex((hero) => hero.id === action.payload.id);
       return {
         ...state,
         heroesAssignedToQuest: [
@@ -143,19 +141,13 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
     case ActionType.HEROES_EMBARKED_ON_QUEST:
       const { embarkedQuests, embarkedHeroes } = action.payload;
 
-      const questIdx = state.quests.findIndex(
-        (q) => q.id === +embarkedQuests[0].id
-      );
+      const questIdx = state.quests.findIndex((q) => q.id === +embarkedQuests[0].id);
 
       let upHeroes = [...state.heroes];
       for (const embHero of embarkedHeroes) {
         const hero = convertHero(embHero);
         const heroIdx = upHeroes.findIndex((h) => h.id === hero.id);
-        upHeroes = [
-          ...upHeroes.slice(0, heroIdx),
-          hero,
-          ...upHeroes.slice(heroIdx + 1),
-        ];
+        upHeroes = [...upHeroes.slice(0, heroIdx), hero, ...upHeroes.slice(heroIdx + 1)];
       }
       return {
         ...state,
@@ -179,19 +171,11 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       for (const embHero of embHeroes) {
         const hero = convertHero(embHero);
         const heroIdx = uHeroes.findIndex((h) => h.id === hero.id);
-        uHeroes = [
-          ...uHeroes.slice(0, heroIdx),
-          hero,
-          ...uHeroes.slice(heroIdx + 1),
-        ];
+        uHeroes = [...uHeroes.slice(0, heroIdx), hero, ...uHeroes.slice(heroIdx + 1)];
       }
       return {
         ...state,
-        quests: [
-          ...state.quests.slice(0, qIdx),
-          convertQuest(embQuest),
-          ...state.quests.slice(qIdx + 1),
-        ],
+        quests: [...state.quests.slice(0, qIdx), convertQuest(embQuest), ...state.quests.slice(qIdx + 1)],
         heroes: uHeroes,
       };
 
@@ -229,16 +213,11 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       };
 
     case ActionType.DISMISS_USER_MESSAGE:
-      const messageIdx = state.messages.findIndex(
-        (m) => m.id === action.payload
-      );
+      const messageIdx = state.messages.findIndex((m) => m.id === action.payload);
 
       return {
         ...state,
-        messages: [
-          ...state.messages.slice(0, messageIdx),
-          ...state.messages.slice(messageIdx + 1),
-        ],
+        messages: [...state.messages.slice(0, messageIdx), ...state.messages.slice(messageIdx + 1)],
       };
 
     case ActionType.HERO_HIRED:
@@ -250,20 +229,14 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         ...state,
         stats: hireResult.stats,
         heroes: [...state.heroes, hero],
-        tavernPatrons: [
-          ...state.tavernPatrons.slice(0, patronIdx),
-          ...state.tavernPatrons.slice(patronIdx + 1),
-        ],
+        tavernPatrons: [...state.tavernPatrons.slice(0, patronIdx), ...state.tavernPatrons.slice(patronIdx + 1)],
       };
 
     case ActionType.HERO_DISMISSED:
       const heroIdx = state.heroes.findIndex((h) => +h.id === +action.payload);
       return {
         ...state,
-        heroes: [
-          ...state.heroes.slice(0, heroIdx),
-          ...state.heroes.slice(heroIdx + 1),
-        ],
+        heroes: [...state.heroes.slice(0, heroIdx), ...state.heroes.slice(heroIdx + 1)],
       };
 
     case ActionType.HERO_ACTIVITIES_UPDATED:
@@ -273,11 +246,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       for (const hr of occupHeroes) {
         const hero = convertHero(hr);
         const heroIdx = replacedHeroes.findIndex((h) => h.id === hero.id);
-        replacedHeroes = [
-          ...replacedHeroes.slice(0, heroIdx),
-          hero,
-          ...replacedHeroes.slice(heroIdx + 1),
-        ];
+        replacedHeroes = [...replacedHeroes.slice(0, heroIdx), hero, ...replacedHeroes.slice(heroIdx + 1)];
       }
       return {
         ...state,

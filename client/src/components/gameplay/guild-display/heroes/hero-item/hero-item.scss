@@ -1,9 +1,9 @@
-@import "../../../../utils/functions.scss";
-@import "../../../../utils/mixins.scss";
+@import "../../../../../utils/functions.scss";
+@import "../../../../../utils/mixins.scss";
 
 .hero-item {
   height: to-gameplay-scale(250px);
-  background-image: url(../../../../img/guild-display/guild-hero_display.png);
+  background-image: url(../../../../../img/guild-display/guild-hero_display.png);
   background-size: cover;
   background-repeat: no-repeat;
   cursor: default;
@@ -35,7 +35,7 @@
     font-family: inherit;
     width: to-gameplay-scale(120px);
     height: to-gameplay-scale(36px);
-    background-image: url(../../../../img/guild-display/guild-btn_assign_hero.png);
+    background-image: url(../../../../../img/guild-display/guild-btn_assign_hero.png);
     background-size: contain;
     background-repeat: no-repeat;
     z-index: 1020;
@@ -67,12 +67,12 @@
 
   &__portrait--WARRIOR {
     @include portrait;
-    background-image: url(../../../../img/guild-display/guild-hero_icon_warrior.png);
+    background-image: url(../../../../../img/guild-display/guild-hero_icon_warrior.png);
   }
 
   &__portrait--MAGE {
     @include portrait;
-    background-image: url(../../../../img/guild-display/guild-hero_icon_mage.png);
+    background-image: url(../../../../../img/guild-display/guild-hero_icon_mage.png);
   }
 
   &__type-level {

@@ -31,10 +31,10 @@ export type Hero = {
   hired: boolean;
   appearAt: Date;
   /** activity part - exists only for hired heroes */
-  activityType: HeroActivityType | null;
-  activityId: number | null;
-  startedAt: Date | null;
-  duration: number | null;
+  activityType?: HeroActivityType;
+  activityId?: number;
+  startedAt?: Date;
+  duration?: number;
 };
 
 export type HeroWithEquipment = Hero & { equipment: Equipment[] };
@@ -165,6 +165,14 @@ export const getHeroesOnQuest = (userId: number, questId: number) => {
   );
 };
 
+export const updateHeroLevel = (heroId: number, level: number, addPower: number, addVitality: number) => {
+  return query<void>(
+    "updateHeroLevel",
+    "update public.hero set level = $2, power = power + $3, vitality = vitality + $4 where id = $1",
+    [heroId, level, addPower, addVitality]
+  );
+};
+
 export const rewardHeroesForQuest = async (
   userId: number,
   heroIds: number[],
@@ -210,7 +218,7 @@ const mapHero = (row: HeroRow): Hero => {
     userId: +row.user_id,
     name: row.name,
     type: mapHeroType(row.type),
-    level: { lvl: +row.level, experience: +row.experience, tier: "", progress: 0, levelUp: null },
+    level: { lvl: +row.level, experience: +row.experience },
     power: +row.power,
     defence: +row.defence,
     health: +row.health,
@@ -219,10 +227,10 @@ const mapHero = (row: HeroRow): Hero => {
     initiative: +row.initiative,
     hired: row.hired,
     appearAt: row.appear_at,
-    activityType: row.activity_type ? mapHeroActivityType(row.activity_type) : null,
-    activityId: row.activity_id !== null ? +row.activity_id : null,
-    startedAt: row.started_at,
-    duration: row.duration !== null ? +row.duration : null,
+    activityType: row.activity_type ? mapHeroActivityType(row.activity_type) : undefined,
+    activityId: row.activity_id !== null ? +row.activity_id : undefined,
+    startedAt: row.started_at ?? undefined,
+    duration: row.duration !== null ? +row.duration : undefined,
   };
 };
 

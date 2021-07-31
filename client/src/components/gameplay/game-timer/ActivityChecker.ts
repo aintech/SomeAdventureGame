@@ -25,7 +25,7 @@ const needHealer = (hero: Hero) => {
 };
 
 const readyToLevelUp = (hero: Hero) => {
-  return false;
+  return hero.level.levelUp?.cost <= hero.gold;
 };
 
 const checkActivityEnded = (hero: Hero): boolean => {

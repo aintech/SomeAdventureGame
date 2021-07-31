@@ -74,7 +74,7 @@ const mapStateToProps = ({ chosenBuilding }: BuildingDetailsState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   hideBuildingDisplay: () => {
-    dispatch(buildingClicked(null));
+    dispatch(buildingClicked());
   },
 });
 

@@ -25,9 +25,9 @@ export class BattleStep {
   constructor(
     public heroId: number,
     public action: BattleStepActionType,
-    public enemyId: number | null,
-    public itemId: number | null,
-    public damage: number | null
+    public enemyId?: number,
+    public itemId?: number,
+    public damage?: number
   ) {}
 }
 
@@ -39,11 +39,11 @@ export default class QuestCheckpoint {
     public type: CheckpointType,
     /** duration of checkpoint in seconds */
     public duration: number,
-    /** key of this Map is second on which action occures */
-    public steps: Map<number, BattleStep[]> | null,
-    public enemies: CheckpointEnemy[] | null,
     public tribute: number,
-    public passed: boolean
+    public passed: boolean,
+    /** key of this Map is second on which action occures */
+    public steps?: Map<number, BattleStep[]>,
+    public enemies?: CheckpointEnemy[]
   ) {}
 }
 
@@ -53,17 +53,17 @@ export const convert = (response: CheckpointResponse): QuestCheckpoint => {
     response.occuredAt,
     response.type,
     response.duration,
-    response.stringifiedSteps ? mapSteps(response.stringifiedSteps) : null,
-    response.enemies,
     response.tribute,
-    response.passed
+    response.passed,
+    mapSteps(response.stringifiedSteps),
+    response.enemies
   );
 };
 
 /** duplicate code in server */
-const mapSteps = (steps: string | null) => {
+const mapSteps = (steps?: string) => {
   if (!steps) {
-    return null;
+    return undefined;
   }
   const result: Map<number, BattleStep[]> = new Map();
   steps.split(",\n").forEach((s) => {

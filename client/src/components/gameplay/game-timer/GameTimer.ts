@@ -2,22 +2,18 @@ import { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { onHeroActivities } from "../../../actions/ApiActions";
-import withApiService, {
-  WithApiServiceProps,
-} from "../../../hoc/WithApiService";
+import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService";
 import Hero from "../../../models/hero/Hero";
 import { HeroActivityType } from "../../../models/hero/HeroActivityType";
 import checkHeroActivity from "./ActivityChecker";
 
 type GameTimerProps = {
   heroes: Hero[];
-  onHeroActivities: (
-    activities: { heroId: number; type: HeroActivityType }[]
-  ) => void;
+  onHeroActivities: (activities: { heroId: number; type: HeroActivityType }[]) => void;
 };
 
 class GameTimer extends Component<GameTimerProps> {
-  private secondsTimer: NodeJS.Timeout | null = null;
+  private secondsTimer?: NodeJS.Timeout;
 
   constructor(props: GameTimerProps) {
     super(props);
@@ -74,10 +70,7 @@ const mapStateToProps = ({ heroes }: GameTimerState) => {
   return { heroes };
 };
 
-const mapDispatchToProps = (
-  dispatch: Dispatch,
-  customProps: WithApiServiceProps
-) => {
+const mapDispatchToProps = (dispatch: Dispatch, customProps: WithApiServiceProps) => {
   const { apiService, auth } = customProps;
 
   return bindActionCreators(
@@ -88,7 +81,4 @@ const mapDispatchToProps = (
   );
 };
 
-export default compose(
-  withApiService(),
-  connect(mapStateToProps, mapDispatchToProps)
-)(GameTimer);
+export default compose(withApiService(), connect(mapStateToProps, mapDispatchToProps))(GameTimer);

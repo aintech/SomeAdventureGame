@@ -86,6 +86,9 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
     case HeroActivityType.HEALING:
       activity = `Лечится у знахаря`;
       break;
+    case HeroActivityType.TRAINING:
+      activity = "Тренирует новый уровень";
+      break;
     default:
       throw new Error(`Unknown activity type ${HeroActivityType[hero.activity!.type]}`);
   }

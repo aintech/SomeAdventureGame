@@ -10,8 +10,8 @@ type StoredUserData = {
 };
 
 const useAuth = () => {
-  const [token, setToken] = useState<string | null>(null);
-  const [userId, setUserId] = useState<number | null>(null);
+  const [token, setToken] = useState<string | undefined>();
+  const [userId, setUserId] = useState<number | undefined>();
   const [ready, setReady] = useState<boolean>(false);
 
   const login = useCallback((jwtToken: string, id: number) => {
@@ -29,8 +29,8 @@ const useAuth = () => {
   }, []);
 
   const logout = useCallback(() => {
-    setToken(null);
-    setUserId(null);
+    setToken(undefined);
+    setUserId(undefined);
     localStorage.removeItem(storageName);
   }, []);
 
@@ -39,9 +39,7 @@ const useAuth = () => {
   };
 
   useEffect(() => {
-    const data: StoredUserData = JSON.parse(
-      localStorage.getItem(storageName) as string
-    );
+    const data: StoredUserData = JSON.parse(localStorage.getItem(storageName) as string);
     if (data && data.token && isFreshLogin(data.time)) {
       login(data.token, data.userId);
     } else {

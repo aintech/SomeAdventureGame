@@ -8,7 +8,7 @@ import Quest from "../../../models/Quest";
 import Loader from "../../loader/Loader";
 import "./guild-display.scss";
 import HeroList from "./heroes/HeroList";
-import QuestScrollList from "./quest-board/QuestScrollList";
+import QuestScrollList from "./quest-board/quest-scroll-list/QuestScrollList";
 
 type GuildDisplayProps = {
   quests: Quest[];
@@ -83,7 +83,7 @@ const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest, closeDisplay }: G
   return (
     <div className="guild-display" id="guild-display" onClick={clickHandler}>
       <QuestScrollList quests={quests} />
-      <HeroList heroes={heroesOnPage} heroesAssignedToQuest={heroesAssignedToQuest} />
+      <HeroList heroes={heroesOnPage} quests={quests} heroesAssignedToQuest={heroesAssignedToQuest} />
       <button className="guild-display__btn--close" onClick={closeDisplay}></button>
       <button className="guild-display__btn--show-unabled" onClick={switchShowUnabled}>
         <i className="material-icons guild-display__btn--show-unabled-icon">

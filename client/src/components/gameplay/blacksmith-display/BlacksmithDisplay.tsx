@@ -6,7 +6,7 @@ import { BuildingType, buildingTypeToName } from "../../../models/Building";
 import Hero from "../../../models/hero/Hero";
 import { HeroActivityType } from "../../../models/hero/HeroActivityType";
 import Loader from "../../loader/Loader";
-import HeroItem from "../guild-display/heroes/HeroItem";
+import HeroItem from "../guild-display/heroes/hero-item/HeroItem";
 import "./blacksmith-display.scss";
 
 type BlacksmithDisplayProps = {
