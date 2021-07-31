@@ -17,10 +17,10 @@ const persistProgress = (userId: number, questId: number, checkpoints: QuestChec
 
   return query<number>(
     "persistProgress",
-    `with quest_duration as (select duration as d from public.quest where id = $2)
+    `with quest_time as (select duration as d, travel_time tt from public.quest where id = $2)
      insert into public.quest_progress 
      (user_id, quest_id, duration, embarked_time) 
-     values ($1, $2, (select d from quest_duration) + $3, now()) 
+     values ($1, $2, (select d from quest_time) + $3, (now() + ((select tt from quest_time) * interval '1 second'))) 
      returning id`,
     [userId, questId, checkpointsDuration],
     defaultMapper,

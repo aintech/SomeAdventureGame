@@ -11,6 +11,7 @@ export type Quest = {
   level: number;
   title: string;
   description: string;
+  travelTime: number;
   duration: number;
   fame: number;
   tribute: number;
@@ -152,6 +153,7 @@ type QuestWithProgressRow = {
   level: string;
   title: string;
   description: string;
+  travel_time: string;
   duration: string;
   fame: string;
   tribute: string;
@@ -168,6 +170,7 @@ const mapQuestWithProgress = (row: QuestWithProgressRow): QuestWithProgress => {
     level: +row.level,
     title: row.title,
     description: row.description,
+    travelTime: +row.travel_time,
     duration: +row.duration,
     fame: +row.fame,
     tribute: +row.tribute,

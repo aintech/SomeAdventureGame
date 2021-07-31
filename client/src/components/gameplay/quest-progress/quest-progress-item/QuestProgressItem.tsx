@@ -10,6 +10,7 @@ import backgroundImgSrc from "../../../../img/quest-progress/quest-progress_back
 import heroImgSrc from "../../../../img/quest-progress/quest-progress_hero.png";
 import skeletonImgSrc from "../../../../img/quest-progress/Skeleton.png";
 import skeletonDeadImgSrc from "../../../../img/quest-progress/Skeleton_dead.png";
+import horseImgSrc from "../../../../img/quest-progress/horse.gif";
 import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
 import QuestCheckpoint, {
@@ -23,6 +24,7 @@ import { convertDuration, millisToSecs, toGameplayScale } from "../../../../util
 import ActorItemList from "./actor-item-list/ActorItemList";
 import { ActorItemType, convertToActor } from "./actor-item/ActorItem";
 import "./quest-progress-item.scss";
+import { Gif } from "../../../../utils/gif-reader";
 
 enum Direction {
   LEFT,
@@ -46,6 +48,7 @@ type QuestProgressItemState = {
   seconds: number;
   bgOffset: number;
   images: Map<string, HTMLImageElement>;
+  gifs: Map<string, any>;
   eventMessages: EventMessage[];
   activeCheckpoint?: QuestCheckpoint;
   willBeSpendOnCheckpoints: number;
@@ -67,6 +70,7 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
       seconds: 0,
       bgOffset: 0,
       images: new Map(),
+      gifs: new Map(),
       eventMessages: [],
       willBeSpendOnCheckpoints: 0,
       spendedOnCheckpoints: 0,
@@ -88,6 +92,8 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     this.loadImage("hero", heroImgSrc);
     this.loadImage("skeleton", skeletonImgSrc);
     this.loadImage("skeleton_dead", skeletonDeadImgSrc);
+
+    this.loadGif("horse", horseImgSrc);
 
     const { quest, heroes } = this.props;
 
@@ -127,6 +133,16 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
       },
       false
     );
+  }
+
+  loadGif(name: string, src: string) {
+    const gif = Gif();
+    gif.load(src);
+    gif.onload = (event: any) => {
+      const gifs = new Map(this.state.gifs);
+      gifs.set(name, event.path[0]);
+      this.setState({ gifs });
+    };
   }
 
   startTimers() {
@@ -200,10 +216,8 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     if (!this.state.activeCheckpoint) {
       this.checkIfCheckpointOccured(this.state.seconds);
     }
-    this.setState((state) => {
-      return {
-        seconds: state.seconds + 1,
-      };
+    this.setState({
+      seconds: Math.floor(millisToSecs(new Date().getTime() - this.props.quest.progress!.embarkedTime)),
     });
 
     if (this.state.activeCheckpoint) {
@@ -374,9 +388,18 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
       }
     }
 
+    /* Draw travel to quest location */
+    const horseGif = this.state.gifs.get("horse");
+    if (horseGif && this.state.seconds < 0) {
+      for (let i = 0; i < this.props.heroes.length; i++) {
+        this.canvasCtx.drawImage(horseGif.image, 10, -5, 80, 72);
+        this.drawStroked(this.canvasCtx, "Герои в пути", 70, 35, "aqua");
+      }
+    }
+
     /* Draw heroes */
     const heroImg = this.state.images.get("hero");
-    if (heroImg && !this.questFinished()) {
+    if (heroImg && this.state.seconds >= 0 && !this.questFinished()) {
       for (let i = 0; i < this.props.heroes.length; i++) {
         this.canvasCtx.drawImage(heroImg, 50 - i * 10, 14 + i * 1, toGameplayScale(48), toGameplayScale(54));
       }
@@ -392,14 +415,14 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
   }
 
   drawStroked(ctx: CanvasRenderingContext2D, msg: string, x: number, y: number, color: string) {
-    ctx.font = "bold 16px Nunito";
+    ctx.font = "16px Pattaya";
     ctx.strokeStyle = "black";
-    ctx.lineWidth = 8;
+    ctx.lineWidth = 2;
     ctx.strokeText(msg, x, y);
     ctx.fillStyle = color;
-    ctx.miterLimit = 2;
+    // ctx.miterLimit = 2;
     ctx.fillText(msg, x, y);
-    // ctx.scale(0.25, 0.25);
+    ctx.lineCap = "round";
   }
 
   drawChest(diff: number, passed: boolean) {
@@ -471,7 +494,10 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     const { quest } = this.props;
     const { actors } = this.state;
 
-    const remainSeconds = quest.progress!.duration - this.state.seconds - this.state.willBeSpendOnCheckpoints;
+    const remainSeconds =
+      this.state.seconds < 0
+        ? -this.state.seconds
+        : quest.progress!.duration - this.state.seconds - this.state.willBeSpendOnCheckpoints;
 
     const questFinished = this.questFinished();
 
