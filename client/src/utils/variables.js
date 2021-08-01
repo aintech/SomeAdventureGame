@@ -6,6 +6,6 @@ export const HEALTH_PER_VITALITY = 10;
 
 export const CURE_COST_PER_HP = 1;
 
-export const GUILD_SHARE = 0.8;
+export const GUILD_SHARE = 0.4;
 
 export const MAX_EMBARKED_QUESTS = 4;

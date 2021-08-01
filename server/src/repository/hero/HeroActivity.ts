@@ -16,8 +16,10 @@ export enum HeroActivityType {
   QUEST,
   HEALING,
   TRAINING,
-  PURCHASING,
+  PURCHASING_EQUIPMENT,
+  PURCHASING_POTIONS,
   PRAYING,
+  UPGRADING_EQUIPMENT,
 }
 
 export type HeroActivity = {

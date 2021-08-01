@@ -13,6 +13,8 @@ import TrainingGroundDisplay from "../training-ground-display/TrainingGroundDisp
 import TreasuryDisplay from "../treasury-display/TreasuryDisplay";
 import "./building-details.scss";
 import StablesDisplay from "../stables-display/StablesDisplay";
+import StorageDisplayContainer from "../storage-display/StorageDisplay";
+import MarketDisplay from "../market-display/MarketDisplay";
 
 type BuildingDetailsProps = {
   chosenBuilding: Building;
@@ -52,6 +54,12 @@ const BuildingDetails = ({ chosenBuilding, hideBuildingDisplay }: BuildingDetail
       break;
     case BuildingType.STABLES:
       display = <StablesDisplay closeDisplay={hideBuildingDisplay} />;
+      break;
+    case BuildingType.STORAGE:
+      display = <StorageDisplayContainer closeDisplay={hideBuildingDisplay} />;
+      break;
+    case BuildingType.MARKET:
+      display = <MarketDisplay closeDisplay={hideBuildingDisplay} />;
       break;
     default:
       throw new Error(`Unknown building type ${BuildingType[chosenBuilding.type]}`);

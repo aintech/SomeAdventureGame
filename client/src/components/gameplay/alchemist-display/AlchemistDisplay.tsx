@@ -61,7 +61,7 @@ class AlchemistDisplayContainer extends Component<AlchemistDisplayContainerProps
       return <Loader message={`Wating for heroes`} />;
     }
 
-    const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.PURCHASING);
+    const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.PURCHASING_POTIONS);
 
     return <AlchemistDisplay visitors={visitors} closeDisplay={closeDisplay} visitorClicked={heroClicked} />;
   }

@@ -24,6 +24,7 @@ const TreasuryDisplay = ({ stats, closeDisplay }: TreasuryDisplayProps) => {
       <div className="treasury-display__container">
         <div className="treasury-display__name">{buildingTypeToName(BuildingType.TREASURY)}</div>
         <div className="treasury-display__stats">
+          <div>Уровень славы городка {stats.fame}</div>
           <div>Золота в сокровищнице {stats.gold} g</div>
           <div>Доля гильдии в квестах {GUILD_SHARE * 100}% </div>
         </div>

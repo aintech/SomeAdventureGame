@@ -3,8 +3,8 @@
 .game-world__building {
   &-TAVERN {
     position: absolute;
-    top: 85px;
-    left: 918px;
+    top: 180px;
+    left: 530px;
     width: 86px;
     height: 83px;
     background-image: url(../../../../img/map/Tavern.png);
@@ -128,6 +128,36 @@
     width: 83px;
     height: 76px;
     background-image: url(../../../../img/map/Stables.png);
+    background-size: cover;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  &-STORAGE {
+    position: absolute;
+    top: 85px;
+    left: 918px;
+    width: 83px;
+    height: 76px;
+    background-image: url(../../../../img/map/Storage.png);
+    background-size: cover;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  &-MARKET {
+    position: absolute;
+    top: 170px;
+    left: 215px;
+    width: 170px;
+    height: 110px;
+    background-image: url(../../../../img/map/Market.png);
     background-size: cover;
     cursor: pointer;
 
