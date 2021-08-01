@@ -44,7 +44,7 @@ const persistPatrons = async (userId: number, heroes: GeneratedHero[]) => {
     .map(
       (hero) =>
         `select 
-            ${userId}, '${hero.name}', '${hero.type}', 
+            ${userId}, '${hero.name}', ${hero.type}, 
             ${hero.power}, ${hero.defence}, ${hero.vitality}, ${hero.initiative},
             ${hero.health}, ${hero.experience}, ${hero.gold}, 
             (now() + interval '${hero.index} seconds')`

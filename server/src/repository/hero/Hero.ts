@@ -217,7 +217,7 @@ const mapHero = (row: HeroRow): Hero => {
     id: +row.id,
     userId: +row.user_id,
     name: row.name,
-    type: mapHeroType(row.type),
+    type: +row.type,
     level: { lvl: +row.level, experience: +row.experience },
     power: +row.power,
     defence: +row.defence,
@@ -232,23 +232,6 @@ const mapHero = (row: HeroRow): Hero => {
     startedAt: row.started_at ?? undefined,
     duration: row.duration !== null ? +row.duration : undefined,
   };
-};
-
-const mapHeroType = (type: string) => {
-  switch (type) {
-    case "warrior":
-      return HeroType.WARRIOR;
-    case "mage":
-      return HeroType.MAGE;
-    case "thief":
-      return HeroType.THIEF;
-    case "healer":
-      return HeroType.HEALER;
-    case "paladin":
-      return HeroType.PALADIN;
-    default:
-      throw new Error(`Unknown hero type ${type}`);
-  }
 };
 
 const mapHeroHP = (row: { id: string; health: string; total: string }) => {

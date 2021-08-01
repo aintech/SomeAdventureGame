@@ -1,3 +1,4 @@
+import { HeroType } from "../repository/hero/Hero";
 import { anyOf } from "../utils/Arrays";
 
 const names = [
@@ -19,7 +20,7 @@ const names = [
 
 export type GeneratedHero = {
   name: string;
-  type: string;
+  type: HeroType;
   power: number;
   defence: number;
   vitality: number;
@@ -32,23 +33,29 @@ export type GeneratedHero = {
 
 const generateHeroes = () => {
   const heroes: GeneratedHero[] = [];
-  const poolSize = 6; //Math.floor(Math.random() * 7) + 3;
+  const poolSize = Math.floor(Math.random() * 4) + 3;
   for (let i = 0; i < poolSize; i++) {
+    const power = Math.floor(Math.random() * 6) + 6;
+    const vit = Math.floor(Math.random() * 5) + 10;
     heroes.push({
       name: anyOf(names),
-      type: Math.random() > 0.5 ? "warrior" : "mage",
-      power: 10,
+      type: randomType(),
+      power: power,
       defence: 3,
-      vitality: 10,
+      vitality: vit,
       initiative: 2,
-      health: 100,
-      experience: 50,
-      gold: 100,
+      health: vit * 10,
+      experience: 0,
+      gold: power * 10 + vit * 10,
       index: i,
     });
   }
 
   return heroes;
+};
+
+const randomType = (): HeroType => {
+  return Math.floor(Math.random() * Object.values(HeroType).length * 0.5);
 };
 
 export default generateHeroes;
