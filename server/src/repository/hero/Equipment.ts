@@ -76,7 +76,7 @@ const mapEquipment = (row: EquipmentRow): Equipment => {
     equipmentId: +row.equipment_id,
     name: row.name,
     description: row.description,
-    type: mapEquipmentType(row.type),
+    type: +row.type,
     level: +row.level,
     power: +row.power,
     defence: +row.defence,
@@ -87,19 +87,4 @@ const mapEquipment = (row: EquipmentRow): Equipment => {
     mage: row.mage,
     avatar: row.avatar,
   };
-};
-
-const mapEquipmentType = (type: string): EquipmentType => {
-  switch (type) {
-    case "weapon":
-      return EquipmentType.WEAPON;
-    case "armor":
-      return EquipmentType.ARMOR;
-    case "shield":
-      return EquipmentType.SHIELD;
-    case "accessory":
-      return EquipmentType.ACCESSORY;
-    default:
-      throw new Error(`Unknown equipment type ${type}`);
-  }
 };

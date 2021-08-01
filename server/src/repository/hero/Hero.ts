@@ -1,8 +1,8 @@
 import { HEALTH_PER_VITALITY } from "../../utils/Variables";
 import query from "../Db";
-import { HeroActivityType, mapHeroActivityType } from "./HeroActivity";
+import { Equipment, withEquipment } from "./Equipment";
+import { HeroActivityType } from "./HeroActivity";
 import { Item, withItems } from "./Item";
-import { withEquipment, Equipment } from "./Equipment";
 import { HeroLevel, withLevelUpInfo } from "./Level";
 import { Perk, withPerks } from "./Perk";
 import { Skill, withSkills } from "./Skill";
@@ -227,7 +227,7 @@ const mapHero = (row: HeroRow): Hero => {
     initiative: +row.initiative,
     hired: row.hired,
     appearAt: row.appear_at,
-    activityType: row.activity_type ? mapHeroActivityType(row.activity_type) : undefined,
+    activityType: row.activity_type !== null ? +row.activity_type : undefined,
     activityId: row.activity_id !== null ? +row.activity_id : undefined,
     startedAt: row.started_at ?? undefined,
     duration: row.duration !== null ? +row.duration : undefined,

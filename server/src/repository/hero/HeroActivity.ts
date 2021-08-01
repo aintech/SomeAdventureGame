@@ -106,30 +106,11 @@ const updateHeroActivity = async (heroId: number, activity: HeroActivity) => {
   await query<void>(
     "updateHeroActivity",
     `update public.hero_activity set 
-     activity_type = '${HeroActivityType[activity.type].toLowerCase()}', 
+     activity_type = ${activity.type}, 
      activity_id = ${activity.activityId ?? null}, 
      duration = ${activity.duration ?? null},
      started_at = now() 
      where hero_id = $1`,
     [heroId]
   );
-};
-
-export const mapHeroActivityType = (type: string) => {
-  switch (type) {
-    case "idle":
-      return HeroActivityType.IDLE;
-    case "quest":
-      return HeroActivityType.QUEST;
-    case "healing":
-      return HeroActivityType.HEALING;
-    case "training":
-      return HeroActivityType.TRAINING;
-    case "purchasing":
-      return HeroActivityType.PURCHASING;
-    case "praying":
-      return HeroActivityType.PRAYING;
-    default:
-      throw new Error(`Unknown hero activity type ${type}`);
-  }
 };

@@ -32,7 +32,7 @@ export const withItems = async (heroes: HeroWithEquipment[]) => {
   return heroWithItems;
 };
 
-export const adjustItems = (heroId: number, type: string, amount: number) => {
+export const adjustItems = (heroId: number, type: ItemType, amount: number) => {
   return query<void>(
     "adjustItems",
     `merge into public.hero_item hi 
@@ -61,20 +61,7 @@ const mapItem = (row: ItemRow): Item => {
   return {
     id: +row.id,
     heroId: +row.hero_id,
-    type: mapItemType(row.type),
+    type: +row.type,
     amount: +row.amount,
   };
-};
-
-const mapItemType = (type: string): ItemType => {
-  switch (type) {
-    case "health_potion":
-      return ItemType.HEALTH_POTION;
-    case "health_elixir":
-      return ItemType.HEALTH_ELIXIR;
-    case "mana_potion":
-      return ItemType.MANA_POTION;
-    default:
-      throw new Error(`Unknown item type ${type}`);
-  }
 };
