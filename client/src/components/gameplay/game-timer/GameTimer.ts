@@ -3,12 +3,14 @@ import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { onHeroActivities } from "../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService";
+import Equipment from "../../../models/Equipment";
 import Hero from "../../../models/hero/Hero";
 import { HeroActivityType } from "../../../models/hero/HeroActivityType";
 import checkHeroActivity from "./ActivityChecker";
 
 type GameTimerProps = {
   heroes: Hero[];
+  marketAssortment: Equipment[];
   onHeroActivities: (activities: { heroId: number; type: HeroActivityType }[]) => void;
 };
 
@@ -42,12 +44,19 @@ class GameTimer extends Component<GameTimerProps> {
   }
 
   checkHeroes() {
-    const { heroes } = this.props;
+    const { heroes, marketAssortment } = this.props;
     const activities: { heroId: number; type: HeroActivityType }[] = [];
 
+    const actualActivities = new Map<HeroActivityType, number>();
+
+    heroes.forEach((h) => {
+      actualActivities.set(h.activity!.type, (actualActivities.get(h.activity!.type) ?? 0) + 1);
+    });
+
     for (const hero of heroes) {
-      const activity = checkHeroActivity(hero);
+      const activity = checkHeroActivity(hero, actualActivities, marketAssortment);
       if (activity != null) {
+        actualActivities.set(activity, (actualActivities.get(activity) ?? 0) + 1);
         activities.push({ heroId: hero.id, type: activity });
       }
     }
@@ -64,10 +73,11 @@ class GameTimer extends Component<GameTimerProps> {
 
 type GameTimerState = {
   heroes: Hero[];
+  marketAssortment: Equipment[];
 };
 
-const mapStateToProps = ({ heroes }: GameTimerState) => {
-  return { heroes };
+const mapStateToProps = ({ heroes, marketAssortment }: GameTimerState) => {
+  return { heroes, marketAssortment };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch, customProps: WithApiServiceProps) => {

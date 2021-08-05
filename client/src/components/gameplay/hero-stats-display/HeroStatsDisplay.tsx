@@ -1,4 +1,5 @@
 import React, { MouseEvent, useEffect, useRef } from "react";
+import { useState } from "react";
 import { connect, useDispatch } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { heroStatsDisplayClosed, showConfirmDialog } from "../../../actions/Actions";
@@ -10,6 +11,7 @@ import { HeroActivityType } from "../../../models/hero/HeroActivityType";
 import { getItemName } from "../../../models/hero/HeroItem";
 import { HeroType } from "../../../models/hero/HeroType";
 import PersonageStats from "../../../models/PersonageStats";
+import { convertDuration, millisToSecs } from "../../../utils/Utils";
 import "./hero-stats-display.scss";
 
 const calcEquipSurpluses = (equipment: Equipment[]): PersonageStats => {
@@ -34,10 +36,23 @@ type HeroStatsDisplayProps = {
   onDismissHero: (hero: Hero) => void;
 };
 
+//FIXME: Если герой закончил текущую активность текст активности не обновляется
 const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroStatsDisplayProps) => {
   const dispatch = useDispatch();
   const healthRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const expRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
+  const [activityTime, setActivityTime] = useState("");
+
+  const updateActivityTime = () => {
+    if (hero?.activity?.duration) {
+      const remained = millisToSecs(
+        hero.activity.startedAt.getTime() + hero.activity.duration * 1000 - new Date().getTime()
+      );
+      setActivityTime(convertDuration(remained));
+    } else {
+      setActivityTime("");
+    }
+  };
 
   useEffect(() => {
     if (hero) {
@@ -50,8 +65,25 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
       expBar.clearRect(0, 0, 124, 21);
       expBar.fillStyle = "yellow";
       expBar.fillRect(0, 0, 124 * hero.level.progress, 21);
+
+      if (hero?.activity?.duration) {
+        const remained = millisToSecs(
+          hero.activity.startedAt.getTime() + hero.activity.duration * 1000 - new Date().getTime()
+        );
+        setActivityTime(convertDuration(remained));
+      } else {
+        setActivityTime("");
+      }
     }
   }, [hero]);
+
+  useEffect(() => {
+    let timer = setInterval(() => updateActivityTime(), 1000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  });
 
   if (!hero) {
     return null;
@@ -74,24 +106,6 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
   const armorStyle = `hero-stats__equipment-armor${armor ? "--" + armor.imgAvatar : ""}`;
   const shieldStyle = `hero-stats__equipment-shield${shield ? "--" + shield.imgAvatar : ""}`;
   const accessoryStyle = `hero-stats__equipment-accessory${accessory ? "--" + accessory.imgAvatar : ""}`;
-
-  let activity;
-  switch (hero.activity!.type) {
-    case HeroActivityType.IDLE:
-      activity = "Отдыхает";
-      break;
-    case HeroActivityType.QUEST:
-      activity = `Выполняет задание`;
-      break;
-    case HeroActivityType.HEALING:
-      activity = `Лечится у знахаря`;
-      break;
-    case HeroActivityType.TRAINING:
-      activity = "Тренирует новый уровень";
-      break;
-    default:
-      throw new Error(`Unknown activity type ${HeroActivityType[hero.activity!.type]}`);
-  }
 
   return (
     <div className="hero-stats" onClick={heroStatsDisplayClosed}>
@@ -116,7 +130,9 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
           <span style={{ color: "red" }}>X</span> Отпустить
         </span>
       </button>
-      <div className="hero-stats__activity">{activity}</div>
+      <div className="hero-stats__activity">
+        {hero.activity!.description} {activityTime}
+      </div>
       <div className="hero-stats__gold">{hero.gold}</div>
       <div className="hero-stats__name">{hero.name}</div>
       <div className="hero-stats__level">

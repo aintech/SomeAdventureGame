@@ -2,6 +2,7 @@ import generateHeroes, { GeneratedHero } from "../hero-generator/HeroGenerator";
 import { TAVERN_PATRONS_REPLENISH_PERIOD } from "../utils/Variables";
 import query from "./Db";
 import { getNotHiredHeroes, Hero, HeroType, HeroWithEquipment, HeroWithItems } from "./hero/Hero";
+import { ItemType } from "./hero/Item";
 import { getPerks, Perk } from "./hero/Perk";
 
 export const getTavernPatrons = async (userId: number) => {
@@ -70,13 +71,13 @@ const givePatronsEqipment = async (heroes: Hero[]) => {
 };
 
 const givePatronsItems = async (heroes: Hero[]) => {
-  const defaultPotions = heroes.map((hero) => `(${hero.id}, 'health_potion', 3)`).join(",");
+  const defaultPotions = heroes.map((hero) => `(${hero.id}, ${ItemType.HEALTH_POTION}, 3)`).join(",");
 
   const additionalPotions = heroes
     .map(
       (hero) =>
         `(${hero.id}, ${
-          hero.type === HeroType.MAGE || hero.type === HeroType.HEALER ? `'mana_potion'` : `'health_elixir'`
+          hero.type === HeroType.MAGE || hero.type === HeroType.HEALER ? ItemType.MANA_POTION : ItemType.HEALTH_ELIXIR
         }, 3)`
     )
     .join(",");
@@ -93,7 +94,7 @@ const givePatronsPerks = async (heroes: Hero[]) => {
   const insertPerks: string[] = [];
   heroes.forEach((hero) => {
     let rand = Math.random();
-    const perksCount = rand > 0.75 ? 3 : rand > 0.5 ? 2 : 1; // rand > 0.5 ? 1 : 0;
+    const perksCount = rand > 0.75 ? 3 : rand > 0.5 ? 2 : 1;
 
     const perks: Perk[] = [];
     for (let i = 0; i < perksCount; i++) {

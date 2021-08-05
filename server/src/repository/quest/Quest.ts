@@ -99,6 +99,7 @@ export const embarkOnQuest = async (userId: number, questId: number, heroIds: nu
         heroId: id,
         type: HeroActivityType.QUEST,
         activityId: questId,
+        description: `Выполняет задание ${quest.title}`,
       };
     })
   );
@@ -134,6 +135,7 @@ export const completeQuest = async (userId: number, questId: number, canceled = 
         return {
           heroId: id,
           type: HeroActivityType.IDLE,
+          description: "Не при делах",
         };
       })
     )

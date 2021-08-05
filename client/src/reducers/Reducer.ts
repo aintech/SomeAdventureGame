@@ -4,10 +4,11 @@ import { ConfirmDialogType } from "../components/confirm-dialog/ConfirmDialog";
 import { Tooltip } from "../components/gameplay-tooltip/GameplayTooltip";
 import { Message } from "../components/message-popup/MessagePopup";
 import Building from "../models/Building";
+import Equipment, { convert as convertEquipment } from "../models/Equipment";
 import GameStats from "../models/GameStats";
 import Hero, { convert as convertHero } from "../models/hero/Hero";
 import Quest, { convert as convertQuest } from "../models/Quest";
-import { HeroResponse, HireHeroResponse } from "../services/HeroesService";
+import { EquipmentResponse, HeroResponse, HireHeroResponse } from "../services/HeroesService";
 import { QuestResponse } from "../services/QuestsService";
 import { remove, replace } from "../utils/arrays";
 
@@ -16,6 +17,7 @@ export type State = {
   quests: Quest[];
   heroes: Hero[];
   tavernPatrons: Hero[];
+  marketAssortment: Equipment[];
   chosenBuilding: Building | null;
   chosenQuest: Quest | null;
   chosenHero: Hero | null;
@@ -31,6 +33,7 @@ const intialState = {
   quests: [],
   heroes: [],
   tavernPatrons: [],
+  marketAssortment: [],
   chosenBuilding: null,
   chosenQuest: null,
   chosenHero: null,
@@ -42,6 +45,8 @@ const intialState = {
 };
 
 const reducer = (state: State = intialState, action: PayloadedAction) => {
+  let chosenHero = state.chosenHero;
+
   switch (action.type) {
     case ActionType.FETCH_GAME_STATS_REQUEST:
       return {
@@ -89,6 +94,18 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       return {
         ...state,
         tavernPatrons: action.payload.map((h: HeroResponse) => convertHero(h)),
+      };
+
+    case ActionType.FETCH_MARKET_ASSORTMENT_REQUEST:
+      return {
+        ...state,
+        marketAssortment: [],
+      };
+
+    case ActionType.FETCH_MARKET_ASSORTMENT_SUCCESS:
+      return {
+        ...state,
+        marketAssortment: action.payload.map((e: EquipmentResponse) => convertEquipment(e)),
       };
 
     case ActionType.BUILDING_CLICKED:
@@ -148,7 +165,13 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         const hero = convertHero(embHero);
         const heroIdx = upHeroes.findIndex((h) => h.id === hero.id);
         upHeroes = [...upHeroes.slice(0, heroIdx), hero, ...upHeroes.slice(heroIdx + 1)];
+        if (chosenHero) {
+          if (hero.id === chosenHero.id) {
+            chosenHero = hero;
+          }
+        }
       }
+
       return {
         ...state,
         quests: [
@@ -157,6 +180,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
           ...state.quests.slice(questIdx + 1),
         ],
         heroes: upHeroes,
+        chosenHero,
         chosenQuest: null,
         heroesAssignedToQuest: [],
       };
@@ -172,11 +196,17 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         const hero = convertHero(embHero);
         const heroIdx = uHeroes.findIndex((h) => h.id === hero.id);
         uHeroes = [...uHeroes.slice(0, heroIdx), hero, ...uHeroes.slice(heroIdx + 1)];
+        if (chosenHero) {
+          if (hero.id === chosenHero.id) {
+            chosenHero = hero;
+          }
+        }
       }
       return {
         ...state,
         quests: [...state.quests.slice(0, qIdx), convertQuest(embQuest), ...state.quests.slice(qIdx + 1)],
         heroes: uHeroes,
+        chosenHero,
       };
 
     case ActionType.COLLECTING_QUEST_REWARD:
@@ -192,6 +222,11 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       let changeHeroes = [...state.heroes];
       for (const hr of heroes) {
         changeHeroes = replace(changeHeroes, convertHero(hr));
+        if (chosenHero) {
+          if (hr.id === chosenHero.id) {
+            chosenHero = convertHero(hr);
+          }
+        }
       }
 
       let changeQuest = quest.completed
@@ -203,6 +238,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         stats,
         quests: changeQuest,
         heroes: changeHeroes,
+        chosenHero,
         collectingQuestReward: null,
       };
 
@@ -247,10 +283,16 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         const hero = convertHero(hr);
         const heroIdx = replacedHeroes.findIndex((h) => h.id === hero.id);
         replacedHeroes = [...replacedHeroes.slice(0, heroIdx), hero, ...replacedHeroes.slice(heroIdx + 1)];
+        if (chosenHero) {
+          if (hero.id === chosenHero.id) {
+            chosenHero = hero;
+          }
+        }
       }
       return {
         ...state,
         heroes: replacedHeroes,
+        chosenHero,
       };
 
     case ActionType.SHOW_TOOLTIP:

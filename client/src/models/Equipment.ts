@@ -9,39 +9,66 @@ export enum EquipmentType {
   ACCESSORY,
 }
 
+/** For simplicity at this point using ID as subtype */
+export enum EquipmentSubtype {
+  NONE,
+  RUSTY_SWORD,
+  BENT_STAFF,
+  SIMPLE_SHIRT,
+  BRONZE_SWORD,
+  OLD_DAGGER,
+  STEEL_SWORD,
+  WOODEN_STAFF,
+  SIMPLE_ROBE,
+  LEATHER_JACKET,
+}
+
 export default class Equipment {
   constructor(
     public id: number,
     public name: string,
     public description: string,
     public type: EquipmentType,
+    public subtype: EquipmentSubtype,
     public level: number,
+    public price: number,
     public stats: PersonageStats,
     public availableTypes: HeroType[],
     public imgAvatar: string
   ) {}
 }
 
-const collectAvailableHeroTypes = (warrior: boolean, mage: boolean): HeroType[] => {
+const collectAvailableHeroTypes = (response: EquipmentResponse): HeroType[] => {
   const types: HeroType[] = [];
-  if (warrior) {
+  if (response.warrior) {
     types.push(HeroType.WARRIOR);
   }
-  if (mage) {
+  if (response.paladin) {
+    types.push(HeroType.PALADIN);
+  }
+  if (response.thief) {
+    types.push(HeroType.THIEF);
+  }
+  if (response.mage) {
     types.push(HeroType.MAGE);
+  }
+  if (response.healer) {
+    types.push(HeroType.HEALER);
   }
   return types;
 };
 
 export const convert = (response: EquipmentResponse): Equipment => {
   return new Equipment(
-    +response.id,
+    response.id,
     response.name,
     response.description,
     response.type,
-    +response.level,
+    response.id,
+    response.level,
+    response.price,
     new PersonageStats(+response.power, +response.defence, +response.vitality, +response.initiative),
-    collectAvailableHeroTypes(response.warrior, response.mage),
+    collectAvailableHeroTypes(response),
     response.avatar
   );
 };

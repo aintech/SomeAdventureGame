@@ -22,8 +22,11 @@ export interface EquipmentResponse extends StatsHolder {
   description: string;
   type: EquipmentType;
   level: number;
-  mage: boolean;
   warrior: boolean;
+  thief: boolean;
+  paladin: boolean;
+  mage: boolean;
+  healer: boolean;
   price: number;
   avatar: string;
 }
@@ -39,9 +42,14 @@ export interface HeroResponse extends StatsHolder {
   items: HeroItemResponse[];
   perks: HeroPerkResponse[];
   skills: HeroSkillResponse[];
-  activityId: number;
-  activityType: HeroActivityType;
+  activity?: HeroActivityResponse;
+}
+
+export interface HeroActivityResponse {
+  type: HeroActivityType;
   startedAt: string;
+  description: string;
+  activityId?: number;
   duration?: number;
 }
 

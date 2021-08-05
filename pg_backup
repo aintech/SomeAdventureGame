@@ -5,7 +5,7 @@
 -- Dumped from database version 10.17 (Ubuntu 10.17-1.pgdg18.04+1)
 -- Dumped by pg_dump version 13.3 (Ubuntu 13.3-1.pgdg18.04+1)
 
--- Started on 2021-08-01 18:17:24 MSK
+-- Started on 2021-08-05 11:38:09 MSK
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -36,7 +36,7 @@ ALTER TABLE public.equipment_id_seq OWNER TO yaremchuken;
 SET default_tablespace = '';
 
 --
--- TOC entry 207 (class 1259 OID 16869)
+-- TOC entry 206 (class 1259 OID 16869)
 -- Name: equipment; Type: TABLE; Schema: public; Owner: yaremchuken
 --
 
@@ -56,7 +56,8 @@ CREATE TABLE public.equipment (
     thief boolean DEFAULT false NOT NULL,
     paladin boolean DEFAULT false NOT NULL,
     healer boolean DEFAULT false NOT NULL,
-    type bigint DEFAULT 0 NOT NULL
+    type bigint DEFAULT 0 NOT NULL,
+    buying_time bigint DEFAULT 120 NOT NULL
 );
 
 
@@ -78,7 +79,7 @@ CREATE SEQUENCE public.hero_id_seq
 ALTER TABLE public.hero_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 208 (class 1259 OID 16880)
+-- TOC entry 207 (class 1259 OID 16880)
 -- Name: hero; Type: TABLE; Schema: public; Owner: yaremchuken
 --
 
@@ -103,7 +104,7 @@ CREATE TABLE public.hero (
 ALTER TABLE public.hero OWNER TO yaremchuken;
 
 --
--- TOC entry 215 (class 1259 OID 16993)
+-- TOC entry 214 (class 1259 OID 16993)
 -- Name: hero_activity; Type: TABLE; Schema: public; Owner: yaremchuken
 --
 
@@ -112,19 +113,19 @@ CREATE TABLE public.hero_activity (
     activity_id bigint,
     started_at timestamp with time zone DEFAULT now() NOT NULL,
     duration bigint,
-    activity_type bigint DEFAULT 0 NOT NULL
+    activity_type bigint DEFAULT 0 NOT NULL,
+    description character varying DEFAULT 'Ни пре делах'::character varying NOT NULL
 );
 
 
 ALTER TABLE public.hero_activity OWNER TO yaremchuken;
 
 --
--- TOC entry 206 (class 1259 OID 16854)
+-- TOC entry 205 (class 1259 OID 16854)
 -- Name: hero_equipment; Type: TABLE; Schema: public; Owner: yaremchuken
 --
 
 CREATE TABLE public.hero_equipment (
-    id bigint NOT NULL,
     hero_id bigint NOT NULL,
     equipment_id bigint NOT NULL
 );
@@ -133,31 +134,7 @@ CREATE TABLE public.hero_equipment (
 ALTER TABLE public.hero_equipment OWNER TO yaremchuken;
 
 --
--- TOC entry 205 (class 1259 OID 16852)
--- Name: hero_equipment_id_seq; Type: SEQUENCE; Schema: public; Owner: yaremchuken
---
-
-CREATE SEQUENCE public.hero_equipment_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.hero_equipment_id_seq OWNER TO yaremchuken;
-
---
--- TOC entry 3091 (class 0 OID 0)
--- Dependencies: 205
--- Name: hero_equipment_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
---
-
-ALTER SEQUENCE public.hero_equipment_id_seq OWNED BY public.hero_equipment.id;
-
-
---
--- TOC entry 217 (class 1259 OID 17005)
+-- TOC entry 216 (class 1259 OID 17005)
 -- Name: hero_item; Type: TABLE; Schema: public; Owner: yaremchuken
 --
 
@@ -172,7 +149,7 @@ CREATE TABLE public.hero_item (
 ALTER TABLE public.hero_item OWNER TO yaremchuken;
 
 --
--- TOC entry 216 (class 1259 OID 17003)
+-- TOC entry 215 (class 1259 OID 17003)
 -- Name: hero_item_id_seq; Type: SEQUENCE; Schema: public; Owner: yaremchuken
 --
 
@@ -187,8 +164,8 @@ CREATE SEQUENCE public.hero_item_id_seq
 ALTER TABLE public.hero_item_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3092 (class 0 OID 0)
--- Dependencies: 216
+-- TOC entry 3096 (class 0 OID 0)
+-- Dependencies: 215
 -- Name: hero_item_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
 
@@ -196,7 +173,7 @@ ALTER SEQUENCE public.hero_item_id_seq OWNED BY public.hero_item.id;
 
 
 --
--- TOC entry 220 (class 1259 OID 17025)
+-- TOC entry 219 (class 1259 OID 17025)
 -- Name: hero_perk; Type: TABLE; Schema: public; Owner: yaremchuken
 --
 
@@ -225,7 +202,7 @@ CREATE TABLE public.level_exp (
 ALTER TABLE public.level_exp OWNER TO yaremchuken;
 
 --
--- TOC entry 214 (class 1259 OID 16932)
+-- TOC entry 213 (class 1259 OID 16932)
 -- Name: monster; Type: TABLE; Schema: public; Owner: yaremchuken
 --
 
@@ -243,7 +220,7 @@ CREATE TABLE public.monster (
 ALTER TABLE public.monster OWNER TO yaremchuken;
 
 --
--- TOC entry 213 (class 1259 OID 16930)
+-- TOC entry 212 (class 1259 OID 16930)
 -- Name: monster_id_seq; Type: SEQUENCE; Schema: public; Owner: yaremchuken
 --
 
@@ -258,8 +235,8 @@ CREATE SEQUENCE public.monster_id_seq
 ALTER TABLE public.monster_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3093 (class 0 OID 0)
--- Dependencies: 213
+-- TOC entry 3097 (class 0 OID 0)
+-- Dependencies: 212
 -- Name: monster_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
 
@@ -267,7 +244,7 @@ ALTER SEQUENCE public.monster_id_seq OWNED BY public.monster.id;
 
 
 --
--- TOC entry 219 (class 1259 OID 17016)
+-- TOC entry 218 (class 1259 OID 17016)
 -- Name: perk; Type: TABLE; Schema: public; Owner: yaremchuken
 --
 
@@ -281,7 +258,7 @@ CREATE TABLE public.perk (
 ALTER TABLE public.perk OWNER TO yaremchuken;
 
 --
--- TOC entry 218 (class 1259 OID 17014)
+-- TOC entry 217 (class 1259 OID 17014)
 -- Name: perk_id_seq; Type: SEQUENCE; Schema: public; Owner: yaremchuken
 --
 
@@ -296,8 +273,8 @@ CREATE SEQUENCE public.perk_id_seq
 ALTER TABLE public.perk_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3094 (class 0 OID 0)
--- Dependencies: 218
+-- TOC entry 3098 (class 0 OID 0)
+-- Dependencies: 217
 -- Name: perk_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
 
@@ -325,7 +302,7 @@ CREATE TABLE public.quest (
 ALTER TABLE public.quest OWNER TO yaremchuken;
 
 --
--- TOC entry 212 (class 1259 OID 16902)
+-- TOC entry 211 (class 1259 OID 16902)
 -- Name: quest_checkpoint; Type: TABLE; Schema: public; Owner: yaremchuken
 --
 
@@ -345,7 +322,7 @@ CREATE TABLE public.quest_checkpoint (
 ALTER TABLE public.quest_checkpoint OWNER TO yaremchuken;
 
 --
--- TOC entry 211 (class 1259 OID 16900)
+-- TOC entry 210 (class 1259 OID 16900)
 -- Name: quest_checkpoints_id_seq; Type: SEQUENCE; Schema: public; Owner: yaremchuken
 --
 
@@ -360,8 +337,8 @@ CREATE SEQUENCE public.quest_checkpoints_id_seq
 ALTER TABLE public.quest_checkpoints_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3095 (class 0 OID 0)
--- Dependencies: 211
+-- TOC entry 3099 (class 0 OID 0)
+-- Dependencies: 210
 -- Name: quest_checkpoints_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
 
@@ -384,7 +361,7 @@ CREATE SEQUENCE public.quest_id_seq
 ALTER TABLE public.quest_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3096 (class 0 OID 0)
+-- TOC entry 3100 (class 0 OID 0)
 -- Dependencies: 201
 -- Name: quest_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
@@ -393,7 +370,7 @@ ALTER SEQUENCE public.quest_id_seq OWNED BY public.quest.id;
 
 
 --
--- TOC entry 210 (class 1259 OID 16891)
+-- TOC entry 209 (class 1259 OID 16891)
 -- Name: quest_progress; Type: TABLE; Schema: public; Owner: yaremchuken
 --
 
@@ -410,7 +387,7 @@ CREATE TABLE public.quest_progress (
 ALTER TABLE public.quest_progress OWNER TO yaremchuken;
 
 --
--- TOC entry 209 (class 1259 OID 16889)
+-- TOC entry 208 (class 1259 OID 16889)
 -- Name: quest_progress_id_seq; Type: SEQUENCE; Schema: public; Owner: yaremchuken
 --
 
@@ -425,8 +402,8 @@ CREATE SEQUENCE public.quest_progress_id_seq
 ALTER TABLE public.quest_progress_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3097 (class 0 OID 0)
--- Dependencies: 209
+-- TOC entry 3101 (class 0 OID 0)
+-- Dependencies: 208
 -- Name: quest_progress_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
 
@@ -434,7 +411,7 @@ ALTER SEQUENCE public.quest_progress_id_seq OWNED BY public.quest_progress.id;
 
 
 --
--- TOC entry 222 (class 1259 OID 17032)
+-- TOC entry 221 (class 1259 OID 17032)
 -- Name: skill; Type: TABLE; Schema: public; Owner: yaremchuken
 --
 
@@ -450,7 +427,7 @@ CREATE TABLE public.skill (
 ALTER TABLE public.skill OWNER TO yaremchuken;
 
 --
--- TOC entry 221 (class 1259 OID 17030)
+-- TOC entry 220 (class 1259 OID 17030)
 -- Name: skill_id_seq; Type: SEQUENCE; Schema: public; Owner: yaremchuken
 --
 
@@ -465,8 +442,8 @@ CREATE SEQUENCE public.skill_id_seq
 ALTER TABLE public.skill_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3098 (class 0 OID 0)
--- Dependencies: 221
+-- TOC entry 3102 (class 0 OID 0)
+-- Dependencies: 220
 -- Name: skill_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
 
@@ -503,7 +480,7 @@ CREATE SEQUENCE public.stats_user_id_seq
 ALTER TABLE public.stats_user_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3099 (class 0 OID 0)
+-- TOC entry 3103 (class 0 OID 0)
 -- Dependencies: 199
 -- Name: stats_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
@@ -541,7 +518,7 @@ CREATE SEQUENCE public.user_id_seq
 ALTER TABLE public.user_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3100 (class 0 OID 0)
+-- TOC entry 3104 (class 0 OID 0)
 -- Dependencies: 196
 -- Name: user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
@@ -550,15 +527,20 @@ ALTER SEQUENCE public.user_id_seq OWNED BY public."user".id;
 
 
 --
--- TOC entry 2884 (class 2604 OID 16960)
--- Name: hero_equipment id; Type: DEFAULT; Schema: public; Owner: yaremchuken
+-- TOC entry 222 (class 1259 OID 17147)
+-- Name: user_market_assortment; Type: TABLE; Schema: public; Owner: yaremchuken
 --
 
-ALTER TABLE ONLY public.hero_equipment ALTER COLUMN id SET DEFAULT nextval('public.hero_equipment_id_seq'::regclass);
+CREATE TABLE public.user_market_assortment (
+    user_id bigint NOT NULL,
+    equipment_id bigint NOT NULL
+);
 
+
+ALTER TABLE public.user_market_assortment OWNER TO yaremchuken;
 
 --
--- TOC entry 2903 (class 2604 OID 17008)
+-- TOC entry 2906 (class 2604 OID 17008)
 -- Name: hero_item id; Type: DEFAULT; Schema: public; Owner: yaremchuken
 --
 
@@ -566,7 +548,7 @@ ALTER TABLE ONLY public.hero_item ALTER COLUMN id SET DEFAULT nextval('public.he
 
 
 --
--- TOC entry 2900 (class 2604 OID 16961)
+-- TOC entry 2902 (class 2604 OID 16961)
 -- Name: monster id; Type: DEFAULT; Schema: public; Owner: yaremchuken
 --
 
@@ -574,7 +556,7 @@ ALTER TABLE ONLY public.monster ALTER COLUMN id SET DEFAULT nextval('public.mons
 
 
 --
--- TOC entry 2905 (class 2604 OID 17019)
+-- TOC entry 2908 (class 2604 OID 17019)
 -- Name: perk id; Type: DEFAULT; Schema: public; Owner: yaremchuken
 --
 
@@ -582,7 +564,7 @@ ALTER TABLE ONLY public.perk ALTER COLUMN id SET DEFAULT nextval('public.perk_id
 
 
 --
--- TOC entry 2879 (class 2604 OID 16962)
+-- TOC entry 2881 (class 2604 OID 16962)
 -- Name: quest id; Type: DEFAULT; Schema: public; Owner: yaremchuken
 --
 
@@ -590,7 +572,7 @@ ALTER TABLE ONLY public.quest ALTER COLUMN id SET DEFAULT nextval('public.quest_
 
 
 --
--- TOC entry 2899 (class 2604 OID 16963)
+-- TOC entry 2901 (class 2604 OID 16963)
 -- Name: quest_checkpoint id; Type: DEFAULT; Schema: public; Owner: yaremchuken
 --
 
@@ -598,7 +580,7 @@ ALTER TABLE ONLY public.quest_checkpoint ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 2897 (class 2604 OID 16964)
+-- TOC entry 2899 (class 2604 OID 16964)
 -- Name: quest_progress id; Type: DEFAULT; Schema: public; Owner: yaremchuken
 --
 
@@ -606,7 +588,7 @@ ALTER TABLE ONLY public.quest_progress ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
--- TOC entry 2906 (class 2604 OID 17035)
+-- TOC entry 2909 (class 2604 OID 17035)
 -- Name: skill id; Type: DEFAULT; Schema: public; Owner: yaremchuken
 --
 
@@ -614,7 +596,7 @@ ALTER TABLE ONLY public.skill ALTER COLUMN id SET DEFAULT nextval('public.skill_
 
 
 --
--- TOC entry 2878 (class 2604 OID 16965)
+-- TOC entry 2880 (class 2604 OID 16965)
 -- Name: stats user_id; Type: DEFAULT; Schema: public; Owner: yaremchuken
 --
 
@@ -622,7 +604,7 @@ ALTER TABLE ONLY public.stats ALTER COLUMN user_id SET DEFAULT nextval('public.s
 
 
 --
--- TOC entry 2877 (class 2604 OID 16966)
+-- TOC entry 2879 (class 2604 OID 16966)
 -- Name: user id; Type: DEFAULT; Schema: public; Owner: yaremchuken
 --
 
@@ -630,251 +612,151 @@ ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_
 
 
 --
--- TOC entry 3070 (class 0 OID 16869)
--- Dependencies: 207
+-- TOC entry 3074 (class 0 OID 16869)
+-- Dependencies: 206
 -- Data for Name: equipment; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
-COPY public.equipment (id, name, description, level, power, defence, vitality, price, warrior, mage, avatar, initiative, thief, paladin, healer, type) FROM stdin;
-1	Старый меч	Просто старый и немного ржавый меч	1	5	0	0	100	t	f	rusty_sword	0	f	t	f	0
-2	Кривой посох	Простая палка, найдена валяющейся не так далеко от источника силы	1	5	0	0	100	f	t	bent_staff	0	f	f	t	0
-3	Плотная рубаха	Мало что представляет в плане защиты	1	0	3	0	70	t	t	simple_shirt	0	t	t	t	1
+COPY public.equipment (id, name, description, level, power, defence, vitality, price, warrior, mage, avatar, initiative, thief, paladin, healer, type, buying_time) FROM stdin;
+1	Старый меч	Просто старый и немного ржавый меч	1	5	0	0	100	t	f	rusty_sword	0	f	t	f	0	120
+2	Кривой посох	Простая палка, найдена валяющейся не так далеко от источника силы	1	5	0	0	100	f	t	bent_staff	0	f	f	t	0	120
+3	Плотная рубаха	Мало что представляет в плане защиты	1	0	3	0	70	t	t	simple_shirt	0	t	t	t	1	120
+4	Бронзовый меч	Меч из бронзы	2	7	0	0	150	t	f	no_image	0	f	t	f	0	120
+5	Старый кинжал	Похоже этот кинжал провалялся на задворках лет сто, лезвие остротоой не блещет	1	5	0	0	100	f	f	no_image	0	t	f	f	0	120
+6	Стальной меч	Уже можно считать оружием	3	10	0	0	250	t	f	no_image	0	f	t	f	0	120
+7	Деревянный посох	В посохе есть магия, в зачаточном состоянии	2	7	0	0	150	f	t	no_image	0	f	f	t	0	120
+8	Простая роба	Подходит для начинающих магов, чтобы побродить туда-сюда, сражаться в этом не стоит	2	0	5	0	120	f	t	no_image	0	f	f	t	1	120
+9	Кожанная куртка	Защитит от острых веток и колючек, на что-то посерьезнее рассчитывать не стоит	2	0	5	0	120	t	f	no_image	0	t	t	f	1	120
 \.
 
 
 --
--- TOC entry 3071 (class 0 OID 16880)
--- Dependencies: 208
+-- TOC entry 3075 (class 0 OID 16880)
+-- Dependencies: 207
 -- Data for Name: hero; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
 COPY public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type) FROM stdin;
-129	5	Клайн	10	3	100	50	100	10	2	f	2021-06-03 14:01:54.948402	1	0
-128	5	Торий	10	3	100	50	100	10	2	f	2021-06-03 14:01:53.948402	1	0
-119	4	Калопус	10	3	100	50	100	10	2	f	2021-06-03 13:46:18.044496	1	0
-120	4	Калопус	10	3	100	50	100	10	2	f	2021-06-03 13:46:22.044496	1	0
-123	4	Калопус	10	3	100	50	100	10	2	f	2021-06-03 13:46:23.044496	1	0
-2	1	John	17	3	230	2850	432	23	2	t	2021-05-27 16:58:59.487704	4	0
-8	1	Golandec	20	3	340	1165	255	34	2	t	2021-05-27 16:58:59.487704	3	0
-366	1	Клайн	10	3	100	50	100	10	2	t	2021-07-30 11:33:35.572712	1	0
-6	1	Currier	8	3	100	555	876	10	2	t	2021-05-27 16:58:59.487704	2	0
-5	1	Ratta de curra	50	3	950	1318	889	95	2	t	2021-05-27 16:58:59.487704	3	0
-130	5	Всевол	10	3	100	50	100	10	2	f	2021-06-03 14:01:52.948402	1	1
-9	2	Mettme	16	3	180	105	125	18	2	t	2021-05-27 16:58:59.487704	1	1
-125	5	Торий	10	3	100	50	100	10	2	f	2021-06-03 14:01:56.948402	1	1
-126	5	Потер	10	3	100	50	100	10	2	f	2021-06-03 14:01:51.948402	1	1
-127	5	Политра	10	3	100	50	100	10	2	f	2021-06-03 14:01:55.948402	1	1
-121	4	Клайн	10	3	100	50	100	10	2	f	2021-06-03 13:46:20.044496	1	1
-4	1	Flora	19	3	250	1736	1668	25	2	t	2021-05-27 16:58:59.487704	3	1
-122	4	Калопус	10	3	100	50	100	10	2	f	2021-06-03 13:46:19.044496	1	1
-124	4	Мосток	10	3	100	50	100	10	2	f	2021-06-03 13:46:21.044496	1	1
-468	1	Потер	11	3	120	0	230	12	2	t	2021-08-01 15:08:35.84756	1	2
-474	1	Политра	10	3	110	0	210	11	2	f	2021-08-01 15:13:04.309086	1	4
-475	1	Ровер	9	3	130	0	220	13	2	f	2021-08-01 15:13:03.309086	1	4
-476	1	Калопус	8	3	130	0	210	13	2	f	2021-08-01 15:13:02.309086	1	3
-477	1	Мира	6	3	110	0	170	11	2	f	2021-08-01 15:13:05.309086	1	3
-3	1	Steven	8	3	50	1071	1600	5	2	t	2021-05-27 16:58:59.487704	3	1
+595	1	Серпок	11	3	130	0	240	13	2	f	2021-08-05 11:03:14.529045	1	2
+596	1	Серпок	11	3	110	0	220	11	2	f	2021-08-05 11:03:13.529045	1	3
+597	1	Всевол	9	3	100	0	190	10	2	f	2021-08-05 11:03:16.529045	1	4
+598	1	Ровер	6	3	110	0	170	11	2	f	2021-08-05 11:03:12.529045	1	1
+600	1	Карион	7	3	100	0	170	10	2	f	2021-08-05 11:03:11.529045	1	2
+576	1	Ровер	10	3	110	0	40	11	2	t	2021-08-05 10:59:06.856054	1	1
+579	1	Ровер	13	3	120	0	80	12	2	t	2021-08-05 11:02:47.570568	1	1
+584	1	Белозер	11	3	140	0	80	14	2	t	2021-08-05 11:02:48.570568	1	3
+599	1	Карион	10	3	140	0	70	14	2	t	2021-08-05 11:03:15.529045	1	4
+573	1	Белозер	7	5	110	0	60	11	2	t	2021-08-05 10:59:08.856054	1	2
+577	1	Торий	10	5	130	0	40	13	2	t	2021-08-05 10:59:11.856054	1	0
 \.
 
 
 --
--- TOC entry 3078 (class 0 OID 16993)
--- Dependencies: 215
+-- TOC entry 3082 (class 0 OID 16993)
+-- Dependencies: 214
 -- Data for Name: hero_activity; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
-COPY public.hero_activity (hero_id, activity_id, started_at, duration, activity_type) FROM stdin;
-8	\N	2021-08-01 18:10:19.038191+03	\N	0
-366	\N	2021-08-01 18:10:19.038191+03	\N	0
-129	\N	2021-08-01 18:10:19.038191+03	\N	0
-130	\N	2021-08-01 18:10:19.038191+03	\N	0
-161	\N	2021-08-01 18:10:19.038191+03	\N	0
-162	\N	2021-08-01 18:10:19.038191+03	\N	0
-163	\N	2021-08-01 18:10:19.038191+03	\N	0
-164	\N	2021-08-01 18:10:19.038191+03	\N	0
-165	\N	2021-08-01 18:10:19.038191+03	\N	0
-166	\N	2021-08-01 18:10:19.038191+03	\N	0
-9	\N	2021-08-01 18:10:19.038191+03	\N	0
-125	\N	2021-08-01 18:10:19.038191+03	\N	0
-126	\N	2021-08-01 18:10:19.038191+03	\N	0
-127	\N	2021-08-01 18:10:19.038191+03	\N	0
-128	\N	2021-08-01 18:10:19.038191+03	\N	0
-119	\N	2021-08-01 18:10:19.038191+03	\N	0
-120	\N	2021-08-01 18:10:19.038191+03	\N	0
-121	\N	2021-08-01 18:10:19.038191+03	\N	0
-122	\N	2021-08-01 18:10:19.038191+03	\N	0
-123	\N	2021-08-01 18:10:19.038191+03	\N	0
-124	\N	2021-08-01 18:10:19.038191+03	\N	0
-468	\N	2021-08-01 18:10:19.038191+03	\N	0
-5	\N	2021-08-01 18:10:19.038191+03	\N	0
-3	\N	2021-08-01 18:10:19.038191+03	\N	0
-6	\N	2021-08-01 18:10:19.038191+03	\N	0
-4	\N	2021-08-01 18:10:19.038191+03	\N	0
-2	\N	2021-08-01 18:10:19.038191+03	\N	0
+COPY public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) FROM stdin;
+576	\N	2021-08-05 11:03:20.291693+03	\N	0	Не при делах
+573	\N	2021-08-05 11:04:46.28702+03	\N	0	Не при делах
+579	\N	2021-08-05 11:04:57.285781+03	\N	0	Не при делах
+584	\N	2021-08-05 11:05:22.301578+03	\N	0	Не при делах
+599	\N	2021-08-05 11:06:45.307588+03	\N	0	Не при делах
+577	\N	2021-08-05 11:36:41.277216+03	\N	0	Не при делах
 \.
 
 
 --
--- TOC entry 3069 (class 0 OID 16854)
--- Dependencies: 206
+-- TOC entry 3073 (class 0 OID 16854)
+-- Dependencies: 205
 -- Data for Name: hero_equipment; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
-COPY public.hero_equipment (id, hero_id, equipment_id) FROM stdin;
-1	2	3
-2	3	3
-3	4	3
-4	5	3
-5	6	3
-936	474	3
-7	8	3
-8	9	3
-9	2	1
-10	3	2
-11	4	2
-12	5	1
-13	6	1
-937	475	3
-15	8	1
-16	9	2
-938	477	3
-939	476	3
-940	474	1
-941	475	1
-942	477	1
-943	476	1
-720	366	3
-726	366	1
-226	124	2
-227	123	3
-228	123	1
-229	120	1
-230	122	2
-231	121	2
-232	120	3
-233	121	3
-234	122	3
-235	119	1
-236	119	3
-237	124	3
-238	129	3
-239	130	2
-240	125	2
-241	126	3
-242	129	1
-243	125	3
-244	127	2
-245	128	3
-246	130	3
-247	127	3
-248	128	1
-249	126	2
-918	468	3
-923	468	1
+COPY public.hero_equipment (hero_id, equipment_id) FROM stdin;
+577	4
+573	9
+579	7
+584	7
+599	4
+577	9
+576	3
+573	1
+579	3
+584	3
+599	3
+595	3
+596	3
+600	3
+597	3
+598	3
+595	1
+596	1
+600	1
+597	1
+598	2
+576	7
 \.
 
 
 --
--- TOC entry 3080 (class 0 OID 17005)
--- Dependencies: 217
+-- TOC entry 3084 (class 0 OID 17005)
+-- Dependencies: 216
 -- Data for Name: hero_item; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
 COPY public.hero_item (id, hero_id, amount, type) FROM stdin;
-282	366	3	0
-480	468	3	0
-498	474	3	0
-499	475	3	0
-500	477	3	0
-501	476	3	0
-1	129	2	0
-2	130	2	0
-3	8	2	0
-4	5	2	0
-5	204	2	0
-6	205	2	0
-7	206	2	0
-8	207	2	0
-9	208	2	0
-10	9	2	0
-11	125	2	0
-12	126	2	0
-13	127	2	0
-14	128	2	0
-15	6	2	0
-16	7	2	0
-17	3	2	0
-18	4	2	0
-19	119	2	0
-20	120	2	0
-21	121	2	0
-22	122	2	0
-23	123	2	0
-24	124	2	0
-25	2	3	0
-288	366	3	1
-485	468	3	1
-502	474	3	1
-503	475	3	1
-43	129	2	1
-44	8	2	1
-45	5	2	1
-46	128	2	1
-47	6	2	1
-48	119	2	1
-49	120	2	1
-50	123	2	1
-51	2	0	1
-504	477	3	2
-505	476	3	2
-26	130	2	2
-27	209	2	2
-28	210	2	2
-29	211	2	2
-30	212	2	2
-31	213	2	2
-32	214	2	2
-33	9	2	2
-34	125	2	2
-35	126	2	2
-36	127	2	2
-37	7	2	2
-38	3	2	2
-39	4	2	2
-40	121	2	2
-41	122	2	2
-42	124	2	2
+690	573	3	0
+693	576	3	0
+694	577	3	0
+696	573	3	1
+699	576	3	2
+700	577	3	1
+703	579	3	0
+707	584	3	0
+709	579	3	2
+713	584	3	2
+734	599	3	0
+735	595	3	0
+736	596	3	0
+737	600	3	0
+738	597	3	0
+739	598	3	0
+740	599	3	1
+741	595	3	1
+742	596	3	2
+743	600	3	1
+744	597	3	1
+745	598	3	2
 \.
 
 
 --
--- TOC entry 3083 (class 0 OID 17025)
--- Dependencies: 220
+-- TOC entry 3087 (class 0 OID 17025)
+-- Dependencies: 219
 -- Data for Name: hero_perk; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
 COPY public.hero_perk (hero_id, perk_id) FROM stdin;
-2	2
-2	5
-2	10
-4	1
-4	11
-366	4
-366	3
-468	5
-474	3
-474	10
-475	8
-475	4
-477	1
-477	11
-477	9
-476	11
+573	4
+576	10
+577	1
+579	9
+584	10
+599	1
+595	2
+595	11
+596	7
+600	1
+597	11
+598	1
+598	10
+598	4
 \.
 
 
 --
--- TOC entry 3066 (class 0 OID 16807)
+-- TOC entry 3071 (class 0 OID 16807)
 -- Dependencies: 203
 -- Data for Name: level_exp; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
@@ -904,8 +786,8 @@ COPY public.level_exp (level, experience, cost, duration, tier) FROM stdin;
 
 
 --
--- TOC entry 3077 (class 0 OID 16932)
--- Dependencies: 214
+-- TOC entry 3081 (class 0 OID 16932)
+-- Dependencies: 213
 -- Data for Name: monster; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
@@ -917,8 +799,8 @@ COPY public.monster (id, level, name, power, health, initiative, defence) FROM s
 
 
 --
--- TOC entry 3082 (class 0 OID 17016)
--- Dependencies: 219
+-- TOC entry 3086 (class 0 OID 17016)
+-- Dependencies: 218
 -- Data for Name: perk; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
@@ -938,7 +820,7 @@ COPY public.perk (id, name, description) FROM stdin;
 
 
 --
--- TOC entry 3065 (class 0 OID 16793)
+-- TOC entry 3070 (class 0 OID 16793)
 -- Dependencies: 202
 -- Data for Name: quest; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
@@ -961,8 +843,8 @@ COPY public.quest (id, level, title, description, duration, fame, tribute, exper
 
 
 --
--- TOC entry 3075 (class 0 OID 16902)
--- Dependencies: 212
+-- TOC entry 3079 (class 0 OID 16902)
+-- Dependencies: 211
 -- Data for Name: quest_checkpoint; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
@@ -971,8 +853,8 @@ COPY public.quest_checkpoint (id, quest_progress_id, type, occured_at, duration,
 
 
 --
--- TOC entry 3073 (class 0 OID 16891)
--- Dependencies: 210
+-- TOC entry 3077 (class 0 OID 16891)
+-- Dependencies: 209
 -- Data for Name: quest_progress; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
@@ -981,8 +863,8 @@ COPY public.quest_progress (id, user_id, quest_id, embarked_time, completed, dur
 
 
 --
--- TOC entry 3085 (class 0 OID 17032)
--- Dependencies: 222
+-- TOC entry 3089 (class 0 OID 17032)
+-- Dependencies: 221
 -- Data for Name: skill; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
@@ -1006,7 +888,7 @@ COPY public.skill (id, name, description, hero_type, level) FROM stdin;
 
 
 --
--- TOC entry 3063 (class 0 OID 16785)
+-- TOC entry 3068 (class 0 OID 16785)
 -- Dependencies: 200
 -- Data for Name: stats; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
@@ -1014,7 +896,7 @@ COPY public.skill (id, name, description, hero_type, level) FROM stdin;
 COPY public.stats (user_id, gold, fame) FROM stdin;
 2	1000	0
 3	1000	0
-1	6208	735
+1	29638	735
 4	1000	0
 5	1000	0
 6	1000	0
@@ -1022,60 +904,65 @@ COPY public.stats (user_id, gold, fame) FROM stdin;
 
 
 --
--- TOC entry 3060 (class 0 OID 16740)
+-- TOC entry 3065 (class 0 OID 16740)
 -- Dependencies: 197
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
 COPY public."user" (id, login, password) FROM stdin;
 1	aintech	$2a$12$lyi9qsxa/KsP9Cq0ZbrodOlebEqYg8EXF5g7Iu5aO03cw/.B.ONgS
-2	admin	$2a$12$jYIXfzmH.PYcFIs.0PWIH.Ji2NR9unRXbY3vU5oCTp7Q2RN2aSwoi
-3	master	$2a$12$secSfTGZ9tZ91qlSEm.72e9Q2gj04kLElB4jWtSF7EXGox89bBUpW
-4	aintech1	$2a$12$9LaFZE4aTBtLZgS7r/yUfe//i7Mo7546A4qiPiLh.pg/uHos8fZ4.
-5	aintech3	$2a$12$OC2l0foPuVIBueD4msTkKOS91M0.zRBHGqgC4jj4Jw4qqgspDmP7S
-6	aintech2	$2a$12$di3ZRwoAjQsBG59SOn/pjuYqwejdCMu9vKgLfZZs94tbMwWkqbvNO
 \.
 
 
 --
--- TOC entry 3101 (class 0 OID 0)
--- Dependencies: 204
--- Name: equipment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
+-- TOC entry 3090 (class 0 OID 17147)
+-- Dependencies: 222
+-- Data for Name: user_market_assortment; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
-SELECT pg_catalog.setval('public.equipment_id_seq', 3, true);
-
-
---
--- TOC entry 3102 (class 0 OID 0)
--- Dependencies: 205
--- Name: hero_equipment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
---
-
-SELECT pg_catalog.setval('public.hero_equipment_id_seq', 943, true);
-
-
---
--- TOC entry 3103 (class 0 OID 0)
--- Dependencies: 198
--- Name: hero_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
---
-
-SELECT pg_catalog.setval('public.hero_id_seq', 477, true);
-
-
---
--- TOC entry 3104 (class 0 OID 0)
--- Dependencies: 216
--- Name: hero_item_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
---
-
-SELECT pg_catalog.setval('public.hero_item_id_seq', 505, true);
+COPY public.user_market_assortment (user_id, equipment_id) FROM stdin;
+1	1
+1	2
+1	3
+1	4
+1	5
+1	6
+1	7
+1	8
+1	9
+\.
 
 
 --
 -- TOC entry 3105 (class 0 OID 0)
--- Dependencies: 213
+-- Dependencies: 204
+-- Name: equipment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
+--
+
+SELECT pg_catalog.setval('public.equipment_id_seq', 9, true);
+
+
+--
+-- TOC entry 3106 (class 0 OID 0)
+-- Dependencies: 198
+-- Name: hero_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
+--
+
+SELECT pg_catalog.setval('public.hero_id_seq', 600, true);
+
+
+--
+-- TOC entry 3107 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: hero_item_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
+--
+
+SELECT pg_catalog.setval('public.hero_item_id_seq', 745, true);
+
+
+--
+-- TOC entry 3108 (class 0 OID 0)
+-- Dependencies: 212
 -- Name: monster_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
@@ -1083,8 +970,8 @@ SELECT pg_catalog.setval('public.monster_id_seq', 3, true);
 
 
 --
--- TOC entry 3106 (class 0 OID 0)
--- Dependencies: 218
+-- TOC entry 3109 (class 0 OID 0)
+-- Dependencies: 217
 -- Name: perk_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
@@ -1092,16 +979,16 @@ SELECT pg_catalog.setval('public.perk_id_seq', 11, true);
 
 
 --
--- TOC entry 3107 (class 0 OID 0)
--- Dependencies: 211
+-- TOC entry 3110 (class 0 OID 0)
+-- Dependencies: 210
 -- Name: quest_checkpoints_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
-SELECT pg_catalog.setval('public.quest_checkpoints_id_seq', 3898, true);
+SELECT pg_catalog.setval('public.quest_checkpoints_id_seq', 3899, true);
 
 
 --
--- TOC entry 3108 (class 0 OID 0)
+-- TOC entry 3111 (class 0 OID 0)
 -- Dependencies: 201
 -- Name: quest_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
@@ -1110,17 +997,17 @@ SELECT pg_catalog.setval('public.quest_id_seq', 13, true);
 
 
 --
--- TOC entry 3109 (class 0 OID 0)
--- Dependencies: 209
+-- TOC entry 3112 (class 0 OID 0)
+-- Dependencies: 208
 -- Name: quest_progress_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
-SELECT pg_catalog.setval('public.quest_progress_id_seq', 759, true);
+SELECT pg_catalog.setval('public.quest_progress_id_seq', 760, true);
 
 
 --
--- TOC entry 3110 (class 0 OID 0)
--- Dependencies: 221
+-- TOC entry 3113 (class 0 OID 0)
+-- Dependencies: 220
 -- Name: skill_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
@@ -1128,7 +1015,7 @@ SELECT pg_catalog.setval('public.skill_id_seq', 15, true);
 
 
 --
--- TOC entry 3111 (class 0 OID 0)
+-- TOC entry 3114 (class 0 OID 0)
 -- Dependencies: 199
 -- Name: stats_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
@@ -1137,7 +1024,7 @@ SELECT pg_catalog.setval('public.stats_user_id_seq', 1, false);
 
 
 --
--- TOC entry 3112 (class 0 OID 0)
+-- TOC entry 3115 (class 0 OID 0)
 -- Dependencies: 196
 -- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
@@ -1146,7 +1033,7 @@ SELECT pg_catalog.setval('public.user_id_seq', 6, true);
 
 
 --
--- TOC entry 2919 (class 2606 OID 16879)
+-- TOC entry 2922 (class 2606 OID 16879)
 -- Name: equipment equipment_pkey; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
 --
 
@@ -1155,16 +1042,16 @@ ALTER TABLE ONLY public.equipment
 
 
 --
--- TOC entry 2917 (class 2606 OID 16859)
+-- TOC entry 2920 (class 2606 OID 17161)
 -- Name: hero_equipment hero_equipment_pkey; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
 --
 
 ALTER TABLE ONLY public.hero_equipment
-    ADD CONSTRAINT hero_equipment_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT hero_equipment_pkey PRIMARY KEY (hero_id, equipment_id);
 
 
 --
--- TOC entry 2931 (class 2606 OID 17013)
+-- TOC entry 2934 (class 2606 OID 17013)
 -- Name: hero_item hero_item_pkey; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
 --
 
@@ -1173,7 +1060,7 @@ ALTER TABLE ONLY public.hero_item
 
 
 --
--- TOC entry 2915 (class 2606 OID 16811)
+-- TOC entry 2918 (class 2606 OID 16811)
 -- Name: level_exp hero_level_pkey; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
 --
 
@@ -1182,7 +1069,7 @@ ALTER TABLE ONLY public.level_exp
 
 
 --
--- TOC entry 2929 (class 2606 OID 17000)
+-- TOC entry 2932 (class 2606 OID 17000)
 -- Name: hero_activity hero_occupation_pkey1; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
 --
 
@@ -1191,7 +1078,7 @@ ALTER TABLE ONLY public.hero_activity
 
 
 --
--- TOC entry 2935 (class 2606 OID 17029)
+-- TOC entry 2938 (class 2606 OID 17029)
 -- Name: hero_perk hero_perk_pkey; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
 --
 
@@ -1200,7 +1087,7 @@ ALTER TABLE ONLY public.hero_perk
 
 
 --
--- TOC entry 2921 (class 2606 OID 16888)
+-- TOC entry 2924 (class 2606 OID 16888)
 -- Name: hero hero_pkey; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
 --
 
@@ -1209,7 +1096,7 @@ ALTER TABLE ONLY public.hero
 
 
 --
--- TOC entry 2927 (class 2606 OID 16940)
+-- TOC entry 2930 (class 2606 OID 16940)
 -- Name: monster monster_pkey; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
 --
 
@@ -1218,7 +1105,7 @@ ALTER TABLE ONLY public.monster
 
 
 --
--- TOC entry 2933 (class 2606 OID 17024)
+-- TOC entry 2936 (class 2606 OID 17024)
 -- Name: perk perk_pkey; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
 --
 
@@ -1227,7 +1114,7 @@ ALTER TABLE ONLY public.perk
 
 
 --
--- TOC entry 2925 (class 2606 OID 16910)
+-- TOC entry 2928 (class 2606 OID 16910)
 -- Name: quest_checkpoint quest_checkpoints_pkey; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
 --
 
@@ -1236,7 +1123,7 @@ ALTER TABLE ONLY public.quest_checkpoint
 
 
 --
--- TOC entry 2913 (class 2606 OID 16801)
+-- TOC entry 2916 (class 2606 OID 16801)
 -- Name: quest quest_pkey; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
 --
 
@@ -1245,7 +1132,7 @@ ALTER TABLE ONLY public.quest
 
 
 --
--- TOC entry 2923 (class 2606 OID 16897)
+-- TOC entry 2926 (class 2606 OID 16897)
 -- Name: quest_progress quest_progress_pkey; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
 --
 
@@ -1254,7 +1141,7 @@ ALTER TABLE ONLY public.quest_progress
 
 
 --
--- TOC entry 2937 (class 2606 OID 17040)
+-- TOC entry 2940 (class 2606 OID 17040)
 -- Name: skill skill_pkey; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
 --
 
@@ -1263,7 +1150,7 @@ ALTER TABLE ONLY public.skill
 
 
 --
--- TOC entry 2911 (class 2606 OID 16790)
+-- TOC entry 2914 (class 2606 OID 16790)
 -- Name: stats stats_pkey; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
 --
 
@@ -1272,7 +1159,16 @@ ALTER TABLE ONLY public.stats
 
 
 --
--- TOC entry 2909 (class 2606 OID 16748)
+-- TOC entry 2942 (class 2606 OID 17151)
+-- Name: user_market_assortment user_market_assortment_pkey; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
+--
+
+ALTER TABLE ONLY public.user_market_assortment
+    ADD CONSTRAINT user_market_assortment_pkey PRIMARY KEY (user_id, equipment_id);
+
+
+--
+-- TOC entry 2912 (class 2606 OID 16748)
 -- Name: user user_pkey; Type: CONSTRAINT; Schema: public; Owner: yaremchuken
 --
 
@@ -1280,7 +1176,7 @@ ALTER TABLE ONLY public."user"
     ADD CONSTRAINT user_pkey PRIMARY KEY (id);
 
 
--- Completed on 2021-08-01 18:17:24 MSK
+-- Completed on 2021-08-05 11:38:09 MSK
 
 --
 -- PostgreSQL database dump complete

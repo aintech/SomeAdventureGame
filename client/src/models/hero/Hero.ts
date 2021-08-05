@@ -64,6 +64,6 @@ export const convert = (response: HeroResponse): Hero => {
     response.items.map((i) => convertItem(i)),
     response.perks.map((p) => convertPerk(p)),
     response.skills.map((s) => convertSkill(s)),
-    convertActivity(response)
+    response.activity ? convertActivity(response.activity) : undefined
   );
 };

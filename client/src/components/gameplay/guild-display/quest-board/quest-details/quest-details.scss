@@ -141,10 +141,34 @@
         background-size: cover;
       }
 
+      &--PALADIN {
+        width: to-gameplay-scale(80px);
+        height: to-gameplay-scale(80px);
+        background-image: url(../../../../../img/guild-display/guild-hero_icon_paladin.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+
+      &--THIEF {
+        width: to-gameplay-scale(80px);
+        height: to-gameplay-scale(80px);
+        background-image: url(../../../../../img/guild-display/guild-hero_icon_thief.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+
       &--MAGE {
         width: to-gameplay-scale(80px);
         height: to-gameplay-scale(80px);
         background-image: url(../../../../../img/guild-display/guild-hero_icon_mage.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+
+      &--HEALER {
+        width: to-gameplay-scale(80px);
+        height: to-gameplay-scale(80px);
+        background-image: url(../../../../../img/guild-display/guild-hero_icon_healer.png);
         background-repeat: no-repeat;
         background-size: cover;
       }

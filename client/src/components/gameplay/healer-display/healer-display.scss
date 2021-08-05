@@ -43,6 +43,7 @@
     margin-top: 65px;
     align-self: center;
     @include strokeText;
+    cursor: default;
   }
 
   &__visitors-holder {

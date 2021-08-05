@@ -8,14 +8,17 @@ import Loader from "../../loader/Loader";
 import HeroItem from "../guild-display/heroes/hero-item/HeroItem";
 import { BuildingType, buildingTypeToName } from "../../../models/Building";
 import "./market-display.scss";
+import Equipment from "../../../models/Equipment";
+import { MarketItem } from "./market-item/MarketItem";
 
 type MarketDisplayProps = {
   visitors: Hero[];
+  marketAssortment: Equipment[];
   visitorClicked: (visitor: Hero) => void;
   closeDisplay: () => void;
 };
 
-const MarketDisplay = ({ visitors, visitorClicked, closeDisplay }: MarketDisplayProps) => {
+const MarketDisplay = ({ visitors, marketAssortment, visitorClicked, closeDisplay }: MarketDisplayProps) => {
   const visitorClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     visitorClicked(hero);
@@ -32,6 +35,13 @@ const MarketDisplay = ({ visitors, visitorClicked, closeDisplay }: MarketDisplay
       <button className="market-display__btn--close" onClick={closeDisplay}></button>
       <div className="market-display__container">
         <div className="market-display__name">{buildingTypeToName(BuildingType.MARKET)}</div>
+        <div className="market-display__assortment-holder">
+          <ul>
+            {marketAssortment.map((assortment) => (
+              <MarketItem key={assortment.id} item={assortment} />
+            ))}
+          </ul>
+        </div>
         <div className="market-display__visitors-holder">
           {visitors.map((visitor) => (
             <HeroItem
@@ -49,13 +59,14 @@ const MarketDisplay = ({ visitors, visitorClicked, closeDisplay }: MarketDisplay
 
 type MarketDisplayContainerProps = {
   heroes: Hero[];
+  marketAssortment: Equipment[];
   heroClicked: (hero: Hero) => void;
   closeDisplay: () => void;
 };
 
 class MarketDisplayContainer extends Component<MarketDisplayContainerProps> {
   render() {
-    const { heroes, heroClicked, closeDisplay } = this.props;
+    const { heroes, marketAssortment, heroClicked, closeDisplay } = this.props;
 
     if (!heroes) {
       return <Loader message={`Wating for heroes`} />;
@@ -63,16 +74,24 @@ class MarketDisplayContainer extends Component<MarketDisplayContainerProps> {
 
     const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.PURCHASING_EQUIPMENT);
 
-    return <MarketDisplay visitors={visitors} closeDisplay={closeDisplay} visitorClicked={heroClicked} />;
+    return (
+      <MarketDisplay
+        visitors={visitors}
+        marketAssortment={marketAssortment}
+        closeDisplay={closeDisplay}
+        visitorClicked={heroClicked}
+      />
+    );
   }
 }
 
 type MarketDisplayContainerState = {
   heroes: Hero[];
+  marketAssortment: Equipment[];
 };
 
-const mapStateToProps = ({ heroes }: MarketDisplayContainerState) => {
-  return { heroes };
+const mapStateToProps = ({ heroes, marketAssortment }: MarketDisplayContainerState) => {
+  return { heroes, marketAssortment };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => {

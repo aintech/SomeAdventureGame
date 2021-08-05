@@ -13,7 +13,7 @@
   display: grid;
   grid-template-columns: 1fr 165px 75px 55px 70px 1fr;
   grid-template-rows:
-    1fr
+    272px
     [name-row] 63px [name-row
     level-row] 45px [level-row]
     13px
@@ -29,6 +29,7 @@
     8px
     [initiative-row] 30px [initiative-row]
     26px
+    max-content
     1fr;
 
   & > * {
@@ -56,10 +57,10 @@
     z-index: inherit;
     cursor: pointer;
 
-    grid-row: 17;
+    grid-row: 18;
     grid-column: 2 / 6;
     justify-self: center;
-    margin-top: 50px;
+    margin-top: 20px;
 
     &:hover {
       transform: scale(1.05);
@@ -115,12 +116,24 @@
       background-size: cover;
     }
 
+    &--WARRIOR {
+      background-image: url(../../../img/portraits/portrait-warrior.png);
+    }
+
+    &--PALADIN {
+      background-image: url(../../../img/portraits/portrait-paladin.png);
+    }
+
+    &--THIEF {
+      background-image: url(../../../img/portraits/portrait-thief.png);
+    }
+
     &--MAGE {
       background-image: url(../../../img/portraits/portrait-mage.png);
     }
 
-    &--WARRIOR {
-      background-image: url(../../../img/portraits/portrait-warrior.png);
+    &--HEALER {
+      background-image: url(../../../img/portraits/portrait-healer.png);
     }
   }
 
@@ -226,6 +239,7 @@
     justify-self: center;
     width: fit-content;
     height: fit-content;
+    text-align: center;
   }
 
   &__equipment {

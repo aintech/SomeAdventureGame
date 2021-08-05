@@ -1,7 +1,7 @@
 import { HEALTH_PER_VITALITY } from "../../utils/Variables";
 import query from "../Db";
-import { Equipment, withEquipment } from "./Equipment";
-import { HeroActivityType } from "./HeroActivity";
+import { Equipment, withEquipment } from "../Equipment";
+import { HeroActivity, HeroActivityType } from "./HeroActivity";
 import { Item, withItems } from "./Item";
 import { HeroLevel, withLevelUpInfo } from "./Level";
 import { Perk, withPerks } from "./Perk";
@@ -31,10 +31,7 @@ export type Hero = {
   hired: boolean;
   appearAt: Date;
   /** activity part - exists only for hired heroes */
-  activityType?: HeroActivityType;
-  activityId?: number;
-  startedAt?: Date;
-  duration?: number;
+  activity?: HeroActivity;
 };
 
 export type HeroWithEquipment = Hero & { equipment: Equipment[] };
@@ -209,6 +206,7 @@ type HeroRow = {
   activity_type: string | null;
   activity_id: string | null;
   started_at: Date | null;
+  description: string | null;
   duration: string | null;
 };
 
@@ -227,10 +225,16 @@ const mapHero = (row: HeroRow): Hero => {
     initiative: +row.initiative,
     hired: row.hired,
     appearAt: row.appear_at,
-    activityType: row.activity_type !== null ? +row.activity_type : undefined,
-    activityId: row.activity_id !== null ? +row.activity_id : undefined,
-    startedAt: row.started_at ?? undefined,
-    duration: row.duration !== null ? +row.duration : undefined,
+    activity: row.activity_type
+      ? {
+          heroId: +row.id,
+          type: +row.activity_type,
+          description: row.description!,
+          startedAt: row.started_at!,
+          activityId: row.activity_id !== null ? +row.activity_id : undefined,
+          duration: row.duration !== null ? +row.duration : undefined,
+        }
+      : undefined,
   };
 };
 

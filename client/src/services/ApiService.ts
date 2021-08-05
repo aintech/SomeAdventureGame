@@ -3,20 +3,9 @@ import Hero from "../models/hero/Hero";
 import { HeroActivityType } from "../models/hero/HeroActivityType";
 import Quest from "../models/Quest";
 import QuestCheckpoint from "../models/QuestCheckpoint";
-import {
-  dismissHero,
-  getHeroes,
-  getTavernPatrons,
-  hireHero,
-  updateHeroActivities,
-} from "./HeroesService";
-import {
-  cancelQuest,
-  checkpointPassed,
-  completeQuest,
-  embarkOnQuest,
-  getQuests,
-} from "./QuestsService";
+import { dismissHero, getHeroes, getTavernPatrons, hireHero, updateHeroActivities } from "./HeroesService";
+import { getAssortment } from "./MarketService";
+import { cancelQuest, checkpointPassed, completeQuest, embarkOnQuest, getQuests } from "./QuestsService";
 import { getStats } from "./StatsService";
 
 export default class ApiService {
@@ -34,6 +23,10 @@ export default class ApiService {
 
   getTavernPatrons(auth: AuthProps) {
     return getTavernPatrons(auth);
+  }
+
+  getMarketAssortment(auth: AuthProps) {
+    return getAssortment(auth);
   }
 
   embarkHeroesOnQuest(auth: AuthProps, quest: Quest, assignedHeroes: Hero[]) {
@@ -64,10 +57,7 @@ export default class ApiService {
     return dismissHero(auth, hero);
   }
 
-  updateHeroActivities(
-    auth: AuthProps,
-    activities: { heroId: number; type: HeroActivityType }[]
-  ) {
+  updateHeroActivities(auth: AuthProps, activities: { heroId: number; type: HeroActivityType }[]) {
     return updateHeroActivities(auth, activities);
   }
 }
