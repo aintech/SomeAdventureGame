@@ -9,14 +9,14 @@ import sendHttp from "./SendHttp";
 
 const baseUrl = "/api/heroes";
 
-export interface StatsHolder {
+export interface StatsHolderResponse {
   power: number;
   defence: number;
   vitality: number;
   initiative: number;
 }
 
-export interface EquipmentResponse extends StatsHolder {
+export interface EquipmentResponse extends StatsHolderResponse {
   id: number;
   name: string;
   description: string;
@@ -29,9 +29,10 @@ export interface EquipmentResponse extends StatsHolder {
   healer: boolean;
   price: number;
   avatar: string;
+  tier?: number;
 }
 
-export interface HeroResponse extends StatsHolder {
+export interface HeroResponse extends StatsHolderResponse {
   id: number;
   name: string;
   type: HeroType;
@@ -66,7 +67,7 @@ export interface HireHeroResponse {
 
 export interface HeroLevelResponse {
   lvl: number;
-  tier: string;
+  definition: string;
   experience: number;
   progress: number;
   levelUp: {

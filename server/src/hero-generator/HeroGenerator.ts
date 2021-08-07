@@ -35,13 +35,13 @@ const generateHeroes = () => {
   const heroes: GeneratedHero[] = [];
   const poolSize = Math.floor(Math.random() * 4) + 3;
   for (let i = 0; i < poolSize; i++) {
-    const power = Math.floor(Math.random() * 6) + 6;
+    const power = Math.floor(Math.random() * 6) + 5;
     const vit = Math.floor(Math.random() * 5) + 10;
     heroes.push({
       name: anyOf(names),
       type: randomType(),
       power: power,
-      defence: 3,
+      defence: 0,
       vitality: vit,
       initiative: 2,
       health: vit * 10,

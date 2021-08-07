@@ -1,5 +1,5 @@
 import query, { defaultMapper, single } from "../Db";
-import { HeroWithItems } from "../hero/Hero";
+import { HeroWithItems, HeroWithSkills } from "../hero/Hero";
 import { Quest } from "../quest/Quest";
 import { generateCheckpoints, persistQuestCheckpoints, QuestCheckpoint } from "../quest/QuestCheckpoints";
 
@@ -28,7 +28,7 @@ const persistProgress = (userId: number, questId: number, checkpoints: QuestChec
   );
 };
 
-export const createQuestProgress = async (userId: number, quest: Quest, heroes: HeroWithItems[]) => {
+export const createQuestProgress = async (userId: number, quest: Quest, heroes: HeroWithSkills[]) => {
   const checkpoints = await generateCheckpoints(quest, heroes);
   const progressId = await persistProgress(userId, quest.id, checkpoints);
   await persistQuestCheckpoints(progressId, checkpoints);

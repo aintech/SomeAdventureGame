@@ -1,9 +1,9 @@
 import { HEALTH_PER_VITALITY } from "../../utils/Variables";
 import query from "../Db";
-import { Equipment, withEquipment } from "../Equipment";
+import { Equipment, HeroEquipment, withEquipment } from "../Equipment";
 import { HeroActivity, HeroActivityType } from "./HeroActivity";
 import { Item, withItems } from "./Item";
-import { HeroLevel, withLevelUpInfo } from "./Level";
+import { HeroLevel, withLevelInfo } from "./Level";
 import { Perk, withPerks } from "./Perk";
 import { Skill, withSkills } from "./Skill";
 
@@ -22,19 +22,19 @@ export type Hero = {
   name: string;
   type: HeroType;
   level: HeroLevel;
+  health: number;
   power: number;
   defence: number;
-  health: number;
-  gold: number;
   vitality: number;
   initiative: number;
+  gold: number;
   hired: boolean;
   appearAt: Date;
   /** activity part - exists only for hired heroes */
   activity?: HeroActivity;
 };
 
-export type HeroWithEquipment = Hero & { equipment: Equipment[] };
+export type HeroWithEquipment = Hero & { equipment: HeroEquipment[] };
 
 export type HeroWithItems = HeroWithEquipment & { items: Item[] };
 
@@ -48,16 +48,17 @@ const selectQuery = `
      left join public.hero_activity a on a.hero_id = h.id`;
 
 const prepareHeroes = async (heroes: Hero[]) => {
-  return withSkills(await withPerks(await withItems(await withEquipment(await withLevelUpInfo(heroes)))));
+  return withSkills(await withPerks(await withItems(await withEquipment(await withLevelInfo(heroes)))));
 };
 
 /**
+ * УХОДИМ ОТ ЭТОГО!!!
  * У атрибутов (power, health и т.д.) значения указаны уже с учётом экипировки!
  * так сделано чтобы не подмешивать в разных местах характеристики экипировки при расчёте
  * характеристик героя.
  */
 export const getHeroes = async (userId: number) => {
-  return query<HeroWithPerks[]>(
+  return query<HeroWithSkills[]>(
     "getHeroes",
     `${selectQuery} where user_id = $1 and hired = true`,
     [userId],
@@ -67,7 +68,7 @@ export const getHeroes = async (userId: number) => {
 };
 
 export const getHeroesByIds = async (heroIds: number[]) => {
-  return query<HeroWithPerks[]>(
+  return query<HeroWithSkills[]>(
     "getHeroesByIds",
     `${selectQuery} where id in (${heroIds.join(",")})`,
     [],
@@ -77,7 +78,7 @@ export const getHeroesByIds = async (heroIds: number[]) => {
 };
 
 export const getNotHiredHeroes = async (userId: number) => {
-  return query<HeroWithPerks[]>(
+  return query<HeroWithSkills[]>(
     "getNotHiredHeroes",
     `${selectQuery} where user_id = $1 and hired = false`,
     [userId],
@@ -120,16 +121,6 @@ export const setHeroHealth = (heroId: number, amount: number) => {
   );
 };
 
-export const adjustHeroHealth = (heroId: number, amount: number) => {
-  return query<void>(
-    "adjustHeroHealth",
-    `update public.hero 
-     set health = greatest(0, least(health + $2, vitality * $3)) 
-     where id = $1`,
-    [heroId, amount, HEALTH_PER_VITALITY]
-  );
-};
-
 type HeroHP = {
   id: number;
   health: number;
@@ -153,7 +144,7 @@ export const adjustHeroGold = (heroId: number, amount: number) => {
 };
 
 export const getHeroesOnQuest = (userId: number, questId: number) => {
-  return query<HeroWithPerks[]>(
+  return query<HeroWithSkills[]>(
     "getHeroesOnQuest",
     `${selectQuery} where user_id = $1 and a.activity_id = $2`,
     [userId, questId],

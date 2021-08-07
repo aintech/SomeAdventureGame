@@ -6,7 +6,7 @@ export type LevelExp = {
   experience: number;
   cost: number;
   duration: number;
-  tier: string;
+  definition: string;
 };
 
 export type LevelUp = {
@@ -17,7 +17,7 @@ export type LevelUp = {
 export type HeroLevel = {
   lvl: number;
   experience: number;
-  tier?: string;
+  definition?: string;
   progress?: number;
   levelUp?: LevelUp;
 };
@@ -60,7 +60,7 @@ const calcLevelProgress = (hero: Hero): HeroLevel => {
 
   return {
     ...hero.level,
-    tier: currentLevelExp.tier,
+    definition: currentLevelExp.definition,
     progress,
     levelUp: levelUp
       ? {
@@ -70,7 +70,7 @@ const calcLevelProgress = (hero: Hero): HeroLevel => {
   };
 };
 
-export const withLevelUpInfo = async (heroes: Hero[]) => {
+export const withLevelInfo = async (heroes: Hero[]) => {
   await checkLevelsLoaded();
   if (heroes.length === 0) {
     return [];
@@ -89,7 +89,7 @@ type LevelRow = {
   experience: string;
   cost: string;
   duration: string;
-  tier: string;
+  definition: string;
 };
 
 const mapLevel = (row: LevelRow): LevelExp => {
@@ -98,6 +98,6 @@ const mapLevel = (row: LevelRow): LevelExp => {
     experience: +row.experience,
     cost: +row.cost,
     duration: +row.duration,
-    tier: row.tier,
+    definition: row.definition,
   };
 };

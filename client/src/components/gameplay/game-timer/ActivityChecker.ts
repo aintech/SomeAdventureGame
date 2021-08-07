@@ -1,7 +1,13 @@
 import Equipment, { EquipmentType } from "../../../models/Equipment";
 import Hero from "../../../models/hero/Hero";
 import { HeroActivityType } from "../../../models/hero/HeroActivityType";
-import { CURE_COST_PER_HP, HEALTH_PER_VITALITY, MAX_HEROES_SAME_ACTIVITIES } from "../../../utils/variables";
+import {
+  CURE_COST_PER_HP,
+  EQUIPMENT_MAX_TIER,
+  EQUIPMENT_UPGRADE_COST_FRACTION,
+  HEALTH_PER_VITALITY,
+  MAX_HEROES_SAME_ACTIVITIES,
+} from "../../../utils/variables";
 
 const checkHeroActivity = (
   hero: Hero,
@@ -17,6 +23,9 @@ const checkHeroActivity = (
     }
     if (spareActivities(HeroActivityType.PURCHASING_EQUIPMENT, actualActivities) && buyEquipment(hero, market)) {
       return HeroActivityType.PURCHASING_EQUIPMENT;
+    }
+    if (spareActivities(HeroActivityType.UPGRADING_EQUIPMENT, actualActivities) && upgradingEquipment(hero)) {
+      return HeroActivityType.UPGRADING_EQUIPMENT;
     }
   } else {
     if (checkActivityEnded(hero)) {
@@ -41,24 +50,20 @@ const readyToLevelUp = (hero: Hero) => {
 };
 
 const buyEquipment = (hero: Hero, market: Equipment[]) => {
-  const weapon = hero.equipment.filter((e) => e.type === EquipmentType.WEAPON)[0];
-  const newWeapon = market.filter(
+  const weapon = hero.equipment.find((e) => e.type === EquipmentType.WEAPON)!;
+  const newWeapon = market.find(
     (e) => appropriateEquipment(hero, EquipmentType.WEAPON, e) && e.level === weapon.level + 1
   );
-  if (newWeapon.length > 0) {
-    if (newWeapon[0].price <= hero.gold) {
-      return true;
-    }
+  if ((newWeapon?.price ?? Number.MAX_SAFE_INTEGER) <= hero.gold) {
+    return true;
   }
 
-  const armor = hero.equipment.filter((e) => e.type === EquipmentType.ARMOR)[0];
-  const newArmor = market.filter(
+  const armor = hero.equipment.find((e) => e.type === EquipmentType.ARMOR)!;
+  const newArmor = market.find(
     (e) => appropriateEquipment(hero, EquipmentType.ARMOR, e) && e.level === armor.level + 1
   );
-  if (newArmor.length > 0) {
-    if (newArmor[0].price <= hero.gold) {
-      return true;
-    }
+  if ((newArmor?.price ?? Number.MAX_SAFE_INTEGER) <= hero.gold) {
+    return true;
   }
 
   return false;
@@ -66,6 +71,16 @@ const buyEquipment = (hero: Hero, market: Equipment[]) => {
 
 const appropriateEquipment = (hero: Hero, type: EquipmentType, equipment: Equipment) => {
   return equipment.availableTypes.includes(hero.type) && equipment.type === type;
+};
+
+const upgradingEquipment = (hero: Hero) => {
+  let readyToUpdate = false;
+  hero.equipment.forEach((e) => {
+    if (e.tier < EQUIPMENT_MAX_TIER) {
+      readyToUpdate = readyToUpdate || hero.gold >= Math.floor(e.price * EQUIPMENT_UPGRADE_COST_FRACTION);
+    }
+  });
+  return readyToUpdate;
 };
 
 const checkActivityEnded = (hero: Hero): boolean => {

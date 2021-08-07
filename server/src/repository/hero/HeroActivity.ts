@@ -1,14 +1,20 @@
-import { CURE_COST_PER_HP, HEALTH_PER_VITALITY, MAX_HEROES_SAME_ACTIVITIES } from "../../utils/Variables";
-import query from "../Db";
-import { Equipment, EquipmentType, replaceHeroEquipment } from "../Equipment";
 import {
-  adjustHeroGold,
-  adjustHeroHealth,
-  getHeroesByIds,
-  HeroType,
-  HeroWithPerks,
-  updateHeroLevel,
-} from "../hero/Hero";
+  CURE_COST_PER_HP,
+  EQUIPMENT_MAX_TIER,
+  EQUIPMENT_UPGRADE_COST_FRACTION,
+  HEALTH_PER_VITALITY,
+  MAX_HEROES_SAME_ACTIVITIES,
+} from "../../utils/Variables";
+import query from "../Db";
+import {
+  changeHeroEquipmentTier,
+  Equipment,
+  EquipmentType,
+  getEquipmentStats,
+  getHeroEquipmentLink,
+  replaceHeroEquipment,
+} from "../Equipment";
+import { adjustHeroGold, getHeroesByIds, HeroType, HeroWithPerks, setHeroHealth, updateHeroLevel } from "../hero/Hero";
 import { getAssortment } from "../MarketAssortment";
 import { addStats } from "../Stats";
 import { getLevelExp } from "./Level";
@@ -73,6 +79,9 @@ export const updateHeroActivities = async (userId: number, heroActivities: HeroA
       case HeroActivityType.PURCHASING_EQUIPMENT:
         enrichedActivity = await idleToPurchasingEquipment(userId, hero, heroActivity);
         break;
+      case HeroActivityType.UPGRADING_EQUIPMENT:
+        enrichedActivity = await idleToUpgradingEquipment(userId, hero, heroActivity);
+        break;
       default:
         throw new Error(`Unknown activity type for update ${heroActivity.type}`);
     }
@@ -82,27 +91,49 @@ export const updateHeroActivities = async (userId: number, heroActivities: HeroA
   return getHeroesByIds(heroIds);
 };
 
-//FIXME: Проверять что прошло время нужное на завершение активности
 const toIdle = async (userId: number, hero: HeroWithPerks, heroActivity: HeroActivityUpdate) => {
-  switch (hero.activity!.type) {
+  if (!hero.activity) {
+    throw new Error(`Activity not found while switching to idle for hero ${hero.id}`);
+  }
+
+  if (!hero.activity.duration) {
+    throw new Error(`Activity without duration while switching to idle for hero ${hero.id}`);
+  }
+
+  /** additional 1000 ms just in case */
+  if (hero.activity.startedAt.getTime() + hero.activity.duration * 1000 >= new Date().getTime() + 1000) {
+    throw new Error(`Activity not complete yet while switching to idle for hero ${hero.id}`);
+  }
+
+  let maxHealth = 0;
+  switch (hero.activity.type) {
     case HeroActivityType.QUEST:
       //all done in complete quest methods
       break;
     case HeroActivityType.HEALING:
-      //adding max health
-      await adjustHeroHealth(hero.id, Number.MAX_SAFE_INTEGER);
+      //setting max health
+      maxHealth = (hero.vitality + getEquipmentStats(hero.equipment).vitality) * HEALTH_PER_VITALITY;
+      await setHeroHealth(hero.id, maxHealth);
       break;
     case HeroActivityType.TRAINING:
       const power = Math.floor(Math.random() * 6) + 5;
       const vitality = Math.floor(Math.random() * (hero.type === HeroType.MAGE || HeroType.HEALER ? 2 : 6)) + 3;
+      maxHealth = (vitality + getEquipmentStats(hero.equipment).vitality) * HEALTH_PER_VITALITY;
       await updateHeroLevel(hero.id, hero.level.lvl + 1, power, vitality);
-      await adjustHeroHealth(hero.id, Number.MAX_SAFE_INTEGER);
+      await setHeroHealth(hero.id, maxHealth);
       break;
     case HeroActivityType.PURCHASING_EQUIPMENT:
       const assortment = await getAssortment(userId);
       const newHeroEquip = assortment.find((a) => a.id === hero.activity!.activityId)!;
       const replacedEquip = hero.equipment.find((e) => e.type === newHeroEquip.type)!;
       await replaceHeroEquipment(hero.id, replacedEquip, newHeroEquip);
+      break;
+    case HeroActivityType.UPGRADING_EQUIPMENT:
+      const equipment = await getHeroEquipmentLink(hero.id, hero.activity.activityId!);
+      if (equipment.tier === EQUIPMENT_MAX_TIER) {
+        throw new Error(`Trying to upgrade equipment past maximum tier!`);
+      }
+      await changeHeroEquipmentTier(hero.id, hero.activity.activityId!, equipment.tier + 1);
       break;
     default:
       throw new Error(`Unknown activity type ${hero.activity!.type}`);
@@ -165,7 +196,7 @@ const idleToPurchasingEquipment = async (
 ): Promise<HeroActivityUpdate> => {
   const assortment = await getAssortment(userId);
 
-  let purchase: Equipment | null = null;
+  let purchase: Equipment | undefined;
 
   const weapon = hero.equipment.filter((e) => e.type === EquipmentType.WEAPON)[0];
   const newWeapon = assortment.filter(
@@ -212,6 +243,37 @@ const appropriateEquipment = (hero: HeroWithPerks, type: EquipmentType, equipmen
       (equipment.mage && hero.type === HeroType.MAGE) ||
       (equipment.healer && hero.type === HeroType.HEALER))
   );
+};
+
+const idleToUpgradingEquipment = async (
+  userId: number,
+  hero: HeroWithPerks,
+  heroActivity: HeroActivityUpdate
+): Promise<HeroActivityUpdate> => {
+  let equipment: Equipment | undefined;
+
+  hero.equipment.forEach((e) => {
+    if (e.tier < EQUIPMENT_MAX_TIER) {
+      if (hero.gold >= Math.floor(e.price * EQUIPMENT_UPGRADE_COST_FRACTION)) {
+        equipment = e;
+      }
+    }
+  });
+
+  if (!equipment) {
+    throw new Error(`Unable to find equipment for upgrading for hero ${hero.id}`);
+  }
+
+  const cost = Math.floor(equipment.price * EQUIPMENT_UPGRADE_COST_FRACTION);
+
+  await Promise.all([adjustHeroGold(hero.id, -cost), addStats(userId, cost)]);
+
+  return {
+    ...heroActivity,
+    duration: equipment.buyingTime,
+    activityId: equipment.id,
+    description: `Улучшает ${equipment.name} в кузнице`,
+  };
 };
 
 const updateHeroActivity = async (heroId: number, activity: HeroActivityUpdate) => {

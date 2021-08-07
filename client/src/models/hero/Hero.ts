@@ -1,13 +1,13 @@
-import { HeroResponse, StatsHolder } from "../../services/HeroesService";
+import { HeroResponse } from "../../services/HeroesService";
 import { HEALTH_PER_VITALITY } from "../../utils/variables";
-import Equipment, { convert as convertEquipment } from "../Equipment";
+import Equipment, { convert as convertEquipment, getEquipmentStats } from "../Equipment";
 import PersonageStats from "../PersonageStats";
 import HeroActivity, { convert as convertActivity } from "./HeroActivity";
 import HeroItem, { convert as convertItem } from "./HeroItem";
+import HeroLevel, { convert as convertLevel } from "./HeroLevel";
 import HeroPerk, { convert as convertPerk } from "./HeroPerk";
 import HeroSkill, { convert as convertSkill } from "./HeroSkill";
 import { HeroType } from "./HeroType";
-import HeroLevel, { convert as convertLevel } from "./HeroLevel";
 
 export default class Hero {
   constructor(
@@ -16,8 +16,6 @@ export default class Hero {
     public type: HeroType,
     public level: HeroLevel,
     public stats: PersonageStats,
-    /** Stats without equipment surpluses */
-    public rawStats: PersonageStats,
     public health: number,
     public gold: number,
     public equipment: Equipment[],
@@ -34,16 +32,8 @@ export default class Hero {
 }
 
 export const calcHealthFraction = (hero: Hero): number => {
-  return hero.health / (hero.stats.vitality * HEALTH_PER_VITALITY);
+  return hero.health / ((hero.stats.vitality + getEquipmentStats(hero.equipment).vitality) * HEALTH_PER_VITALITY);
 };
-
-/** Computes 'initial' hero stats without equipment surpluses */
-const getRawStat =
-  <T extends StatsHolder, U extends keyof T>(stat: U) =>
-  (hero: T) =>
-  (equipment: T[]): number => {
-    return +hero[stat] - equipment.map((e: T) => +e[stat]).reduce((a, b) => a + b);
-  };
 
 export const convert = (response: HeroResponse): Hero => {
   return new Hero(
@@ -52,12 +42,6 @@ export const convert = (response: HeroResponse): Hero => {
     response.type,
     convertLevel(response.level),
     new PersonageStats(response.power, response.defence, response.vitality, response.initiative),
-    new PersonageStats(
-      getRawStat("power")(response)(response.equipment),
-      getRawStat("defence")(response)(response.equipment),
-      getRawStat("vitality")(response)(response.equipment),
-      getRawStat("initiative")(response)(response.equipment)
-    ),
     response.health,
     response.gold,
     response.equipment.map((e) => convertEquipment(e)),

@@ -264,14 +264,27 @@
       background-repeat: no-repeat;
     }
 
-    &--level {
-      display: block;
-      font-size: 2rem;
-      font-weight: bold;
-      align-self: flex-end;
-      margin-left: auto;
-      margin-right: 8px;
-      @include strokeText;
+    &--stats {
+      display: grid;
+      width: 100%;
+
+      &-level {
+        grid-row: 2;
+        display: block;
+        font-size: 2rem;
+        font-weight: bold;
+        align-self: flex-end;
+        margin-left: auto;
+        margin-right: 8px;
+        @include strokeText;
+      }
+
+      &-tier {
+        grid-row: 1;
+        justify-self: center;
+        margin-top: 5px;
+        color: yellow;
+      }
     }
 
     &-weapon {
@@ -285,6 +298,10 @@
       &--bent_staff {
         background-image: url(../../../img/equipment/equipment-weapon-bent_staff.png);
       }
+
+      &--no_image {
+        background-image: url(../../../img/equipment/equipment-weapon-no_image.png);
+      }
     }
 
     &-armor {
@@ -293,6 +310,10 @@
 
       &--simple_shirt {
         background-image: url(../../../img/equipment/equipment-armor-simple_shirt.png);
+      }
+
+      &--no_image {
+        background-image: url(../../../img/equipment/equipment-weapon-no_image.png);
       }
     }
 

@@ -11,3 +11,7 @@ export const GUILD_SHARE = 0.4;
 export const MAX_EMBARKED_QUESTS = 4;
 
 export const MAX_HEROES_SAME_ACTIVITIES = 4;
+
+export const EQUIPMENT_MAX_TIER = 3;
+
+export const EQUIPMENT_UPGRADE_COST_FRACTION = 0.2;

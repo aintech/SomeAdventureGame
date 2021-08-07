@@ -34,9 +34,26 @@ export default class Equipment {
     public price: number,
     public stats: PersonageStats,
     public availableTypes: HeroType[],
-    public imgAvatar: string
+    public imgAvatar: string,
+    public tier: number
   ) {}
 }
+
+export const getEquipmentStats = (equipment: Equipment[]): PersonageStats => {
+  let power = 0;
+  let defence = 0;
+  let initiative = 0;
+  let vitality = 0;
+
+  equipment.forEach((e) => {
+    power += e.stats.power;
+    defence += e.stats.defence;
+    vitality += e.stats.vitality;
+    initiative -= e.stats.initiative;
+  });
+
+  return { power, defence, vitality, initiative };
+};
 
 const collectAvailableHeroTypes = (response: EquipmentResponse): HeroType[] => {
   const types: HeroType[] = [];
@@ -69,6 +86,7 @@ export const convert = (response: EquipmentResponse): Equipment => {
     response.price,
     new PersonageStats(+response.power, +response.defence, +response.vitality, +response.initiative),
     collectAvailableHeroTypes(response),
-    response.avatar
+    response.avatar,
+    response.tier ?? 0
   );
 };

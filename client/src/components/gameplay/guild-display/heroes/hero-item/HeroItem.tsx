@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, MouseEvent } from "react";
+import { getEquipmentStats } from "../../../../../models/Equipment";
 import Hero, { calcHealthFraction } from "../../../../../models/hero/Hero";
 import { display, HeroType } from "../../../../../models/hero/HeroType";
 import Quest from "../../../../../models/Quest";
@@ -50,6 +51,8 @@ const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, reward, embark
 
   const className = `hero-item ${reward ? "" : "hero-item--hoverable"}`;
 
+  const power = hero.stats.power + getEquipmentStats(hero.equipment).power;
+
   return (
     <div className={className} style={style} onClick={itemClickHandler}>
       <button id="hero_assigned_btn" className="hero-item__btn--assign" style={assignBtnStyle}>
@@ -57,12 +60,12 @@ const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, reward, embark
       </button>
       <div className={`hero-item__portrait--${HeroType[hero.type]}`}></div>
       <div className="hero-item__type-level">
-        {display(hero.type)} <br></br> {hero.level.lvl} ур. - {hero.level.tier}
+        {display(hero.type)} <br></br> {hero.level.lvl} ур. - {hero.level.definition}
       </div>
       <canvas className="hero-item__health-bar" ref={healthRef} width={canvasW} height={canvasH} />
       <canvas className="hero-item__exp-bar" ref={expRef} width={canvasW} height={canvasH} />
       <div className="hero-item__name">{hero.name}</div>
-      <div className="hero-item__power">{hero.stats.power}</div>
+      <div className="hero-item__power">{power}</div>
       <div className="hero-item__health">{hero.health}</div>
       <div className="hero-item__gold">{hero.gold}</div>
       <div className="hero-item__reward--gold" style={rewardStyle}>

@@ -6,14 +6,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Some memos
-memos.txt
-
 # Help sqls
 sql.sql
-
-# Base backups
-base_backups
 
 # Design ideas
 1d68b9f97a02e08898f0d65113e00b3b.png

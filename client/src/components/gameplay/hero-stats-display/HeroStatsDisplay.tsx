@@ -1,34 +1,16 @@
-import React, { MouseEvent, useEffect, useRef } from "react";
-import { useState } from "react";
+import React, { MouseEvent, useEffect, useRef, useState } from "react";
 import { connect, useDispatch } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { heroStatsDisplayClosed, showConfirmDialog } from "../../../actions/Actions";
 import { onDismissHero } from "../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService";
-import Equipment, { EquipmentType } from "../../../models/Equipment";
+import { EquipmentType, getEquipmentStats } from "../../../models/Equipment";
 import Hero, { calcHealthFraction } from "../../../models/hero/Hero";
 import { HeroActivityType } from "../../../models/hero/HeroActivityType";
 import { getItemName } from "../../../models/hero/HeroItem";
 import { HeroType } from "../../../models/hero/HeroType";
-import PersonageStats from "../../../models/PersonageStats";
 import { convertDuration, millisToSecs } from "../../../utils/Utils";
 import "./hero-stats-display.scss";
-
-const calcEquipSurpluses = (equipment: Equipment[]): PersonageStats => {
-  let power = 0;
-  let defence = 0;
-  let vitality = 0;
-  let initiative = 0;
-
-  for (const equip of equipment) {
-    power += equip.stats.power;
-    defence += equip.stats.defence;
-    vitality += equip.stats.vitality;
-    initiative -= equip.stats.initiative;
-  }
-
-  return new PersonageStats(power, defence, vitality, initiative);
-};
 
 type HeroStatsDisplayProps = {
   hero: Hero;
@@ -95,17 +77,45 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
     onDismissHero(hero);
   };
 
-  const equipmentSurplus = calcEquipSurpluses(hero.equipment);
+  const equipmentSurplus = getEquipmentStats(hero.equipment);
 
-  const weapon = hero.equipment.find((e) => e.type === EquipmentType.WEAPON);
-  const armor = hero.equipment.find((e) => e.type === EquipmentType.ARMOR);
+  const weapon = hero.equipment.find((e) => e.type === EquipmentType.WEAPON)!;
+  const armor = hero.equipment.find((e) => e.type === EquipmentType.ARMOR)!;
   const shield = hero.equipment.find((e) => e.type === EquipmentType.SHIELD);
   const accessory = hero.equipment.find((e) => e.type === EquipmentType.ACCESSORY);
 
-  const weaponStyle = `hero-stats__equipment-weapon${weapon ? "--" + weapon.imgAvatar : ""}`;
-  const armorStyle = `hero-stats__equipment-armor${armor ? "--" + armor.imgAvatar : ""}`;
+  const weaponStyle = `hero-stats__equipment-weapon--${weapon.imgAvatar}`;
+  const armorStyle = `hero-stats__equipment-armor--${armor.imgAvatar}`;
   const shieldStyle = `hero-stats__equipment-shield${shield ? "--" + shield.imgAvatar : ""}`;
   const accessoryStyle = `hero-stats__equipment-accessory${accessory ? "--" + accessory.imgAvatar : ""}`;
+
+  const stars = [
+    [],
+    [
+      <i key={0} className="material-icons guild-display__btn--show-unabled-icon">
+        star_rate
+      </i>,
+    ],
+    [
+      <i key={0} className="material-icons guild-display__btn--show-unabled-icon">
+        star_rate
+      </i>,
+      <i key={1} className="material-icons guild-display__btn--show-unabled-icon">
+        star_rate
+      </i>,
+    ],
+    [
+      <i key={0} className="material-icons guild-display__btn--show-unabled-icon">
+        star_rate
+      </i>,
+      <i key={1} className="material-icons guild-display__btn--show-unabled-icon">
+        star_rate
+      </i>,
+      <i key={2} className="material-icons guild-display__btn--show-unabled-icon">
+        star_rate
+      </i>,
+    ],
+  ];
 
   return (
     <div className="hero-stats" onClick={heroStatsDisplayClosed}>
@@ -115,7 +125,7 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
       </div>
       <button
         className={`hero-stats__dismiss-btn ${
-          hero.activity!.type !== HeroActivityType.IDLE ? "hero-stats__dismiss-btn__hidden" : ""
+          hero.activity!.type === HeroActivityType.QUEST ? "hero-stats__dismiss-btn__hidden" : ""
         }`}
         onClick={(e) => {
           e.preventDefault();
@@ -136,30 +146,40 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
       <div className="hero-stats__gold">{hero.gold}</div>
       <div className="hero-stats__name">{hero.name}</div>
       <div className="hero-stats__level">
-        {hero.level.lvl} - {hero.level.tier}
+        {hero.level.lvl} - {hero.level.definition}
       </div>
       <div className="hero-stats__health">{hero.health}</div>
       <div className="hero-stats__experience">{hero.level.experience}</div>
-      <div className="hero-stats__power">{hero.rawStats.power}</div>
+      <div className="hero-stats__power">{hero.stats.power}</div>
       <div className="hero-stats__power-surplus">+{equipmentSurplus.power}</div>
-      <div className="hero-stats__defence">{hero.rawStats.defence}</div>
+      <div className="hero-stats__defence">{hero.stats.defence}</div>
       <div className="hero-stats__defence-surplus">+{equipmentSurplus.defence}</div>
-      <div className="hero-stats__vitality">{hero.rawStats.vitality}</div>
+      <div className="hero-stats__vitality">{hero.stats.vitality}</div>
       <div className="hero-stats__vitality-surplus">+{equipmentSurplus.vitality}</div>
-      <div className="hero-stats__initiative">{hero.rawStats.initiative}</div>
+      <div className="hero-stats__initiative">{hero.stats.initiative}</div>
       <div className="hero-stats__initiative-surplus">-{equipmentSurplus.initiative}</div>
       <div className="hero-stats__equipment">
         <div className={weaponStyle}>
-          <div className="hero-stats__equipment--level">{weapon ? `lv. ${weapon.level}` : null}</div>
+          <div className="hero-stats__equipment--stats">
+            <div className="hero-stats__equipment--stats-tier">{stars[weapon.tier]}</div>
+            <div className="hero-stats__equipment--stats-level">lv. {weapon.level}</div>
+          </div>
         </div>
         <div className={armorStyle}>
-          <div className="hero-stats__equipment--level">{armor ? `lv. ${armor.level}` : null}</div>
+          <div className="hero-stats__equipment--stats">
+            <div className="hero-stats__equipment--stats-tier">{stars[armor.tier]}</div>
+            <div className="hero-stats__equipment--stats-level">lv. {armor.level}</div>
+          </div>
         </div>
         <div className={shieldStyle}>
-          <div className="hero-stats__equipment--level">{shield ? `lv. ${shield.level}` : null}</div>
+          <div className="hero-stats__equipment--stats">
+            <div className="hero-stats__equipment--stats-level">{shield ? `lv. ${shield.level}` : null}</div>
+          </div>
         </div>
         <div className={accessoryStyle}>
-          <div className="hero-stats__equipment--level">{accessory ? `lv. ${accessory.level}` : null}</div>
+          <div className="hero-stats__equipment--stats">
+            <div className="hero-stats__equipment--stats-level">{accessory ? `lv. ${accessory.level}` : null}</div>
+          </div>
         </div>
       </div>
       <div className="hero-stats__items">

@@ -1,6 +1,6 @@
 import getBattleSteps, { BattleStep, BattleStepActionType } from "../../battle/BattleProcessor";
 import query, { single } from "../Db";
-import { getHeroesHP, HeroWithItems, setHeroHealth } from "../hero/Hero";
+import { getHeroesHP, HeroWithItems, HeroWithSkills, setHeroHealth } from "../hero/Hero";
 import { adjustItemsById } from "../hero/Item";
 import { getMonsterParty, Monster } from "../Monster";
 import { Quest } from "./Quest";
@@ -29,7 +29,7 @@ export type QuestCheckpointWithProgress = QuestCheckpoint & {
   embarkedTime: Date;
 };
 
-export const generateCheckpoints = async (quest: Quest, heroes: HeroWithItems[]) => {
+export const generateCheckpoints = async (quest: Quest, heroes: HeroWithSkills[]) => {
   const checkpoints: QuestCheckpoint[] = [];
 
   const checkpointsCount = 1; //Math.floor(quest.duration * 0.5 * 0.1);

@@ -1,0 +1,187 @@
+--------------------Raw stats-----------------------------
+
+/** Computes 'initial' hero stats without equipment surpluses */
+ const getRawStat =
+   <T extends StatsHolderResponse, U extends keyof T>(stat: U) =>
+   (hero: T) =>
+   (equipment: T[]): number => {
+     return +hero[stat] - equipment.map((e: T) => +e[stat]).reduce((a, b) => a + b);
+   };
+
+ new PersonageStats(
+   getRawStat("power")(response)(response.equipment),
+   getRawStat("defence")(response)(response.equipment),
+   getRawStat("vitality")(response)(response.equipment),
+   getRawStat("initiative")(response)(response.equipment)
+ ),
+
+--------------------Multiply Update-----------------------------
+
+const enrichedActivities = await enrichHeroActivities(heroActivities);
+const values = [];
+
+enrichedActivities.forEach((activity) => {
+  const act = activity.activity;
+  values.push(`
+    (
+      ${activity.hero_id},
+      '${act.type}',
+      ${act.activity_id ?? null}::integer,
+      ${act.duration ?? null}::integer
+    )
+  `);
+});
+
+await query(
+  "updateHeroActivity",
+  `update public.hero_activity ha set
+    activity_type = a.type,
+    activity_id = a.activity_id,
+    started_at = now(),
+    duration = a.duration
+    from (values
+    ${values.join(",")}
+    ) as a(hero_id, type, activity_id, duration)
+    where ha.hero_id = a.hero_id`
+);
+
+
+--------------------ЗАГРУЗКА КАРТИНКИ И CANVAS-----------------------------
+const GameplayPage = () => {
+  const [houseImg, setHouseImg] = useState(null);
+  const [houses, setHouses] = useState([]);
+
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = housePng;
+    img.onload = () => {
+      setHouseImg(img);
+    };
+    setHouses([
+      {
+        id: 1,
+        type: "TAVERN",
+        position: { x: 3, y: 2 },
+      },
+      {
+        id: 2,
+        type: "GUILD",
+        position: { x: 6, y: 5 },
+      },
+    ]);
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+
+    if (houseImg) {
+      context.fillStyle = "#fddca5";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
+      houses.forEach((h) => {
+        context.drawImage(houseImg, h.position.x, h.position.y, 64, 64);
+      });
+    }
+  }, [houseImg, houses]);
+
+  const clickHandler = (event) => {
+    console.log(event.screenX, event.screenY);
+  };
+
+  return (
+    <div className="gameplay">
+      <div className="gameplay__world" onClick={clickHandler}>
+        <canvas ref={canvasRef} width={800} height={600} />
+      </div>
+    </div>
+  );
+};
+
+export default GameplayPage;
+
+--------------------СТИЛИ-----------------------------
+// .gameplay {
+//   display: flex;
+
+//   &__world {
+//     position: absolute;
+//     top: 50%;
+//     left: 50%;
+//     transform: translate(-50%, -50%);
+//   }
+// }
+
+.gameplay {
+  display: block;
+  width: calc(152rem / 1.4);
+  height: calc(85.5rem / 1.4);
+  background-color: #fddca5;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -45%);
+
+  background-image: url(../../img/Village.jpg);
+  background-size: cover;
+
+  &__world {
+    // display: grid;
+    // grid-template-rows: repeat(8, 1fr);
+    // grid-template-columns: repeat(10, 1fr);
+
+    &__btn--building {
+      position: absolute;
+      background-size: inherit;
+      cursor: crosshair;
+
+      &-tavern {
+        background-image: url(../../img/tavern_btn.svg);
+        background-size: 100%;
+        width: 90px;
+        height: 90px;
+        opacity: 0;
+
+        &:hover {
+          opacity: 0.3;
+        }
+      }
+
+      &-guild {
+        background-image: url(../../img/guild_btn.svg);
+        background-size: 100%;
+        width: 120px;
+        height: 120px;
+        opacity: 0;
+
+        &:hover {
+          opacity: 0.3;
+        }
+      }
+    }
+  }
+}
+
+// .house {
+//   width: 8rem;
+//   height: 8rem;
+
+//   &--img {
+//     height: 100%;
+//     background-image: url(../../img/house.png);
+//     background-size: contain;
+//     background-repeat: no-repeat;
+//   }
+
+//   &--name {
+//     display: flex;
+//     flex: 1;
+//     flex-grow: 1;
+//     align-items: center;
+//     align-self: center;
+//   }
+// }
+

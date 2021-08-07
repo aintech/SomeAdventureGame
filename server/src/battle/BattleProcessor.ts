@@ -1,4 +1,5 @@
-import { HeroWithItems } from "../repository/hero/Hero";
+import { getEquipmentStats } from "../repository/Equipment";
+import { HeroWithItems, HeroWithSkills } from "../repository/hero/Hero";
 import { Item, ItemType } from "../repository/hero/Item";
 import { Monster } from "../repository/Monster";
 import { anyOf, copy } from "../utils/Arrays";
@@ -35,19 +36,24 @@ export type BattleStep = {
   damage?: number;
 };
 
-const map = (actor: HeroWithItems | Monster, type: ActorType): Actor => {
+const mapActor = (actor: HeroWithSkills | Monster, type: ActorType): Actor => {
+  const equipStats = getEquipmentStats(type === ActorType.MONSTER ? [] : (actor as HeroWithSkills).equipment);
   return {
-    ...actor,
+    id: actor.id,
+    health: actor.health,
+    power: actor.power + equipStats.power,
+    defence: actor.defence + equipStats.defence,
+    initiative: actor.initiative + equipStats.initiative,
     actorId: type === ActorType.MONSTER ? (actor as Monster).actorId : undefined,
-    vitality: type === ActorType.HERO ? (actor as HeroWithItems).vitality : undefined,
+    vitality: type === ActorType.HERO ? (actor as HeroWithItems).vitality + equipStats.vitality : undefined,
     items: type === ActorType.HERO ? (actor as HeroWithItems).items : undefined,
     type,
   };
 };
 
-const getBattleSteps = (origMonsters: Monster[], origHeroes: HeroWithItems[]) => {
-  const monsters = (copy(origMonsters) as Monster[]).map((a) => map(a, ActorType.MONSTER));
-  const heroes = (copy(origHeroes) as HeroWithItems[]).map((a) => map(a, ActorType.HERO));
+const getBattleSteps = (origMonsters: Monster[], origHeroes: HeroWithSkills[]) => {
+  const monsters = (copy(origMonsters) as Monster[]).map((a) => mapActor(a, ActorType.MONSTER));
+  const heroes = (copy(origHeroes) as HeroWithSkills[]).map((a) => mapActor(a, ActorType.HERO));
 
   const battleSteps = new Map<number, BattleStep[]>();
   for (let sec = 1; ; sec++) {
