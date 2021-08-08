@@ -8,7 +8,7 @@ import fameImg from "../../../img/quest-reward/quest-reward_star.png";
 import Hero from "../../../models/hero/Hero";
 import Quest from "../../../models/Quest";
 import { GUILD_SHARE } from "../../../utils/variables";
-import HeroItem from "../guild-display/heroes/hero-item/HeroItem";
+import HeroItem from "../village-building-display/guild-display/heroes/hero-item/HeroItem";
 import "./quest-reward.scss";
 
 type QuestRewardProps = {

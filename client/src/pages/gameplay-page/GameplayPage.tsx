@@ -4,7 +4,7 @@ import { bindActionCreators, compose, Dispatch } from "redux";
 import { fetchInitials } from "../../actions/ApiActions";
 import ConfirmDialog from "../../components/confirm-dialog/ConfirmDialog";
 import GameplayTooltip from "../../components/gameplay-tooltip/GameplayTooltip";
-import BuildingDisplay from "../../components/gameplay/building-details/BuildingDetails";
+import BuildingDisplay from "../../components/gameplay/village-building-display/building-details/BuildingDetails";
 import GameTimer from "../../components/gameplay/game-timer/GameTimer";
 import GameWorld from "../../components/gameplay/game-world/GameWorld";
 import HeroStatsDisplay from "../../components/gameplay/hero-stats-display/HeroStatsDisplay";
@@ -64,10 +64,7 @@ const mapStateToProps = ({ quests, heroes }: GameplayPageState) => {
   return { quests, heroes };
 };
 
-const mapDispatchToProps = (
-  dispatch: Dispatch,
-  customProps: WithApiServiceProps
-) => {
+const mapDispatchToProps = (dispatch: Dispatch, customProps: WithApiServiceProps) => {
   const { apiService, auth } = customProps;
   return bindActionCreators(
     {
@@ -77,7 +74,4 @@ const mapDispatchToProps = (
   );
 };
 
-export default compose(
-  withApiService(),
-  connect(mapStateToProps, mapDispatchToProps)
-)(GameplayPageContainer);
+export default compose(withApiService(), connect(mapStateToProps, mapDispatchToProps))(GameplayPageContainer);

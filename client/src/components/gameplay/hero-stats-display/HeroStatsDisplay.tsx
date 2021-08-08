@@ -17,7 +17,6 @@ type HeroStatsDisplayProps = {
   onDismissHero: (hero: Hero) => void;
 };
 
-//FIXME: Если герой закончил текущую активность текст активности не обновляется
 const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroStatsDisplayProps) => {
   const dispatch = useDispatch();
   const healthRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);

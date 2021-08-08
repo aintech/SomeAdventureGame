@@ -1,0 +1,11 @@
+@import "../../../../utils/variables.scss";
+@import "../../../../utils/mixins.scss";
+
+.building-container {
+  @include absoluteCenter;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba($color: black, $alpha: 0.8);
+  cursor: default;
+  z-index: 2000;
+}

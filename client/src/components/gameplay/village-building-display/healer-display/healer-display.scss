@@ -1,0 +1,61 @@
+@import "../../../../utils/variables.scss";
+@import "../../../../utils/functions.scss";
+@import "../../../../utils/mixins.scss";
+
+.healer-display {
+  @include absoluteCenter;
+  display: block;
+  width: $gameplay_width;
+  height: $gameplay_height;
+  background-image: url(../../../../img/tavern-display/tavern-display_bg.png);
+  background-size: cover;
+  z-index: 1010;
+
+  &__btn--close {
+    position: absolute;
+    float: right;
+    top: 1rem;
+    right: 3rem;
+    width: to-gameplay-scale(84px);
+    height: to-gameplay-scale(84px);
+    background-image: url(../../../../img/guild-display/guild-btn_dismiss_hero.png);
+    border: none;
+    outline: none;
+    background-color: transparent;
+    z-index: inherit;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  &__name {
+    font-family: inherit;
+    font-size: 3.4rem;
+    color: peru;
+    margin-top: 65px;
+    align-self: center;
+    @include strokeText;
+    cursor: default;
+  }
+
+  &__visitors-holder {
+    position: absolute;
+    top: to-gameplay-scale(200px);
+    left: to-gameplay-scale(180px);
+    width: to-gameplay-scale(460px);
+    height: to-gameplay-scale(500px);
+
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(5, 1fr);
+    gap: to-gameplay-scale(20px);
+  }
+}
