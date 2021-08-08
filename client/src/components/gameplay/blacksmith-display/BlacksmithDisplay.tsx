@@ -4,7 +4,7 @@ import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsChoosed } from "../../../actions/Actions";
 import { BuildingType, buildingTypeToName } from "../../../models/Building";
 import Hero from "../../../models/hero/Hero";
-import { HeroActivityType } from "../../../models/hero/HeroActivityType";
+import { HeroActivityType } from "../../../models/hero/HeroActivity";
 import Loader from "../../loader/Loader";
 import HeroItem from "../guild-display/heroes/hero-item/HeroItem";
 import "./blacksmith-display.scss";

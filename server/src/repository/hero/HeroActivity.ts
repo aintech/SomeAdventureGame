@@ -15,7 +15,8 @@ import {
   replaceHeroEquipment,
 } from "../Equipment";
 import { adjustHeroGold, getHeroesByIds, HeroType, HeroWithPerks, setHeroHealth, updateHeroLevel } from "../hero/Hero";
-import { getAssortment } from "../MarketAssortment";
+import { adjustItems, Item, ItemSubtype } from "../Item";
+import { getAlchemistAssortment, getMarketAssortment } from "../ShopsAssortment";
 import { addStats } from "../Stats";
 import { getLevelExp } from "./Level";
 
@@ -79,6 +80,9 @@ export const updateHeroActivities = async (userId: number, heroActivities: HeroA
       case HeroActivityType.PURCHASING_EQUIPMENT:
         enrichedActivity = await idleToPurchasingEquipment(userId, hero, heroActivity);
         break;
+      case HeroActivityType.PURCHASING_POTIONS:
+        enrichedActivity = await idleToPurchasingPotions(userId, hero, heroActivity);
+        break;
       case HeroActivityType.UPGRADING_EQUIPMENT:
         enrichedActivity = await idleToUpgradingEquipment(userId, hero, heroActivity);
         break;
@@ -123,10 +127,13 @@ const toIdle = async (userId: number, hero: HeroWithPerks, heroActivity: HeroAct
       await setHeroHealth(hero.id, maxHealth);
       break;
     case HeroActivityType.PURCHASING_EQUIPMENT:
-      const assortment = await getAssortment(userId);
-      const newHeroEquip = assortment.find((a) => a.id === hero.activity!.activityId)!;
+      const marketAssort = await getMarketAssortment(userId);
+      const newHeroEquip = marketAssort.find((a) => a.id === hero.activity!.activityId)!;
       const replacedEquip = hero.equipment.find((e) => e.type === newHeroEquip.type)!;
       await replaceHeroEquipment(hero.id, replacedEquip, newHeroEquip);
+      break;
+    case HeroActivityType.PURCHASING_POTIONS:
+      await adjustItems(hero.id, hero.activity.activityId!, 1);
       break;
     case HeroActivityType.UPGRADING_EQUIPMENT:
       const equipment = await getHeroEquipmentLink(hero.id, hero.activity.activityId!);
@@ -194,7 +201,7 @@ const idleToPurchasingEquipment = async (
   hero: HeroWithPerks,
   heroActivity: HeroActivityUpdate
 ): Promise<HeroActivityUpdate> => {
-  const assortment = await getAssortment(userId);
+  const assortment = await getMarketAssortment(userId);
 
   let purchase: Equipment | undefined;
 
@@ -221,7 +228,7 @@ const idleToPurchasingEquipment = async (
   }
 
   if (!purchase) {
-    throw new Error("Unable to find equipment to buy!");
+    throw new Error(`Unable to find equipment to purchase for hero ${hero.id}!`);
   }
 
   await Promise.all([adjustHeroGold(hero.id, -purchase.price), addStats(userId, purchase.price)]);
@@ -243,6 +250,69 @@ const appropriateEquipment = (hero: HeroWithPerks, type: EquipmentType, equipmen
       (equipment.mage && hero.type === HeroType.MAGE) ||
       (equipment.healer && hero.type === HeroType.HEALER))
   );
+};
+
+const idleToPurchasingPotions = async (
+  userId: number,
+  hero: HeroWithPerks,
+  heroActivity: HeroActivityUpdate
+): Promise<HeroActivityUpdate> => {
+  let potion: Item | undefined;
+
+  const assortment = await getAlchemistAssortment(userId);
+
+  const healingPotion = assortment.find((i) => i.subtype === ItemSubtype.HEALTH_POTION)!;
+  const healingElixir = assortment.find((i) => i.subtype === ItemSubtype.HEALTH_ELIXIR)!;
+  const manaPotion = assortment.find((i) => i.subtype === ItemSubtype.MANA_POTION)!;
+
+  let possiblePotion = hero.items.find((i) => i.subtype === ItemSubtype.HEALTH_POTION);
+
+  if (!possiblePotion && healingPotion.price <= hero.gold) {
+    potion = healingPotion;
+  }
+
+  if (!potion && possiblePotion) {
+    if (possiblePotion.amount < 3 && healingPotion.price <= hero.gold) {
+      potion = healingPotion;
+    }
+  }
+
+  if (!potion) {
+    if (hero.type === HeroType.MAGE || hero.type === HeroType.HEALER) {
+      possiblePotion = hero.items.find((i) => i.subtype === ItemSubtype.MANA_POTION);
+      if (!possiblePotion && manaPotion.price <= hero.gold) {
+        potion = manaPotion;
+      }
+      if (!potion && possiblePotion) {
+        if (possiblePotion.amount < 3 && manaPotion.price <= hero.gold) {
+          potion = manaPotion;
+        }
+      }
+    } else {
+      possiblePotion = hero.items.find((i) => i.subtype === ItemSubtype.HEALTH_ELIXIR);
+      if (!possiblePotion && healingElixir.price <= hero.gold) {
+        potion = healingElixir;
+      }
+      if (!potion && possiblePotion) {
+        if (possiblePotion.amount < 3 && healingElixir.price <= hero.gold) {
+          potion = healingElixir;
+        }
+      }
+    }
+  }
+
+  if (!potion) {
+    throw new Error(`Unable to find potion to buy for hero ${hero.id}`);
+  }
+
+  await Promise.all([adjustHeroGold(hero.id, -potion.price), addStats(userId, potion.price)]);
+
+  return {
+    ...heroActivity,
+    duration: potion.buyingTime,
+    activityId: potion.id,
+    description: `Покупает ${potion.name} у алхимика`,
+  };
 };
 
 const idleToUpgradingEquipment = async (

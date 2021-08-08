@@ -10,8 +10,6 @@ type MarketItemProps = {
 };
 
 export const MarketItem = ({ item }: MarketItemProps) => {
-  // const imgSrc =
-
   return (
     <li className="market-item">
       <img src={getImage(item.subtype)} alt={item.name} className="market-item__img"></img>

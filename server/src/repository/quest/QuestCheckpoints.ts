@@ -1,7 +1,7 @@
 import getBattleSteps, { BattleStep, BattleStepActionType } from "../../battle/BattleProcessor";
 import query, { single } from "../Db";
 import { getHeroesHP, HeroWithItems, HeroWithSkills, setHeroHealth } from "../hero/Hero";
-import { adjustItemsById } from "../hero/Item";
+import { adjustItemsById } from "../Item";
 import { getMonsterParty, Monster } from "../Monster";
 import { Quest } from "./Quest";
 import { getQuestProgress } from "./QuestProgress";

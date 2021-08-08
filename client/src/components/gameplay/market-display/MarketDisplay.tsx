@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsChoosed } from "../../../actions/Actions";
 import Hero from "../../../models/hero/Hero";
-import { HeroActivityType } from "../../../models/hero/HeroActivityType";
+import { HeroActivityType } from "../../../models/hero/HeroActivity";
 import Loader from "../../loader/Loader";
 import HeroItem from "../guild-display/heroes/hero-item/HeroItem";
 import { BuildingType, buildingTypeToName } from "../../../models/Building";
@@ -36,11 +36,13 @@ const MarketDisplay = ({ visitors, marketAssortment, visitorClicked, closeDispla
       <div className="market-display__container">
         <div className="market-display__name">{buildingTypeToName(BuildingType.MARKET)}</div>
         <div className="market-display__assortment-holder">
-          <ul>
-            {marketAssortment.map((assortment) => (
-              <MarketItem key={assortment.id} item={assortment} />
-            ))}
-          </ul>
+          <div className="market-display__assortment__list">
+            <ul>
+              {marketAssortment.map((assortment) => (
+                <MarketItem key={assortment.id} item={assortment} />
+              ))}
+            </ul>
+          </div>
         </div>
         <div className="market-display__visitors-holder">
           {visitors.map((visitor) => (

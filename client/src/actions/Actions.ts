@@ -5,7 +5,7 @@ import Building from "../models/Building";
 import GameStats from "../models/GameStats";
 import Hero from "../models/hero/Hero";
 import Quest from "../models/Quest";
-import { EquipmentResponse, HeroResponse, HireHeroResponse } from "../services/HeroesService";
+import { EquipmentResponse, HeroResponse, HireHeroResponse, ItemResponse } from "../services/HeroesService";
 import {
   CheckpointPassedResponse,
   CompleteCancelQuestResponse,
@@ -79,6 +79,19 @@ export const marketAssortmentRequested = (): PayloadedAction => {
 export const marketAssortmentLoaded = (assortment: EquipmentResponse[]): PayloadedAction => {
   return {
     type: ActionType.FETCH_MARKET_ASSORTMENT_SUCCESS,
+    payload: assortment,
+  };
+};
+
+export const alchemistAssortmentRequested = (): PayloadedAction => {
+  return {
+    type: ActionType.FETCH_ALCHEMIST_ASSORTMENT_REQUEST,
+  };
+};
+
+export const alchemistAssortmentLoaded = (assortment: ItemResponse[]): PayloadedAction => {
+  return {
+    type: ActionType.FETCH_ALCHEMIST_ASSORTMENT_SUCCESS,
     payload: assortment,
   };
 };

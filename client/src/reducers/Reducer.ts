@@ -7,8 +7,9 @@ import Building from "../models/Building";
 import Equipment, { convert as convertEquipment } from "../models/Equipment";
 import GameStats from "../models/GameStats";
 import Hero, { convert as convertHero } from "../models/hero/Hero";
+import Item, { convertItem } from "../models/Item";
 import Quest, { convert as convertQuest } from "../models/Quest";
-import { EquipmentResponse, HeroResponse, HireHeroResponse } from "../services/HeroesService";
+import { EquipmentResponse, HeroResponse, HireHeroResponse, ItemResponse } from "../services/HeroesService";
 import { QuestResponse } from "../services/QuestsService";
 import { remove, replace } from "../utils/arrays";
 
@@ -18,6 +19,7 @@ export type State = {
   heroes: Hero[];
   tavernPatrons: Hero[];
   marketAssortment: Equipment[];
+  alchemistAssortment: Item[];
   chosenBuilding: Building | null;
   chosenQuest: Quest | null;
   chosenHero: Hero | null;
@@ -34,6 +36,7 @@ const intialState = {
   heroes: [],
   tavernPatrons: [],
   marketAssortment: [],
+  alchemistAssortment: [],
   chosenBuilding: null,
   chosenQuest: null,
   chosenHero: null,
@@ -106,6 +109,18 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       return {
         ...state,
         marketAssortment: action.payload.map((e: EquipmentResponse) => convertEquipment(e)),
+      };
+
+    case ActionType.FETCH_ALCHEMIST_ASSORTMENT_REQUEST:
+      return {
+        ...state,
+        alchemistAssortment: [],
+      };
+
+    case ActionType.FETCH_ALCHEMIST_ASSORTMENT_SUCCESS:
+      return {
+        ...state,
+        alchemistAssortment: action.payload.map((e: ItemResponse) => convertItem(e)),
       };
 
     case ActionType.BUILDING_CLICKED:

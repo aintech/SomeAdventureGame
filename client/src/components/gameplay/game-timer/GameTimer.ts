@@ -5,12 +5,14 @@ import { onHeroActivities } from "../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService";
 import Equipment from "../../../models/Equipment";
 import Hero from "../../../models/hero/Hero";
-import { HeroActivityType } from "../../../models/hero/HeroActivityType";
+import { HeroActivityType } from "../../../models/hero/HeroActivity";
+import Item from "../../../models/Item";
 import checkHeroActivity from "./ActivityChecker";
 
 type GameTimerProps = {
   heroes: Hero[];
   marketAssortment: Equipment[];
+  alchemistAssortment: Item[];
   onHeroActivities: (activities: { heroId: number; type: HeroActivityType }[]) => void;
 };
 
@@ -44,7 +46,7 @@ class GameTimer extends Component<GameTimerProps> {
   }
 
   checkHeroes() {
-    const { heroes, marketAssortment } = this.props;
+    const { heroes, marketAssortment, alchemistAssortment } = this.props;
     const activities: { heroId: number; type: HeroActivityType }[] = [];
 
     const actualActivities = new Map<HeroActivityType, number>();
@@ -54,7 +56,7 @@ class GameTimer extends Component<GameTimerProps> {
     });
 
     for (const hero of heroes) {
-      const activity = checkHeroActivity(hero, actualActivities, marketAssortment);
+      const activity = checkHeroActivity(hero, actualActivities, marketAssortment, alchemistAssortment);
       if (activity != null) {
         actualActivities.set(activity, (actualActivities.get(activity) ?? 0) + 1);
         activities.push({ heroId: hero.id, type: activity });
@@ -74,10 +76,11 @@ class GameTimer extends Component<GameTimerProps> {
 type GameTimerState = {
   heroes: Hero[];
   marketAssortment: Equipment[];
+  alchemistAssortment: Item[];
 };
 
-const mapStateToProps = ({ heroes, marketAssortment }: GameTimerState) => {
-  return { heroes, marketAssortment };
+const mapStateToProps = ({ heroes, marketAssortment, alchemistAssortment }: GameTimerState) => {
+  return { heroes, marketAssortment, alchemistAssortment };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch, customProps: WithApiServiceProps) => {

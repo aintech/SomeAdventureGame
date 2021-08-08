@@ -2,7 +2,7 @@ import generateHeroes, { GeneratedHero } from "../hero-generator/HeroGenerator";
 import { TAVERN_PATRONS_REPLENISH_PERIOD } from "../utils/Variables";
 import query from "./Db";
 import { getNotHiredHeroes, Hero, HeroType, HeroWithEquipment, HeroWithItems } from "./hero/Hero";
-import { ItemType } from "./hero/Item";
+import { fetchItems, ItemSubtype, ItemType } from "./Item";
 import { getPerks, Perk } from "./hero/Perk";
 
 export const getTavernPatrons = async (userId: number) => {
@@ -71,20 +71,25 @@ const givePatronsEqipment = async (heroes: Hero[]) => {
 };
 
 const givePatronsItems = async (heroes: Hero[]) => {
-  const defaultPotions = heroes.map((hero) => `(${hero.id}, ${ItemType.HEALTH_POTION}, 3)`).join(",");
+  const items = await fetchItems();
+  const healthPotion = items.find((i) => i.subtype === ItemSubtype.HEALTH_POTION)!;
+  const healthElixir = items.find((i) => i.subtype === ItemSubtype.HEALTH_ELIXIR)!;
+  const manaPotion = items.find((i) => i.subtype === ItemSubtype.MANA_POTION)!;
+
+  const defaultPotions = heroes.map((hero) => `(${hero.id}, ${healthPotion.id}, 3)`).join(",");
 
   const additionalPotions = heroes
     .map(
       (hero) =>
         `(${hero.id}, ${
-          hero.type === HeroType.MAGE || hero.type === HeroType.HEALER ? ItemType.MANA_POTION : ItemType.HEALTH_ELIXIR
+          hero.type === HeroType.MAGE || hero.type === HeroType.HEALER ? manaPotion.id : healthElixir.id
         }, 3)`
     )
     .join(",");
 
   return query<void>(
     "givePatronsItems",
-    `insert into public.hero_item (hero_id, type, amount) values ${defaultPotions}, ${additionalPotions}`
+    `insert into public.hero_item (hero_id, item_id, amount) values ${defaultPotions}, ${additionalPotions}`
   );
 };
 

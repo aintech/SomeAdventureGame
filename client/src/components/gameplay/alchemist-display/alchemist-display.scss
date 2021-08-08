@@ -31,9 +31,12 @@
   }
 
   &__container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    display: grid;
+    width: 85%;
+    margin: 0 auto;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 100px 1fr;
+    gap: 30px;
   }
 
   &__name {
@@ -41,8 +44,48 @@
     font-size: 3.4rem;
     color: peru;
     margin-top: 65px;
-    align-self: center;
+    text-align: center;
+    grid-row: 1;
+    grid-column: 1 / -1;
     @include strokeText;
     cursor: default;
+  }
+
+  &__visitors-holder {
+    grid-row: 2;
+    grid-column: 2;
+    display: grid;
+    grid-template-columns: repeat(2, min-content);
+    gap: to-gameplay-scale(20px);
+  }
+
+  &__assortment__list {
+    margin: 10px;
+  }
+
+  &__assortment-holder {
+    height: 400px;
+    grid-row: 2;
+    grid-column: 1;
+    display: flex;
+    font-family: inherit;
+    font-size: 2rem;
+    @include strokeText;
+    color: whitesmoke;
+    overflow-y: scroll;
+    background-color: #908070;
+    border-radius: 5px;
+
+    & ul {
+      list-style: none;
+
+      & li {
+        margin-bottom: 10px;
+
+        & hr {
+          border-color: bisque;
+        }
+      }
+    }
   }
 }

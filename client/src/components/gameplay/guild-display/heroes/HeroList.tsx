@@ -6,7 +6,7 @@ import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
 import HeroItem from "./hero-item/HeroItem";
 import "./hero-list.scss";
-import { HeroActivityType } from "../../../../models/hero/HeroActivityType";
+import { HeroActivityType } from "../../../../models/hero/HeroActivity";
 import { MAX_EMBARKED_QUESTS } from "../../../../utils/variables";
 
 type HeroListProps = {

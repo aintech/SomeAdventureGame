@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { questScrollClosed } from "../../../actions/Actions";
 import Hero from "../../../models/hero/Hero";
-import { HeroActivityType } from "../../../models/hero/HeroActivityType";
+import { HeroActivityType } from "../../../models/hero/HeroActivity";
 import Quest from "../../../models/Quest";
 import Loader from "../../loader/Loader";
 import "./guild-display.scss";

@@ -3,7 +3,7 @@ import { HEALTH_PER_VITALITY } from "../../utils/variables";
 import Equipment, { convert as convertEquipment, getEquipmentStats } from "../Equipment";
 import PersonageStats from "../PersonageStats";
 import HeroActivity, { convert as convertActivity } from "./HeroActivity";
-import HeroItem, { convert as convertItem } from "./HeroItem";
+import { HeroItem, convertHeroItem } from "../Item";
 import HeroLevel, { convert as convertLevel } from "./HeroLevel";
 import HeroPerk, { convert as convertPerk } from "./HeroPerk";
 import HeroSkill, { convert as convertSkill } from "./HeroSkill";
@@ -45,7 +45,7 @@ export const convert = (response: HeroResponse): Hero => {
     response.health,
     response.gold,
     response.equipment.map((e) => convertEquipment(e)),
-    response.items.map((i) => convertItem(i)),
+    response.items.map((i) => convertHeroItem(i)),
     response.perks.map((p) => convertPerk(p)),
     response.skills.map((s) => convertSkill(s)),
     response.activity ? convertActivity(response.activity) : undefined

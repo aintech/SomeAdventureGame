@@ -2,7 +2,7 @@ import { HEALTH_PER_VITALITY } from "../../utils/Variables";
 import query from "../Db";
 import { Equipment, HeroEquipment, withEquipment } from "../Equipment";
 import { HeroActivity, HeroActivityType } from "./HeroActivity";
-import { Item, withItems } from "./Item";
+import { HeroItem, Item, withItems } from "../Item";
 import { HeroLevel, withLevelInfo } from "./Level";
 import { Perk, withPerks } from "./Perk";
 import { Skill, withSkills } from "./Skill";
@@ -36,7 +36,7 @@ export type Hero = {
 
 export type HeroWithEquipment = Hero & { equipment: HeroEquipment[] };
 
-export type HeroWithItems = HeroWithEquipment & { items: Item[] };
+export type HeroWithItems = HeroWithEquipment & { items: HeroItem[] };
 
 export type HeroWithPerks = HeroWithItems & { perks: Perk[] };
 
@@ -51,12 +51,6 @@ const prepareHeroes = async (heroes: Hero[]) => {
   return withSkills(await withPerks(await withItems(await withEquipment(await withLevelInfo(heroes)))));
 };
 
-/**
- * УХОДИМ ОТ ЭТОГО!!!
- * У атрибутов (power, health и т.д.) значения указаны уже с учётом экипировки!
- * так сделано чтобы не подмешивать в разных местах характеристики экипировки при расчёте
- * характеристик героя.
- */
 export const getHeroes = async (userId: number) => {
   return query<HeroWithSkills[]>(
     "getHeroes",

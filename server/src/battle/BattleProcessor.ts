@@ -1,6 +1,6 @@
 import { getEquipmentStats } from "../repository/Equipment";
 import { HeroWithItems, HeroWithSkills } from "../repository/hero/Hero";
-import { Item, ItemType } from "../repository/hero/Item";
+import { HeroItem, Item, ItemSubtype, ItemType } from "../repository/Item";
 import { Monster } from "../repository/Monster";
 import { anyOf, copy } from "../utils/Arrays";
 import { HEALTH_PER_VITALITY } from "../utils/Variables";
@@ -19,7 +19,7 @@ type Actor = {
   type: ActorType;
   actorId?: number /** actual for monster */;
   vitality?: number /** actual for hero */;
-  items?: Item[] /** actual for hero */;
+  items?: HeroItem[] /** actual for hero */;
 };
 
 export enum BattleStepActionType {
@@ -119,9 +119,9 @@ const attackStep = (actor: Actor, opponents: Actor[]) => {
 const potionStep = (actor: Actor): BattleStep | null => {
   const items = actor.items!;
   if (items.length > 0) {
-    let potions = items.filter((i) => i.type == ItemType.HEALTH_POTION && i.amount > 0);
+    let potions = items.filter((i) => i.subtype == ItemSubtype.HEALTH_POTION && i.amount > 0);
     if (potions.length === 0) {
-      potions = items.filter((i) => i.type == ItemType.HEALTH_ELIXIR && i.amount > 0);
+      potions = items.filter((i) => i.subtype == ItemSubtype.HEALTH_ELIXIR && i.amount > 0);
     }
     if (potions.length > 0) {
       const potion = potions[0];

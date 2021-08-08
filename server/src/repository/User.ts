@@ -8,6 +8,7 @@ type User = {
   password: string;
 };
 
+//FIXME: Добавить первоначальный ассортимент на рынок и алхимику
 export const createUser = async (user: LoginUser) => {
   await persistUser(user);
 

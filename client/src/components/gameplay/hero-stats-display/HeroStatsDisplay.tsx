@@ -6,8 +6,7 @@ import { onDismissHero } from "../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService";
 import { EquipmentType, getEquipmentStats } from "../../../models/Equipment";
 import Hero, { calcHealthFraction } from "../../../models/hero/Hero";
-import { HeroActivityType } from "../../../models/hero/HeroActivityType";
-import { getItemName } from "../../../models/hero/HeroItem";
+import { HeroActivityType } from "../../../models/hero/HeroActivity";
 import { HeroType } from "../../../models/hero/HeroType";
 import { convertDuration, millisToSecs } from "../../../utils/Utils";
 import "./hero-stats-display.scss";
@@ -30,7 +29,7 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
       const remained = millisToSecs(
         hero.activity.startedAt.getTime() + hero.activity.duration * 1000 - new Date().getTime()
       );
-      setActivityTime(convertDuration(remained));
+      setActivityTime(convertDuration(remained + 1));
     } else {
       setActivityTime("");
     }
@@ -52,7 +51,7 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
         const remained = millisToSecs(
           hero.activity.startedAt.getTime() + hero.activity.duration * 1000 - new Date().getTime()
         );
-        setActivityTime(convertDuration(remained));
+        setActivityTime(convertDuration(remained + 1));
       } else {
         setActivityTime("");
       }
@@ -191,7 +190,7 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
               .map((i) => {
                 return (
                   <ul key={i.id}>
-                    {getItemName(i.type)} - {i.amount}
+                    {i.name} - {i.amount}
                   </ul>
                 );
               })}

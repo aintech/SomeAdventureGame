@@ -16,10 +16,12 @@ import {
   cancelQuest,
   marketAssortmentRequested,
   marketAssortmentLoaded,
+  alchemistAssortmentRequested,
+  alchemistAssortmentLoaded,
 } from "../actions/Actions";
 import { AuthProps } from "../contexts/AuthContext";
 import Hero from "../models/hero/Hero";
-import { HeroActivityType } from "../models/hero/HeroActivityType";
+import { HeroActivityType } from "../models/hero/HeroActivity";
 import Quest from "../models/Quest";
 import QuestCheckpoint from "../models/QuestCheckpoint";
 import ApiService from "../services/ApiService";
@@ -38,7 +40,9 @@ export const fetchInitials = (apiService: ApiService, auth: AuthProps) => () => 
     .then(() => apiService.getTavernPatrons(auth))
     .then((data) => dispatch(tavernPatronsLoaded(data)))
     .then(() => apiService.getMarketAssortment(auth))
-    .then((data) => dispatch(marketAssortmentLoaded(data)));
+    .then((data) => dispatch(marketAssortmentLoaded(data)))
+    .then(() => apiService.getAlchemistAssortment(auth))
+    .then((data) => dispatch(alchemistAssortmentLoaded(data)));
 };
 
 export const fetchQuests = (apiService: ApiService, auth: AuthProps) => () => (dispatch: any) => {
@@ -59,6 +63,11 @@ export const fetchTavernPatrons = (apiService: ApiService, auth: AuthProps) => (
 export const fetchMarketAssortment = (apiService: ApiService, auth: AuthProps) => () => (dispatch: any) => {
   dispatch(marketAssortmentRequested);
   apiService.getMarketAssortment(auth).then((data) => dispatch(marketAssortmentLoaded(data)));
+};
+
+export const fetchAlchemistAssortment = (apiService: ApiService, auth: AuthProps) => () => (dispatch: any) => {
+  dispatch(alchemistAssortmentRequested);
+  apiService.getAlchemistAssortment(auth).then((data) => dispatch(alchemistAssortmentLoaded(data)));
 };
 
 export const embarkHeroesOnQuest =

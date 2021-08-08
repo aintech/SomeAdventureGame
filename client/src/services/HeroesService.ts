@@ -2,9 +2,9 @@ import { AuthProps } from "../contexts/AuthContext";
 import { EquipmentType } from "../models/Equipment";
 import GameStats from "../models/GameStats";
 import Hero from "../models/hero/Hero";
-import { HeroActivityType } from "../models/hero/HeroActivityType";
-import { HeroItemType } from "../models/hero/HeroItem";
+import { HeroActivityType } from "../models/hero/HeroActivity";
 import { HeroType } from "../models/hero/HeroType";
+import { ItemSubtype, ItemType } from "../models/Item";
 import sendHttp from "./SendHttp";
 
 const baseUrl = "/api/heroes";
@@ -54,9 +54,18 @@ export interface HeroActivityResponse {
   duration?: number;
 }
 
-export interface HeroItemResponse {
+export interface ItemResponse {
   id: number;
-  type: HeroItemType;
+  name: string;
+  description: string;
+  price: number;
+  avatar: string;
+  type: ItemType;
+  subtype: ItemSubtype;
+  buyingTime: number;
+}
+
+export interface HeroItemResponse extends ItemResponse {
   amount: number;
 }
 

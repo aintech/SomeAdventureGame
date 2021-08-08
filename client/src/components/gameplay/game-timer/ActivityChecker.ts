@@ -1,6 +1,8 @@
 import Equipment, { EquipmentType } from "../../../models/Equipment";
 import Hero from "../../../models/hero/Hero";
-import { HeroActivityType } from "../../../models/hero/HeroActivityType";
+import { HeroActivityType } from "../../../models/hero/HeroActivity";
+import { HeroType } from "../../../models/hero/HeroType";
+import Item, { ItemSubtype } from "../../../models/Item";
 import {
   CURE_COST_PER_HP,
   EQUIPMENT_MAX_TIER,
@@ -12,7 +14,8 @@ import {
 const checkHeroActivity = (
   hero: Hero,
   actualActivities: Map<HeroActivityType, number>,
-  market: Equipment[]
+  market: Equipment[],
+  alchemist: Item[]
 ): HeroActivityType | null => {
   if (hero.activity!.type === HeroActivityType.IDLE) {
     if (spareActivities(HeroActivityType.HEALING, actualActivities) && needHealer(hero)) {
@@ -26,6 +29,9 @@ const checkHeroActivity = (
     }
     if (spareActivities(HeroActivityType.UPGRADING_EQUIPMENT, actualActivities) && upgradingEquipment(hero)) {
       return HeroActivityType.UPGRADING_EQUIPMENT;
+    }
+    if (spareActivities(HeroActivityType.PURCHASING_POTIONS, actualActivities) && buyPotions(hero, alchemist)) {
+      return HeroActivityType.PURCHASING_POTIONS;
     }
   } else {
     if (checkActivityEnded(hero)) {
@@ -81,6 +87,48 @@ const upgradingEquipment = (hero: Hero) => {
     }
   });
   return readyToUpdate;
+};
+
+const buyPotions = (hero: Hero, alchemist: Item[]) => {
+  const healingPotion = alchemist.find((i) => i.subtype === ItemSubtype.HEALTH_POTION)!;
+  const healingElixir = alchemist.find((i) => i.subtype === ItemSubtype.HEALTH_ELIXIR)!;
+  const manaPotion = alchemist.find((i) => i.subtype === ItemSubtype.MANA_POTION)!;
+
+  let heroPotions = hero.items.find((i) => i.subtype === ItemSubtype.HEALTH_POTION);
+
+  if (!heroPotions && healingPotion.price <= hero.gold) {
+    return true;
+  }
+
+  if (heroPotions) {
+    if (heroPotions.amount < 3) {
+      return healingPotion.price <= hero.gold;
+    }
+  }
+
+  if (hero.type === HeroType.MAGE || hero.type === HeroType.HEALER) {
+    heroPotions = hero.items.find((i) => i.subtype === ItemSubtype.MANA_POTION);
+    if (!heroPotions && manaPotion.price <= hero.gold) {
+      return true;
+    }
+    if (heroPotions) {
+      if (heroPotions.amount < 3) {
+        return manaPotion.price <= hero.gold;
+      }
+    }
+  } else {
+    heroPotions = hero.items.find((i) => i.subtype === ItemSubtype.HEALTH_ELIXIR);
+    if (!heroPotions && healingElixir.price <= hero.gold) {
+      return true;
+    }
+    if (heroPotions) {
+      if (heroPotions.amount < 3) {
+        return healingElixir.price <= hero.gold;
+      }
+    }
+  }
+
+  return false;
 };
 
 const checkActivityEnded = (hero: Hero): boolean => {
