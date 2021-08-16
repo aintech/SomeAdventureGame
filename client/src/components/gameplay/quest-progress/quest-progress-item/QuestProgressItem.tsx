@@ -1,15 +1,15 @@
 import React, { Component, createRef, MouseEvent } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
-import { collectingQuestReward, showConfirmDialog } from "../../../../actions/Actions";
+import { collectingQuestReward, showConfirmDialog, beginQuestProcess } from "../../../../actions/Actions";
 import { onCancelQuest, onCheckpointPassed } from "../../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../../hoc/WithApiService";
-import chestClosedImgSrc from "../../../../img/quest-progress/Chest_closed.png";
-import chestOpenImgSrc from "../../../../img/quest-progress/Chest_open.png";
+import chestClosedImgSrc from "../../../../img/quest-progress/chest-closed.png";
+import chestOpenImgSrc from "../../../../img/quest-progress/chest-open.png";
 import backgroundImgSrc from "../../../../img/quest-progress/quest-progress_background.png";
 import heroImgSrc from "../../../../img/quest-progress/quest-progress_hero.png";
-import skeletonImgSrc from "../../../../img/quest-progress/Skeleton.png";
-import skeletonDeadImgSrc from "../../../../img/quest-progress/Skeleton_dead.png";
+import skeletonImgSrc from "../../../../img/quest-progress/skeleton.png";
+import skeletonDeadImgSrc from "../../../../img/quest-progress/skeleton_dead.png";
 import horseImgSrc from "../../../../img/quest-progress/horse.gif";
 import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
@@ -39,6 +39,7 @@ type QuestProgressItemProps = {
   quest: Quest;
   heroes: Hero[];
   collectingQuestReward: (quest: Quest) => void;
+  beginQuestProcess: (quest: Quest, heroes: Hero[]) => void;
   onCheckpointPassed: (quest: Quest, checkpoint: QuestCheckpoint) => void;
   onCancelQuest: (quest: Quest) => void;
 };
@@ -216,9 +217,14 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     if (!this.state.activeCheckpoint) {
       this.checkIfCheckpointOccured(this.state.seconds);
     }
-    this.setState({
-      seconds: Math.floor(millisToSecs(new Date().getTime() - this.props.quest.progress!.embarkedTime)),
-    });
+
+    /** Переход на quest-process */
+    const secondsPassed = Math.floor(millisToSecs(new Date().getTime() - this.props.quest.progress!.embarkedTime));
+    if (secondsPassed <= 0) {
+      this.setState({
+        seconds: Math.floor(millisToSecs(new Date().getTime() - this.props.quest.progress!.embarkedTime)),
+      });
+    }
 
     if (this.state.activeCheckpoint) {
       this.checkCheckpointActions();
@@ -478,11 +484,16 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
   }
 
   questFinished() {
-    return this.props.quest.progress!.duration - this.state.seconds <= 0;
+    return false;
+    // return this.props.quest.progress!.duration - this.state.seconds <= 0;
   }
 
   collectReward() {
     this.props.collectingQuestReward(this.props.quest);
+  }
+
+  beginQuest() {
+    this.props.beginQuestProcess(this.props.quest, this.props.heroes);
   }
 
   cancelQuest(e: MouseEvent) {
@@ -551,6 +562,14 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
         ></div>
 
         <button
+          className="quest-progress-item__start-btn"
+          style={{ display: this.state.seconds >= 0 ? "block" : "none" }}
+          onClick={this.beginQuest.bind(this)}
+        >
+          В подземелье
+        </button>
+
+        <button
           className={dismissBtnClass}
           onClick={(e) =>
             store.dispatch(
@@ -576,6 +595,7 @@ const mapDispatchToProps = (dispatch: Dispatch, customProps: WithApiServiceProps
   return bindActionCreators(
     {
       collectingQuestReward,
+      beginQuestProcess,
       onCheckpointPassed: onCheckpointPassed(apiService, auth),
       onCancelQuest: onCancelQuest(apiService, auth),
     },

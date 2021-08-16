@@ -45,24 +45,10 @@
       background-size: cover;
     }
 
-    &--WARRIOR {
-      background-image: url(../../../../../img/portraits/portrait-warrior.png);
-    }
-
-    &--PALADIN {
-      background-image: url(../../../../../img/portraits/portrait-paladin.png);
-    }
-
-    &--THIEF {
-      background-image: url(../../../../../img/portraits/portrait-thief.png);
-    }
-
-    &--MAGE {
-      background-image: url(../../../../../img/portraits/portrait-mage.png);
-    }
-
-    &--HEALER {
-      background-image: url(../../../../../img/portraits/portrait-healer.png);
+    @each $type in "warrior" "paladin" "thief" "mage" "healer" {
+      &--#{$type} {
+        background-image: url(../../../../../img/portraits/portrait-#{$type}.png);
+      }
     }
   }
 

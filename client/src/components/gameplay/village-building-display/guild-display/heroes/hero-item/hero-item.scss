@@ -65,29 +65,13 @@
     margin-bottom: to-gameplay-scale(-15px);
   }
 
-  &__portrait--WARRIOR {
-    @include portrait;
-    background-image: url(../../../../../../img/guild-display/guild-hero_icon_warrior.png);
-  }
-
-  &__portrait--PALADIN {
-    @include portrait;
-    background-image: url(../../../../../../img/guild-display/guild-hero_icon_paladin.png);
-  }
-
-  &__portrait--THIEF {
-    @include portrait;
-    background-image: url(../../../../../../img/guild-display/guild-hero_icon_thief.png);
-  }
-
-  &__portrait--MAGE {
-    @include portrait;
-    background-image: url(../../../../../../img/guild-display/guild-hero_icon_mage.png);
-  }
-
-  &__portrait--HEALER {
-    @include portrait;
-    background-image: url(../../../../../../img/guild-display/guild-hero_icon_healer.png);
+  &__portrait {
+    @each $type in "warrior" "paladin" "thief" "mage" "healer" {
+      &--#{$type} {
+        @include portrait;
+        background-image: url(../../../../../../img/guild-display/guild-hero_icon_#{$type}.png);
+      }
+    }
   }
 
   &__type-level {

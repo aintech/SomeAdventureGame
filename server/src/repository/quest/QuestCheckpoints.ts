@@ -32,7 +32,7 @@ export type QuestCheckpointWithProgress = QuestCheckpoint & {
 export const generateCheckpoints = async (quest: Quest, heroes: HeroWithSkills[]) => {
   const checkpoints: QuestCheckpoint[] = [];
 
-  const checkpointsCount = 1; //Math.floor(quest.duration * 0.5 * 0.1);
+  const checkpointsCount = 5; //Math.floor(quest.duration * 0.5 * 0.1);
 
   let checkpointsDuration = 0;
   for (let i = 0; i < checkpointsCount; i++) {
@@ -84,26 +84,27 @@ export const generateCheckpoints = async (quest: Quest, heroes: HeroWithSkills[]
 };
 
 export const persistQuestCheckpoints = async (progressId: number, checkpoints: QuestCheckpoint[]) => {
-  const sql = checkpoints
+  const checkpointsData = checkpoints
     .map(
-      (c) =>
-        `insert into public.quest_checkpoint 
-         (quest_progress_id, type, occured_at, duration, steps, enemies, tribute, passed)
-         values
-         (
-           ${progressId},
-           '${CheckpointType[c.type].toLowerCase()}', 
-           ${c.occuredAt}, 
-           ${c.duration},
-           ${c.steps ? `'${stringifySteps(c.steps)}'` : null},
-           ${c.enemies ? `'${JSON.stringify(c.enemies)}'` : null},
-           ${c.tribute},
-           ${c.passed}
-         )`
+      (checkpoint) =>
+        `select 
+          ${progressId},
+          '${CheckpointType[checkpoint.type].toLowerCase()}', 
+          ${checkpoint.occuredAt}, 
+          ${checkpoint.duration},
+          ${checkpoint.steps ? `'${stringifySteps(checkpoint.steps)}'` : null},
+          ${checkpoint.enemies ? `'${JSON.stringify(checkpoint.enemies)}'` : null},
+          ${checkpoint.tribute},
+          ${checkpoint.passed}`
     )
-    .join(" ");
+    .join(" union ");
 
-  await query<void>("persistQuestCheckpoints", sql);
+  await query<void>(
+    "persistQuestCheckpoints",
+    `insert into public.quest_checkpoint 
+     (quest_progress_id, type, occured_at, duration, steps, enemies, tribute, passed)
+     select * from (${checkpointsData}) as vals`
+  );
 
   return getQuestCheckpoints([progressId]);
 };
@@ -153,6 +154,7 @@ export const getQuestCheckpointsByQuest = async (userId: number, questId: number
   return getQuestCheckpoints([progress.id]);
 };
 
+//TODO: Скорее всего больше не пригодится, т.к. игрок будет сам проходить чекпоинты
 const checkIfCheckpointPassed = async (checkpoints: QuestCheckpointWithProgress[]) => {
   for (const checkpoint of checkpoints) {
     if (checkpoint.passed) {
@@ -169,6 +171,7 @@ const checkIfCheckpointPassed = async (checkpoints: QuestCheckpointWithProgress[
   }
 };
 
+//TODO: Скорее всего больше не пригодится, т.к. игрок будет сам проходить чекпоинты
 export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress) => {
   if (checkpoint.passed) {
     return;
@@ -177,7 +180,6 @@ export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress) 
   if (checkpoint.type === CheckpointType.BATTLE) {
     const adjustments: Promise<any>[] = [];
 
-    // const outcome = JSON.parse(checkpoint.outcome);
     const steps = checkpoint.steps!;
     const heroesHP = await getHeroesHP(checkpoint.questId);
     const healthValues = new Map<number, number>();
@@ -192,15 +194,13 @@ export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress) 
     const maxSec = Math.max(...Array.from(steps.keys()));
 
     for (let sec = 0; sec <= maxSec; sec++) {
-      const process = steps.get(sec); // steps.filter((o) => o[0] === sec);
+      const process = steps.get(sec);
 
       if (!process) {
         continue;
       }
 
       for (const step of process) {
-        // const steps = action[1];
-        // for (const step of steps) {
         if (step.action === BattleStepActionType.ENEMY_ATTACK) {
           healthValues.set(step.heroId, healthValues.get(step.heroId)! - +step.damage!);
         }
@@ -208,7 +208,6 @@ export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress) 
           usedItems.set(step.itemId!, (usedItems.get(step.itemId!) ?? 0) - 1);
           healthValues.set(step.heroId, totalHPs.get(step.heroId)!);
         }
-        // }
       }
     }
 

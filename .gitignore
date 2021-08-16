@@ -1,6 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 node_modules
+archive
 
 npm-debug.log*
 yarn-debug.log*
@@ -26,3 +27,4 @@ Village_old.jpg
 221c64c649cf183150e887f1d0bab271.gif
 625458dca878654fb88f380e5ebcb632.gif
 c994aac0-c411-11e6-a014-87d0c3c02b5e.gif
+svg-marker-11.png

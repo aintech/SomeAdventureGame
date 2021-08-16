@@ -11,7 +11,7 @@
     width: 30px;
     height: 30px;
 
-    @each $type in "warrior" "mage" {
+    @each $type in "warrior" "paladin" "thief" "mage" "healer" {
       &--#{$type} {
         height: 100%;
         background-image: url(../../../../../img/portraits/portrait-#{$type}.png);
@@ -21,7 +21,7 @@
 
     &--skeleton {
       height: 100%;
-      background-image: url(../../../../../img/quest-progress/Skeleton_dead.png);
+      background-image: url(../../../../../img/quest-progress/skeleton_dead.png);
       background-size: cover;
     }
   }

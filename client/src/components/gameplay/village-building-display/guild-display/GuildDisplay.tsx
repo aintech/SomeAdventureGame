@@ -68,13 +68,13 @@ const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest, closeDisplay }: G
     }
   };
 
-  const prevStyle: CSSProperties = {
+  const prevPageBtnStyle: CSSProperties = {
     opacity: page === 0 ? 0.5 : 1,
     cursor: page === 0 ? "default" : "pointer",
     pointerEvents: page === 0 ? "none" : "inherit",
   };
 
-  const nextStyle: CSSProperties = {
+  const nextPageBtnStyle: CSSProperties = {
     opacity: page === lastPage ? 0.5 : 1,
     cursor: page === lastPage ? "default" : "pointer",
     pointerEvents: page === lastPage ? "none" : "inherit",
@@ -89,12 +89,12 @@ const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest, closeDisplay }: G
         <i className="material-icons guild-display__btn--show-unabled-icon">
           {!showUnabledHeroes ? "check_box" : "check_box_outline_blank"}
         </i>
-        <span>Только доступные</span>
+        <span>Только свободные</span>
       </button>
-      <button className="guild-display__btn--previous" style={prevStyle} onClick={() => switchPage(-1)}></button>
+      <button className="guild-display__btn--previous" style={prevPageBtnStyle} onClick={() => switchPage(-1)}></button>
       <button
         className="guild-display__btn--next"
-        style={nextStyle}
+        style={nextPageBtnStyle}
         onClick={() => {
           switchPage(1);
         }}

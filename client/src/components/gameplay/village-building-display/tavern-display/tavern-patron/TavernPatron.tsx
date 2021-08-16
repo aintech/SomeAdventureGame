@@ -17,7 +17,7 @@ const TavernPatron = ({ patron, hirePatron }: TavernPatronProps) => {
   return (
     <div className="tavern-patron">
       <div className="tavern-patron__portrait">
-        <div className={`tavern-patron__portrait--${HeroType[patron.type]}`}></div>
+        <div className={`tavern-patron__portrait--${HeroType[patron.type].toLowerCase()}`}></div>
       </div>
       <div className="tavern-patron__name">{patron.name}</div>
       <div className="tavern-patron__type-level">{`${display(patron.type)} lvl. ${patron.level.lvl}`}</div>

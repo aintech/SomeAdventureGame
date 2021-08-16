@@ -1,0 +1,38 @@
+.quest-map {
+  &__container {
+    display: flex;
+    width: 750px;
+    height: 350px;
+    align-self: center;
+    justify-self: center;
+    background-image: url(../../../../img/quest-process-display/quest-map.png);
+    background-size: cover;
+    padding-left: 100px;
+    gap: 50px;
+  }
+
+  &__checkpoint-marker {
+    align-self: center;
+    width: 36px;
+    height: 48px;
+    background-size: cover;
+
+    &--passed {
+      background-image: url(../../../../img/quest-process-display/checkpoint-marker-passed.png);
+    }
+
+    &--active {
+      background-image: url(../../../../img/quest-process-display/checkpoint-marker-active.png);
+
+      &:hover {
+        scale: 1.1;
+        transform: translateY(-3px);
+      }
+    }
+
+    &--inactive {
+      background-image: url(../../../../img/quest-process-display/checkpoint-marker-inactive.png);
+      opacity: 0.3;
+    }
+  }
+}

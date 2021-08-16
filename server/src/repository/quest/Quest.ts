@@ -68,7 +68,8 @@ export const getQuests = async (userId: number) => {
     mapQuestWithProgress
   );
 
-  return addCheckpoints(quests, true);
+  // return addCheckpoints(quests, true);
+  return addCheckpoints(quests);
 };
 
 const addCheckpoints = async (quests: QuestWithProgress[], checkIfPassed = false) => {

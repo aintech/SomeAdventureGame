@@ -57,7 +57,7 @@ const QuestDetails = ({
 
     return (
       <div className="quest-details__assigned-heroes__hero" key={hero.id}>
-        <div className={`quest-details__assigned-heroes__hero--${HeroType[hero.type]}`}></div>
+        <div className={`quest-details__assigned-heroes__hero--${HeroType[hero.type].toLocaleLowerCase()}`}></div>
         <div className="quest-details__assigned-heroes__hero-name">{shortName}</div>
         <button
           onClick={() => {

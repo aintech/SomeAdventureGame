@@ -2,6 +2,7 @@ import { PayloadedAction } from "../actions/Actions";
 import { ActionType } from "../actions/ActionType";
 import { ConfirmDialogType } from "../components/confirm-dialog/ConfirmDialog";
 import { Tooltip } from "../components/gameplay-tooltip/GameplayTooltip";
+import { QuestProcess } from "../components/gameplay/quest-process-display/QuestProcessDisplay";
 import { Message } from "../components/message-popup/MessagePopup";
 import Building from "../models/Building";
 import Equipment, { convert as convertEquipment } from "../models/Equipment";
@@ -20,14 +21,15 @@ export type State = {
   tavernPatrons: Hero[];
   marketAssortment: Equipment[];
   alchemistAssortment: Item[];
-  chosenBuilding: Building | null;
-  chosenQuest: Quest | null;
-  chosenHero: Hero | null;
+  chosenBuilding?: Building;
+  chosenQuest?: Quest;
+  chosenHero?: Hero;
   heroesAssignedToQuest: Hero[];
-  collectingQuestReward: Quest | null;
+  collectingQuestReward?: Quest;
   messages: Message[];
   tooltip: Tooltip;
-  confirmDialog: ConfirmDialogType | null;
+  confirmDialog?: ConfirmDialogType;
+  activeQuestProcess?: QuestProcess;
 };
 
 const intialState = {
@@ -37,14 +39,9 @@ const intialState = {
   tavernPatrons: [],
   marketAssortment: [],
   alchemistAssortment: [],
-  chosenBuilding: null,
-  chosenQuest: null,
-  chosenHero: null,
   heroesAssignedToQuest: [],
-  collectingQuestReward: null,
   messages: [],
   tooltip: { message: "", appear: false },
-  confirmDialog: null,
 };
 
 const reducer = (state: State = intialState, action: PayloadedAction) => {
@@ -138,7 +135,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
     case ActionType.QUEST_SCROLL_CLOSED:
       return {
         ...state,
-        chosenQuest: null,
+        chosenQuest: undefined,
         heroesAssignedToQuest: [],
       };
 
@@ -151,7 +148,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
     case ActionType.HERO_STATS_DISPLAY_CLOSED:
       return {
         ...state,
-        chosenHero: null,
+        chosenHero: undefined,
       };
 
     case ActionType.HERO_ASSIGNED_TO_QUEST:
@@ -196,7 +193,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         ],
         heroes: upHeroes,
         chosenHero,
-        chosenQuest: null,
+        chosenQuest: undefined,
         heroesAssignedToQuest: [],
       };
 
@@ -254,7 +251,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         quests: changeQuest,
         heroes: changeHeroes,
         chosenHero,
-        collectingQuestReward: null,
+        collectingQuestReward: undefined,
       };
 
     case ActionType.SHOW_USER_MESSAGE:
@@ -324,11 +321,19 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
     case ActionType.SHOW_CONFIRM_DIALOG:
       return {
         ...state,
-        confirmDialog: action.payload
-          ? {
-              ...action.payload,
-            }
-          : null,
+        confirmDialog: action.payload,
+      };
+
+    case ActionType.BEGIN_QUEST_PROCESS:
+      return {
+        ...state,
+        activeQuestProcess: action.payload,
+      };
+
+    case ActionType.CLOSE_QUEST_PROCESS:
+      return {
+        ...state,
+        activeQuestProcess: undefined,
       };
 
     default:

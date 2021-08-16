@@ -227,6 +227,19 @@ export const showConfirmDialog = (
 ): PayloadedAction => {
   return {
     type: ActionType.SHOW_CONFIRM_DIALOG,
-    payload: message ? { message, callback, event } : null,
+    payload: message ? { message, callback, event } : undefined,
+  };
+};
+
+export const beginQuestProcess = (quest: Quest, heroes: Hero[]): PayloadedAction => {
+  return {
+    type: ActionType.BEGIN_QUEST_PROCESS,
+    payload: { quest, heroes },
+  };
+};
+
+export const closeQuestProcess = (): Action => {
+  return {
+    type: ActionType.CLOSE_QUEST_PROCESS,
   };
 };

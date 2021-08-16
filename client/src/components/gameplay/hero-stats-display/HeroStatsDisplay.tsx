@@ -117,122 +117,125 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
 
   return (
     <div className="hero-stats" onClick={heroStatsDisplayClosed}>
-      <div className="hero-stats__bg"></div>
-      <div className="hero-stats__portrait">
-        <div className={`hero-stats__portrait--${HeroType[hero.type]}`}></div>
-      </div>
-      <button
-        className={`hero-stats__dismiss-btn ${
-          hero.activity!.type === HeroActivityType.QUEST ? "hero-stats__dismiss-btn__hidden" : ""
-        }`}
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          dispatch(
-            showConfirmDialog(`${hero.name} отправится на поиски новых приключений в другие гильдии`, dismissHero, e)
-          );
-        }}
-      >
-        <span className="hero-stats__dismiss-btn--text">
-          {" "}
-          <span style={{ color: "red" }}>X</span> Отпустить
-        </span>
-      </button>
-      <div className="hero-stats__activity">
-        {hero.activity!.description} {activityTime}
-      </div>
-      <div className="hero-stats__gold">{hero.gold}</div>
-      <div className="hero-stats__name">{hero.name}</div>
-      <div className="hero-stats__level">
-        {hero.level.lvl} - {hero.level.definition}
-      </div>
-      <div className="hero-stats__health">{hero.health}</div>
-      <div className="hero-stats__experience">{hero.level.experience}</div>
-      <div className="hero-stats__power">{hero.stats.power}</div>
-      <div className="hero-stats__power-surplus">+{equipmentSurplus.power}</div>
-      <div className="hero-stats__defence">{hero.stats.defence}</div>
-      <div className="hero-stats__defence-surplus">+{equipmentSurplus.defence}</div>
-      <div className="hero-stats__vitality">{hero.stats.vitality}</div>
-      <div className="hero-stats__vitality-surplus">+{equipmentSurplus.vitality}</div>
-      <div className="hero-stats__initiative">{hero.stats.initiative}</div>
-      <div className="hero-stats__initiative-surplus">-{equipmentSurplus.initiative}</div>
-      <div className="hero-stats__equipment">
-        <div className={weaponStyle}>
-          <div className="hero-stats__equipment--stats">
-            <div className="hero-stats__equipment--stats-tier">{stars[weapon.tier]}</div>
-            <div className="hero-stats__equipment--stats-level">lv. {weapon.level}</div>
+      <div className="hero-stats__container">
+        <div className="hero-stats__bg"></div>
+        <div className="hero-stats__portrait">
+          <div className={`hero-stats__portrait--${HeroType[hero.type].toLowerCase()}`}></div>
+        </div>
+        <button
+          className={`hero-stats__dismiss-btn ${
+            hero.activity!.type === HeroActivityType.QUEST ? "hero-stats__dismiss-btn__hidden" : ""
+          }`}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dispatch(
+              showConfirmDialog(`${hero.name} отправится на поиски новых приключений в другие гильдии`, dismissHero, e)
+            );
+          }}
+        >
+          <span className="hero-stats__dismiss-btn--text">
+            {" "}
+            <span style={{ color: "red" }}>X</span> Отпустить
+          </span>
+        </button>
+        <div className="hero-stats__activity">
+          {hero.activity!.description} {activityTime}
+        </div>
+        <div className="hero-stats__gold">{hero.gold}</div>
+        <div className="hero-stats__name">{hero.name}</div>
+        <div className="hero-stats__level">
+          <span className="hero-stats__level--text">Ур. </span>
+          {hero.level.lvl} - {hero.level.definition}
+        </div>
+        <div className="hero-stats__health">{hero.health}</div>
+        <div className="hero-stats__experience">{hero.level.experience}</div>
+        <div className="hero-stats__power">{hero.stats.power}</div>
+        <div className="hero-stats__power-surplus">+{equipmentSurplus.power}</div>
+        <div className="hero-stats__defence">{hero.stats.defence}</div>
+        <div className="hero-stats__defence-surplus">+{equipmentSurplus.defence}</div>
+        <div className="hero-stats__vitality">{hero.stats.vitality}</div>
+        <div className="hero-stats__vitality-surplus">+{equipmentSurplus.vitality}</div>
+        <div className="hero-stats__initiative">{hero.stats.initiative}</div>
+        <div className="hero-stats__initiative-surplus">-{equipmentSurplus.initiative}</div>
+        <div className="hero-stats__equipment">
+          <div className={weaponStyle}>
+            <div className="hero-stats__equipment--stats">
+              <div className="hero-stats__equipment--stats-tier">{stars[weapon.tier]}</div>
+              <div className="hero-stats__equipment--stats-level">lv. {weapon.level}</div>
+            </div>
+          </div>
+          <div className={armorStyle}>
+            <div className="hero-stats__equipment--stats">
+              <div className="hero-stats__equipment--stats-tier">{stars[armor.tier]}</div>
+              <div className="hero-stats__equipment--stats-level">lv. {armor.level}</div>
+            </div>
+          </div>
+          <div className={shieldStyle}>
+            <div className="hero-stats__equipment--stats">
+              <div className="hero-stats__equipment--stats-level">{shield ? `lv. ${shield.level}` : null}</div>
+            </div>
+          </div>
+          <div className={accessoryStyle}>
+            <div className="hero-stats__equipment--stats">
+              <div className="hero-stats__equipment--stats-level">{accessory ? `lv. ${accessory.level}` : null}</div>
+            </div>
           </div>
         </div>
-        <div className={armorStyle}>
-          <div className="hero-stats__equipment--stats">
-            <div className="hero-stats__equipment--stats-tier">{stars[armor.tier]}</div>
-            <div className="hero-stats__equipment--stats-level">lv. {armor.level}</div>
+        <div className="hero-stats__items">
+          <div className="hero-stats__items--header">Инвентарь</div>
+          <div className="hero-stats__items--list">
+            <li>
+              {hero.items
+                .filter((i) => i.amount > 0)
+                .map((i) => {
+                  return (
+                    <ul key={i.id}>
+                      {i.name} - {i.amount}
+                    </ul>
+                  );
+                })}
+            </li>
           </div>
         </div>
-        <div className={shieldStyle}>
-          <div className="hero-stats__equipment--stats">
-            <div className="hero-stats__equipment--stats-level">{shield ? `lv. ${shield.level}` : null}</div>
-          </div>
-        </div>
-        <div className={accessoryStyle}>
-          <div className="hero-stats__equipment--stats">
-            <div className="hero-stats__equipment--stats-level">{accessory ? `lv. ${accessory.level}` : null}</div>
-          </div>
-        </div>
-      </div>
-      <div className="hero-stats__items">
-        <div className="hero-stats__items--header">Инвентарь</div>
-        <div className="hero-stats__items--list">
-          <li>
-            {hero.items
-              .filter((i) => i.amount > 0)
-              .map((i) => {
+        <div className="hero-stats__perks">
+          <div className="hero-stats__perks--header">Перки</div>
+          <div className="hero-stats__perks--list">
+            <li>
+              {hero.perks.map((perk) => {
                 return (
-                  <ul key={i.id}>
-                    {i.name} - {i.amount}
+                  <ul key={perk.id}>
+                    <span className="hero-stats__perks--name">{perk.name}</span> - {perk.description}
                   </ul>
                 );
               })}
-          </li>
+            </li>
+          </div>
         </div>
-      </div>
-      <div className="hero-stats__perks">
-        <div className="hero-stats__perks--header">Перки</div>
-        <div className="hero-stats__perks--list">
-          <li>
-            {hero.perks.map((perk) => {
-              return (
-                <ul key={perk.id}>
-                  <span className="hero-stats__perks--name">{perk.name}</span> - {perk.description}
-                </ul>
-              );
-            })}
-          </li>
+        <div className="hero-stats__skills">
+          <div className="hero-stats__skills--header">Умения</div>
+          <div className="hero-stats__skills--list">
+            <li>
+              {hero.skills.map((skill) => {
+                return (
+                  <ul
+                    key={skill.name}
+                    className={`${skill.level > hero.level.lvl ? "hero-stats__skills--disabled" : ""}`}
+                  >
+                    <span className="hero-stats__skills--name">
+                      {skill.name} ({skill.level} ур)
+                    </span>{" "}
+                    - {skill.description}
+                  </ul>
+                );
+              })}
+            </li>
+          </div>
         </div>
-      </div>
-      <div className="hero-stats__skills">
-        <div className="hero-stats__skills--header">Умения</div>
-        <div className="hero-stats__skills--list">
-          <li>
-            {hero.skills.map((skill) => {
-              return (
-                <ul
-                  key={skill.name}
-                  className={`${skill.level > hero.level.lvl ? "hero-stats__skills--disabled" : ""}`}
-                >
-                  <span className="hero-stats__skills--name">
-                    {skill.name} ({skill.level} ур)
-                  </span>{" "}
-                  - {skill.description}
-                </ul>
-              );
-            })}
-          </li>
-        </div>
-      </div>
 
-      <canvas className="hero-stats__health-bar" width={124} height={21} ref={healthRef}></canvas>
-      <canvas className="hero-stats__experience-bar" width={124} height={21} ref={expRef}></canvas>
+        <canvas className="hero-stats__health-bar" width={124} height={21} ref={healthRef}></canvas>
+        <canvas className="hero-stats__experience-bar" width={124} height={21} ref={expRef}></canvas>
+      </div>
     </div>
   );
 };

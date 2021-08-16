@@ -58,7 +58,7 @@ const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, reward, embark
       <button id="hero_assigned_btn" className="hero-item__btn--assign" style={assignBtnStyle}>
         Назначить
       </button>
-      <div className={`hero-item__portrait--${HeroType[hero.type]}`}></div>
+      <div className={`hero-item__portrait--${HeroType[hero.type].toLowerCase()}`}></div>
       <div className="hero-item__type-level">
         {display(hero.type)} <br></br> {hero.level.lvl} ур. - {hero.level.definition}
       </div>

@@ -3,31 +3,38 @@
 .game-world__building {
   &-TAVERN {
     position: absolute;
-    top: 180px;
-    left: 530px;
-    width: 86px;
-    height: 83px;
-    background-image: url(../../../../img/map/Tavern.png);
-    background-size: cover;
+    // top: 180px;
+    // left: 530px;
+    // width: 86px;
+    // height: 83px;
+    top: 167px;
+    left: 856px;
+    width: 160px;
+    height: 124px;
     cursor: pointer;
 
     &:hover {
-      transform: scale(1.05);
+      background-image: url(../../../../img/map/tavern-frame.png);
+      background-size: cover;
     }
   }
 
   &-GUILD {
     position: absolute;
-    top: 10px;
-    left: 478px;
-    width: 174px;
-    height: 159px;
-    background-image: url(../../../../img/map/Guild.png);
-    background-size: cover;
+    // top: 10px;
+    // left: 478px;
+    // width: 174px;
+    // height: 159px;
+    top: 0px;
+    left: 465px;
+    // width: 190px;
+    width: 258px;
+    height: 175px;
     cursor: pointer;
 
     &:hover {
-      transform: scale(1.05);
+      background-image: url(../../../../img/map/guild-frame.png);
+      background-size: cover;
     }
   }
 
@@ -37,7 +44,7 @@
     left: 545px;
     width: 114px;
     height: 89px;
-    background-image: url(../../../../img/map/Healer.png);
+    background-image: url(../../../../img/map/healer.png);
     background-size: cover;
     cursor: pointer;
 
@@ -52,7 +59,7 @@
     left: 261px;
     width: 170px;
     height: 110px;
-    background-image: url(../../../../img/map/Treasury.png);
+    background-image: url(../../../../img/map/treasury.png);
     background-size: cover;
     cursor: pointer;
 
@@ -67,7 +74,7 @@
     left: 671px;
     width: 164px;
     height: 89px;
-    background-image: url(../../../../img/map/Training_ground.png);
+    background-image: url(../../../../img/map/training_ground.png);
     background-size: cover;
     cursor: pointer;
 
@@ -82,7 +89,7 @@
     left: 766px;
     width: 45px;
     height: 102px;
-    background-image: url(../../../../img/map/Alchemist.png);
+    background-image: url(../../../../img/map/alchemist.png);
     background-size: cover;
     cursor: pointer;
 
@@ -97,7 +104,7 @@
     left: 45px;
     width: 198px;
     height: 190px;
-    background-image: url(../../../../img/map/Temple.png);
+    background-image: url(../../../../img/map/temple.png);
     background-size: cover;
     cursor: pointer;
 
@@ -112,7 +119,7 @@
     left: 304px;
     width: 83px;
     height: 76px;
-    background-image: url(../../../../img/map/Blacksmith.png);
+    background-image: url(../../../../img/map/blacksmith.png);
     background-size: cover;
     cursor: pointer;
 
@@ -127,7 +134,7 @@
     left: 904px;
     width: 83px;
     height: 76px;
-    background-image: url(../../../../img/map/Stables.png);
+    background-image: url(../../../../img/map/stables.png);
     background-size: cover;
     cursor: pointer;
 
@@ -138,11 +145,13 @@
 
   &-STORAGE {
     position: absolute;
-    top: 85px;
-    left: 918px;
+    // top: 85px;
+    // left: 918px;
+    top: 180px;
+    left: 530px;
     width: 83px;
     height: 76px;
-    background-image: url(../../../../img/map/Storage.png);
+    background-image: url(../../../../img/map/storage.png);
     background-size: cover;
     cursor: pointer;
 
@@ -157,7 +166,7 @@
     left: 215px;
     width: 170px;
     height: 110px;
-    background-image: url(../../../../img/map/Market.png);
+    background-image: url(../../../../img/map/market.png);
     background-size: cover;
     cursor: pointer;
 

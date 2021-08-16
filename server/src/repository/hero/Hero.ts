@@ -124,10 +124,14 @@ type HeroHP = {
 export const getHeroesHP = async (questId: number) => {
   return query<HeroHP[]>(
     "getHeroesHP",
-    `select h.id, h.health, (h.vitality * $2) as total
+    `select h.id, h.health, ((h.vitality + sum(et.vitality)) * $2) as total
      from public.hero h
      left join public.hero_activity a on a.hero_id = h.id
-     where a.activity_id = $1 and a.activity_type = '${HeroActivityType[HeroActivityType.QUEST].toLowerCase()}'`,
+     left join public.hero_equipment he on he.hero_id = h.id
+     left join public.equipment e on e.id = he.equipment_id
+     left join public.equipment_tier et on et.tier = he.tier and et.equipment_id = he.equipment_id
+     where a.activity_id = $1 and a.activity_type = ${HeroActivityType.QUEST}
+     group by h.id, h.health, h.vitality`,
     [questId, HEALTH_PER_VITALITY],
     mapHeroHP
   );
