@@ -4,9 +4,10 @@ import "./quest-map.scss";
 
 type QuestMapProps = {
   quest: Quest;
+  checkpointActivated: (checkpoint: QuestCheckpoint) => void;
 };
 
-const QuestMap = ({ quest }: QuestMapProps) => {
+const QuestMap = ({ quest, checkpointActivated }: QuestMapProps) => {
   const sorted = quest.progress!.checkpoints.sort((a, b) => a.occuredTime - b.occuredTime);
   let currentCheckpoint = sorted[sorted.length - 1];
   sorted.forEach((c) => {
@@ -19,7 +20,7 @@ const QuestMap = ({ quest }: QuestMapProps) => {
     if (checkpoint.id !== currentCheckpoint.id) {
       return;
     }
-    console.log("ACTIVE", checkpoint);
+    checkpointActivated(checkpoint);
   };
 
   const markerRenders = sorted.map((c) => {

@@ -205,6 +205,11 @@ export const Gif = function () {
     gif.disposalMethod = (bitField & 0b11100) >> 2;
     gif.transparencyGiven = bitField & 0b1 ? true : false; // ignoring bit two that is marked as  userInput???
     gif.delayTime = st.data[st.pos++] + (st.data[st.pos++] << 8);
+
+    /** Some gifs read without delay, lets set some default */
+    if (gif.delayTime === 0) {
+      gif.delayTime = 3;
+    }
     gif.transparencyIndex = st.data[st.pos++];
     st.pos++;
   }

@@ -5,7 +5,7 @@ export enum CheckpointType {
   BATTLE,
 }
 
-export enum BattleStepActionType {
+export enum BattleActionType {
   HERO_ATTACK,
   ENEMY_ATTACK,
   USE_POTION,
@@ -21,10 +21,10 @@ export class CheckpointEnemy {
   ) {}
 }
 
-export class BattleStep {
+export class BattleRound {
   constructor(
     public heroId: number,
-    public action: BattleStepActionType,
+    public action: BattleActionType,
     public enemyId?: number,
     public itemId?: number,
     public damage?: number
@@ -42,7 +42,7 @@ export default class QuestCheckpoint {
     public tribute: number,
     public passed: boolean,
     /** key of this Map is second on which action occures */
-    public steps?: Map<number, BattleStep[]>,
+    public rounds?: Map<number, BattleRound[]>,
     public enemies?: CheckpointEnemy[]
   ) {}
 }
@@ -55,20 +55,20 @@ export const convert = (response: CheckpointResponse): QuestCheckpoint => {
     response.duration,
     response.tribute,
     response.passed,
-    mapSteps(response.stringifiedSteps),
+    mapRounds(response.stringifiedRounds),
     response.enemies
   );
 };
 
 /** duplicate code in server */
-const mapSteps = (steps?: string) => {
-  if (!steps) {
+const mapRounds = (rounds?: string) => {
+  if (!rounds) {
     return undefined;
   }
-  const result: Map<number, BattleStep[]> = new Map();
-  steps.split(",\n").forEach((s) => {
-    const secStep = s.split("::");
-    result.set(+secStep[0], JSON.parse(secStep[1]));
+  const result: Map<number, BattleRound[]> = new Map();
+  rounds.split(",\n").forEach((s) => {
+    const roundToTime = s.split("::");
+    result.set(+roundToTime[0], JSON.parse(roundToTime[1]));
   });
 
   return result;

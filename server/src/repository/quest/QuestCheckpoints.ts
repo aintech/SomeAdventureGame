@@ -1,4 +1,4 @@
-import getBattleSteps, { BattleStep, BattleStepActionType } from "../../battle/BattleProcessor";
+import getBattleRounds, { BattleRound, BattleActionType } from "../../battle/BattleProcessor";
 import query, { single } from "../Db";
 import { getHeroesHP, HeroWithItems, HeroWithSkills, setHeroHealth } from "../hero/Hero";
 import { adjustItemsById } from "../Item";
@@ -18,8 +18,8 @@ export type QuestCheckpoint = {
   duration: number;
   passed: boolean;
   tribute: number;
-  steps?: Map<number, BattleStep[]>;
-  stringifiedSteps?: string /** steps as Map are not sending properly through http, send them as string */;
+  rounds?: Map<number, BattleRound[]>;
+  stringifiedRounds?: string /** rounds as Map are not sending properly through http, send them as string */;
   enemies?: Monster[];
 };
 
@@ -49,7 +49,7 @@ export const generateCheckpoints = async (quest: Quest, heroes: HeroWithSkills[]
 
     let tribute: number;
     let duration: number;
-    let steps: Map<number, BattleStep[]> | undefined;
+    let rounds: Map<number, BattleRound[]> | undefined;
     let enemies: Monster[] | undefined;
     switch (type) {
       case CheckpointType.TREASURE:
@@ -58,10 +58,10 @@ export const generateCheckpoints = async (quest: Quest, heroes: HeroWithSkills[]
         break;
       case CheckpointType.BATTLE:
         const monsters = await getMonsterParty(quest.level);
-        steps = getBattleSteps(monsters, heroes);
+        rounds = getBattleRounds(monsters, heroes);
         tribute = quest.level * Math.floor(Math.random() * 5 + 5);
         enemies = [...monsters];
-        duration = Math.max(...Array.from(steps.keys()));
+        duration = Math.max(...Array.from(rounds.keys()));
         break;
       default:
         throw new Error(`Unknown checkpoint type ${CheckpointType[type]}`);
@@ -73,7 +73,7 @@ export const generateCheckpoints = async (quest: Quest, heroes: HeroWithSkills[]
       type,
       occuredAt,
       duration,
-      steps,
+      rounds,
       enemies,
       tribute,
       passed: false,
@@ -92,7 +92,7 @@ export const persistQuestCheckpoints = async (progressId: number, checkpoints: Q
           '${CheckpointType[checkpoint.type].toLowerCase()}', 
           ${checkpoint.occuredAt}, 
           ${checkpoint.duration},
-          ${checkpoint.steps ? `'${stringifySteps(checkpoint.steps)}'` : null},
+          ${checkpoint.rounds ? `'${stringifyRounds(checkpoint.rounds)}'` : null},
           ${checkpoint.enemies ? `'${JSON.stringify(checkpoint.enemies)}'` : null},
           ${checkpoint.tribute},
           ${checkpoint.passed}`
@@ -102,7 +102,7 @@ export const persistQuestCheckpoints = async (progressId: number, checkpoints: Q
   await query<void>(
     "persistQuestCheckpoints",
     `insert into public.quest_checkpoint 
-     (quest_progress_id, type, occured_at, duration, steps, enemies, tribute, passed)
+     (quest_progress_id, type, occured_at, duration, rounds, enemies, tribute, passed)
      select * from (${checkpointsData}) as vals`
   );
 
@@ -180,7 +180,7 @@ export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress) 
   if (checkpoint.type === CheckpointType.BATTLE) {
     const adjustments: Promise<any>[] = [];
 
-    const steps = checkpoint.steps!;
+    const rounds = checkpoint.rounds!;
     const heroesHP = await getHeroesHP(checkpoint.questId);
     const healthValues = new Map<number, number>();
     const totalHPs = new Map<number, number>();
@@ -191,22 +191,22 @@ export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress) 
       totalHPs.set(h.id, h.total);
     });
 
-    const maxSec = Math.max(...Array.from(steps.keys()));
+    const maxSec = Math.max(...Array.from(rounds.keys()));
 
     for (let sec = 0; sec <= maxSec; sec++) {
-      const process = steps.get(sec);
+      const process = rounds.get(sec);
 
       if (!process) {
         continue;
       }
 
-      for (const step of process) {
-        if (step.action === BattleStepActionType.ENEMY_ATTACK) {
-          healthValues.set(step.heroId, healthValues.get(step.heroId)! - +step.damage!);
+      for (const round of process) {
+        if (round.action === BattleActionType.ENEMY_ATTACK) {
+          healthValues.set(round.heroId, healthValues.get(round.heroId)! - +round.damage!);
         }
-        if (step.action === BattleStepActionType.USE_POTION) {
-          usedItems.set(step.itemId!, (usedItems.get(step.itemId!) ?? 0) - 1);
-          healthValues.set(step.heroId, totalHPs.get(step.heroId)!);
+        if (round.action === BattleActionType.USE_POTION) {
+          usedItems.set(round.itemId!, (usedItems.get(round.itemId!) ?? 0) - 1);
+          healthValues.set(round.heroId, totalHPs.get(round.heroId)!);
         }
       }
     }
@@ -244,7 +244,7 @@ type CheckpointWithProgressRow = {
   type: string;
   occured_at: string;
   duration: string;
-  steps: string | null;
+  rounds: string | null;
   enemies: string | null;
   passed: boolean;
   tribute: string;
@@ -259,8 +259,8 @@ const mapQuestCheckpointWithProgress = (row: CheckpointWithProgressRow): QuestCh
     type: mapCheckpointType(row.type),
     occuredAt: +row.occured_at,
     duration: +row.duration,
-    steps: mapSteps(row.steps),
-    stringifiedSteps: row.steps ?? undefined,
+    rounds: mapRounds(row.rounds),
+    stringifiedRounds: row.rounds ?? undefined,
     enemies: mapEnemies(row.enemies),
     passed: row.passed,
     tribute: +row.tribute,
@@ -282,14 +282,14 @@ const mapCheckpointType = (type: string) => {
 };
 
 /** duplicate code in client */
-const mapSteps = (steps: string | null) => {
-  if (!steps) {
+const mapRounds = (rounds: string | null) => {
+  if (!rounds) {
     return undefined;
   }
-  const result: Map<number, BattleStep[]> = new Map();
-  steps.split(",\n").forEach((s) => {
-    const secStep = s.split("::");
-    result.set(+secStep[0], JSON.parse(secStep[1]));
+  const result: Map<number, BattleRound[]> = new Map();
+  rounds.split(",\n").forEach((s) => {
+    const roundToTime = s.split("::");
+    result.set(+roundToTime[0], JSON.parse(roundToTime[1]));
   });
   return result;
 };
@@ -301,9 +301,9 @@ const mapEnemies = (enemies: string | null) => {
   return JSON.parse(enemies) as Monster[];
 };
 
-const stringifySteps = (steps: Map<number, BattleStep[]>) => {
+const stringifyRounds = (rounds: Map<number, BattleRound[]>) => {
   let result = "";
-  steps.forEach((v, k) => {
+  rounds.forEach((v, k) => {
     result += `${k}::${JSON.stringify(v)},\n`;
   });
   return result.slice(0, -2); /** removing last ,\n */

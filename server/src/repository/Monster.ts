@@ -22,7 +22,7 @@ export const getMonsterParty = async (level: number) => {
     monsters = await fetchMonsters();
   }
 
-  const partyCount = Math.random() > 0.5 ? 2 : 3; // Math.floor(Math.random() * 3) + 1;
+  const partyCount = 4; // Math.random() > 0.5 ? 2 : 3; // Math.floor(Math.random() * 3) + 1;
   //Пока в базе есть только монстры 1 уровня
   const monstersByLevel = [...monsters]; //_monsters.filter((m) => m.level === level);
   const suitable: Monster[] = [];

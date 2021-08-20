@@ -22,15 +22,15 @@ type Actor = {
   items?: HeroItem[] /** actual for hero */;
 };
 
-export enum BattleStepActionType {
+export enum BattleActionType {
   HERO_ATTACK,
   ENEMY_ATTACK,
   USE_POTION,
 }
 
-export type BattleStep = {
+export type BattleRound = {
   heroId: number;
-  action: BattleStepActionType;
+  action: BattleActionType;
   enemyId?: number;
   itemId?: number;
   damage?: number;
@@ -51,43 +51,43 @@ const mapActor = (actor: HeroWithSkills | Monster, type: ActorType): Actor => {
   };
 };
 
-const getBattleSteps = (origMonsters: Monster[], origHeroes: HeroWithSkills[]) => {
+const getBattleRounds = (origMonsters: Monster[], origHeroes: HeroWithSkills[]) => {
   const monsters = (copy(origMonsters) as Monster[]).map((a) => mapActor(a, ActorType.MONSTER));
   const heroes = (copy(origHeroes) as HeroWithSkills[]).map((a) => mapActor(a, ActorType.HERO));
 
-  const battleSteps = new Map<number, BattleStep[]>();
+  const battleRounds = new Map<number, BattleRound[]>();
   for (let sec = 1; ; sec++) {
-    battleSteps.set(sec, []);
+    battleRounds.set(sec, []);
 
     for (const hero of heroes) {
-      defineStep(sec, hero, monsters, battleSteps);
+      defineRound(sec, hero, monsters, battleRounds);
       if (partyDefeated(monsters)) {
-        return removeEmptySteps(battleSteps);
+        return removeEmptyRounds(battleRounds);
       }
     }
 
     for (const monster of monsters) {
-      defineStep(sec, monster, heroes, battleSteps);
+      defineRound(sec, monster, heroes, battleRounds);
       if (partyDefeated(heroes)) {
-        return removeEmptySteps(battleSteps);
+        return removeEmptyRounds(battleRounds);
       }
     }
 
     if (partyDefeated(monsters) || partyDefeated(heroes)) {
-      return removeEmptySteps(battleSteps);
+      return removeEmptyRounds(battleRounds);
     }
   }
 };
 
-const defineStep = (sec: number, actor: Actor, opponents: Actor[], battleSteps: Map<number, BattleStep[]>) => {
+const defineRound = (sec: number, actor: Actor, opponents: Actor[], battleRounds: Map<number, BattleRound[]>) => {
   if (sec % actor.initiative === 0) {
     let usePotion;
 
     if (actor.type === ActorType.HERO) {
       if (lowHealth(actor)) {
-        const step = potionStep(actor);
-        if (step) {
-          battleSteps.get(sec)!.push(step);
+        const round = potionRound(actor);
+        if (round) {
+          battleRounds.get(sec)!.push(round);
           actor.health = actor.vitality! * HEALTH_PER_VITALITY;
           usePotion = true;
         }
@@ -95,28 +95,28 @@ const defineStep = (sec: number, actor: Actor, opponents: Actor[], battleSteps: 
     }
 
     if (!usePotion) {
-      battleSteps.get(sec)!.push(attackStep(actor, opponents));
+      battleRounds.get(sec)!.push(attackRound(actor, opponents));
     }
   }
 };
 
-const attackStep = (actor: Actor, opponents: Actor[]) => {
+const attackRound = (actor: Actor, opponents: Actor[]) => {
   const aliveOpponents = opponents.filter((o) => +o.health > 0);
   const opponent = anyOf(aliveOpponents);
   const damage = Math.max(+actor.power - +opponent.defence, 0);
   opponent.health -= damage;
 
-  const result: BattleStep = {
+  const result: BattleRound = {
     heroId: actor.type === ActorType.HERO ? actor.id : opponent.id,
     enemyId: actor.type === ActorType.MONSTER ? actor.actorId : opponent.actorId,
-    action: actor.type === ActorType.HERO ? BattleStepActionType.HERO_ATTACK : BattleStepActionType.ENEMY_ATTACK,
+    action: actor.type === ActorType.HERO ? BattleActionType.HERO_ATTACK : BattleActionType.ENEMY_ATTACK,
     damage,
   };
 
   return result;
 };
 
-const potionStep = (actor: Actor): BattleStep | null => {
+const potionRound = (actor: Actor): BattleRound | null => {
   const items = actor.items!;
   if (items.length > 0) {
     let potions = items.filter((i) => i.subtype == ItemSubtype.HEALTH_POTION && i.amount > 0);
@@ -127,7 +127,7 @@ const potionStep = (actor: Actor): BattleStep | null => {
       const potion = potions[0];
       return {
         heroId: actor.id,
-        action: BattleStepActionType.USE_POTION,
+        action: BattleActionType.USE_POTION,
         itemId: potion.id,
       };
     }
@@ -141,9 +141,9 @@ const lowHealth = (actor: Actor) => {
   return actor.health < actor.vitality! * HEALTH_PER_VITALITY * 0.3;
 };
 
-const removeEmptySteps = (steps: Map<number, BattleStep[]>) => {
-  const result = new Map<number, BattleStep[]>();
-  steps.forEach((v, k) => {
+const removeEmptyRounds = (rounds: Map<number, BattleRound[]>) => {
+  const result = new Map<number, BattleRound[]>();
+  rounds.forEach((v, k) => {
     if (v.length > 0) {
       result.set(k, v);
     }
@@ -155,4 +155,4 @@ const partyDefeated = (party: Actor[]) => {
   return !party.some((char) => char.health > 0);
 };
 
-export default getBattleSteps;
+export default getBattleRounds;

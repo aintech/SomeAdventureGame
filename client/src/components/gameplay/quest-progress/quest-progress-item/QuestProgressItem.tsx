@@ -14,8 +14,8 @@ import horseImgSrc from "../../../../img/quest-progress/horse.gif";
 import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
 import QuestCheckpoint, {
-  BattleStep,
-  BattleStepActionType,
+  BattleRound,
+  BattleActionType,
   CheckpointEnemy,
   CheckpointType,
 } from "../../../../models/QuestCheckpoint";
@@ -151,7 +151,7 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
       this.secondsTimer = setInterval(this.countSeconds, 1000);
     }
     if (!this.updateTimer) {
-      this.updateTimer = setInterval(this.update, 1000 / 20);
+      this.updateTimer = setInterval(this.update, 1000 / 40);
     }
   }
 
@@ -245,7 +245,7 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
           const heroActors = this.props.heroes.map((h) => convertToActor(h));
           const enemyActors = checkpoint.enemies!.map((e) => convertToActor(e));
           actors = [...heroActors, ...enemyActors];
-          checkpoint.steps!.forEach((value, key) => {
+          checkpoint.rounds!.forEach((value, key) => {
             if (key <= secOffset && value) {
               for (const action of value) {
                 this.actorReactAction(action, actors);
@@ -264,52 +264,52 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     const checkpoint = this.state.activeCheckpoint!;
     if (checkpoint.type === CheckpointType.BATTLE) {
       const secOffset = this.state.seconds - checkpoint.occuredTime;
-      const steps = checkpoint.steps!.get(secOffset);
-      if (!steps) {
+      const rounds = checkpoint.rounds!.get(secOffset);
+      if (!rounds) {
         return;
       }
 
-      const mergedDamage = new Map<BattleStepActionType, number>();
-      for (const step of steps!) {
-        switch (step.action) {
-          case BattleStepActionType.USE_POTION:
+      const mergedDamage = new Map<BattleActionType, number>();
+      for (const round of rounds!) {
+        switch (round.action) {
+          case BattleActionType.USE_POTION:
             this.sendMessage("potion", "lightskyblue");
             break;
-          case BattleStepActionType.HERO_ATTACK:
-          case BattleStepActionType.ENEMY_ATTACK:
-            mergedDamage.set(step.action!, (mergedDamage.get(step.action!) ?? 0) + step.damage!);
+          case BattleActionType.HERO_ATTACK:
+          case BattleActionType.ENEMY_ATTACK:
+            mergedDamage.set(round.action!, (mergedDamage.get(round.action!) ?? 0) + round.damage!);
             break;
           default:
-            throw new Error(`Unknown action type ${BattleStepActionType[step.action]}`);
+            throw new Error(`Unknown action type ${BattleActionType[round.action]}`);
         }
-        this.actorReactAction(step, this.state.actors);
+        this.actorReactAction(round, this.state.actors);
       }
       mergedDamage.forEach(this.createAttackMessage.bind(this));
     }
   }
 
-  actorReactAction(action: BattleStep, actors: ActorItemType[]) {
+  actorReactAction(round: BattleRound, actors: ActorItemType[]) {
     let hero: ActorItemType, enemy: ActorItemType;
-    switch (action.action) {
-      case BattleStepActionType.HERO_ATTACK:
-        enemy = actors.find((a) => !a.isHero && a.actorId === action.enemyId)!;
-        enemy.currentHealth -= action.damage!;
+    switch (round.action) {
+      case BattleActionType.HERO_ATTACK:
+        enemy = actors.find((a) => !a.isHero && a.actorId === round.enemyId)!;
+        enemy.currentHealth -= round.damage!;
         break;
-      case BattleStepActionType.ENEMY_ATTACK:
-        hero = actors.find((a) => a.isHero && a.actorId === action.heroId)!;
-        hero.currentHealth -= action.damage!;
+      case BattleActionType.ENEMY_ATTACK:
+        hero = actors.find((a) => a.isHero && a.actorId === round.heroId)!;
+        hero.currentHealth -= round.damage!;
         break;
-      case BattleStepActionType.USE_POTION:
-        hero = actors.find((a) => a.isHero && a.actorId === action.heroId)!;
+      case BattleActionType.USE_POTION:
+        hero = actors.find((a) => a.isHero && a.actorId === round.heroId)!;
         hero.currentHealth = hero.totalHealth;
         break;
       default:
-        throw new Error(`Unknown action type ${BattleStepActionType[action.action]}`);
+        throw new Error(`Unknown action type ${BattleActionType[round.action]}`);
     }
   }
 
-  createAttackMessage(value: number, key: BattleStepActionType) {
-    const direction = key === BattleStepActionType.HERO_ATTACK ? Direction.RIGHT : Direction.LEFT;
+  createAttackMessage(value: number, key: BattleActionType) {
+    const direction = key === BattleActionType.HERO_ATTACK ? Direction.RIGHT : Direction.LEFT;
     this.sendMessage(`-${value} hp`, "red", direction);
   }
 

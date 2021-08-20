@@ -1,7 +1,7 @@
 import { AuthProps } from "../contexts/AuthContext";
 import GameStats from "../models/GameStats";
 import Quest from "../models/Quest";
-import { BattleStep, CheckpointEnemy, CheckpointType } from "../models/QuestCheckpoint";
+import { BattleRound, CheckpointEnemy, CheckpointType } from "../models/QuestCheckpoint";
 import { HeroResponse } from "./HeroesService";
 import sendHttp from "./SendHttp";
 
@@ -21,8 +21,8 @@ export interface CheckpointResponse {
   duration: number;
   tribute: number;
   passed: boolean;
-  steps?: Map<number, BattleStep[]>;
-  stringifiedSteps?: string;
+  rounds?: Map<number, BattleRound[]>;
+  stringifiedRounds?: string;
   enemies?: CheckpointEnemy[];
 }
 
