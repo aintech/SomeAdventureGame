@@ -1,7 +1,8 @@
+import { generateCheckpoints } from "../../generators/CheckpointGenerator";
 import query, { defaultMapper, single } from "../Db";
 import { HeroWithItems, HeroWithSkills } from "../hero/Hero";
 import { Quest } from "../quest/Quest";
-import { generateCheckpoints, persistQuestCheckpoints, QuestCheckpoint } from "../quest/QuestCheckpoints";
+import { persistQuestCheckpoints, QuestCheckpoint } from "../quest/QuestCheckpoints";
 
 type QuestProgress = {
   id: number;

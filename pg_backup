@@ -5,7 +5,7 @@
 -- Dumped from database version 10.17 (Ubuntu 10.17-1.pgdg18.04+1)
 -- Dumped by pg_dump version 13.3 (Ubuntu 13.3-1.pgdg18.04+1)
 
--- Started on 2021-08-16 15:40:43 MSK
+-- Started on 2021-08-23 20:11:32 MSK
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -336,7 +336,7 @@ CREATE TABLE public.quest_checkpoint (
     type character varying NOT NULL,
     occured_at bigint NOT NULL,
     duration bigint NOT NULL,
-    steps character varying,
+    rounds character varying,
     enemies character varying,
     passed boolean NOT NULL,
     tribute bigint DEFAULT 0 NOT NULL
@@ -712,11 +712,11 @@ COPY public.equipment_tier (equipment_id, tier, power, defence, vitality, initia
 --
 
 COPY public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type) FROM stdin;
-626	1	Белозер	6	0	130	0	190	13	2	f	2021-08-16 12:49:40.957561	1	0
-627	1	Всевол	10	0	130	0	230	13	2	f	2021-08-16 12:49:39.957561	1	3
-628	1	Потер	9	0	100	0	190	10	2	f	2021-08-16 12:49:38.957561	1	4
-629	1	Ровер	9	0	110	0	200	11	2	f	2021-08-16 12:49:37.957561	1	2
-630	1	Карион	10	0	110	0	210	11	2	f	2021-08-16 12:49:36.957561	1	4
+644	1	Серпок	7	0	140	0	210	14	2	f	2021-08-23 14:10:08.41731	1	2
+645	1	Мира	8	0	140	0	220	14	2	f	2021-08-23 14:10:05.41731	1	3
+646	1	Мосток	5	0	120	0	170	12	2	f	2021-08-23 14:10:06.41731	1	1
+647	1	Клайн	8	0	130	0	210	13	2	f	2021-08-23 14:10:09.41731	1	3
+648	1	Белозер	9	0	120	0	210	12	2	f	2021-08-23 14:10:07.41731	1	4
 601	1	Карион	7	0	120	0	10	12	2	t	2021-08-07 10:23:47.924464	1	4
 603	1	Мосток	7	0	110	0	28	11	2	t	2021-08-07 10:23:48.924464	1	2
 606	1	Карион	8	0	120	0	8	12	2	t	2021-08-07 10:23:50.924464	1	3
@@ -731,10 +731,10 @@ COPY public.hero (id, user_id, name, power, defence, health, experience, gold, v
 --
 
 COPY public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) FROM stdin;
-603	\N	2021-08-16 14:32:25.004303+03	\N	0	Отдыхает
-606	\N	2021-08-16 14:32:25.004303+03	\N	0	Отдыхает
-601	3	2021-08-16 14:32:34.485406+03	\N	1	Выполняет задание Бить и пить
-604	3	2021-08-16 14:32:34.487217+03	\N	1	Выполняет задание Бить и пить
+606	\N	2021-08-23 19:17:37.744869+03	\N	0	Отдыхает
+604	\N	2021-08-23 19:17:37.744869+03	\N	0	Отдыхает
+601	3	2021-08-23 19:17:49.241229+03	\N	1	Выполняет задание Бить и пить
+603	3	2021-08-23 19:17:49.243254+03	\N	1	Выполняет задание Бить и пить
 \.
 
 
@@ -745,16 +745,6 @@ COPY public.hero_activity (hero_id, activity_id, started_at, duration, activity_
 --
 
 COPY public.hero_equipment (hero_id, equipment_id, tier) FROM stdin;
-626	3	0
-627	3	0
-628	3	0
-629	3	0
-630	3	0
-626	1	0
-627	1	0
-628	1	0
-629	1	0
-630	1	0
 601	3	0
 601	4	1
 603	9	3
@@ -763,6 +753,16 @@ COPY public.hero_equipment (hero_id, equipment_id, tier) FROM stdin;
 606	3	3
 606	7	2
 604	3	1
+644	3	0
+645	3	0
+646	3	0
+647	3	0
+648	3	0
+644	1	0
+645	1	0
+646	2	0
+647	1	0
+648	1	0
 \.
 
 
@@ -773,18 +773,18 @@ COPY public.hero_equipment (hero_id, equipment_id, tier) FROM stdin;
 --
 
 COPY public.hero_item (hero_id, item_id, amount) FROM stdin;
-626	1	3
-627	1	3
-628	1	3
-629	1	3
 603	1	3
-630	1	3
-626	2	3
-627	3	3
-628	2	3
-629	2	3
-630	2	3
 603	2	1
+644	1	3
+645	1	3
+646	1	3
+647	1	3
+648	1	3
+644	2	3
+645	3	3
+646	3	3
+647	3	3
+648	2	3
 \.
 
 
@@ -803,16 +803,12 @@ COPY public.hero_perk (hero_id, perk_id) FROM stdin;
 603	10
 603	9
 604	3
-626	9
-626	8
-626	2
-627	5
-628	6
-628	5
-629	1
-629	6
-630	1
-630	7
+644	11
+645	9
+646	8
+646	6
+647	11
+648	9
 \.
 
 
@@ -866,9 +862,11 @@ COPY public.level_exp (level, experience, cost, duration, definition) FROM stdin
 --
 
 COPY public.monster (id, level, name, power, health, initiative, defence) FROM stdin;
-1	1	goblin	10	60	6	5
-2	1	fairy	4	40	4	2
-3	1	skeleton	6	80	8	4
+2	1	slime	4	40	4	2
+1	1	plant	10	60	6	3
+3	1	crab	6	80	8	6
+4	1	spider	5	100	4	2
+5	1	zombie	7	50	8	0
 \.
 
 
@@ -922,12 +920,8 @@ COPY public.quest (id, level, title, description, duration, fame, tribute, exper
 -- Data for Name: quest_checkpoint; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
-COPY public.quest_checkpoint (id, quest_progress_id, type, occured_at, duration, steps, enemies, passed, tribute) FROM stdin;
-3905	764	battle	5	14	2::[{"heroId":601,"enemyId":2,"action":0,"damage":13},{"heroId":604,"enemyId":1,"action":0,"damage":15}],\n4::[{"heroId":601,"enemyId":0,"action":0,"damage":11},{"heroId":604,"enemyId":2,"action":0,"damage":15},{"heroId":601,"enemyId":1,"action":1,"damage":1},{"heroId":604,"enemyId":2,"action":1,"damage":0}],\n6::[{"heroId":601,"enemyId":0,"action":0,"damage":11},{"heroId":604,"enemyId":1,"action":0,"damage":15}],\n8::[{"heroId":601,"enemyId":2,"action":0,"damage":13},{"heroId":604,"enemyId":0,"action":0,"damage":13},{"heroId":604,"enemyId":0,"action":1,"damage":2},{"heroId":604,"enemyId":1,"action":1,"damage":0},{"heroId":601,"enemyId":2,"action":1,"damage":1}],\n10::[{"heroId":601,"enemyId":0,"action":0,"damage":11},{"heroId":604,"enemyId":0,"action":0,"damage":13}],\n12::[{"heroId":601,"enemyId":1,"action":0,"damage":13},{"heroId":604,"enemyId":0,"action":0,"damage":13},{"heroId":604,"enemyId":1,"action":1,"damage":0},{"heroId":601,"enemyId":2,"action":1,"damage":1}],\n14::[{"heroId":601,"enemyId":0,"action":0,"damage":11}]	[{"id":3,"level":1,"name":"skeleton","power":6,"health":80,"initiative":8,"defence":4,"actorId":0},{"id":2,"level":1,"name":"fairy","power":4,"health":40,"initiative":4,"defence":2,"actorId":1},{"id":2,"level":1,"name":"fairy","power":4,"health":40,"initiative":4,"defence":2,"actorId":2}]	t	6
-3906	764	treasure	29	10	\N	\N	t	29
-3904	764	treasure	77	10	\N	\N	f	23
-3902	764	battle	97	14	2::[{"heroId":601,"enemyId":1,"action":0,"damage":11},{"heroId":604,"enemyId":1,"action":0,"damage":13}],\n4::[{"heroId":601,"enemyId":0,"action":0,"damage":11},{"heroId":604,"enemyId":0,"action":0,"damage":13}],\n6::[{"heroId":601,"enemyId":1,"action":0,"damage":11},{"heroId":604,"enemyId":0,"action":0,"damage":13}],\n8::[{"heroId":601,"enemyId":0,"action":0,"damage":11},{"heroId":604,"enemyId":0,"action":0,"damage":13},{"heroId":604,"enemyId":0,"action":1,"damage":2},{"heroId":601,"enemyId":1,"action":1,"damage":3}],\n10::[{"heroId":601,"enemyId":0,"action":0,"damage":11},{"heroId":604,"enemyId":1,"action":0,"damage":13}],\n12::[{"heroId":601,"enemyId":1,"action":0,"damage":11},{"heroId":604,"enemyId":0,"action":0,"damage":13}],\n14::[{"heroId":601,"enemyId":1,"action":0,"damage":11},{"heroId":604,"enemyId":1,"action":0,"damage":13}]	[{"id":3,"level":1,"name":"skeleton","power":6,"health":80,"initiative":8,"defence":4,"actorId":0},{"id":3,"level":1,"name":"skeleton","power":6,"health":80,"initiative":8,"defence":4,"actorId":1}]	f	5
-3903	764	battle	49	18	2::[{"heroId":601,"enemyId":0,"action":0,"damage":13},{"heroId":604,"enemyId":2,"action":0,"damage":12}],\n4::[{"heroId":601,"enemyId":0,"action":0,"damage":13},{"heroId":604,"enemyId":1,"action":0,"damage":13},{"heroId":604,"enemyId":0,"action":1,"damage":0}],\n6::[{"heroId":601,"enemyId":0,"action":0,"damage":13},{"heroId":604,"enemyId":2,"action":0,"damage":12},{"heroId":604,"enemyId":2,"action":1,"damage":6}],\n8::[{"heroId":601,"enemyId":1,"action":0,"damage":11},{"heroId":604,"enemyId":2,"action":0,"damage":12},{"heroId":604,"enemyId":0,"action":1,"damage":0},{"heroId":601,"enemyId":1,"action":1,"damage":3}],\n10::[{"heroId":601,"enemyId":0,"action":0,"damage":13},{"heroId":604,"enemyId":1,"action":0,"damage":13}],\n12::[{"heroId":601,"enemyId":2,"action":0,"damage":10},{"heroId":604,"enemyId":1,"action":0,"damage":13},{"heroId":601,"enemyId":0,"action":1,"damage":1},{"heroId":604,"enemyId":2,"action":1,"damage":6}],\n14::[{"heroId":601,"enemyId":1,"action":0,"damage":11},{"heroId":604,"enemyId":2,"action":0,"damage":12}],\n16::[{"heroId":601,"enemyId":1,"action":0,"damage":11},{"heroId":604,"enemyId":1,"action":0,"damage":13},{"heroId":604,"enemyId":0,"action":1,"damage":0},{"heroId":601,"enemyId":1,"action":1,"damage":3}],\n18::[{"heroId":601,"enemyId":2,"action":0,"damage":10}]	[{"id":2,"level":1,"name":"fairy","power":4,"health":40,"initiative":4,"defence":2,"actorId":0},{"id":3,"level":1,"name":"skeleton","power":6,"health":80,"initiative":8,"defence":4,"actorId":1},{"id":1,"level":1,"name":"goblin","power":10,"health":60,"initiative":6,"defence":5,"actorId":2}]	f	5
+COPY public.quest_checkpoint (id, quest_progress_id, type, occured_at, duration, rounds, enemies, passed, tribute) FROM stdin;
+3918	768	battle	5	4	2::[{"heroId":601,"enemyId":0,"action":0,"damage":15},{"heroId":603,"enemyId":0,"action":0,"damage":15}],\n4::[{"heroId":601,"enemyId":0,"action":0,"damage":15},{"heroId":603,"enemyId":0,"action":0,"damage":15}]	[{"id":5,"level":1,"name":"zombie","power":7,"health":50,"initiative":8,"defence":0,"actorId":0}]	f	5
 \.
 
 
@@ -938,7 +932,7 @@ COPY public.quest_checkpoint (id, quest_progress_id, type, occured_at, duration,
 --
 
 COPY public.quest_progress (id, user_id, quest_id, embarked_time, completed, duration) FROM stdin;
-764	1	3	2021-08-16 14:32:44.472932+03	f	146
+768	1	3	2021-08-23 19:17:59.227123+03	f	84
 \.
 
 
@@ -1041,7 +1035,7 @@ SELECT pg_catalog.setval('public.equipment_id_seq', 9, true);
 -- Name: hero_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
-SELECT pg_catalog.setval('public.hero_id_seq', 630, true);
+SELECT pg_catalog.setval('public.hero_id_seq', 648, true);
 
 
 --
@@ -1059,7 +1053,7 @@ SELECT pg_catalog.setval('public.item_id_seq', 3, true);
 -- Name: monster_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
-SELECT pg_catalog.setval('public.monster_id_seq', 3, true);
+SELECT pg_catalog.setval('public.monster_id_seq', 5, true);
 
 
 --
@@ -1077,7 +1071,7 @@ SELECT pg_catalog.setval('public.perk_id_seq', 11, true);
 -- Name: quest_checkpoints_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
-SELECT pg_catalog.setval('public.quest_checkpoints_id_seq', 3906, true);
+SELECT pg_catalog.setval('public.quest_checkpoints_id_seq', 3918, true);
 
 
 --
@@ -1095,7 +1089,7 @@ SELECT pg_catalog.setval('public.quest_id_seq', 13, true);
 -- Name: quest_progress_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
-SELECT pg_catalog.setval('public.quest_progress_id_seq', 764, true);
+SELECT pg_catalog.setval('public.quest_progress_id_seq', 768, true);
 
 
 --
@@ -1296,7 +1290,7 @@ ALTER TABLE ONLY public."user"
     ADD CONSTRAINT user_pkey PRIMARY KEY (id);
 
 
--- Completed on 2021-08-16 15:40:43 MSK
+-- Completed on 2021-08-23 20:11:32 MSK
 
 --
 -- PostgreSQL database dump complete

@@ -1,4 +1,4 @@
-import generateHeroes, { GeneratedHero } from "../hero-generator/HeroGenerator";
+import generateHeroes, { GeneratedHero } from "../generators/HeroGenerator";
 import { TAVERN_PATRONS_REPLENISH_PERIOD } from "../utils/Variables";
 import query from "./Db";
 import { getNotHiredHeroes, Hero, HeroType, HeroWithEquipment, HeroWithItems } from "./hero/Hero";

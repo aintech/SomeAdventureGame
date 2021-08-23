@@ -1,9 +1,10 @@
 import { Component, createRef } from "react";
 import Hero from "../../../../models/hero/Hero";
-import QuestCheckpoint from "../../../../models/QuestCheckpoint";
+import QuestCheckpoint, { BattleActionType, BattleRound } from "../../../../models/QuestCheckpoint";
 import Loader from "../../../loader/Loader";
 import CheckpointActor, { convertToActor } from "./checkpoint-actor/CheckpointActor";
 import "./checkpoint-process.scss";
+import Color, { create } from "./process-utils/Color";
 import { drawActors, drawMessages, loadGifs } from "./process-utils/DrawManager";
 
 export enum Direction {
@@ -19,26 +20,30 @@ export enum Effect {
   FLY_AWAY,
 }
 
-export type Color = {
-  r: number; //0...255
-  g: number; //0...255
-  b: number; //0...255
-  a: number; //0...1
-};
-
-const color = (r: number = 0, g: number = 0, b: number = 0, a: number = 1): Color => {
-  return { r, g, b, a };
-};
-
 export class EventMessage {
+  private _id: number;
+  private _fireTime: Date;
+
   constructor(
-    public fireTime: Date,
+    public lifetime: number, // in seconds
+    public position: { x: number; y: number },
     public fontSize: number,
     public message: string,
     public color: Color,
     public direction: Direction,
     public effect: Effect
-  ) {}
+  ) {
+    this._id = new Date().getTime() * Math.random();
+    this._fireTime = new Date();
+  }
+
+  public id() {
+    return this._id;
+  }
+
+  public fireTime() {
+    return this._fireTime;
+  }
 }
 
 type CheckpointProcessProps = {
@@ -93,7 +98,7 @@ class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProc
         loaded: true,
         beginTime: new Date(),
         eventMessages: [
-          new EventMessage(new Date(), 72, "BEGIN", color(255, 255), Direction.CENTER, Effect.FADE_IN_OUT),
+          new EventMessage(2, { x: 0, y: 0 }, 72, "BEGIN", create(255, 255), Direction.CENTER, Effect.FADE_IN_OUT),
         ],
       })
     );
@@ -102,9 +107,9 @@ class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProc
 
     this.setState({
       actors: [
-        ...heroes.map((h) => convertToActor(h)),
-        ...(checkpoint.enemies ? checkpoint.enemies.map((e) => convertToActor(e)) : []),
-      ],
+        ...heroes.map((h, idx) => convertToActor(h, idx, this.canvas!.height)),
+        ...(checkpoint.enemies ? checkpoint.enemies.map((e, idx) => convertToActor(e, idx, this.canvas!.height)) : []),
+      ].sort((a, b) => b.index - a.index),
     });
 
     this.startTimers();
@@ -129,17 +134,24 @@ class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProc
   }
 
   updateSecond() {
-    if (this.state.loaded && this.state.beginTime) {
-      const seconds = Math.floor((new Date().getTime() - this.state.beginTime!.getTime()) * 0.001);
+    let seconds = this.state.seconds;
+    let inBattle = this.state.inBattle;
+    let beginTime = this.state.beginTime;
+
+    if (this.state.loaded && beginTime) {
+      seconds = Math.floor((new Date().getTime() - this.state.beginTime!.getTime()) * 0.001);
       this.setState({ seconds });
     }
     if (!this.state.inBattle && this.state.seconds >= 2) {
-      this.setState({ inBattle: true, beginTime: new Date(), eventMessages: [] });
+      inBattle = true;
+      seconds = 0;
+      beginTime = new Date();
+      this.setState({ inBattle, beginTime, seconds, eventMessages: [] });
     }
-    if (this.state.inBattle) {
-      const round = this.props.checkpoint.rounds!.get(this.state.seconds);
+    if (inBattle) {
+      const round = this.props.checkpoint.rounds!.get(seconds);
       if (round) {
-        console.log(round);
+        this.processRound(round);
       }
     }
   }
@@ -148,12 +160,77 @@ class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProc
     if (this.state.loaded && this.canvasCtx) {
       this.draw();
     }
+    this.checkEndedMessages();
   }
 
   draw() {
     this.canvasCtx!.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
     drawActors(this.state.actors, this.state.gifs, this.canvasCtx!);
     drawMessages(this.state.eventMessages, this.canvasCtx!);
+  }
+
+  processRound(round: BattleRound[]) {
+    let events: { isHeroAttack: boolean; victimId: number; position: { x: number; y: number }; amount: number }[] = [];
+
+    round.forEach((r) => {
+      switch (r.action) {
+        case BattleActionType.HERO_ATTACK:
+        case BattleActionType.ENEMY_ATTACK:
+          const isHeroAttack = r.action === BattleActionType.HERO_ATTACK;
+          const victim = this.state.actors.find(
+            (a) => a.isHero !== isHeroAttack && a.actorId === (isHeroAttack ? r.enemyId : r.heroId)
+          )!;
+          victim.currentHealth -= r.damage!;
+          const existsIdx = events.findIndex((e) => e.isHeroAttack === isHeroAttack && e.victimId === victim.actorId);
+          if (existsIdx === -1) {
+            events.push({ isHeroAttack, victimId: victim.actorId, position: victim.position, amount: r.damage! });
+          } else {
+            const existsMsg = events[existsIdx];
+            const updatedMsg = {
+              isHeroAttack,
+              victimId: victim.actorId,
+              position: victim.position,
+              amount: r.damage! + existsMsg.amount,
+            };
+            events = [...events.slice(0, existsIdx), updatedMsg, ...events.slice(existsIdx + 1)];
+          }
+          break;
+        default:
+          throw new Error(`Unknown battle action type ${BattleActionType[r.action]}`);
+      }
+    });
+
+    const messages = events.map(
+      (e) =>
+        new EventMessage(
+          2,
+          e.position,
+          32,
+          `-${e.amount} HP`,
+          create(255),
+          e.isHeroAttack ? Direction.RIGHT : Direction.LEFT,
+          Effect.FLY_AWAY
+        )
+    );
+
+    this.setState((state) => {
+      return { eventMessages: [...state.eventMessages, ...messages] };
+    });
+  }
+
+  checkEndedMessages() {
+    const endedMessages = this.state.eventMessages.filter(
+      (m) => m.fireTime().getTime() + m.lifetime * 1000 < new Date().getTime()
+    );
+
+    if (endedMessages.length > 0) {
+      const filteredMessages = this.state.eventMessages;
+      for (let i = 0; i < endedMessages.length; i++) {
+        const idx = filteredMessages.findIndex((m) => m.id() === endedMessages[i].id());
+        filteredMessages.splice(idx, 1);
+      }
+      this.setState({ eventMessages: filteredMessages });
+    }
   }
 
   render() {

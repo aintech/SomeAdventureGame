@@ -51,7 +51,7 @@ const mapActor = (actor: HeroWithSkills | Monster, type: ActorType): Actor => {
   };
 };
 
-const getBattleRounds = (origMonsters: Monster[], origHeroes: HeroWithSkills[]) => {
+const generateBattleRounds = (origMonsters: Monster[], origHeroes: HeroWithSkills[]) => {
   const monsters = (copy(origMonsters) as Monster[]).map((a) => mapActor(a, ActorType.MONSTER));
   const heroes = (copy(origHeroes) as HeroWithSkills[]).map((a) => mapActor(a, ActorType.HERO));
 
@@ -155,4 +155,4 @@ const partyDefeated = (party: Actor[]) => {
   return !party.some((char) => char.health > 0);
 };
 
-export default getBattleRounds;
+export default generateBattleRounds;

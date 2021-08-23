@@ -10,11 +10,18 @@ export const getGifs = async (src: string[]) => {
   return gifs;
 };
 
+//FIXME: заменить gif-reader на
+// https://stackoverflow.com/a/48323003
+// https://github.com/rfrench/gify
+// https://www.npmjs.com/package/jdataview
 const loadGif = (src: string): Promise<{ src: string; gif: any }> => {
   const gif = Gif();
   gif.load(src);
   return new Promise<any>((resolve, _) => {
     gif.onload = (event: any) => {
+      if (src.includes("hero")) {
+        console.log(`called onload ${src}`);
+      }
       resolve({ src, gif: event.path[0] });
     };
   });

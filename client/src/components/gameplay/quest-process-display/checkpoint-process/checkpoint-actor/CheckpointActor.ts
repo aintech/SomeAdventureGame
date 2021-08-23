@@ -11,6 +11,9 @@ type CheckpointActor = {
   type: string;
   currentHealth: number;
   totalHealth: number;
+
+  index: number;
+  position: { x: number; y: number };
 };
 
 // type CheckpointActorProps = {
@@ -49,28 +52,46 @@ type CheckpointActor = {
 //   );
 // };
 
-export const convertToActor = (actor: Hero | CheckpointEnemy): CheckpointActor => {
-  if (actor.isHero) {
-    const hero = actor as Hero;
-    return {
-      actorId: hero.id,
-      isHero: true,
-      name: hero.name,
-      type: display(hero.type),
-      currentHealth: hero.health,
-      totalHealth: (hero.stats.vitality + getEquipmentStats(hero.equipment).vitality) * HEALTH_PER_VITALITY,
-    };
-  } else {
-    const enemy = actor as CheckpointEnemy;
-    return {
-      actorId: enemy.actorId,
-      isHero: false,
-      name: enemy.name,
-      type: enemy.name,
-      currentHealth: enemy.health,
-      totalHealth: enemy.health,
-    };
-  }
+export const convertToActor = (actor: Hero | CheckpointEnemy, index: number, canvasH: number): CheckpointActor => {
+  return {
+    isHero: actor.isHero,
+    actorId: actor.isHero ? (actor as Hero).id : (actor as CheckpointEnemy).actorId,
+    name: actor.name,
+    type: actor.isHero ? display((actor as Hero).type) : actor.name,
+    currentHealth: actor.health,
+    totalHealth: actor.isHero
+      ? ((actor as Hero).stats.vitality + getEquipmentStats((actor as Hero).equipment).vitality) * HEALTH_PER_VITALITY
+      : actor.health,
+    index,
+    position: {
+      x: (actor.isHero ? 30 : 600) + 50 * index * (actor.isHero ? 1 : -1),
+      y: canvasH - (actor.isHero ? 135 : 120) - 15 * index,
+    },
+  };
+
+  // if (actor.isHero) {
+  //   const hero = actor as Hero;
+  //   return {
+  //     actorId: hero.id,
+  //     isHero: true,
+  //     name: hero.name,
+  //     type: display(hero.type),
+  //     currentHealth: hero.health,
+  //     totalHealth: (hero.stats.vitality + getEquipmentStats(hero.equipment).vitality) * HEALTH_PER_VITALITY,
+  //     index,
+  //   };
+  // } else {
+  //   const enemy = actor as CheckpointEnemy;
+  //   return {
+  //     actorId: enemy.actorId,
+  //     isHero: false,
+  //     name: enemy.name,
+  //     type: enemy.name,
+  //     currentHealth: enemy.health,
+  //     totalHealth: enemy.health,
+  //     index,
+  //   };
+  // }
 };
 
 export default CheckpointActor;
