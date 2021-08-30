@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, MouseEvent } from "react";
 import { useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
@@ -11,6 +11,7 @@ import QuestCheckpoint from "../../../models/QuestCheckpoint";
 import Loader from "../../loader/Loader";
 import HeroItem from "../village-building-display/guild-display/heroes/hero-item/HeroItem";
 import CheckpointProcess from "./checkpoint-process/CheckpointProcess";
+import QuestComplete from "./quest-complete/QuestComplete";
 import QuestMap from "./quest-map/QuestMap";
 import "./quest-process-display.scss";
 
@@ -57,6 +58,10 @@ const QuestProcessDisplay = ({
     }
   };
 
+  const completeCheckpoint = (e: MouseEvent) => {
+    setActiveCheckpoint(undefined);
+  };
+
   return (
     <div className="quest-process-display" id="quest-process-display" onClick={clickHandler}>
       <button className="quest-process-display__btn--close" onClick={closeDisplay}></button>
@@ -68,10 +73,13 @@ const QuestProcessDisplay = ({
             checkpoint={activeCheckpoint}
             heroes={heroes}
             checkpointPassed={passCheckpoint}
+            moveOnwards={completeCheckpoint}
             closeCheckpoint={() => setActiveCheckpoint(undefined)}
           />
-        ) : (
+        ) : quest.progress!.checkpoints.find((c) => !c.passed) ? (
           <QuestMap quest={quest} checkpointActivated={checkpointActivated} />
+        ) : (
+          <QuestComplete quest={quest} heroes={heroes} />
         )}
 
         <div className="quest-process-display__heroes-holder">

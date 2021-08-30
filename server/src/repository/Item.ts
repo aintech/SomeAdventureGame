@@ -53,17 +53,13 @@ export const withItems = async (heroes: HeroWithEquipment[]) => {
 export const adjustItems = (heroId: number, itemId: number, amount: number) => {
   return query<void>(
     "adjustItems",
-    `insert into public.hero_item 
+    `insert into public.hero_item as hi
      (hero_id, item_id, amount)
      values ($1, $2, $3)
      on conflict (hero_id, item_id)
-     do update set amount = $3`,
+     do update set amount = hi.amount + $3`,
     [heroId, itemId, amount]
   );
-};
-
-export const adjustItemsById = (itemId: number, amount: number) => {
-  return query<void>("adjustItems", `update public.hero_item set amount = amount + $2 where id = $1`, [itemId, amount]);
 };
 
 type ItemRow = {

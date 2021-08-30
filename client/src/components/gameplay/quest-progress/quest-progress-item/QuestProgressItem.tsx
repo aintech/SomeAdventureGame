@@ -1,30 +1,31 @@
 import React, { Component, createRef, MouseEvent } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
-import { collectingQuestReward, showConfirmDialog, beginQuestProcess } from "../../../../actions/Actions";
+import { beginQuestProcess, collectingQuestReward, showConfirmDialog } from "../../../../actions/Actions";
 import { onCancelQuest, onCheckpointPassed } from "../../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../../hoc/WithApiService";
 import chestClosedImgSrc from "../../../../img/quest-progress/chest-closed.png";
 import chestOpenImgSrc from "../../../../img/quest-progress/chest-open.png";
+import horseImgSrc from "../../../../img/quest-progress/horse.gif";
 import backgroundImgSrc from "../../../../img/quest-progress/quest-progress_background.png";
 import heroImgSrc from "../../../../img/quest-progress/quest-progress_hero.png";
 import skeletonImgSrc from "../../../../img/quest-progress/skeleton.png";
 import skeletonDeadImgSrc from "../../../../img/quest-progress/skeleton_dead.png";
-import horseImgSrc from "../../../../img/quest-progress/horse.gif";
 import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
 import QuestCheckpoint, {
-  BattleRound,
   BattleActionType,
+  BattleRound,
   CheckpointEnemy,
   CheckpointType,
 } from "../../../../models/QuestCheckpoint";
 import store from "../../../../Store";
+import { Gif } from "../../../../utils/gif-reader";
 import { convertDuration, millisToSecs, toGameplayScale } from "../../../../utils/Utils";
+import { QuestProcess } from "../../quest-process-display/QuestProcessDisplay";
 import ActorItemList from "./actor-item-list/ActorItemList";
 import { ActorItemType, convertToActor } from "./actor-item/ActorItem";
 import "./quest-progress-item.scss";
-import { Gif } from "../../../../utils/gif-reader";
 
 enum Direction {
   LEFT,
@@ -38,6 +39,7 @@ class EventMessage {
 type QuestProgressItemProps = {
   quest: Quest;
   heroes: Hero[];
+  activeQuestProcess?: QuestProcess;
   collectingQuestReward: (quest: Quest) => void;
   beginQuestProcess: (quest: Quest, heroes: Hero[]) => void;
   onCheckpointPassed: (quest: Quest, checkpoint: QuestCheckpoint) => void;
@@ -277,7 +279,7 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
             break;
           case BattleActionType.HERO_ATTACK:
           case BattleActionType.ENEMY_ATTACK:
-            mergedDamage.set(round.action!, (mergedDamage.get(round.action!) ?? 0) + round.damage!);
+            mergedDamage.set(round.action!, (mergedDamage.get(round.action!) ?? 0) + round.hpAdjust!);
             break;
           default:
             throw new Error(`Unknown action type ${BattleActionType[round.action]}`);
@@ -293,11 +295,11 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     switch (round.action) {
       case BattleActionType.HERO_ATTACK:
         enemy = actors.find((a) => !a.isHero && a.actorId === round.enemyId)!;
-        enemy.currentHealth -= round.damage!;
+        enemy.currentHealth -= round.hpAdjust!;
         break;
       case BattleActionType.ENEMY_ATTACK:
         hero = actors.find((a) => a.isHero && a.actorId === round.heroId)!;
-        hero.currentHealth -= round.damage!;
+        hero.currentHealth -= round.hpAdjust!;
         break;
       case BattleActionType.USE_POTION:
         hero = actors.find((a) => a.isHero && a.actorId === round.heroId)!;
@@ -350,14 +352,18 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     /* Draw background */
     const backImg = this.state.images.get("background");
     if (backImg) {
-      this.canvasCtx.drawImage(backImg, this.state.bgOffset, 0, this.canvas.width, this.canvas.height);
-      this.canvasCtx.drawImage(
-        backImg,
-        this.state.bgOffset + this.canvas.width - 1,
-        0,
-        this.canvas.width,
-        this.canvas.height
-      );
+      if (this.state.seconds < 0) {
+        this.canvasCtx.drawImage(backImg, this.state.bgOffset, 0, this.canvas.width, this.canvas.height);
+        this.canvasCtx.drawImage(
+          backImg,
+          this.state.bgOffset + this.canvas.width - 1,
+          0,
+          this.canvas.width,
+          this.canvas.height
+        );
+      } else {
+        this.canvasCtx.drawImage(backImg, 0, 0, this.canvas.width, this.canvas.height);
+      }
     }
 
     /* Draw checkpoints obstacles */
@@ -387,7 +393,7 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
           this.drawChest(diff, passed);
           break;
         case CheckpointType.BATTLE:
-          this.drawEnemy(checkpoint.enemies!, diff, passed);
+          // this.drawEnemy(checkpoint.enemies!, diff, passed);
           break;
         default:
           throw new Error(`unknown checkpoint type in draw call: ${CheckpointType[checkpoint.type]}`);
@@ -496,6 +502,7 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     this.props.beginQuestProcess(this.props.quest, this.props.heroes);
   }
 
+  //TODO: При отмене квеста лут и опыт остаются, но сам квест пропадает с доски квестов (или становится временно недоступным)
   cancelQuest(e: MouseEvent) {
     e.preventDefault();
     this.props.onCancelQuest(this.props.quest);
@@ -516,6 +523,10 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
 
     if (questFinished) {
       description = "DONE";
+    } else if (this.props.activeQuestProcess) {
+      description = "In process";
+    } else if (this.state.seconds >= 0) {
+      description = "Waiting";
     } else if (this.state.activeCheckpoint) {
       switch (this.state.activeCheckpoint.type) {
         case CheckpointType.TREASURE:
@@ -531,10 +542,9 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
       description = convertDuration(remainSeconds);
     }
 
-    //FIXME: убирать диалог если начался чекпоинт пока диалог был активен
     const dismissBtnClass =
       "quest-progress-item__btn--dismiss" +
-      (this.state.activeCheckpoint !== undefined || questFinished ? "__hidden" : "");
+      (this.state.activeCheckpoint !== undefined || this.props.activeQuestProcess || questFinished ? "__hidden" : "");
 
     return (
       <div className="quest-progress-item">
@@ -551,6 +561,8 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
             marginLeft: `${toGameplayScale(35)}px`,
             zIndex: -1,
             marginTop: `-5px`,
+            gridRow: 2,
+            gridColumn: `1 / -1`,
           }}
           ref={this.canvasRef}
         ></canvas>
@@ -562,11 +574,11 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
         ></div>
 
         <button
-          className="quest-progress-item__start-btn"
-          style={{ display: this.state.seconds >= 0 ? "block" : "none" }}
+          className="quest-progress-item__btn--start"
+          style={{ display: this.state.seconds >= 0 && !this.props.activeQuestProcess ? "block" : "none" }}
           onClick={this.beginQuest.bind(this)}
         >
-          В подземелье
+          {quest.progress!.checkpoints.find((c) => !c.passed) ? "Lets Go ->" : "Collect ->"}
         </button>
 
         <button
@@ -574,7 +586,8 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
           onClick={(e) =>
             store.dispatch(
               showConfirmDialog(
-                "Герои вернутся в гильдию а квест на доску, все найденные сокровища будут потеряны",
+                `Герои вернутся в гильдию, найденные сокровища и полученный опыт останутся с ними. 
+                Сам квест будет какое-то время недоступен для выполнения`,
                 this.cancelQuest.bind(this),
                 e
               )
@@ -590,6 +603,10 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
   }
 }
 
+const mapStateToProps = ({ activeQuestProcess }: { activeQuestProcess?: QuestProcess }) => {
+  return { activeQuestProcess };
+};
+
 const mapDispatchToProps = (dispatch: Dispatch, customProps: WithApiServiceProps) => {
   const { apiService, auth } = customProps;
   return bindActionCreators(
@@ -603,4 +620,4 @@ const mapDispatchToProps = (dispatch: Dispatch, customProps: WithApiServiceProps
   );
 };
 
-export default compose(withApiService(), connect(null, mapDispatchToProps))(QuestProgressItem);
+export default compose(withApiService(), connect(mapStateToProps, mapDispatchToProps))(QuestProgressItem);

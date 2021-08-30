@@ -1,49 +1,23 @@
-import { Component, createRef } from "react";
+import { Component, createRef, MouseEvent } from "react";
 import Hero from "../../../../models/hero/Hero";
-import QuestCheckpoint, { BattleActionType, BattleRound } from "../../../../models/QuestCheckpoint";
+import QuestCheckpoint, { BattleActionType, BattleRound, CheckpointType } from "../../../../models/QuestCheckpoint";
 import Loader from "../../../loader/Loader";
 import CheckpointActor, { convertToActor } from "./checkpoint-actor/CheckpointActor";
 import "./checkpoint-process.scss";
-import Color, { create } from "./process-utils/Color";
-import { drawActors, drawMessages, loadGifs } from "./process-utils/DrawManager";
+import { create } from "./process-helpers/Color";
+import { drawActors, drawMessages, prepareDrawDatas, drawTreasure, drawCompleted } from "./process-helpers/DrawManager";
+import { Direction, Effect, EventMessage } from "./process-helpers/EventMessage";
 
-export enum Direction {
-  LEFT,
-  RIGHT,
-  CENTER,
-}
+enum ProcessState {
+  LOADING,
 
-export enum Effect {
-  FADE_IN,
-  FADE_OUT,
-  FADE_IN_OUT,
-  FLY_AWAY,
-}
+  PREPARE,
+  BATTLE,
+  BATTLE_LOST,
 
-export class EventMessage {
-  private _id: number;
-  private _fireTime: Date;
+  CHEST_CRACKING,
 
-  constructor(
-    public lifetime: number, // in seconds
-    public position: { x: number; y: number },
-    public fontSize: number,
-    public message: string,
-    public color: Color,
-    public direction: Direction,
-    public effect: Effect
-  ) {
-    this._id = new Date().getTime() * Math.random();
-    this._fireTime = new Date();
-  }
-
-  public id() {
-    return this._id;
-  }
-
-  public fireTime() {
-    return this._fireTime;
-  }
+  CHECKPOINT_COMPLETED,
 }
 
 type CheckpointProcessProps = {
@@ -51,22 +25,20 @@ type CheckpointProcessProps = {
   heroes: Hero[];
   closeCheckpoint: () => void;
   checkpointPassed: () => void;
+  moveOnwards: (e: MouseEvent) => void;
 };
 
 type CheckpointProcessState = {
   seconds: number;
-  gifs: Map<string, any>;
-  images: Map<string, HTMLImageElement>;
   eventMessages: EventMessage[];
   actors: CheckpointActor[];
-  inBattle: boolean;
-  loaded: boolean;
+  processState: ProcessState;
   beginTime?: Date;
 };
 
 class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProcessState> {
-  private secondsTimer?: NodeJS.Timeout;
-  private updateTimer?: NodeJS.Timeout;
+  private roundTimer?: NodeJS.Timeout;
+  private frameTimer?: NodeJS.Timeout;
   private canvasRef: React.RefObject<HTMLCanvasElement>;
   private canvas?: HTMLCanvasElement;
   private canvasCtx?: CanvasRenderingContext2D;
@@ -75,33 +47,19 @@ class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProc
     super(props);
     this.state = {
       seconds: 0,
-      gifs: new Map(),
-      images: new Map(),
       eventMessages: [],
       actors: [],
-      inBattle: false,
-      loaded: false,
+      processState: ProcessState.LOADING,
     };
     this.canvasRef = createRef();
     this.startTimers = this.startTimers.bind(this);
-    this.updateSecond = this.updateSecond.bind(this);
+    this.updateRound = this.updateRound.bind(this);
     this.updateFrame = this.updateFrame.bind(this);
   }
 
   componentDidMount() {
     this.canvas = this.canvasRef.current!;
     this.canvasCtx = this.canvas.getContext("2d")!;
-
-    loadGifs().then((data) =>
-      this.setState({
-        gifs: data,
-        loaded: true,
-        beginTime: new Date(),
-        eventMessages: [
-          new EventMessage(2, { x: 0, y: 0 }, 72, "BEGIN", create(255, 255), Direction.CENTER, Effect.FADE_IN_OUT),
-        ],
-      })
-    );
 
     const { checkpoint, heroes } = this.props;
 
@@ -112,65 +70,121 @@ class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProc
       ].sort((a, b) => b.index - a.index),
     });
 
+    prepareDrawDatas().then((_) =>
+      this.setState({
+        processState: ProcessState.PREPARE,
+        beginTime: new Date(),
+        eventMessages:
+          checkpoint.type === CheckpointType.BATTLE
+            ? [new EventMessage(2, { x: 0, y: 0 }, 72, "BEGIN", create(255, 255), Direction.CENTER, Effect.FADE_IN_OUT)]
+            : [],
+      })
+    );
+
     this.startTimers();
   }
 
   componentWillUnmount() {
-    if (this.secondsTimer) {
-      clearInterval(this.secondsTimer);
+    if (this.roundTimer) {
+      clearInterval(this.roundTimer);
     }
-    if (this.updateTimer) {
-      clearInterval(this.updateTimer);
+    if (this.frameTimer) {
+      clearInterval(this.frameTimer);
     }
   }
 
   startTimers() {
-    if (!this.secondsTimer) {
-      this.secondsTimer = setInterval(this.updateSecond, 1000);
+    if (!this.roundTimer) {
+      this.roundTimer = setInterval(this.updateRound, 1000);
     }
-    if (!this.updateTimer) {
-      this.updateTimer = setInterval(this.updateFrame, 1000 / 40);
+    if (!this.frameTimer) {
+      this.frameTimer = setInterval(this.updateFrame, 1000 / 40);
     }
   }
 
-  updateSecond() {
+  updateRound() {
     let seconds = this.state.seconds;
-    let inBattle = this.state.inBattle;
+    let processState = this.state.processState;
     let beginTime = this.state.beginTime;
 
-    if (this.state.loaded && beginTime) {
-      seconds = Math.floor((new Date().getTime() - this.state.beginTime!.getTime()) * 0.001);
+    if (processState !== ProcessState.LOADING && beginTime) {
+      seconds += 1; //Math.floor((new Date().getTime() - this.state.beginTime!.getTime()) * 0.001);
       this.setState({ seconds });
     }
-    if (!this.state.inBattle && this.state.seconds >= 2) {
-      inBattle = true;
-      seconds = 0;
-      beginTime = new Date();
-      this.setState({ inBattle, beginTime, seconds, eventMessages: [] });
-    }
-    if (inBattle) {
-      const round = this.props.checkpoint.rounds!.get(seconds);
-      if (round) {
-        this.processRound(round);
-      }
+
+    switch (processState) {
+      case ProcessState.LOADING:
+        //do nothing
+        break;
+      case ProcessState.PREPARE:
+        switch (this.props.checkpoint.type) {
+          case CheckpointType.BATTLE:
+            if (seconds >= 2) {
+              processState = ProcessState.BATTLE;
+              seconds = 0;
+              beginTime = new Date();
+
+              this.setState({ processState, beginTime, seconds, eventMessages: [] });
+            }
+            break;
+          case CheckpointType.TREASURE:
+            processState = ProcessState.CHEST_CRACKING;
+            this.setState({ processState });
+            break;
+          default:
+            throw new Error(`${CheckpointType[this.props.checkpoint.type]} is not implemented yet!`);
+        }
+        break;
+      case ProcessState.BATTLE:
+        const round = this.props.checkpoint.rounds!.get(seconds);
+        if (round) {
+          this.processRound(round);
+        }
+        this.checkBattleComplete();
+        break;
+      case ProcessState.BATTLE_LOST:
+      case ProcessState.CHEST_CRACKING:
+      case ProcessState.CHECKPOINT_COMPLETED:
+        //do nothing
+        break;
+      default:
+        throw new Error(`Process ${ProcessState[processState]} is not implemented yet!`);
     }
   }
 
   updateFrame() {
-    if (this.state.loaded && this.canvasCtx) {
+    if (this.state.processState !== ProcessState.LOADING) {
       this.draw();
     }
     this.checkEndedMessages();
   }
 
   draw() {
-    this.canvasCtx!.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
-    drawActors(this.state.actors, this.state.gifs, this.canvasCtx!);
-    drawMessages(this.state.eventMessages, this.canvasCtx!);
+    if (this.canvasCtx) {
+      this.canvasCtx.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
+
+      drawActors(this.state.actors, this.canvasCtx);
+
+      if (this.state.processState === ProcessState.CHEST_CRACKING) {
+        drawTreasure(this.props.checkpoint, this.canvasCtx);
+      }
+
+      drawMessages(this.state.eventMessages, this.canvasCtx);
+
+      if (this.state.processState === ProcessState.CHECKPOINT_COMPLETED) {
+        drawCompleted(this.props.checkpoint, this.canvasCtx);
+      }
+    }
   }
 
   processRound(round: BattleRound[]) {
-    let events: { isHeroAttack: boolean; victimId: number; position: { x: number; y: number }; amount: number }[] = [];
+    const messages: EventMessage[] = [];
+    let events: {
+      isHeroAttack: boolean;
+      victimId: number;
+      position: { x: number; y: number };
+      amount: number;
+    }[] = [];
 
     round.forEach((r) => {
       switch (r.action) {
@@ -180,42 +194,75 @@ class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProc
           const victim = this.state.actors.find(
             (a) => a.isHero !== isHeroAttack && a.actorId === (isHeroAttack ? r.enemyId : r.heroId)
           )!;
-          victim.currentHealth -= r.damage!;
+          victim.currentHealth -= r.hpAdjust!;
           const existsIdx = events.findIndex((e) => e.isHeroAttack === isHeroAttack && e.victimId === victim.actorId);
           if (existsIdx === -1) {
-            events.push({ isHeroAttack, victimId: victim.actorId, position: victim.position, amount: r.damage! });
+            events.push({ isHeroAttack, victimId: victim.actorId, position: victim.position, amount: r.hpAdjust! });
           } else {
             const existsMsg = events[existsIdx];
             const updatedMsg = {
               isHeroAttack,
               victimId: victim.actorId,
               position: victim.position,
-              amount: r.damage! + existsMsg.amount,
+              amount: r.hpAdjust! + existsMsg.amount,
             };
             events = [...events.slice(0, existsIdx), updatedMsg, ...events.slice(existsIdx + 1)];
           }
+          break;
+        case BattleActionType.USE_POTION:
+          const actor = this.state.actors.find((a) => a.isHero && a.actorId === r.heroId)!;
+          actor.currentHealth += r.hpAdjust!;
+          messages.push(
+            new EventMessage(
+              2,
+              actor.position,
+              32,
+              `+${r.hpAdjust} hp`,
+              create(0, 255),
+              Direction.LEFT,
+              Effect.FLY_AWAY
+            )
+          );
           break;
         default:
           throw new Error(`Unknown battle action type ${BattleActionType[r.action]}`);
       }
     });
 
-    const messages = events.map(
-      (e) =>
+    events.map((e) =>
+      messages.push(
         new EventMessage(
           2,
           e.position,
           32,
-          `-${e.amount} HP`,
+          `-${e.amount} hp`,
           create(255),
           e.isHeroAttack ? Direction.RIGHT : Direction.LEFT,
           Effect.FLY_AWAY
         )
+      )
     );
 
     this.setState((state) => {
       return { eventMessages: [...state.eventMessages, ...messages] };
     });
+  }
+
+  checkBattleComplete() {
+    if (this.state.actors.filter((a) => !a.isHero && a.currentHealth > 0).length === 0) {
+      this.setState({ processState: ProcessState.CHECKPOINT_COMPLETED });
+      this.props.checkpointPassed();
+    } else if (this.state.actors.filter((a) => a.isHero && a.currentHealth > 0).length === 0) {
+      this.setState({ processState: ProcessState.BATTLE_LOST });
+    }
+  }
+
+  canvasClickHandler(e: MouseEvent) {
+    const { processState } = this.state;
+    if (processState === ProcessState.CHEST_CRACKING) {
+      this.setState({ processState: ProcessState.CHECKPOINT_COMPLETED });
+      this.props.checkpointPassed();
+    }
   }
 
   checkEndedMessages() {
@@ -235,124 +282,17 @@ class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProc
 
   render() {
     return (
-      <div className="checkpoint-process__container">
-        {!this.state.loaded ? <Loader message="Loading scene" /> : null}
-        <canvas width={750} height={400} ref={this.canvasRef}></canvas>
+      <div className="checkpoint-process">
+        {this.state.processState === ProcessState.LOADING ? <Loader message="Loading assets" /> : null}
+        <canvas width={750} height={400} ref={this.canvasRef} onClick={(e) => this.canvasClickHandler(e)}></canvas>
+        {this.state.processState === ProcessState.CHECKPOINT_COMPLETED ? (
+          <button className="checkpoint-process__btn--onwards" onClick={(e) => this.props.moveOnwards(e)}>
+            Дальше в подземелье
+          </button>
+        ) : null}
       </div>
     );
   }
 }
 
 export default CheckpointProcess;
-
-// const CheckpointProcessOld = ({ checkpoint, heroes, checkpointPassed, closeCheckpoint }: CheckpointProcessProps) => {
-//   // const [images, setImages] = useState<Map<string, HTMLImageElement>>(new Map());
-//   const [seconds, setSeconds] = useState<number>(0);
-//   const [gifs, setGifs] = useState<Map<string, any>>(new Map());
-//   // const [eventMessages, setEventMessages] = useState<EventMessage[]>([]);
-//   const [actors, setActors] = useState<CheckpointActor[]>([]);
-//   const [canvasCtx, setCanvasCtx] = useState<CanvasRenderingContext2D>();
-//   const [inBattle, setInBattle] = useState<boolean>(false);
-//   const [loaded, setLoaded] = useState<boolean>(false);
-//   const [beginTime, setBeginTime] = useState<Date>();
-//   // const [drawCalls, setDrawCalls] = useState(0);
-
-//   const canvas = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
-
-//   const eventMessages: EventMessage[] = [];
-
-//   useEffect(() => {
-//     console.log("gifs");
-//     loadGifs().then((g) => {
-//       setGifs(g);
-//       if (gifs.size > 0) {
-//         setLoaded(true);
-//       }
-//     });
-//   }, [gifs]);
-
-//   useEffect(() => {
-//     console.log("actors");
-//     const acts = heroes.map((h) => convertToActor(h));
-//     if (checkpoint.enemies) {
-//       checkpoint.enemies.forEach((e) => acts.push(convertToActor(e)));
-//     }
-//     setActors(acts);
-//   }, [heroes, checkpoint.enemies]);
-
-//   useEffect(() => {
-//     console.log("canvas");
-//     if (canvas.current.getContext("2d")) {
-//       setCanvasCtx(canvas.current.getContext("2d")!);
-//       canvas.current.getContext("2d")!.clearRect(0, 0, canvas.current.width, canvas.current.height);
-//     }
-//   }, [canvas]);
-
-//   useEffect(() => {
-//     console.log("timers");
-//     let updateTimer: any;
-//     let secTimer: any;
-
-//     if (loaded) {
-//       console.log("timers 2");
-//       updateTimer = setInterval(() => update(), 1000 / 40);
-//       secTimer = setInterval(() => updateSec(), 1000);
-
-//       eventMessages.push({
-//         fireTime: new Date(),
-//         fontSize: 72,
-//         message: "BEGIN",
-//         color: color(255, 255),
-//         direction: Direction.CENTER,
-//         effect: Effect.FADE_IN_OUT,
-//       });
-
-//       setBeginTime(new Date());
-//     }
-
-//     return () => {
-//       clearInterval(updateTimer);
-//       clearInterval(secTimer);
-//     };
-//     // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, [loaded]);
-
-//   if (!checkpoint) {
-//     return null;
-//   }
-
-//   const update = () => {
-//     if (loaded) {
-//       if (canvasCtx) {
-//         canvasCtx.clearRect(0, 0, canvas.current.width, canvas.current.height);
-//         drawActors(actors, gifs, canvasCtx);
-//         drawMessages(eventMessages, canvasCtx);
-//         if (!inBattle) {
-//           if (seconds >= 3) {
-//             setInBattle(true);
-//             //       // setSeconds(0);
-//             eventMessages.length = 0;
-//           }
-//         }
-//       }
-//     }
-//   };
-
-//   const updateSec = () => {
-//     if (loaded && beginTime) {
-//       setSeconds(Math.floor(new Date().getTime() - beginTime.getTime()) * 0.001);
-//       console.log(seconds, Math.floor((new Date().getTime() - beginTime.getTime()) * 0.001));
-//     }
-//   };
-
-//   // <div className="checkpoint-process__heroes"></div>
-//   // <div className="checkpoint-process__loot"></div>
-//   // <div className="checkpoint-process__enemies"></div>
-
-//   return (
-//     <div className="checkpoint-process__container">
-//       {!loaded ? <Loader message="Loading scene" /> : null}
-//       <canvas width={750} height={400} ref={canvas}></canvas>
-//     </div>
-//   );
-// };

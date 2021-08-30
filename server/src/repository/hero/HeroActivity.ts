@@ -100,13 +100,17 @@ const toIdle = async (userId: number, hero: HeroWithPerks, heroActivity: HeroAct
     throw new Error(`Activity not found while switching to idle for hero ${hero.id}`);
   }
 
-  if (!hero.activity.duration) {
-    throw new Error(`Activity without duration while switching to idle for hero ${hero.id}`);
-  }
+  if (hero.activity.type !== HeroActivityType.QUEST) {
+    if (!hero.activity.duration) {
+      throw new Error(`Activity without duration while switching to idle for hero ${hero.id}`);
+    }
 
-  /** additional 1000 ms just in case */
-  if (hero.activity.startedAt.getTime() + hero.activity.duration * 1000 >= new Date().getTime() + 1000) {
-    throw new Error(`Activity not complete yet while switching to idle for hero ${hero.id}`);
+    /** additional 1000 ms just in case */
+    if (hero.activity.startedAt.getTime() + hero.activity.duration * 1000 >= new Date().getTime() + 1000) {
+      throw new Error(`Activity not complete yet while switching to idle for hero ${hero.id}`);
+    }
+  } else {
+    console.log("ADD CHECK THAT QUEST COMPLETED!!!");
   }
 
   let maxHealth = 0;

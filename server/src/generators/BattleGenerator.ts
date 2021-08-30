@@ -5,12 +5,12 @@ import { Monster } from "../repository/Monster";
 import { anyOf, copy } from "../utils/Arrays";
 import { HEALTH_PER_VITALITY } from "../utils/Variables";
 
-enum ActorType {
+export enum ActorType {
   HERO,
   MONSTER,
 }
 
-type Actor = {
+export type Actor = {
   id: number;
   health: number;
   power: number;
@@ -22,21 +22,7 @@ type Actor = {
   items?: HeroItem[] /** actual for hero */;
 };
 
-export enum BattleActionType {
-  HERO_ATTACK,
-  ENEMY_ATTACK,
-  USE_POTION,
-}
-
-export type BattleRound = {
-  heroId: number;
-  action: BattleActionType;
-  enemyId?: number;
-  itemId?: number;
-  damage?: number;
-};
-
-const mapActor = (actor: HeroWithSkills | Monster, type: ActorType): Actor => {
+export const mapActor = (actor: HeroWithSkills | Monster, type: ActorType): Actor => {
   const equipStats = getEquipmentStats(type === ActorType.MONSTER ? [] : (actor as HeroWithSkills).equipment);
   return {
     id: actor.id,
@@ -51,10 +37,21 @@ const mapActor = (actor: HeroWithSkills | Monster, type: ActorType): Actor => {
   };
 };
 
-const generateBattleRounds = (origMonsters: Monster[], origHeroes: HeroWithSkills[]) => {
-  const monsters = (copy(origMonsters) as Monster[]).map((a) => mapActor(a, ActorType.MONSTER));
-  const heroes = (copy(origHeroes) as HeroWithSkills[]).map((a) => mapActor(a, ActorType.HERO));
+export enum BattleActionType {
+  HERO_ATTACK,
+  ENEMY_ATTACK,
+  USE_POTION,
+}
 
+export type BattleRound = {
+  heroId: number;
+  action: BattleActionType;
+  enemyId?: number;
+  itemId?: number;
+  hpAdjust?: number;
+};
+
+const generateBattleRounds = (monsters: Actor[], heroes: Actor[]) => {
   const battleRounds = new Map<number, BattleRound[]>();
   for (let sec = 1; ; sec++) {
     battleRounds.set(sec, []);
@@ -88,7 +85,6 @@ const defineRound = (sec: number, actor: Actor, opponents: Actor[], battleRounds
         const round = potionRound(actor);
         if (round) {
           battleRounds.get(sec)!.push(round);
-          actor.health = actor.vitality! * HEALTH_PER_VITALITY;
           usePotion = true;
         }
       }
@@ -103,14 +99,14 @@ const defineRound = (sec: number, actor: Actor, opponents: Actor[], battleRounds
 const attackRound = (actor: Actor, opponents: Actor[]) => {
   const aliveOpponents = opponents.filter((o) => +o.health > 0);
   const opponent = anyOf(aliveOpponents);
-  const damage = Math.max(+actor.power - +opponent.defence, 0);
-  opponent.health -= damage;
+  const hitted = Math.max(+actor.power - +opponent.defence, 0);
+  opponent.health -= hitted;
 
   const result: BattleRound = {
     heroId: actor.type === ActorType.HERO ? actor.id : opponent.id,
     enemyId: actor.type === ActorType.MONSTER ? actor.actorId : opponent.actorId,
     action: actor.type === ActorType.HERO ? BattleActionType.HERO_ATTACK : BattleActionType.ENEMY_ATTACK,
-    damage,
+    hpAdjust: hitted,
   };
 
   return result;
@@ -125,10 +121,17 @@ const potionRound = (actor: Actor): BattleRound | null => {
     }
     if (potions.length > 0) {
       const potion = potions[0];
+      const totalHealth = actor.vitality! * HEALTH_PER_VITALITY;
+      let healed = potion.subtype === ItemSubtype.HEALTH_POTION ? Math.ceil(totalHealth * 0.5) : totalHealth;
+      if (healed + actor.health > totalHealth) {
+        healed = totalHealth - actor.health;
+      }
+      actor.health += healed;
       return {
         heroId: actor.id,
         action: BattleActionType.USE_POTION,
         itemId: potion.id,
+        hpAdjust: healed,
       };
     }
   }

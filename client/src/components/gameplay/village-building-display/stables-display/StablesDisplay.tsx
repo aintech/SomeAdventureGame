@@ -25,11 +25,11 @@ const StablesDisplay = ({ embarked, closeDisplay }: StablesDisplayProps) => {
         <div className="stables-display__name">{buildingTypeToName(BuildingType.STABLES)}</div>
         <div className="stables-display__stats">
           <div>
-            Квестов в процессе {embarked.length}/{MAX_EMBARKED_QUESTS}
+            Выполняемые квесты {embarked.length}/{MAX_EMBARKED_QUESTS}
           </div>
           <li>
             {embarked.map((q) => (
-              <ul key={q.id}>{q.title}</ul>
+              <ul key={q.id}>- {q.title}</ul>
             ))}
           </li>
         </div>

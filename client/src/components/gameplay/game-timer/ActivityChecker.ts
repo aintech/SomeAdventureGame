@@ -90,6 +90,10 @@ const upgradingEquipment = (hero: Hero) => {
 };
 
 const buyPotions = (hero: Hero, alchemist: Item[]) => {
+  if (alchemist.length === 0) {
+    return false;
+  }
+
   const healingPotion = alchemist.find((i) => i.subtype === ItemSubtype.HEALTH_POTION)!;
   const healingElixir = alchemist.find((i) => i.subtype === ItemSubtype.HEALTH_ELIXIR)!;
   const manaPotion = alchemist.find((i) => i.subtype === ItemSubtype.MANA_POTION)!;

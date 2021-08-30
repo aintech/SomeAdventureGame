@@ -33,7 +33,7 @@ export const buildingTypeToName = (type: BuildingType) => {
     case BuildingType.ALCHEMIST:
       return "Лаборатория алхимика";
     case BuildingType.TEMPLE:
-      return "Храм Света и Тьмы";
+      return "Святилище Первого огня";
     case BuildingType.BLACKSMITH:
       return "Кузница гномов";
     case BuildingType.STORAGE:

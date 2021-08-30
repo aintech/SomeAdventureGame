@@ -1,13 +1,11 @@
 .checkpoint-process {
-  &__container {
-    display: flex;
-    width: 750px;
-    height: 400px;
-    // align-self: center;
-    justify-self: center;
-    background-image: url(../../../../img/quest-process-display/quest-process-dungeon.jpg);
-    background-size: cover;
-  }
+  display: flex;
+  width: 750px;
+  height: 400px;
+  // align-self: center;
+  justify-self: center;
+  background-image: url(../../../../img/quest-process-display/quest-process-dungeon.jpg);
+  background-size: cover;
 
   &__prebegin {
     display: flex;
@@ -15,5 +13,20 @@
     align-self: center;
     justify-self: center;
     font-size: 3rem;
+  }
+
+  &__btn {
+    &--onwards {
+      position: absolute;
+      left: 50%;
+      bottom: 15%;
+      transform: translate(-50%, -50%);
+
+      font-family: inherit;
+      font-size: 24pt;
+      cursor: pointer;
+      border-radius: 6px;
+      width: 30%;
+    }
   }
 }

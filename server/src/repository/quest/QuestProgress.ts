@@ -46,20 +46,17 @@ export const getQuestProgress = (userId: number, questId: number) => {
   );
 };
 
-export const deleteProgress = (userId: number, questId: number) => {
-  return query<void>("deleteProgress", "delete from public.quest_progress where user_id = $1 and quest_id = $2", [
-    userId,
-    questId,
-  ]);
+export const deleteProgress = (progressId: number) => {
+  return query<void>("deleteProgress", "delete from public.quest_progress where id = $1", [progressId]);
 };
 
-export const completeProgress = (userId: number, questId: number) => {
+export const completeProgress = (progressId: number) => {
   return query<void>(
     "completeProgress",
     `update public.quest_progress 
      set completed = true 
-     where user_id = $1 and quest_id = $2`,
-    [userId, questId]
+     where id = $1`,
+    [progressId]
   );
 };
 

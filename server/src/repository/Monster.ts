@@ -9,6 +9,7 @@ export type Monster = {
   health: number;
   initiative: number;
   defence: number;
+  experience: number;
 };
 
 let monsters: Monster[] = [];
@@ -27,6 +28,7 @@ type MonsterRow = {
   health: string;
   initiative: string;
   defence: string;
+  experience: string;
 };
 
 const mapMonster = (row: MonsterRow) => {
@@ -38,5 +40,6 @@ const mapMonster = (row: MonsterRow) => {
     health: +row.health,
     initiative: +row.initiative,
     defence: +row.defence,
+    experience: +row.experience,
   };
 };

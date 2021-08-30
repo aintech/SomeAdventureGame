@@ -22,6 +22,7 @@
     }
 
     &--active {
+      cursor: pointer;
       background-image: url(../../../../img/quest-process-display/checkpoint-marker-active.png);
 
       &:hover {

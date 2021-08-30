@@ -17,6 +17,7 @@ export class CheckpointEnemy {
     public actorId: number,
     public name: string,
     public health: number,
+    public experience: number,
     public isHero: boolean = false
   ) {}
 }
@@ -27,7 +28,7 @@ export class BattleRound {
     public action: BattleActionType,
     public enemyId?: number,
     public itemId?: number,
-    public damage?: number
+    public hpAdjust?: number
   ) {}
 }
 

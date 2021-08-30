@@ -1,7 +1,7 @@
 import { BattleActionType, BattleRound } from "../../generators/BattleGenerator";
 import query, { single } from "../Db";
 import { getHeroesHP, setHeroHealth } from "../hero/Hero";
-import { adjustItemsById } from "../Item";
+import { adjustItems } from "../Item";
 import { Monster } from "../Monster";
 import { getQuestProgress } from "./QuestProgress";
 
@@ -70,7 +70,7 @@ export const getQuestCheckpoint = async (checkpointId: number) => {
   );
 };
 
-export const getQuestCheckpoints = async (progressIds: number[], checkIfPassed = false) => {
+export const getQuestCheckpoints = async (progressIds: number[]) => {
   if (progressIds.length === 0) {
     return [];
   }
@@ -87,10 +87,6 @@ export const getQuestCheckpoints = async (progressIds: number[], checkIfPassed =
     mapQuestCheckpointWithProgress
   );
 
-  if (checkIfPassed) {
-    checkIfCheckpointPassed(checkpoints);
-  }
-
   return checkpoints;
 };
 
@@ -99,24 +95,7 @@ export const getQuestCheckpointsByQuest = async (userId: number, questId: number
   return getQuestCheckpoints([progress.id]);
 };
 
-//TODO: Скорее всего больше не пригодится, т.к. игрок будет сам проходить чекпоинты
-const checkIfCheckpointPassed = async (checkpoints: QuestCheckpointWithProgress[]) => {
-  for (const checkpoint of checkpoints) {
-    if (checkpoint.passed) {
-      continue;
-    }
-
-    const endedIn =
-      new Date(checkpoint.embarkedTime).getTime() + +checkpoint.occuredAt * 1000 + +checkpoint.duration * 1000;
-
-    if (endedIn <= new Date().getTime()) {
-      await checkpointPassed(checkpoint);
-      checkpoint.passed = true;
-    }
-  }
-};
-
-//TODO: Скорее всего больше не пригодится, т.к. игрок будет сам проходить чекпоинты
+//CONTINUE: Добавить героям опыт и лут полученный при прохлждении чекпоинта
 export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress) => {
   if (checkpoint.passed) {
     return;
@@ -128,12 +107,10 @@ export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress) 
     const rounds = checkpoint.rounds!;
     const heroesHP = await getHeroesHP(checkpoint.questId);
     const healthValues = new Map<number, number>();
-    const totalHPs = new Map<number, number>();
-    const usedItems = new Map<number, number>();
+    const usedItems = new Map<{ heroId: number; itemId: number }, number>();
 
     heroesHP.forEach((h) => {
       healthValues.set(h.id, h.health);
-      totalHPs.set(h.id, h.total);
     });
 
     const maxSec = Math.max(...Array.from(rounds.keys()));
@@ -147,18 +124,20 @@ export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress) 
 
       for (const round of process) {
         if (round.action === BattleActionType.ENEMY_ATTACK) {
-          healthValues.set(round.heroId, healthValues.get(round.heroId)! - +round.damage!);
+          healthValues.set(round.heroId, healthValues.get(round.heroId)! - +round.hpAdjust!);
         }
         if (round.action === BattleActionType.USE_POTION) {
-          usedItems.set(round.itemId!, (usedItems.get(round.itemId!) ?? 0) - 1);
-          healthValues.set(round.heroId, totalHPs.get(round.heroId)!);
+          const key = { heroId: round.heroId, itemId: round.itemId! };
+          usedItems.set(key, (usedItems.get(key) ?? 0) - 1);
+          healthValues.set(round.heroId, healthValues.get(round.heroId)! + +round.hpAdjust!);
         }
       }
     }
 
+    healthValues.forEach((v, k) => adjustments.push(setHeroHealth(k, v)));
+    usedItems.forEach((v, k) => adjustments.push(adjustItems(k.heroId, k.itemId, v)));
+
     if (adjustments.length > 0) {
-      healthValues.forEach((v, k) => adjustments.push(setHeroHealth(k, v)));
-      usedItems.forEach((v, k) => adjustments.push(adjustItemsById(k, v)));
       await Promise.all(adjustments);
     }
   } else if (checkpoint.type === CheckpointType.TREASURE) {
@@ -174,13 +153,12 @@ const markAsPassed = (checkpointId: number) => {
   return query<void>("markAsPassed", `update public.quest_checkpoint set passed = true where id = $1`, [checkpointId]);
 };
 
-export const deleteCheckpoints = (userId: number, questId: number) => {
+export const deleteCheckpoints = (progressId: number) => {
   return query<void>(
     "deleteCheckpoint",
     `delete from public.quest_checkpoint 
-     where quest_progress_id = 
-     (select id from public.quest_progress where user_id = $1 and quest_id = $2)`,
-    [userId, questId]
+     where quest_progress_id = $1`,
+    [progressId]
   );
 };
 

@@ -198,8 +198,8 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       };
 
     case ActionType.CHECKPOINT_PASSED:
-      const embQuest = action.payload.quest;
-      const embHeroes = action.payload.heroes;
+      const embQuest = action.payload.quest as QuestResponse;
+      const embHeroes = action.payload.heroes as HeroResponse[];
 
       const qIdx = state.quests.findIndex((q) => q.id === +embQuest.id);
 
@@ -219,6 +219,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         quests: [...state.quests.slice(0, qIdx), convertQuest(embQuest), ...state.quests.slice(qIdx + 1)],
         heroes: uHeroes,
         chosenHero,
+        activeQuestProcess: { quest: convertQuest(embQuest), heroes: embHeroes.map((h) => convertHero(h)) },
       };
 
     case ActionType.COLLECTING_QUEST_REWARD:

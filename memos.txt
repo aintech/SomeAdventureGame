@@ -1,3 +1,118 @@
+--------------------timers, but working realy BAD-----------------------------
+
+const CheckpointProcessOld = ({ checkpoint, heroes, checkpointPassed, closeCheckpoint }: CheckpointProcessProps) => {
+  // const [images, setImages] = useState<Map<string, HTMLImageElement>>(new Map());
+  const [seconds, setSeconds] = useState<number>(0);
+  const [gifs, setGifs] = useState<Map<string, any>>(new Map());
+  // const [eventMessages, setEventMessages] = useState<EventMessage[]>([]);
+  const [actors, setActors] = useState<CheckpointActor[]>([]);
+  const [canvasCtx, setCanvasCtx] = useState<CanvasRenderingContext2D>();
+  const [inBattle, setInBattle] = useState<boolean>(false);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [beginTime, setBeginTime] = useState<Date>();
+  // const [drawCalls, setDrawCalls] = useState(0);
+
+  const canvas = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
+
+  const eventMessages: EventMessage[] = [];
+
+  useEffect(() => {
+    console.log("gifs");
+    loadGifs().then((g) => {
+      setGifs(g);
+      if (gifs.size > 0) {
+        setLoaded(true);
+      }
+    });
+  }, [gifs]);
+
+  useEffect(() => {
+    console.log("actors");
+    const acts = heroes.map((h) => convertToActor(h));
+    if (checkpoint.enemies) {
+      checkpoint.enemies.forEach((e) => acts.push(convertToActor(e)));
+    }
+    setActors(acts);
+  }, [heroes, checkpoint.enemies]);
+
+  useEffect(() => {
+    console.log("canvas");
+    if (canvas.current.getContext("2d")) {
+      setCanvasCtx(canvas.current.getContext("2d")!);
+      canvas.current.getContext("2d")!.clearRect(0, 0, canvas.current.width, canvas.current.height);
+    }
+  }, [canvas]);
+
+  useEffect(() => {
+    console.log("timers");
+    let frameTimer: any;
+    let secTimer: any;
+
+    if (loaded) {
+      console.log("timers 2");
+      frameTimer = setInterval(() => update(), 1000 / 40);
+      secTimer = setInterval(() => updateSec(), 1000);
+
+      eventMessages.push({
+        fireTime: new Date(),
+        fontSize: 72,
+        message: "BEGIN",
+        color: color(255, 255),
+        direction: Direction.CENTER,
+        effect: Effect.FADE_IN_OUT,
+      });
+
+      setBeginTime(new Date());
+    }
+
+    return () => {
+      clearInterval(frameTimer);
+      clearInterval(secTimer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded]);
+
+  if (!checkpoint) {
+    return null;
+  }
+
+  const update = () => {
+    if (loaded) {
+      if (canvasCtx) {
+        canvasCtx.clearRect(0, 0, canvas.current.width, canvas.current.height);
+        drawActors(actors, gifs, canvasCtx);
+        drawMessages(eventMessages, canvasCtx);
+        if (!inBattle) {
+          if (seconds >= 3) {
+            setInBattle(true);
+            //       // setSeconds(0);
+            eventMessages.length = 0;
+          }
+        }
+      }
+    }
+  };
+
+  const updateSec = () => {
+    if (loaded && beginTime) {
+      setSeconds(Math.floor(new Date().getTime() - beginTime.getTime()) * 0.001);
+      console.log(seconds, Math.floor((new Date().getTime() - beginTime.getTime()) * 0.001));
+    }
+  };
+
+  // <div className="checkpoint-process__heroes"></div>
+  // <div className="checkpoint-process__loot"></div>
+  // <div className="checkpoint-process__enemies"></div>
+
+  return (
+    <div className="checkpoint-process__container">
+      {!loaded ? <Loader message="Loading scene" /> : null}
+      <canvas width={750} height={400} ref={canvas}></canvas>
+    </div>
+  );
+};
+
+
 --------------------Raw stats-----------------------------
 
 /** Computes 'initial' hero stats without equipment surpluses */
