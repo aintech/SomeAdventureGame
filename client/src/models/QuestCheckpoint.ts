@@ -1,4 +1,4 @@
-import { CheckpointResponse } from "../services/QuestsService";
+import { CheckpointEnemyResponse, CheckpointResponse } from "../services/QuestsService";
 
 export enum CheckpointType {
   TREASURE,
@@ -11,6 +11,10 @@ export enum BattleActionType {
   USE_POTION,
 }
 
+export class EnemyDrop {
+  constructor(public fraction: number, public gold: number, public dropped?: boolean) {}
+}
+
 export class CheckpointEnemy {
   constructor(
     public id: number,
@@ -18,7 +22,8 @@ export class CheckpointEnemy {
     public name: string,
     public health: number,
     public experience: number,
-    public isHero: boolean = false
+    public drop: EnemyDrop[],
+    public isHero: boolean
   ) {}
 }
 
@@ -57,8 +62,12 @@ export const convert = (response: CheckpointResponse): QuestCheckpoint => {
     response.tribute,
     response.passed,
     mapRounds(response.stringifiedRounds),
-    response.enemies
+    response.enemies ? response.enemies.map((e) => convertEnemy(e)) : undefined
   );
+};
+
+const convertEnemy = (res: CheckpointEnemyResponse): CheckpointEnemy => {
+  return new CheckpointEnemy(res.id, res.actorId, res.name, res.health, res.experience, res.drop, false);
 };
 
 /** duplicate code in server */

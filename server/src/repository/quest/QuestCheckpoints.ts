@@ -95,7 +95,7 @@ export const getQuestCheckpointsByQuest = async (userId: number, questId: number
   return getQuestCheckpoints([progress.id]);
 };
 
-//CONTINUE: Добавить героям опыт и лут полученный при прохлждении чекпоинта
+//CONTINUE: Добавить героям опыт и лут полученный при прохождении чекпоинта
 export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress) => {
   if (checkpoint.passed) {
     return;

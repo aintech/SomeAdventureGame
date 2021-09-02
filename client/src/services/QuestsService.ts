@@ -1,17 +1,28 @@
 import { AuthProps } from "../contexts/AuthContext";
 import GameStats from "../models/GameStats";
 import Quest from "../models/Quest";
-import { BattleRound, CheckpointEnemy, CheckpointType } from "../models/QuestCheckpoint";
+import { BattleRound, CheckpointType } from "../models/QuestCheckpoint";
 import { HeroResponse } from "./HeroesService";
 import sendHttp from "./SendHttp";
 
 const baseUrl = "/api/quests";
 
+export interface EnemyDropResponse {
+  fraction: number;
+  gold: number;
+}
+
 export interface CheckpointEnemyResponse {
   id: number;
   actorId: number;
+  level: number;
   name: string;
   health: number;
+  power: number;
+  defence: number;
+  initiative: number;
+  experience: number;
+  drop: EnemyDropResponse[];
 }
 
 export interface CheckpointResponse {
@@ -23,7 +34,7 @@ export interface CheckpointResponse {
   passed: boolean;
   rounds?: Map<number, BattleRound[]>;
   stringifiedRounds?: string;
-  enemies?: CheckpointEnemy[];
+  enemies?: CheckpointEnemyResponse[];
 }
 
 export interface QuestResponse {

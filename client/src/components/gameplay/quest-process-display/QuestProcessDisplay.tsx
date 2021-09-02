@@ -7,9 +7,10 @@ import { onCheckpointPassed } from "../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService";
 import Hero from "../../../models/hero/Hero";
 import Quest from "../../../models/Quest";
-import QuestCheckpoint from "../../../models/QuestCheckpoint";
+import QuestCheckpoint, { CheckpointType } from "../../../models/QuestCheckpoint";
 import Loader from "../../loader/Loader";
 import HeroItem from "../village-building-display/guild-display/heroes/hero-item/HeroItem";
+import BattleProcess from "./battle-process/BattleProcess";
 import CheckpointProcess from "./checkpoint-process/CheckpointProcess";
 import QuestComplete from "./quest-complete/QuestComplete";
 import QuestMap from "./quest-map/QuestMap";
@@ -36,6 +37,7 @@ const QuestProcessDisplay = ({
   closeDisplay,
 }: QuestProcessDisplayProps) => {
   const [activeCheckpoint, setActiveCheckpoint] = useState<QuestCheckpoint>();
+  const [heroRewards, setHeroRewards] = useState<Map<number, { gold: number; experience: number }>>(new Map());
 
   const heroClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -60,6 +62,7 @@ const QuestProcessDisplay = ({
 
   const completeCheckpoint = (e: MouseEvent) => {
     setActiveCheckpoint(undefined);
+    passCheckpoint();
   };
 
   return (
@@ -69,13 +72,24 @@ const QuestProcessDisplay = ({
         <div className="quest-process-display__name">{quest.title}</div>
 
         {activeCheckpoint ? (
-          <CheckpointProcess
-            checkpoint={activeCheckpoint}
-            heroes={heroes}
-            checkpointPassed={passCheckpoint}
-            moveOnwards={completeCheckpoint}
-            closeCheckpoint={() => setActiveCheckpoint(undefined)}
-          />
+          activeCheckpoint.type === CheckpointType.BATTLE ? (
+            <BattleProcess
+              checkpoint={activeCheckpoint}
+              heroes={heroes}
+              // checkpointPassed={passCheckpoint}
+              moveOnwards={completeCheckpoint}
+              closeCheckpoint={() => setActiveCheckpoint(undefined)}
+              setHeroRewards={setHeroRewards}
+            />
+          ) : (
+            <CheckpointProcess
+              checkpoint={activeCheckpoint}
+              heroes={heroes}
+              checkpointPassed={passCheckpoint}
+              moveOnwards={completeCheckpoint}
+              closeCheckpoint={() => setActiveCheckpoint(undefined)}
+            />
+          )
         ) : quest.progress!.checkpoints.find((c) => !c.passed) ? (
           <QuestMap quest={quest} checkpointActivated={checkpointActivated} />
         ) : (
@@ -89,6 +103,7 @@ const QuestProcessDisplay = ({
               hero={hero}
               enabled={true}
               itemClickHandler={(event) => heroClickHandler(hero, event)}
+              reward={heroRewards.get(hero.id)}
             />
           ))}
         </div>

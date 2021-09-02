@@ -2,11 +2,19 @@ import { Component, createRef, MouseEvent } from "react";
 import Hero from "../../../../models/hero/Hero";
 import QuestCheckpoint, { BattleActionType, BattleRound, CheckpointType } from "../../../../models/QuestCheckpoint";
 import Loader from "../../../loader/Loader";
-import CheckpointActor, { convertToActor } from "./checkpoint-actor/CheckpointActor";
+import CheckpointActor, { convertToActor } from "../process-helpers/CheckpointActor";
 import "./checkpoint-process.scss";
-import { create } from "./process-helpers/Color";
-import { drawActors, drawMessages, prepareDrawDatas, drawTreasure, drawCompleted } from "./process-helpers/DrawManager";
-import { Direction, Effect, EventMessage } from "./process-helpers/EventMessage";
+import { create } from "../process-helpers/Color";
+import {
+  drawActors,
+  drawMessages,
+  drawTreasure,
+  drawCompleted,
+  prepare,
+  clearDynamicCtx,
+} from "../process-helpers/DrawManager";
+import { Direction, Effect, EventMessage } from "../process-helpers/EventMessage";
+import { ImageType } from "../process-helpers/ImageLoader";
 
 enum ProcessState {
   LOADING,
@@ -41,7 +49,8 @@ class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProc
   private frameTimer?: NodeJS.Timeout;
   private canvasRef: React.RefObject<HTMLCanvasElement>;
   private canvas?: HTMLCanvasElement;
-  private canvasCtx?: CanvasRenderingContext2D;
+  private dynamicCanvasRef: React.RefObject<HTMLCanvasElement>;
+  private dynamicCanvas?: HTMLCanvasElement;
 
   constructor(props: CheckpointProcessProps) {
     super(props);
@@ -52,6 +61,7 @@ class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProc
       processState: ProcessState.LOADING,
     };
     this.canvasRef = createRef();
+    this.dynamicCanvasRef = createRef();
     this.startTimers = this.startTimers.bind(this);
     this.updateRound = this.updateRound.bind(this);
     this.updateFrame = this.updateFrame.bind(this);
@@ -59,7 +69,7 @@ class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProc
 
   componentDidMount() {
     this.canvas = this.canvasRef.current!;
-    this.canvasCtx = this.canvas.getContext("2d")!;
+    this.dynamicCanvas = this.dynamicCanvasRef.current!;
 
     const { checkpoint, heroes } = this.props;
 
@@ -70,7 +80,19 @@ class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProc
       ].sort((a, b) => b.index - a.index),
     });
 
-    prepareDrawDatas().then((_) =>
+    prepare(
+      this.canvas.getContext("2d")!,
+      this.dynamicCanvas.getContext("2d")!,
+      [
+        ImageType.ENEMY,
+        ImageType.GRAVESTONE,
+        ImageType.CHEST_CLOSED,
+        ImageType.CHEST_OPEN,
+        ImageType.REWARD_BACK,
+        ImageType.REWARD_GOLD,
+      ],
+      [ImageType.HERO, ImageType.CRAB, ImageType.PLANT, ImageType.SLIME, ImageType.SPIDER, ImageType.ZOMBIE]
+    ).then((_) =>
       this.setState({
         processState: ProcessState.PREPARE,
         beginTime: new Date(),
@@ -160,20 +182,18 @@ class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProc
   }
 
   draw() {
-    if (this.canvasCtx) {
-      this.canvasCtx.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
+    clearDynamicCtx();
 
-      drawActors(this.state.actors, this.canvasCtx);
+    drawActors(this.state.actors);
 
-      if (this.state.processState === ProcessState.CHEST_CRACKING) {
-        drawTreasure(this.props.checkpoint, this.canvasCtx);
-      }
+    if (this.state.processState === ProcessState.CHEST_CRACKING) {
+      drawTreasure(this.props.checkpoint);
+    }
 
-      drawMessages(this.state.eventMessages, this.canvasCtx);
+    drawMessages(this.state.eventMessages);
 
-      if (this.state.processState === ProcessState.CHECKPOINT_COMPLETED) {
-        drawCompleted(this.props.checkpoint, this.canvasCtx);
-      }
+    if (this.state.processState === ProcessState.CHECKPOINT_COMPLETED) {
+      drawCompleted(this.props.checkpoint, []);
     }
   }
 
@@ -285,6 +305,7 @@ class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProc
       <div className="checkpoint-process">
         {this.state.processState === ProcessState.LOADING ? <Loader message="Loading assets" /> : null}
         <canvas width={750} height={400} ref={this.canvasRef} onClick={(e) => this.canvasClickHandler(e)}></canvas>
+        <canvas width={750} height={400} ref={this.dynamicCanvasRef}></canvas>
         {this.state.processState === ProcessState.CHECKPOINT_COMPLETED ? (
           <button className="checkpoint-process__btn--onwards" onClick={(e) => this.props.moveOnwards(e)}>
             Дальше в подземелье

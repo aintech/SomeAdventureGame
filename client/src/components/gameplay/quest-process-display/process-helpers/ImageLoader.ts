@@ -1,17 +1,20 @@
-import { Gif } from "../../../../../utils/gif-reader";
-import CrabGifSrc from "../../../../../img/quest-process-display/actors/crab.gif";
-import HeroGifSrc from "../../../../../img/quest-process-display/actors/hero.gif";
-import PlantGifSrc from "../../../../../img/quest-process-display/actors/plant.gif";
-import SlimeGifSrc from "../../../../../img/quest-process-display/actors/slime.gif";
-import SpiderGifSrc from "../../../../../img/quest-process-display/actors/spider.gif";
-import ZombieGifSrc from "../../../../../img/quest-process-display/actors/zombie.gif";
-import GravestoneImgSrc from "../../../../../img/quest-process-display/gravestone.png";
-import RewardBackImgSrc from "../../../../../img/quest-process-display/reward-back.png";
-import RewardGoldImgSrc from "../../../../../img/quest-process-display/reward-gold.png";
-import ChestClosedImgSrc from "../../../../../img/quest-process-display/chest-closed.png";
-import ChestOpenImgSrc from "../../../../../img/quest-process-display/chest-open.png";
+import { Gif } from "../../../../utils/gif-reader";
+import CrabGifSrc from "../../../../img/quest-process-display/actors/crab.gif";
+import HeroGifSrc from "../../../../img/quest-process-display/actors/hero.gif";
+import PlantGifSrc from "../../../../img/quest-process-display/actors/plant.gif";
+import SlimeGifSrc from "../../../../img/quest-process-display/actors/slime.gif";
+import SpiderGifSrc from "../../../../img/quest-process-display/actors/spider.gif";
+import ZombieGifSrc from "../../../../img/quest-process-display/actors/zombie.gif";
+import GravestoneImgSrc from "../../../../img/quest-process-display/gravestone.png";
+import RewardBackImgSrc from "../../../../img/quest-process-display/reward-back.png";
+import RewardGoldImgSrc from "../../../../img/quest-process-display/reward-gold.png";
+import ChestClosedImgSrc from "../../../../img/quest-process-display/chest-closed.png";
+import ChestOpenImgSrc from "../../../../img/quest-process-display/chest-open.png";
+import EnemyImgSrc from "../../../../img/quest-process-display/actors/enemy.png";
 
 export enum ImageType {
+  ENEMY,
+
   HERO,
 
   CRAB,
@@ -84,6 +87,8 @@ const loadImage = (type: ImageType): Promise<ImageData> => {
 
 export const getUrlByType = (type: ImageType) => {
   switch (type) {
+    case ImageType.ENEMY:
+      return EnemyImgSrc;
     case ImageType.HERO:
       return HeroGifSrc;
     case ImageType.CRAB:

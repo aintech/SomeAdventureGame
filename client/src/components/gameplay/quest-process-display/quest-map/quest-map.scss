@@ -2,11 +2,12 @@
   &__container {
     display: flex;
     width: 750px;
-    height: 350px;
-    // align-self: center;
+    height: 500px;
+    align-self: center;
     justify-self: center;
     background-image: url(../../../../img/quest-process-display/quest-map.png);
     background-size: cover;
+    grid-row: 1 / -1;
     padding-left: 100px;
     gap: 50px;
   }

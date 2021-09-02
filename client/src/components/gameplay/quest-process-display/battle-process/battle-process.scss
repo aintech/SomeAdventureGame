@@ -1,0 +1,67 @@
+.battle-process {
+  display: grid;
+  gap: 15px;
+  width: 650px;
+  height: 500px;
+  background-image: url(../../../../img/quest-process-display/quest-process-dungeon.jpg);
+  background-size: cover;
+  grid-row: 1 / -1;
+  align-self: center;
+
+  &__prebegin {
+    display: grid;
+    grid-template-columns: 2;
+    color: bisque;
+    align-self: center;
+    justify-self: center;
+    font-size: 3rem;
+  }
+
+  &__canvas {
+    grid-column: 1;
+
+    &--dynamic {
+      margin-top: -515px;
+      grid-column: 1;
+    }
+  }
+
+  &__btn {
+    &--onwards {
+      position: absolute;
+      left: 50%;
+      bottom: 10%;
+      transform: translate(-50%, -50%);
+
+      font-family: inherit;
+      font-size: 24pt;
+      cursor: pointer;
+      border-radius: 6px;
+      width: 30%;
+    }
+  }
+
+  &__opponents-holder {
+    grid-row: 1;
+    grid-column: 2;
+    gap: 10px;
+    display: flex;
+    flex-flow: column;
+  }
+
+  &__opponent-portrait {
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &--current {
+      border: 1px solid yellow;
+    }
+
+    &--disabled {
+      opacity: 0.2;
+    }
+  }
+}

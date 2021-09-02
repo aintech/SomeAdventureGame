@@ -1,5 +1,14 @@
 import query from "./Db";
 
+export type Loot = {
+  gold: number;
+};
+
+export type Drop = {
+  fraction: number; //Health fraction on which loot dropped
+  gold: number;
+};
+
 export type Monster = {
   id: number;
   actorId: number;
@@ -10,6 +19,8 @@ export type Monster = {
   initiative: number;
   defence: number;
   experience: number;
+  loot?: Loot;
+  drop: Drop[];
 };
 
 let monsters: Monster[] = [];
@@ -29,6 +40,7 @@ type MonsterRow = {
   initiative: string;
   defence: string;
   experience: string;
+  loot: string;
 };
 
 const mapMonster = (row: MonsterRow) => {
@@ -41,5 +53,6 @@ const mapMonster = (row: MonsterRow) => {
     initiative: +row.initiative,
     defence: +row.defence,
     experience: +row.experience,
+    loot: JSON.parse(row.loot),
   };
 };

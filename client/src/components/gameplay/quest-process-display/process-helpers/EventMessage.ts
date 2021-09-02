@@ -1,6 +1,8 @@
 import Color from "./Color";
 
 export enum Direction {
+  UP,
+  DOWN,
   LEFT,
   RIGHT,
   CENTER,

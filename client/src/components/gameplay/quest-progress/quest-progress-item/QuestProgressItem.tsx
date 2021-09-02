@@ -4,13 +4,9 @@ import { bindActionCreators, compose, Dispatch } from "redux";
 import { beginQuestProcess, collectingQuestReward, showConfirmDialog } from "../../../../actions/Actions";
 import { onCancelQuest, onCheckpointPassed } from "../../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../../hoc/WithApiService";
-import chestClosedImgSrc from "../../../../img/quest-progress/chest-closed.png";
-import chestOpenImgSrc from "../../../../img/quest-progress/chest-open.png";
 import horseImgSrc from "../../../../img/quest-progress/horse.gif";
 import backgroundImgSrc from "../../../../img/quest-progress/quest-progress_background.png";
 import heroImgSrc from "../../../../img/quest-progress/quest-progress_hero.png";
-import skeletonImgSrc from "../../../../img/quest-progress/skeleton.png";
-import skeletonDeadImgSrc from "../../../../img/quest-progress/skeleton_dead.png";
 import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
 import QuestCheckpoint, {
@@ -23,7 +19,6 @@ import store from "../../../../Store";
 import { Gif } from "../../../../utils/gif-reader";
 import { convertDuration, millisToSecs, toGameplayScale } from "../../../../utils/Utils";
 import { QuestProcess } from "../../quest-process-display/QuestProcessDisplay";
-import ActorItemList from "./actor-item-list/ActorItemList";
 import { ActorItemType, convertToActor } from "./actor-item/ActorItem";
 import "./quest-progress-item.scss";
 
@@ -59,7 +54,6 @@ type QuestProgressItemState = {
   actors: ActorItemType[];
 };
 
-//FIXME: Во время взлома ящика пропадают иконки героев
 class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressItemState> {
   private secondsTimer?: NodeJS.Timeout;
   private updateTimer?: NodeJS.Timeout;
@@ -89,13 +83,8 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     this.canvas = this.canvasRef.current!;
     this.canvasCtx = this.canvas.getContext("2d")!;
 
-    this.loadImage("chest_closed", chestClosedImgSrc);
-    this.loadImage("chest_open", chestOpenImgSrc);
     this.loadImage("background", backgroundImgSrc);
     this.loadImage("hero", heroImgSrc);
-    this.loadImage("skeleton", skeletonImgSrc);
-    this.loadImage("skeleton_dead", skeletonDeadImgSrc);
-
     this.loadGif("horse", horseImgSrc);
 
     const { quest, heroes } = this.props;
@@ -110,7 +99,7 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
 
     this.calcWillBeSpendOnCheckpoints(seconds);
 
-    this.checkIfCheckpointOccured(seconds);
+    // this.checkIfCheckpointOccured(seconds);
 
     this.startTimers();
   }
@@ -176,9 +165,6 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     });
   }
 
-  /**
-   * TODO: Активный чекпоинт рисовать отдельным экранчиком с анимацией боя или вскрытия сундука
-   */
   setAsActiveCheckpoint(checkpoint: QuestCheckpoint, actors: ActorItemType[]) {
     this.setState({
       activeCheckpoint: checkpoint,
@@ -216,9 +202,9 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
   }
 
   countSeconds() {
-    if (!this.state.activeCheckpoint) {
-      this.checkIfCheckpointOccured(this.state.seconds);
-    }
+    // if (!this.state.activeCheckpoint) {
+    //   this.checkIfCheckpointOccured(this.state.seconds);
+    // }
 
     /** Переход на quest-process */
     const secondsPassed = Math.floor(millisToSecs(new Date().getTime() - this.props.quest.progress!.embarkedTime));
@@ -367,38 +353,38 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     }
 
     /* Draw checkpoints obstacles */
-    for (const checkpoint of this.props.quest.progress!.checkpoints) {
-      /** Здесь пока используем  милисекунды для отрисовки позиции более плавно */
-      const passed = checkpoint.occuredTime + checkpoint.duration < this.state.seconds;
+    // for (const checkpoint of this.props.quest.progress!.checkpoints) {
+    //   /** Здесь пока используем  милисекунды для отрисовки позиции более плавно */
+    //   const passed = checkpoint.occuredTime + checkpoint.duration < this.state.seconds;
 
-      let diff = 0;
-      if (this.state.activeCheckpoint) {
-        diff = this.state.activeCheckpoint.id === checkpoint.id ? -800 : 800000;
-      } else {
-        diff =
-          this.props.quest.progress!.embarkedTime +
-          checkpoint.occuredTime * 1000 +
-          (passed
-            ? /**
-               * Магическое значение которое позволяет отрисовывать прошедший чекпоинт где положено
-               * может время потраченое на последний чекпоинт???
-               */
-              10000
-            : 0) -
-          new Date().getTime();
-      }
+    //   let diff = 0;
+    //   if (this.state.activeCheckpoint) {
+    //     diff = this.state.activeCheckpoint.id === checkpoint.id ? -800 : 800000;
+    //   } else {
+    //     diff =
+    //       this.props.quest.progress!.embarkedTime +
+    //       checkpoint.occuredTime * 1000 +
+    //       (passed
+    //         ? /**
+    //            * Магическое значение которое позволяет отрисовывать прошедший чекпоинт где положено
+    //            * может время потраченое на последний чекпоинт???
+    //            */
+    //           10000
+    //         : 0) -
+    //       new Date().getTime();
+    //   }
 
-      switch (checkpoint.type) {
-        case CheckpointType.TREASURE:
-          this.drawChest(diff, passed);
-          break;
-        case CheckpointType.BATTLE:
-          // this.drawEnemy(checkpoint.enemies!, diff, passed);
-          break;
-        default:
-          throw new Error(`unknown checkpoint type in draw call: ${CheckpointType[checkpoint.type]}`);
-      }
-    }
+    //   switch (checkpoint.type) {
+    //     case CheckpointType.TREASURE:
+    //       this.drawChest(diff, passed);
+    //       break;
+    //     case CheckpointType.BATTLE:
+    //       // this.drawEnemy(checkpoint.enemies!, diff, passed);
+    //       break;
+    //     default:
+    //       throw new Error(`unknown checkpoint type in draw call: ${CheckpointType[checkpoint.type]}`);
+    //   }
+    // }
 
     /* Draw travel to quest location */
     const horseGif = this.state.gifs.get("horse");
@@ -510,7 +496,6 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
 
   render() {
     const { quest } = this.props;
-    const { actors } = this.state;
 
     const remainSeconds =
       this.state.seconds < 0
@@ -595,9 +580,9 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
           }
         ></button>
 
-        <div className="quest-progress-item__actors">
+        {/* <div className="quest-progress-item__actors">
           <ActorItemList actors={actors} />
-        </div>
+        </div> */}
       </div>
     );
   }

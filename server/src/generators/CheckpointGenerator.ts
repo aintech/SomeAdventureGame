@@ -1,5 +1,5 @@
 import { HeroWithSkills } from "../repository/hero/Hero";
-import { getAllMonsters, Monster } from "../repository/Monster";
+import { Drop, getAllMonsters, Loot, Monster } from "../repository/Monster";
 import { Quest } from "../repository/quest/Quest";
 import { CheckpointType, QuestCheckpoint } from "../repository/quest/QuestCheckpoints";
 import { anyOf, copy } from "../utils/Arrays";
@@ -66,15 +66,35 @@ export const generateCheckpoints = async (quest: Quest, embarkedHeroes: HeroWith
 export const getMonsterParty = async (level: number) => {
   const monsters = await getAllMonsters();
 
-  const partyCount = 1; // Math.random() > 0.5 ? 2 : 3; // Math.floor(Math.random() * 3) + 1;
+  const partyCount = Math.floor(Math.random() * 3) + 1;
   //Пока в базе есть только монстры 1 уровня
   const monstersByLevel = [...monsters]; //_monsters.filter((m) => m.level === level);
   const suitable: Monster[] = [];
   for (let i = 0; i < partyCount; i++) {
     const monster: Monster = JSON.parse(JSON.stringify(anyOf(monstersByLevel)));
     monster.actorId = i;
+    defineMonsterDrop(monster);
     suitable.push(monster);
   }
 
   return suitable;
+};
+
+const defineMonsterDrop = (monster: Monster) => {
+  const drop: Drop[] = [];
+
+  if (!monster.loot) {
+    return drop;
+  }
+
+  const dropCount = Math.floor(Math.random() * 3) + 2;
+  for (let i = 0; i < dropCount; i++) {
+    const fraction = Math.floor((0.1 + Math.random() * 0.8) * monster.health);
+    const goldMediana = monster.loot.gold;
+    const gold = Math.floor(goldMediana + Math.random() * goldMediana * 0.4 * (Math.random() > 0.5 ? 1 : -1));
+    drop.push({ fraction, gold });
+  }
+
+  monster.drop = drop;
+  monster.loot = undefined;
 };
