@@ -1,19 +1,23 @@
-import { Gif } from "../../../../utils/gif-reader";
 import CrabGifSrc from "../../../../img/quest-process-display/actors/crab.gif";
+import SnakeImgSrc from "../../../../img/quest-process-display/actors/snake.png";
 import HeroGifSrc from "../../../../img/quest-process-display/actors/hero.gif";
 import PlantGifSrc from "../../../../img/quest-process-display/actors/plant.gif";
 import SlimeGifSrc from "../../../../img/quest-process-display/actors/slime.gif";
 import SpiderGifSrc from "../../../../img/quest-process-display/actors/spider.gif";
 import ZombieGifSrc from "../../../../img/quest-process-display/actors/zombie.gif";
+import AttackGifSrc from "../../../../img/quest-process-display/attack.gif";
+import ChestClosedImgSrc from "../../../../img/quest-process-display/chest-closed.png";
+import ChestOpenImgSrc from "../../../../img/quest-process-display/chest-open.png";
 import GravestoneImgSrc from "../../../../img/quest-process-display/gravestone.png";
 import RewardBackImgSrc from "../../../../img/quest-process-display/reward-back.png";
 import RewardGoldImgSrc from "../../../../img/quest-process-display/reward-gold.png";
-import ChestClosedImgSrc from "../../../../img/quest-process-display/chest-closed.png";
-import ChestOpenImgSrc from "../../../../img/quest-process-display/chest-open.png";
-import EnemyImgSrc from "../../../../img/quest-process-display/actors/enemy.png";
+import Gif from "../../../../utils/Gif";
+import GifLoader from "../../../../utils/gif-loader";
 
 export enum ImageType {
-  ENEMY,
+  SNAKE,
+
+  ATTACK,
 
   HERO,
 
@@ -32,7 +36,7 @@ export enum ImageType {
   REWARD_GOLD,
 }
 
-const gifs: Map<ImageType, any> = new Map();
+const gifs: Map<ImageType, Gif> = new Map();
 export const getGifs = async (types: ImageType[]) => {
   const absentGifs = types.filter((type) => !gifs.has(type));
   const loaders = absentGifs.map((type) => loadGif(type));
@@ -52,7 +56,7 @@ export const getImages = async (types: ImageType[]) => {
 
 type GifData = {
   type: ImageType;
-  gif: any;
+  gif: Gif;
 };
 
 //FIXME: заменить gif-reader на
@@ -61,10 +65,10 @@ type GifData = {
 // https://www.npmjs.com/package/jdataview
 // или научиться парсить на сервере и возвращать распарсеную информацию
 const loadGif = (type: ImageType): Promise<GifData> => {
-  const gif = Gif();
-  gif.load(getUrlByType(type));
+  const loader = GifLoader();
+  loader.load(getUrlByType(type));
   return new Promise<GifData>((resolve, _) => {
-    gif.onload = (event: any) => {
+    loader.onload = (event: any) => {
       resolve({ type, gif: event.path[0] });
     };
   });
@@ -87,8 +91,10 @@ const loadImage = (type: ImageType): Promise<ImageData> => {
 
 export const getUrlByType = (type: ImageType) => {
   switch (type) {
-    case ImageType.ENEMY:
-      return EnemyImgSrc;
+    case ImageType.SNAKE:
+      return SnakeImgSrc;
+    case ImageType.ATTACK:
+      return AttackGifSrc;
     case ImageType.HERO:
       return HeroGifSrc;
     case ImageType.CRAB:

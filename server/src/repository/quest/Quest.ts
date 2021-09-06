@@ -1,5 +1,5 @@
 import { GUILD_SHARE } from "../../utils/Variables";
-import query from "../Db";
+import query, { single } from "../Db";
 import { getHeroesByIds, getHeroesOnQuest, rewardHeroesForQuest } from "../hero/Hero";
 import { HeroActivityType, updateHeroActivities } from "../hero/HeroActivity";
 import { deleteCheckpoints, getQuestCheckpoints, QuestCheckpointWithProgress } from "./QuestCheckpoints";
@@ -29,9 +29,9 @@ export type QuestWithCheckpoints = QuestWithProgress & {
   checkpoints?: QuestCheckpointWithProgress[];
 };
 
-export const getQuestsByIds = async (userId: number, questIds: number[], withCheckpoints = true) => {
-  const quests = await query<QuestWithProgress[]>(
-    "getQuestsByIds",
+export const getQuestById = async (userId: number, questId: number, withCheckpoints = true) => {
+  const quest = await query<QuestWithCheckpoints>(
+    "getQuestsById",
     `select 
           quest.*, 
           progress.id as progress_id,
@@ -41,12 +41,21 @@ export const getQuestsByIds = async (userId: number, questIds: number[], withChe
      from public.quest quest 
      left join public.quest_progress progress 
           on progress.quest_id = quest.id and progress.user_id = $1
-     where quest.id in (${questIds.join(",")});`,
-    [userId],
-    mapQuestWithProgress
+     where quest.id = $2;`,
+    [userId, questId],
+    mapQuestWithProgress,
+    single
   );
 
-  return withCheckpoints ? addCheckpoints(quests) : quests;
+  return withCheckpoints ? addCheckpoint(quest) : quest;
+};
+
+const addCheckpoint = async (quest: QuestWithProgress) => {
+  if (quest.progressId) {
+    const checkpoints = await getQuestCheckpoints([quest.progressId]);
+    return { ...quest, checkpoints };
+  }
+  return { ...quest, checkpoints: [] };
 };
 
 export const getQuests = async (userId: number) => {
@@ -68,7 +77,6 @@ export const getQuests = async (userId: number) => {
     mapQuestWithProgress
   );
 
-  // return addCheckpoints(quests, true);
   return addCheckpoints(quests);
 };
 
@@ -87,8 +95,7 @@ const addCheckpoints = async (quests: QuestWithProgress[]) => {
 };
 
 export const embarkOnQuest = async (userId: number, questId: number, heroIds: number[]) => {
-  const fetchedQuests = await getQuestsByIds(userId, [questId], false);
-  const quest = fetchedQuests[0];
+  const quest = await getQuestById(userId, questId, false);
   const heroes = await getHeroesByIds(heroIds);
 
   await createQuestProgress(userId, quest, heroes);
@@ -105,14 +112,14 @@ export const embarkOnQuest = async (userId: number, questId: number, heroIds: nu
     })
   );
 
-  const embarkedQuests = await getQuestsByIds(userId, [questId]);
+  const embarkedQuest = await getQuestById(userId, questId);
   const embarkedHeroes = await getHeroesByIds(heroIds);
 
-  return Promise.resolve({ embarkedQuests, embarkedHeroes });
+  return Promise.resolve({ embarkedQuest, embarkedHeroes });
 };
 
 export const completeQuest = async (userId: number, questId: number, canceled = false) => {
-  let quest = ((await getQuestsByIds(userId, [questId])) as QuestWithCheckpoints[])[0];
+  let quest = await getQuestById(userId, questId);
   const heroIds = (await getHeroesOnQuest(userId, questId)).map((h) => h.id);
   const queries: Promise<any>[] = [];
 
@@ -144,7 +151,7 @@ export const completeQuest = async (userId: number, questId: number, canceled = 
 
   await Promise.all(queries);
 
-  quest = ((await getQuestsByIds(userId, [questId])) as QuestWithCheckpoints[])[0];
+  quest = await getQuestById(userId, questId, false);
   const stats = await getStats(userId);
   const heroes = await getHeroesByIds(heroIds);
 

@@ -50,7 +50,7 @@ A frame holds various frame associated items.
 
 Gifs use various methods to reduce the file size. The loaded frames do not maintain the optimisations and hold the full resolution frames as DOM images. This mean the memory footprint of a decode gif will be many time larger than the Gif file.
  */
-export const Gif = function () {
+const GifLoader = function () {
   // **NOT** for commercial use.
   var timerID; // timer handle for set time out usage
   var st; // holds the stream object when loading.
@@ -558,3 +558,5 @@ export const Gif = function () {
 End of gif reader
 
 */
+
+export default GifLoader;

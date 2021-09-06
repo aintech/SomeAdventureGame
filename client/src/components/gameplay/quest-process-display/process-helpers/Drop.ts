@@ -7,6 +7,9 @@ export enum DropType {
 }
 
 export type Drop = {
+  actorId: number;
+  appearAt: number;
+
   type: DropType;
   amount: number;
   position: Position;
@@ -21,7 +24,7 @@ export type Drop = {
   timeouted?: boolean;
 };
 
-export const defineDrop = (template: EnemyDrop, canvas: HTMLCanvasElement): Drop => {
+export const defineDrop = (actorId: number, template: EnemyDrop, canvas: HTMLCanvasElement): Drop => {
   const position = {
     x: canvas.width * 0.5 + Math.random() * 30 * (Math.random() < 0.5 ? 1 : -1),
     y: canvas.height * 0.5 + Math.random() * canvas.height * 0.2 * (Math.random() < 0.5 ? 1 : -1),
@@ -41,6 +44,8 @@ export const defineDrop = (template: EnemyDrop, canvas: HTMLCanvasElement): Drop
   };
 
   return {
+    actorId,
+    appearAt: template.fraction,
     type: DropType.GOLD,
     amount: template.gold,
     position,

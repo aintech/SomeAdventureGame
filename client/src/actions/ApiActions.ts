@@ -1,30 +1,30 @@
 import {
+  alchemistAssortmentLoaded,
+  alchemistAssortmentRequested,
+  cancelQuest,
   checkpointPassed,
   completeQuest,
   gameStatsLoaded,
   gameStatsRequested,
+  heroActivitiesUpdated,
+  heroDismissed,
   heroesEmbarkedOnQuest,
   heroesLoaded,
   heroesRequested,
   heroHired,
-  heroActivitiesUpdated,
+  marketAssortmentLoaded,
+  marketAssortmentRequested,
   questsLoaded,
   questsRequested,
   tavernPatronsLoaded,
   tavernPatronsRequested,
-  heroDismissed,
-  cancelQuest,
-  marketAssortmentRequested,
-  marketAssortmentLoaded,
-  alchemistAssortmentRequested,
-  alchemistAssortmentLoaded,
 } from "../actions/Actions";
 import { AuthProps } from "../contexts/AuthContext";
 import Hero from "../models/hero/Hero";
 import { HeroActivityType } from "../models/hero/HeroActivity";
 import Quest from "../models/Quest";
-import QuestCheckpoint from "../models/QuestCheckpoint";
 import ApiService from "../services/ApiService";
+import { CheckpointPassedBody } from "../services/QuestsService";
 
 export const fetchGameStats = (apiService: ApiService, auth: AuthProps) => () => (dispatch: any) => {
   dispatch(gameStatsRequested);
@@ -76,7 +76,7 @@ export const embarkHeroesOnQuest =
   };
 
 export const onCheckpointPassed =
-  (apiService: ApiService, auth: AuthProps) => (quest: Quest, checkpoint: QuestCheckpoint) => (dispatch: any) => {
+  (apiService: ApiService, auth: AuthProps) => (quest: Quest, checkpoint: CheckpointPassedBody) => (dispatch: any) => {
     apiService.checkpointPassed(auth, quest, checkpoint).then((data) => dispatch(checkpointPassed(data)));
   };
 

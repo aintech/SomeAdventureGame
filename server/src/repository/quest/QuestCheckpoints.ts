@@ -1,6 +1,6 @@
 import { BattleActionType, BattleRound } from "../../generators/BattleGenerator";
 import query, { single } from "../Db";
-import { getHeroesHP, setHeroHealth } from "../hero/Hero";
+import { adjustHeroGold, adjustHeroGoldExperience, getHeroesHP, HeroWithSkills, setHeroHealth } from "../hero/Hero";
 import { adjustItems } from "../Item";
 import { Monster } from "../Monster";
 import { getQuestProgress } from "./QuestProgress";
@@ -26,6 +26,11 @@ export type QuestCheckpointWithProgress = QuestCheckpoint & {
   progressId?: number /** empty when progress not persist yet */;
   questId: number;
   embarkedTime: Date;
+};
+
+export type QuestCheckpointResult = {
+  id: number;
+  collected: { actorId: number; drops: number[] }[];
 };
 
 export const persistQuestCheckpoints = async (progressId: number, checkpoints: QuestCheckpoint[]) => {
@@ -95,55 +100,77 @@ export const getQuestCheckpointsByQuest = async (userId: number, questId: number
   return getQuestCheckpoints([progress.id]);
 };
 
-//CONTINUE: Добавить героям опыт и лут полученный при прохождении чекпоинта
-export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress) => {
+export const checkpointPassed = async (
+  checkpoint: QuestCheckpointWithProgress,
+  heroes: HeroWithSkills[],
+  result: QuestCheckpointResult
+) => {
   if (checkpoint.passed) {
     return;
   }
 
-  if (checkpoint.type === CheckpointType.BATTLE) {
-    const adjustments: Promise<any>[] = [];
+  const adjustments: Promise<any>[] = [];
 
-    const rounds = checkpoint.rounds!;
-    const heroesHP = await getHeroesHP(checkpoint.questId);
-    const healthValues = new Map<number, number>();
-    const usedItems = new Map<{ heroId: number; itemId: number }, number>();
+  // if (checkpoint.type === CheckpointType.BATTLE) {
+  //   // const adjustments: Promise<any>[] = [];
+  //   // // const rounds = checkpoint.rounds!;
+  //   // const heroesHP = await getHeroesHP(checkpoint.questId);
+  //   // const healthValues = new Map<number, number>();
+  //   // const usedItems = new Map<{ heroId: number; itemId: number }, number>();
+  //   // heroesHP.forEach((h) => {
+  //   //   healthValues.set(h.id, h.health);
+  //   // });
+  //   // const maxSec = Math.max(...Array.from(rounds.keys()));
+  //   // for (let sec = 0; sec <= maxSec; sec++) {
+  //   //   const process = rounds.get(sec);
+  //   //   if (!process) {
+  //   //     continue;
+  //   //   }
+  //   //   for (const round of process) {
+  //   //     if (round.action === BattleActionType.ENEMY_ATTACK) {
+  //   //       healthValues.set(round.heroId, healthValues.get(round.heroId)! - +round.hpAdjust!);
+  //   //     }
+  //   //     if (round.action === BattleActionType.USE_POTION) {
+  //   //       const key = { heroId: round.heroId, itemId: round.itemId! };
+  //   //       usedItems.set(key, (usedItems.get(key) ?? 0) - 1);
+  //   //       healthValues.set(round.heroId, healthValues.get(round.heroId)! + +round.hpAdjust!);
+  //   //     }
+  //   //   }
+  //   // }
+  //   // healthValues.forEach((v, k) => adjustments.push(setHeroHealth(k, v)));
+  //   // usedItems.forEach((v, k) => adjustments.push(adjustItems(k.heroId, k.itemId, v)));
+  //   // if (adjustments.length > 0) {
+  //   //   await Promise.all(adjustments);
+  //   // }
+  // } else if (checkpoint.type === CheckpointType.TREASURE) {
+  //   //do nothing
+  // } else {
+  //   throw new Error(`Unknown checkpoint type! ${checkpoint}`);
+  // }
 
-    heroesHP.forEach((h) => {
-      healthValues.set(h.id, h.health);
+  let gold = 0;
+  let experience = 0;
+  if (checkpoint.enemies) {
+    let collectedGold = 0;
+    result.collected.forEach((drop) => {
+      const enemy = checkpoint.enemies!.find((e) => e.actorId === drop.actorId)!;
+      enemy.drop.forEach((d) => {
+        if (drop.drops.includes(d.fraction)) {
+          collectedGold += d.gold;
+        }
+      });
     });
 
-    const maxSec = Math.max(...Array.from(rounds.keys()));
+    gold = Math.ceil((collectedGold + checkpoint.tribute) / heroes.length);
+    experience = Math.ceil(checkpoint.enemies.reduce((a, b) => a + b.experience, 0) / heroes.length);
+  }
 
-    for (let sec = 0; sec <= maxSec; sec++) {
-      const process = rounds.get(sec);
+  heroes.forEach((h) => {
+    adjustments.push(adjustHeroGoldExperience(h.id, gold, experience));
+  });
 
-      if (!process) {
-        continue;
-      }
-
-      for (const round of process) {
-        if (round.action === BattleActionType.ENEMY_ATTACK) {
-          healthValues.set(round.heroId, healthValues.get(round.heroId)! - +round.hpAdjust!);
-        }
-        if (round.action === BattleActionType.USE_POTION) {
-          const key = { heroId: round.heroId, itemId: round.itemId! };
-          usedItems.set(key, (usedItems.get(key) ?? 0) - 1);
-          healthValues.set(round.heroId, healthValues.get(round.heroId)! + +round.hpAdjust!);
-        }
-      }
-    }
-
-    healthValues.forEach((v, k) => adjustments.push(setHeroHealth(k, v)));
-    usedItems.forEach((v, k) => adjustments.push(adjustItems(k.heroId, k.itemId, v)));
-
-    if (adjustments.length > 0) {
-      await Promise.all(adjustments);
-    }
-  } else if (checkpoint.type === CheckpointType.TREASURE) {
-    //do nothing
-  } else {
-    throw new Error(`Unknown checkpoint type! ${checkpoint}`);
+  if (adjustments.length > 0) {
+    await Promise.all(adjustments);
   }
 
   await markAsPassed(checkpoint.id!);

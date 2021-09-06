@@ -1,8 +1,8 @@
 import { HEALTH_PER_VITALITY } from "../../utils/Variables";
 import query from "../Db";
-import { Equipment, HeroEquipment, withEquipment } from "../Equipment";
+import { HeroEquipment, withEquipment } from "../Equipment";
+import { HeroItem, withItems } from "../Item";
 import { HeroActivity, HeroActivityType } from "./HeroActivity";
-import { HeroItem, Item, withItems } from "../Item";
 import { HeroLevel, withLevelInfo } from "./Level";
 import { Perk, withPerks } from "./Perk";
 import { Skill, withSkills } from "./Skill";
@@ -15,7 +15,7 @@ export enum HeroType {
   PALADIN,
 }
 
-//TODO: Добавить аттрибут Luck
+//TODO: Добавить аттрибут Luck, чаще выпадают паверапы критов
 export type Hero = {
   id: number;
   userId: number;
@@ -139,6 +139,14 @@ export const getHeroesHP = async (questId: number) => {
 
 export const adjustHeroGold = (heroId: number, amount: number) => {
   return query<void>("adjustGold", `update public.hero set gold = (gold + $2) where id = $1`, [heroId, amount]);
+};
+
+export const adjustHeroGoldExperience = (heroId: number, gold: number, experience: number) => {
+  return query<void>(
+    "adjustExperience",
+    `update public.hero set gold = (gold + $2), experience = (experience + $3) where id = $1`,
+    [heroId, gold, experience]
+  );
 };
 
 export const getHeroesOnQuest = (userId: number, questId: number) => {

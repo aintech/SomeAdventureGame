@@ -168,9 +168,9 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       };
 
     case ActionType.HEROES_EMBARKED_ON_QUEST:
-      const { embarkedQuests, embarkedHeroes } = action.payload;
+      const { embarkedQuest, embarkedHeroes } = action.payload;
 
-      const questIdx = state.quests.findIndex((q) => q.id === +embarkedQuests[0].id);
+      const questIdx = state.quests.findIndex((q) => q.id === +embarkedQuest.id);
 
       let upHeroes = [...state.heroes];
       for (const embHero of embarkedHeroes) {
@@ -186,11 +186,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
 
       return {
         ...state,
-        quests: [
-          ...state.quests.slice(0, questIdx),
-          convertQuest(embarkedQuests[0]),
-          ...state.quests.slice(questIdx + 1),
-        ],
+        quests: [...state.quests.slice(0, questIdx), convertQuest(embarkedQuest), ...state.quests.slice(questIdx + 1)],
         heroes: upHeroes,
         chosenHero,
         chosenQuest: undefined,

@@ -16,7 +16,8 @@ import QuestCheckpoint, {
   CheckpointType,
 } from "../../../../models/QuestCheckpoint";
 import store from "../../../../Store";
-import { Gif } from "../../../../utils/gif-reader";
+import Gif from "../../../../utils/Gif";
+import GifLoader from "../../../../utils/gif-loader";
 import { convertDuration, millisToSecs, toGameplayScale } from "../../../../utils/Utils";
 import { QuestProcess } from "../../quest-process-display/QuestProcessDisplay";
 import { ActorItemType, convertToActor } from "./actor-item/ActorItem";
@@ -46,7 +47,7 @@ type QuestProgressItemState = {
   seconds: number;
   bgOffset: number;
   images: Map<string, HTMLImageElement>;
-  gifs: Map<string, any>;
+  gifs: Map<string, Gif>;
   eventMessages: EventMessage[];
   activeCheckpoint?: QuestCheckpoint;
   willBeSpendOnCheckpoints: number;
@@ -128,9 +129,9 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
   }
 
   loadGif(name: string, src: string) {
-    const gif = Gif();
-    gif.load(src);
-    gif.onload = (event: any) => {
+    const loader = GifLoader();
+    loader.load(src);
+    loader.onload = (event: any) => {
       const gifs = new Map(this.state.gifs);
       gifs.set(name, event.path[0]);
       this.setState({ gifs });

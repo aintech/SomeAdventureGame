@@ -2,10 +2,16 @@ import { AuthProps } from "../contexts/AuthContext";
 import Hero from "../models/hero/Hero";
 import { HeroActivityType } from "../models/hero/HeroActivity";
 import Quest from "../models/Quest";
-import QuestCheckpoint from "../models/QuestCheckpoint";
 import { dismissHero, getHeroes, getTavernPatrons, hireHero, updateHeroActivities } from "./HeroesService";
+import {
+  cancelQuest,
+  checkpointPassed,
+  CheckpointPassedBody,
+  completeQuest,
+  embarkOnQuest,
+  getQuests,
+} from "./QuestsService";
 import { getAlchemistAssortment, getMarketAssortment } from "./ShopsService";
-import { cancelQuest, checkpointPassed, completeQuest, embarkOnQuest, getQuests } from "./QuestsService";
 import { getStats } from "./StatsService";
 
 export default class ApiService {
@@ -41,8 +47,8 @@ export default class ApiService {
     );
   }
 
-  checkpointPassed(auth: AuthProps, quest: Quest, checkpoint: QuestCheckpoint) {
-    return checkpointPassed(auth, quest.id, checkpoint.id);
+  checkpointPassed(auth: AuthProps, quest: Quest, result: CheckpointPassedBody) {
+    return checkpointPassed(auth, quest.id, result);
   }
 
   completeQuest(auth: AuthProps, quest: Quest) {

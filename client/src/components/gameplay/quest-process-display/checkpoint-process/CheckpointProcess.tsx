@@ -84,7 +84,7 @@ class CheckpointProcess extends Component<CheckpointProcessProps, CheckpointProc
       this.canvas.getContext("2d")!,
       this.dynamicCanvas.getContext("2d")!,
       [
-        ImageType.ENEMY,
+        ImageType.SNAKE,
         ImageType.GRAVESTONE,
         ImageType.CHEST_CLOSED,
         ImageType.CHEST_OPEN,

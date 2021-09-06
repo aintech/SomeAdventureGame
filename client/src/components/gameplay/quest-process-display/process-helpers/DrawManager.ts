@@ -1,4 +1,5 @@
 import QuestCheckpoint, { CheckpointType } from "../../../../models/QuestCheckpoint";
+import Gif from "../../../../utils/Gif";
 import { CenteredPosition, Dimensions, Position } from "../../../../utils/Utils";
 import CheckpointActor from "./CheckpointActor";
 import Color, { stringify } from "./Color";
@@ -11,6 +12,8 @@ let canvasCtx: CanvasRenderingContext2D;
 let dynamicCanvasCtx: CanvasRenderingContext2D;
 
 const drawDatas: Map<ImageType, DrawData> = new Map();
+
+const hits: { idx: number; pos: Position; gif: Gif; frame: number }[] = [];
 
 export const prepare = async (
   ctx: CanvasRenderingContext2D,
@@ -26,6 +29,21 @@ export const prepare = async (
   ]);
 };
 
+export const dropToHits = (pos: Position) => {
+  hits.push({ idx: new Date().getTime(), pos, gif: drawDatas.get(ImageType.ATTACK)!.raw() as Gif, frame: 1 });
+};
+
+export const drawHits = () => {
+  hits.forEach((s) => {
+    if (s.frame >= s.gif.frameCount) {
+      hits.splice(hits.findIndex((a) => a.idx === s.idx));
+    } else {
+      dynamicCanvasCtx.drawImage(s.gif.image, s.pos.x - 64, s.pos.y - 64);
+      s.frame++;
+    }
+  });
+};
+
 export const clearCtx = () => {
   canvasCtx.clearRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
 };
@@ -35,14 +53,9 @@ export const clearDynamicCtx = () => {
 };
 
 export const drawOpponent = (actor: CheckpointActor) => {
-  const img = drawDatas.get(ImageType.ENEMY)!;
-  canvasCtx.drawImage(
-    img.image(),
-    canvasCtx.canvas.width * 0.5 - img.width() * 0.5,
-    img.height() * 0.2,
-    img.width(),
-    img.height()
-  );
+  const img = drawDatas.get(ImageType.SNAKE)!;
+
+  canvasCtx.drawImage(img.image(), canvasCtx.canvas.width * 0.5 - img.width() * 0.5, 0, img.width(), img.height());
 
   const hpBarWidth = Math.floor((actor.currentHealth / actor.totalHealth) * 100) * 5;
   canvasCtx.fillStyle = "rgba(255, 0, 0, .7)";
@@ -184,10 +197,6 @@ export const drawCompleted = (checkpoint: QuestCheckpoint, drops: Drop[]) => {
   }
 
   const collectedGold = drops.filter((d) => d.type === DropType.GOLD && d.collected).reduce((a, b) => a + b.amount, 0);
-
-  // const goldDrop = checkpoint.enemies
-  //   ? checkpoint.enemies.reduce((a, b) => a + b.drop.reduce((c, d) => c + d.gold, 0), 0)
-  //   : 0;
   drawText(canvasCtx, `${checkpoint.tribute}${collectedGold > 0 ? " + " + collectedGold : ""}`, { x: 250, y: 375 }, 72);
 };
 

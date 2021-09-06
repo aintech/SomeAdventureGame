@@ -1,15 +1,17 @@
+import Gif from "../../../../utils/Gif";
+
 class DrawData {
   private _rotation: number = 0;
   private _image?: HTMLImageElement;
-  private _gif?: any;
+  private _gif?: Gif;
   private _width: number;
   private _height: number;
 
-  constructor(public img?: HTMLImageElement, gif?: any, public rotatePerFrame: number = 0) {
+  constructor(public img?: HTMLImageElement, gif?: Gif, public rotatePerFrame: number = 0) {
     this._image = img;
     this._gif = gif;
-    this._width = img?.width ?? gif.image.width;
-    this._height = img?.height ?? gif.image.height;
+    this._width = img?.width ?? gif!.image.width;
+    this._height = img?.height ?? gif!.image.height;
   }
 
   public rotate() {
@@ -30,6 +32,10 @@ class DrawData {
 
   public height() {
     return this._height;
+  }
+
+  public raw() {
+    return this._image ?? this._gif!;
   }
 }
 

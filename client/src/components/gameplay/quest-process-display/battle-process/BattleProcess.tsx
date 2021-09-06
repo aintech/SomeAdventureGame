@@ -2,7 +2,7 @@ import { Component, createRef, MouseEvent } from "react";
 import EnemyPortraitSrc from "../../../../img/quest-process-display/actors/enemy-portrait.png";
 import Hero from "../../../../models/hero/Hero";
 import QuestCheckpoint from "../../../../models/QuestCheckpoint";
-import { distance, lerp } from "../../../../utils/Utils";
+import { distance, lerp, Position } from "../../../../utils/Utils";
 import Loader from "../../../loader/Loader";
 import CheckpointActor, { convertToActor } from "../process-helpers/CheckpointActor";
 import { create } from "../process-helpers/Color";
@@ -11,8 +11,10 @@ import {
   clearDynamicCtx as clearDynamicDrawCtx,
   drawCompleted,
   drawDrops,
+  drawHits,
   drawMessages,
   drawOpponent,
+  dropToHits,
   prepare,
 } from "../process-helpers/DrawManager";
 import { defineDrop, Drop, DropType } from "../process-helpers/Drop";
@@ -33,7 +35,7 @@ type BattleProcessProps = {
   closeCheckpoint: () => void;
   // checkpointPassed: () => void;
   setHeroRewards: (rewards: Map<number, { gold: number; experience: number }>) => void;
-  moveOnwards: (e: MouseEvent) => void;
+  moveOnwards: (e: MouseEvent, collected: { actorId: number; drops: number[] }[]) => void;
 };
 
 type BattleProcessState = {
@@ -86,11 +88,12 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
       return false;
     };
 
-    prepare(this.canvasRef.current!.getContext("2d")!, this.dynamicCanvasRef.current!.getContext("2d")!, [
-      ImageType.ENEMY,
-      ImageType.REWARD_BACK,
-      ImageType.REWARD_GOLD,
-    ]).then((_) => {
+    prepare(
+      this.canvasRef.current!.getContext("2d")!,
+      this.dynamicCanvasRef.current!.getContext("2d")!,
+      [ImageType.SNAKE, ImageType.REWARD_BACK, ImageType.REWARD_GOLD],
+      [ImageType.ATTACK]
+    ).then((_) => {
       this.setState({
         processState: ProcessState.PREPARE,
         beginTime: new Date(),
@@ -99,8 +102,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         ],
       });
 
-      clearDrawCtx();
-      drawOpponent(enemies[0]);
+      this.drawStatic();
     });
 
     this.startTimers();
@@ -180,8 +182,10 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   drawStatic() {
     clearDrawCtx();
 
-    if (this.state.currentEnemy) {
-      drawOpponent(this.state.currentEnemy);
+    const { currentEnemy } = this.state;
+
+    if (currentEnemy) {
+      drawOpponent(currentEnemy);
     }
 
     if (this.state.processState === ProcessState.POST_BATTLE) {
@@ -191,6 +195,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
   drawFrame() {
     clearDynamicDrawCtx();
+    drawHits();
     drawDrops(this.state.drops.filter((d) => !d.collected && !d.timeouted));
     drawMessages(this.state.eventMessages);
   }
@@ -200,9 +205,14 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     e.preventDefault();
     if (this.state.processState === ProcessState.BATTLE) {
       if (this.state.currentEnemy) {
-        if (this.checkDropClicked(e)) {
+        const rect = this.canvasRef.current!.getBoundingClientRect();
+        const click = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+
+        if (this.checkDropClicked(click)) {
           return;
         }
+
+        dropToHits(click);
 
         const { currentEnemy } = this.state;
         currentEnemy.currentHealth -= this.state.clickPower;
@@ -211,7 +221,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         if (drop) {
           drop.dropped = true;
           const { drops } = this.state;
-          drops.push(defineDrop(drop, this.canvasRef.current!));
+          drops.push(defineDrop(currentEnemy.actorId, drop, this.canvasRef.current!));
           this.setState({ drops });
         }
 
@@ -221,9 +231,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     }
   }
 
-  checkDropClicked(e: MouseEvent) {
-    const rect = this.canvasRef.current!.getBoundingClientRect();
-    const click = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  checkDropClicked(click: Position) {
     const { drops } = this.state;
 
     const msgs: EventMessage[] = [];
@@ -296,8 +304,6 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     let gold = 0;
     if (checkpoint.enemies) {
       experience = Math.ceil(checkpoint.enemies.reduce((a, b) => a + b.experience, 0) / heroes.length);
-
-      // const goldDrop = checkpoint.enemies.reduce((a, b) => a + b.drop.reduce((c, d) => c + d.gold, 0), 0);
       const collectedGold = drops
         .filter((d) => d.type === DropType.GOLD && d.collected)
         .reduce((a, b) => a + b.amount, 0);
@@ -308,6 +314,24 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     heroes.forEach((h) => rewards.set(h.id, { gold, experience }));
 
     return rewards;
+  }
+
+  completeCheckpointClickHandler(e: MouseEvent) {
+    const { drops } = this.state;
+    const collected: { actorId: number; drops: number[] }[] = [];
+
+    drops
+      .filter((drop) => drop.collected)
+      .forEach((drop) => {
+        const exists = collected.find((c) => c.actorId === drop.actorId);
+        if (exists) {
+          exists.drops.push(drop.appearAt);
+        } else {
+          collected.push({ actorId: drop.actorId, drops: [drop.appearAt] });
+        }
+      });
+
+    this.props.moveOnwards(e, collected);
   }
 
   checkEndedMessages() {
@@ -351,7 +375,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
           onClick={(e) => this.canvasClickHandler(e)}
         ></canvas>
         {this.state.processState === ProcessState.POST_BATTLE ? (
-          <button className="battle-process__btn--onwards" onClick={(e) => this.props.moveOnwards(e)}>
+          <button className="battle-process__btn--onwards" onClick={(e) => this.completeCheckpointClickHandler(e)}>
             Дальше в подземелье
           </button>
         ) : null}
@@ -370,8 +394,9 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
                 alt="enemy"
                 onClick={() => this.switchCurrentEnemy(e)}
               />
-              <span>
-                {e.index} - {e.currentHealth}
+              <span style={{ fontFamily: "inherit", fontSize: "14px", color: "white" }}>
+                {e.name}
+                {`${e.currentHealth > 0 ? " - " + e.currentHealth : ""}`}
               </span>
             </div>
           ))}

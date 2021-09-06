@@ -8,6 +8,7 @@ import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService
 import Hero from "../../../models/hero/Hero";
 import Quest from "../../../models/Quest";
 import QuestCheckpoint, { CheckpointType } from "../../../models/QuestCheckpoint";
+import { CheckpointPassedBody } from "../../../services/QuestsService";
 import Loader from "../../loader/Loader";
 import HeroItem from "../village-building-display/guild-display/heroes/hero-item/HeroItem";
 import BattleProcess from "./battle-process/BattleProcess";
@@ -25,7 +26,7 @@ type QuestProcessDisplayProps = {
   quest: Quest;
   heroes: Hero[];
   heroClicked: (hero: Hero) => void;
-  onCheckpointPassed: (quest: Quest, checkpoint: QuestCheckpoint) => void;
+  onCheckpointPassed: (quest: Quest, checkpoint: CheckpointPassedBody) => void;
   closeDisplay: () => void;
 };
 
@@ -54,15 +55,12 @@ const QuestProcessDisplay = ({
     setActiveCheckpoint(checkpoint);
   };
 
-  const passCheckpoint = () => {
-    if (activeCheckpoint) {
-      onCheckpointPassed(quest, activeCheckpoint);
-    }
-  };
-
-  const completeCheckpoint = (e: MouseEvent) => {
+  const completeCheckpoint = (e: MouseEvent, collected: { actorId: number; drops: number[] }[]) => {
     setActiveCheckpoint(undefined);
-    passCheckpoint();
+    setHeroRewards(new Map());
+    if (activeCheckpoint) {
+      onCheckpointPassed(quest, { id: activeCheckpoint.id, collected });
+    }
   };
 
   return (
@@ -85,8 +83,8 @@ const QuestProcessDisplay = ({
             <CheckpointProcess
               checkpoint={activeCheckpoint}
               heroes={heroes}
-              checkpointPassed={passCheckpoint}
-              moveOnwards={completeCheckpoint}
+              checkpointPassed={() => {}}
+              moveOnwards={() => {}}
               closeCheckpoint={() => setActiveCheckpoint(undefined)}
             />
           )
@@ -115,7 +113,7 @@ const QuestProcessDisplay = ({
 type QuestProcessDisplayContainerProps = {
   activeQuestProcess: QuestProcess;
   heroClicked: (hero: Hero) => void;
-  onCheckpointPassed: (quest: Quest, checkpoint: QuestCheckpoint) => void;
+  onCheckpointPassed: (quest: Quest, checkpoint: CheckpointPassedBody) => void;
   closeQuestProcess: () => void;
 };
 
