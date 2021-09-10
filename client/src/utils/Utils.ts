@@ -45,3 +45,7 @@ export const distance = (a: Position, b: Position) => {
 export const lerp = (from: Position, to: Position, speed: number) => {
   return { x: (1 - speed) * from.x + speed * to.x, y: (1 - speed) * from.y + speed * to.y };
 };
+
+export const shallowCopy = <T>(original: T): T => {
+  return JSON.parse(JSON.stringify(original));
+};

@@ -66,7 +66,7 @@ export const generateCheckpoints = async (quest: Quest, embarkedHeroes: HeroWith
 export const getMonsterParty = async (level: number) => {
   const monsters = await getAllMonsters();
 
-  const partyCount = 3; //Math.floor(Math.random() * 3) + 1;
+  const partyCount = Math.floor(Math.random() * 3) + 2;
   //Пока в базе есть только монстры 1 уровня
   const monstersByLevel = [...monsters]; //_monsters.filter((m) => m.level === level);
   const suitable: Monster[] = [];

@@ -1,6 +1,6 @@
-import { getEquipmentStats } from "../../../../models/Equipment";
 import Hero from "../../../../models/hero/Hero";
 import { display } from "../../../../models/hero/HeroType";
+import PersonageStats from "../../../../models/PersonageStats";
 import { CheckpointEnemy, EnemyDrop } from "../../../../models/QuestCheckpoint";
 import { HEALTH_PER_VITALITY } from "../../../../utils/variables";
 
@@ -11,6 +11,7 @@ type CheckpointActor = {
   type: string;
   currentHealth: number;
   totalHealth: number;
+  stats: PersonageStats;
 
   index: number;
   position: { x: number; y: number };
@@ -25,8 +26,9 @@ export const convertToActor = (actor: Hero | CheckpointEnemy, index: number, can
     type: actor.isHero ? display((actor as Hero).type) : actor.name,
     currentHealth: actor.health,
     totalHealth: actor.isHero
-      ? ((actor as Hero).stats.vitality + getEquipmentStats((actor as Hero).equipment).vitality) * HEALTH_PER_VITALITY
+      ? ((actor as Hero).stats.vitality + (actor as Hero).equipStats.vitality) * HEALTH_PER_VITALITY
       : actor.health,
+    stats: actor.stats,
     index,
     position: {
       x: (actor.isHero ? 30 : 600) + 50 * index * (actor.isHero ? 1 : -1),

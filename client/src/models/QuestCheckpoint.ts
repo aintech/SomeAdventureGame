@@ -1,4 +1,5 @@
 import { CheckpointEnemyResponse, CheckpointResponse } from "../services/QuestsService";
+import PersonageStats from "./PersonageStats";
 
 export enum CheckpointType {
   TREASURE,
@@ -22,6 +23,7 @@ export class CheckpointEnemy {
     public name: string,
     public health: number,
     public experience: number,
+    public stats: PersonageStats,
     public drop: EnemyDrop[],
     public isHero: boolean
   ) {}
@@ -67,7 +69,16 @@ export const convert = (response: CheckpointResponse): QuestCheckpoint => {
 };
 
 const convertEnemy = (res: CheckpointEnemyResponse): CheckpointEnemy => {
-  return new CheckpointEnemy(res.id, res.actorId, res.name, res.health, res.experience, res.drop, false);
+  return new CheckpointEnemy(
+    res.id,
+    res.actorId,
+    res.name,
+    res.health,
+    res.experience,
+    { power: res.power, defence: res.defence, initiative: res.initiative, vitality: 0 },
+    res.drop,
+    false
+  );
 };
 
 /** duplicate code in server */

@@ -1,5 +1,6 @@
 @import "../../../../../../utils/functions.scss";
 @import "../../../../../../utils/mixins.scss";
+@import "../../../../../../utils/animations.scss";
 
 .hero-item {
   height: to-gameplay-scale(250px);
@@ -171,5 +172,10 @@
         content: "\00a0 exp";
       }
     }
+  }
+
+  &--hitted {
+    animation: hitted 0.8s;
+    animation-iteration-count: 1;
   }
 }

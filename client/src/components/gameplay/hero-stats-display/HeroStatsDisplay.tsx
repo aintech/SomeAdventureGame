@@ -4,7 +4,7 @@ import { bindActionCreators, compose, Dispatch } from "redux";
 import { heroStatsDisplayClosed, showConfirmDialog } from "../../../actions/Actions";
 import { onDismissHero } from "../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService";
-import { EquipmentType, getEquipmentStats } from "../../../models/Equipment";
+import { EquipmentType } from "../../../models/Equipment";
 import Hero, { calcHealthFraction } from "../../../models/hero/Hero";
 import { HeroActivityType } from "../../../models/hero/HeroActivity";
 import { HeroType } from "../../../models/hero/HeroType";
@@ -74,8 +74,6 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
     heroStatsDisplayClosed();
     onDismissHero(hero);
   };
-
-  const equipmentSurplus = getEquipmentStats(hero.equipment);
 
   const weapon = hero.equipment.find((e) => e.type === EquipmentType.WEAPON)!;
   const armor = hero.equipment.find((e) => e.type === EquipmentType.ARMOR)!;
@@ -151,13 +149,13 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
         <div className="hero-stats__health">{hero.health}</div>
         <div className="hero-stats__experience">{hero.level.experience}</div>
         <div className="hero-stats__power">{hero.stats.power}</div>
-        <div className="hero-stats__power-surplus">+{equipmentSurplus.power}</div>
+        <div className="hero-stats__power-surplus">+{hero.equipStats.power}</div>
         <div className="hero-stats__defence">{hero.stats.defence}</div>
-        <div className="hero-stats__defence-surplus">+{equipmentSurplus.defence}</div>
+        <div className="hero-stats__defence-surplus">+{hero.equipStats.defence}</div>
         <div className="hero-stats__vitality">{hero.stats.vitality}</div>
-        <div className="hero-stats__vitality-surplus">+{equipmentSurplus.vitality}</div>
+        <div className="hero-stats__vitality-surplus">+{hero.equipStats.vitality}</div>
         <div className="hero-stats__initiative">{hero.stats.initiative}</div>
-        <div className="hero-stats__initiative-surplus">-{equipmentSurplus.initiative}</div>
+        <div className="hero-stats__initiative-surplus">-{hero.equipStats.initiative}</div>
         <div className="hero-stats__equipment">
           <div className={weaponStyle}>
             <div className="hero-stats__equipment--stats">

@@ -28,6 +28,18 @@ questsRouter.post("/embark", AuthMiddleware, async (req, res) => {
   }
 });
 
+export type HeroEvent = {
+  time: number;
+  itemId?: number;
+  hpAlter?: number;
+};
+
+export type CheckpointPassedBody = {
+  id: number;
+  collected: { actorId: number; drops: number[] }[];
+  events: { heroId: number; events: HeroEvent[] }[];
+};
+
 questsRouter.post("/checkpoint-passed", AuthMiddleware, async (req, res) => {
   const userId = Number(req.query.user_id as string);
   const questId = Number(req.query.quest_id as string);

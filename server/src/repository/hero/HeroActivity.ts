@@ -14,7 +14,7 @@ import {
   getHeroEquipmentLink,
   replaceHeroEquipment,
 } from "../Equipment";
-import { adjustHeroGold, getHeroesByIds, HeroType, HeroWithPerks, setHeroHealth, updateHeroLevel } from "../hero/Hero";
+import { adjustGold, getHeroesByIds, HeroType, HeroWithPerks, setHeroHealth, updateHeroLevel } from "../hero/Hero";
 import { adjustItems, Item, ItemSubtype } from "../Item";
 import { getAlchemistAssortment, getMarketAssortment } from "../ShopsAssortment";
 import { addStats } from "../Stats";
@@ -168,7 +168,7 @@ const idleToHealing = async (
     throw new Error(`Not enought gold for healing!`);
   }
 
-  await Promise.all([adjustHeroGold(hero.id, -cost), addStats(userId, cost)]);
+  await Promise.all([adjustGold(hero.id, -cost), addStats(userId, cost)]);
 
   return {
     ...heroActivity,
@@ -191,7 +191,7 @@ const idleToTraining = async (
     throw new ErrorEvent(`Not enought experience for level up!`);
   }
 
-  await Promise.all([adjustHeroGold(hero.id, -nextLevel.cost), addStats(userId, nextLevel.cost)]);
+  await Promise.all([adjustGold(hero.id, -nextLevel.cost), addStats(userId, nextLevel.cost)]);
 
   return {
     ...heroActivity,
@@ -235,7 +235,7 @@ const idleToPurchasingEquipment = async (
     throw new Error(`Unable to find equipment to purchase for hero ${hero.id}!`);
   }
 
-  await Promise.all([adjustHeroGold(hero.id, -purchase.price), addStats(userId, purchase.price)]);
+  await Promise.all([adjustGold(hero.id, -purchase.price), addStats(userId, purchase.price)]);
 
   return {
     ...heroActivity,
@@ -309,7 +309,7 @@ const idleToPurchasingPotions = async (
     throw new Error(`Unable to find potion to buy for hero ${hero.id}`);
   }
 
-  await Promise.all([adjustHeroGold(hero.id, -potion.price), addStats(userId, potion.price)]);
+  await Promise.all([adjustGold(hero.id, -potion.price), addStats(userId, potion.price)]);
 
   return {
     ...heroActivity,
@@ -340,7 +340,7 @@ const idleToUpgradingEquipment = async (
 
   const cost = Math.floor(equipment.price * EQUIPMENT_UPGRADE_COST_FRACTION);
 
-  await Promise.all([adjustHeroGold(hero.id, -cost), addStats(userId, cost)]);
+  await Promise.all([adjustGold(hero.id, -cost), addStats(userId, cost)]);
 
   return {
     ...heroActivity,

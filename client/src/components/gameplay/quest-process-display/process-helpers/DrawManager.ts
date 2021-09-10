@@ -1,6 +1,6 @@
-import QuestCheckpoint, { CheckpointType } from "../../../../models/QuestCheckpoint";
+import QuestCheckpoint from "../../../../models/QuestCheckpoint";
 import Gif from "../../../../utils/Gif";
-import { CenteredPosition, Dimensions, Position } from "../../../../utils/Utils";
+import { CenteredPosition, Position } from "../../../../utils/Utils";
 import CheckpointActor from "./CheckpointActor";
 import Color, { stringify } from "./Color";
 import DrawData from "./DrawData";
@@ -53,7 +53,7 @@ export const clearDynamicCtx = () => {
 };
 
 export const drawOpponent = (actor: CheckpointActor) => {
-  const img = drawDatas.get(ImageType.SNAKE)!;
+  const img = drawDatas.get(imageByActorType(actor.type))!;
 
   canvasCtx.drawImage(img.image(), canvasCtx.canvas.width * 0.5 - img.width() * 0.5, 0, img.width(), img.height());
 
@@ -66,44 +66,28 @@ export const drawOpponent = (actor: CheckpointActor) => {
   }
 };
 
-export const drawActors = (actors: CheckpointActor[]) => {
-  actors.forEach((actor) => {
-    const defeated = actor.currentHealth <= 0;
-    const imgType = defeated ? ImageType.GRAVESTONE : actor.isHero ? ImageType.HERO : imageByActorType(actor.type);
-    const img = drawDatas.get(imgType)!.image();
-    drawActor(
-      actor,
-      img,
-      {
-        x: actor.position.x,
-        y: actor.position.y,
-      },
-      {
-        width: defeated ? img.width * 0.07 : actor.isHero ? img.width * 0.25 : 112,
-        height: defeated ? img.width * 0.07 : actor.isHero ? img.height * 0.25 : 120,
-      }
+export const drawTreasure = (checkpoint: QuestCheckpoint, opened: boolean, offset: Position & { rotation: number }) => {
+  let img = drawDatas.get(opened ? ImageType.CHEST_OPEN : ImageType.CHEST_CLOSED)!;
+
+  if (offset.rotation !== 0) {
+    dynamicCanvasCtx.setTransform(1, 0, 0, 1, canvasCtx.canvas.width * 0.5, canvasCtx.canvas.height * 0.5);
+    dynamicCanvasCtx.rotate((offset.rotation * Math.PI) / 180);
+    dynamicCanvasCtx.drawImage(img.image(), -img.width() * 0.5, -img.height() * 0.5, img.width(), img.height());
+    dynamicCanvasCtx.rotate((-offset.rotation * Math.PI) / 180);
+    dynamicCanvasCtx.setTransform(1, 0, 0, 1, 0, 0);
+  } else {
+    dynamicCanvasCtx.drawImage(
+      img.image(),
+      canvasCtx.canvas.width * 0.5 - img.width() * 0.5 + offset.x,
+      340 + offset.y,
+      img.width(),
+      img.height()
     );
-  });
-};
-
-const drawActor = (actor: CheckpointActor, img: any, pos: Position, dim: Dimensions) => {
-  dynamicCanvasCtx.drawImage(img, pos.x, pos.y, dim.width, dim.height);
-
-  if (actor.currentHealth > 0) {
-    drawText(dynamicCanvasCtx, `${actor.currentHealth}/${actor.totalHealth}`, pos, 18, "red");
   }
-};
 
-export const drawTreasure = (checkpoint: QuestCheckpoint) => {
-  let img = drawDatas.get(ImageType.CHEST_CLOSED)!;
-  canvasCtx.drawImage(
-    img.image(),
-    canvasCtx.canvas.width * 0.5 - img.width() * 0.25,
-    270,
-    img.width() * 0.5,
-    img.height() * 0.5
-  );
-  drawText(dynamicCanvasCtx, "Cracking treasure chest...", { centerX: true, x: 0, y: 200 }, 32, "lightgreen");
+  if (!opened) {
+    drawText(dynamicCanvasCtx, "Cracking treasure chest...", { centerX: true, x: 0, y: 100 }, 32, "lightgreen");
+  }
 };
 
 export const drawDrops = (drops: Drop[]) => {
@@ -176,7 +160,7 @@ export const drawMessages = (msgs: EventMessage[]) => {
   });
 };
 
-export const drawCompleted = (checkpoint: QuestCheckpoint, drops: Drop[]) => {
+export const drawBattleCompleted = (checkpoint: QuestCheckpoint, won: boolean, drops: Drop[]) => {
   canvasCtx.fillStyle = `rgba(0, 0, 0, .4)`;
   canvasCtx.fillRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
 
@@ -189,15 +173,22 @@ export const drawCompleted = (checkpoint: QuestCheckpoint, drops: Drop[]) => {
     img.height() * 0.5
   );
 
-  img = drawDatas.get(ImageType.REWARD_GOLD)!;
-  canvasCtx.drawImage(img.image(), 150, 300, img.width() * 0.75, img.height() * 0.75);
+  if (won) {
+    img = drawDatas.get(ImageType.REWARD_GOLD)!;
+    canvasCtx.drawImage(img.image(), 150, 300, img.width() * 0.75, img.height() * 0.75);
 
-  if (checkpoint.type === CheckpointType.BATTLE) {
     drawText(canvasCtx, `Exp: ${checkpoint.enemies!.reduce((a, b) => a + b.experience, 0)}`, { x: 150, y: 275 }, 72);
-  }
 
-  const collectedGold = drops.filter((d) => d.type === DropType.GOLD && d.collected).reduce((a, b) => a + b.amount, 0);
-  drawText(canvasCtx, `${checkpoint.tribute}${collectedGold > 0 ? " + " + collectedGold : ""}`, { x: 250, y: 375 }, 72);
+    const collectedGold = drops
+      .filter((d) => d.type === DropType.GOLD && d.collected)
+      .reduce((a, b) => a + b.amount, 0);
+    drawText(
+      canvasCtx,
+      `${checkpoint.tribute}${collectedGold > 0 ? " + " + collectedGold : ""}`,
+      { x: 250, y: 375 },
+      72
+    );
+  }
 };
 
 const drawText = (
@@ -222,16 +213,12 @@ const drawText = (
 
 const imageByActorType = (type: string) => {
   switch (type) {
-    case "crab":
-      return ImageType.CRAB;
-    case "plant":
-      return ImageType.PLANT;
-    case "slime":
-      return ImageType.SLIME;
-    case "spider":
-      return ImageType.SPIDER;
-    case "zombie":
-      return ImageType.ZOMBIE;
+    case "snake":
+      return ImageType.SNAKE;
+    case "goblin":
+      return ImageType.GOBLIN;
+    case "moth":
+      return ImageType.MOTH;
     default:
       throw new Error(`Unknown actor type ${type}`);
   }

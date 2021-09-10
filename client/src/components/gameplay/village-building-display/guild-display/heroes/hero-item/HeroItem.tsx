@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, MouseEvent } from "react";
-import { getEquipmentStats } from "../../../../../../models/Equipment";
+import React, { useEffect, useRef } from "react";
 import Hero, { calcHealthFraction } from "../../../../../../models/hero/Hero";
 import { display, HeroType } from "../../../../../../models/hero/HeroType";
 import Quest from "../../../../../../models/Quest";
@@ -13,9 +12,10 @@ type HeroItemProps = {
   enabled: boolean;
   reward?: { gold: number; experience: number };
   embarkedLimit?: boolean;
+  hitted?: boolean;
 };
 
-const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, reward, embarkedLimit }: HeroItemProps) => {
+const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, hitted, reward, embarkedLimit }: HeroItemProps) => {
   const healthRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const expRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const canvasW = toGameplayScale(80);
@@ -35,7 +35,7 @@ const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, reward, embark
     expCtx.fillRect(0, 0, canvasW, canvasH);
     expCtx.fillStyle = "yellow";
     expCtx.fillRect(0, 0, canvasW * hero.level.progress, canvasH);
-  });
+  }, [hero, hero.health, canvasH, canvasW]);
 
   const assignBtnStyle = {
     display: chosenQuest && enabled && !embarkedLimit ? "block" : "none",
@@ -49,9 +49,9 @@ const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, reward, embark
     display: reward ? "block" : "none",
   };
 
-  const className = `hero-item ${reward ? "" : "hero-item--hoverable"}`;
+  const className = `hero-item ${reward ? "" : "hero-item--hoverable"} ${hitted ? "hero-item--hitted" : ""}`;
 
-  const power = hero.stats.power + getEquipmentStats(hero.equipment).power;
+  const power = hero.stats.power + hero.equipStats.power;
 
   return (
     <div className={className} style={style} onClick={itemClickHandler}>

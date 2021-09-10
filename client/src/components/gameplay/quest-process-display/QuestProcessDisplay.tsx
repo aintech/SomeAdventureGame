@@ -1,5 +1,4 @@
-import React, { Component, MouseEvent } from "react";
-import { useState } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { closeQuestProcess, heroStatsChoosed } from "../../../actions/Actions";
@@ -9,13 +8,14 @@ import Hero from "../../../models/hero/Hero";
 import Quest from "../../../models/Quest";
 import QuestCheckpoint, { CheckpointType } from "../../../models/QuestCheckpoint";
 import { CheckpointPassedBody } from "../../../services/QuestsService";
+import { shallowCopy } from "../../../utils/Utils";
 import Loader from "../../loader/Loader";
 import HeroItem from "../village-building-display/guild-display/heroes/hero-item/HeroItem";
-import BattleProcess from "./battle-process/BattleProcess";
-import CheckpointProcess from "./checkpoint-process/CheckpointProcess";
+import BattleProcess, { HeroEvent } from "./battle-process/BattleProcess";
 import QuestComplete from "./quest-complete/QuestComplete";
 import QuestMap from "./quest-map/QuestMap";
 import "./quest-process-display.scss";
+import TreasureProcess from "./treasure-process/TreasureProcess";
 
 export type QuestProcess = {
   quest: Quest;
@@ -26,7 +26,7 @@ type QuestProcessDisplayProps = {
   quest: Quest;
   heroes: Hero[];
   heroClicked: (hero: Hero) => void;
-  onCheckpointPassed: (quest: Quest, checkpoint: CheckpointPassedBody) => void;
+  onCheckpointPassed: (quest: Quest, result: CheckpointPassedBody) => void;
   closeDisplay: () => void;
 };
 
@@ -39,6 +39,12 @@ const QuestProcessDisplay = ({
 }: QuestProcessDisplayProps) => {
   const [activeCheckpoint, setActiveCheckpoint] = useState<QuestCheckpoint>();
   const [heroRewards, setHeroRewards] = useState<Map<number, { gold: number; experience: number }>>(new Map());
+  const [heroActors, setHeroActors] = useState<Hero[]>([]);
+  const [hitted, setHitted] = useState<number>(-1);
+
+  useEffect(() => {
+    setHeroActors(heroes.map((h) => shallowCopy(h)));
+  }, [heroes, setHeroActors]);
 
   const heroClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -55,13 +61,76 @@ const QuestProcessDisplay = ({
     setActiveCheckpoint(checkpoint);
   };
 
-  const completeCheckpoint = (e: MouseEvent, collected: { actorId: number; drops: number[] }[]) => {
+  const completeCheckpoint = (
+    won: boolean,
+    collectedDrops: Map<number, number[]>,
+    battleEvents: Map<number, HeroEvent[]>
+  ) => {
     setActiveCheckpoint(undefined);
     setHeroRewards(new Map());
-    if (activeCheckpoint) {
-      onCheckpointPassed(quest, { id: activeCheckpoint.id, collected });
+    if (activeCheckpoint && won) {
+      const collected = Array.from(collectedDrops, ([actorId, drops]) => ({ actorId, drops }));
+      const events = Array.from(battleEvents, ([heroId, events]) => ({ heroId, events }));
+      onCheckpointPassed(quest, { id: activeCheckpoint.id, collected, events });
+    }
+    if (!won) {
+      setHeroActors(heroes.map((h) => shallowCopy(h)));
     }
   };
+
+  const heroHit = (heroId: number, hpLoss: number) => {
+    const actors = [...heroActors];
+    const hero = actors.find((h) => h.id === heroId)!;
+    hero.health -= hpLoss;
+    if (hero.health < 0) {
+      hero.health = 0;
+    }
+    setHeroActors(actors);
+    setHitted(hero.id);
+  };
+
+  let display;
+  if (activeCheckpoint) {
+    switch (activeCheckpoint.type) {
+      case CheckpointType.BATTLE:
+        display = (
+          <BattleProcess
+            checkpoint={activeCheckpoint}
+            heroes={heroActors}
+            heroHit={heroHit}
+            resetAnim={() => setHitted(-1)}
+            // checkpointPassed={passCheckpoint}
+            moveOnwards={completeCheckpoint}
+            closeCheckpoint={() => setActiveCheckpoint(undefined)}
+            setHeroRewards={setHeroRewards}
+          />
+        );
+        break;
+      case CheckpointType.TREASURE:
+        display = (
+          <TreasureProcess
+            checkpoint={activeCheckpoint}
+            heroes={heroActors}
+            // checkpointPassed={() => {}}
+            moveOnwards={() => {
+              setActiveCheckpoint(undefined);
+              onCheckpointPassed(quest, { id: activeCheckpoint.id });
+            }}
+            closeCheckpoint={() => setActiveCheckpoint(undefined)}
+            setHeroRewards={setHeroRewards}
+          />
+        );
+        break;
+      default:
+        throw new Error(`Unknown checkpoint type ${CheckpointType[activeCheckpoint.type]}`);
+    }
+  } else {
+    display = quest.progress!.checkpoints.find((c) => !c.passed) ? (
+      <QuestMap quest={quest} checkpointActivated={checkpointActivated} />
+    ) : (
+      <QuestComplete quest={quest} heroes={heroes} />
+    );
+  }
 
   return (
     <div className="quest-process-display" id="quest-process-display" onClick={clickHandler}>
@@ -69,37 +138,15 @@ const QuestProcessDisplay = ({
       <div className="quest-process-display__container">
         <div className="quest-process-display__name">{quest.title}</div>
 
-        {activeCheckpoint ? (
-          activeCheckpoint.type === CheckpointType.BATTLE ? (
-            <BattleProcess
-              checkpoint={activeCheckpoint}
-              heroes={heroes}
-              // checkpointPassed={passCheckpoint}
-              moveOnwards={completeCheckpoint}
-              closeCheckpoint={() => setActiveCheckpoint(undefined)}
-              setHeroRewards={setHeroRewards}
-            />
-          ) : (
-            <CheckpointProcess
-              checkpoint={activeCheckpoint}
-              heroes={heroes}
-              checkpointPassed={() => {}}
-              moveOnwards={() => {}}
-              closeCheckpoint={() => setActiveCheckpoint(undefined)}
-            />
-          )
-        ) : quest.progress!.checkpoints.find((c) => !c.passed) ? (
-          <QuestMap quest={quest} checkpointActivated={checkpointActivated} />
-        ) : (
-          <QuestComplete quest={quest} heroes={heroes} />
-        )}
+        {display}
 
         <div className="quest-process-display__heroes-holder">
-          {heroes.map((hero) => (
+          {heroActors.map((hero) => (
             <HeroItem
               key={hero.id}
               hero={hero}
               enabled={true}
+              hitted={hitted === hero.id}
               itemClickHandler={(event) => heroClickHandler(hero, event)}
               reward={heroRewards.get(hero.id)}
             />

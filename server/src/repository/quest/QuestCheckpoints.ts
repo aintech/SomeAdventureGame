@@ -1,7 +1,7 @@
-import { BattleActionType, BattleRound } from "../../generators/BattleGenerator";
+import { BattleRound } from "../../generators/BattleGenerator";
+import { CheckpointPassedBody } from "../../routes/QuestRoutes";
 import query, { single } from "../Db";
-import { adjustHeroGold, adjustHeroGoldExperience, getHeroesHP, HeroWithSkills, setHeroHealth } from "../hero/Hero";
-import { adjustItems } from "../Item";
+import { adjustGoldExperience, adjustHealth, HeroWithSkills } from "../hero/Hero";
 import { Monster } from "../Monster";
 import { getQuestProgress } from "./QuestProgress";
 
@@ -26,11 +26,6 @@ export type QuestCheckpointWithProgress = QuestCheckpoint & {
   progressId?: number /** empty when progress not persist yet */;
   questId: number;
   embarkedTime: Date;
-};
-
-export type QuestCheckpointResult = {
-  id: number;
-  collected: { actorId: number; drops: number[] }[];
 };
 
 export const persistQuestCheckpoints = async (progressId: number, checkpoints: QuestCheckpoint[]) => {
@@ -103,7 +98,7 @@ export const getQuestCheckpointsByQuest = async (userId: number, questId: number
 export const checkpointPassed = async (
   checkpoint: QuestCheckpointWithProgress,
   heroes: HeroWithSkills[],
-  result: QuestCheckpointResult
+  result: CheckpointPassedBody
 ) => {
   if (checkpoint.passed) {
     return;
@@ -166,7 +161,21 @@ export const checkpointPassed = async (
   }
 
   heroes.forEach((h) => {
-    adjustments.push(adjustHeroGoldExperience(h.id, gold, experience));
+    const events = result.events.find((e) => e.heroId === h.id)?.events;
+    if (events) {
+      let hpAdjust = 0;
+      events
+        .sort((a, b) => a.time - b.time)
+        .forEach((e) => {
+          hpAdjust += e.hpAlter ?? 0;
+        });
+
+      adjustments.push(adjustHealth(h.id, hpAdjust));
+    }
+  });
+
+  heroes.forEach((h) => {
+    adjustments.push(adjustGoldExperience(h.id, gold, experience));
   });
 
   if (adjustments.length > 0) {

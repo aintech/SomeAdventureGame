@@ -1,14 +1,12 @@
-import CrabGifSrc from "../../../../img/quest-process-display/actors/crab.gif";
+import GoblinImgSrc from "../../../../img/quest-process-display/actors/goblin.png";
+import GoblinPrtImgSrc from "../../../../img/quest-process-display/actors/goblin-prt.png";
 import SnakeImgSrc from "../../../../img/quest-process-display/actors/snake.png";
-import HeroGifSrc from "../../../../img/quest-process-display/actors/hero.gif";
-import PlantGifSrc from "../../../../img/quest-process-display/actors/plant.gif";
-import SlimeGifSrc from "../../../../img/quest-process-display/actors/slime.gif";
-import SpiderGifSrc from "../../../../img/quest-process-display/actors/spider.gif";
-import ZombieGifSrc from "../../../../img/quest-process-display/actors/zombie.gif";
+import SnakePrtImgSrc from "../../../../img/quest-process-display/actors/snake-prt.png";
+import MothImgSrc from "../../../../img/quest-process-display/actors/moth.png";
+import MothPrtImgSrc from "../../../../img/quest-process-display/actors/moth-prt.png";
 import AttackGifSrc from "../../../../img/quest-process-display/attack.gif";
 import ChestClosedImgSrc from "../../../../img/quest-process-display/chest-closed.png";
 import ChestOpenImgSrc from "../../../../img/quest-process-display/chest-open.png";
-import GravestoneImgSrc from "../../../../img/quest-process-display/gravestone.png";
 import RewardBackImgSrc from "../../../../img/quest-process-display/reward-back.png";
 import RewardGoldImgSrc from "../../../../img/quest-process-display/reward-gold.png";
 import Gif from "../../../../utils/Gif";
@@ -16,18 +14,10 @@ import GifLoader from "../../../../utils/gif-loader";
 
 export enum ImageType {
   SNAKE,
+  GOBLIN,
+  MOTH,
 
   ATTACK,
-
-  HERO,
-
-  CRAB,
-  PLANT,
-  SLIME,
-  SPIDER,
-  ZOMBIE,
-
-  GRAVESTONE,
 
   CHEST_CLOSED,
   CHEST_OPEN,
@@ -93,22 +83,12 @@ export const getUrlByType = (type: ImageType) => {
   switch (type) {
     case ImageType.SNAKE:
       return SnakeImgSrc;
+    case ImageType.GOBLIN:
+      return GoblinImgSrc;
+    case ImageType.MOTH:
+      return MothImgSrc;
     case ImageType.ATTACK:
       return AttackGifSrc;
-    case ImageType.HERO:
-      return HeroGifSrc;
-    case ImageType.CRAB:
-      return CrabGifSrc;
-    case ImageType.PLANT:
-      return PlantGifSrc;
-    case ImageType.SLIME:
-      return SlimeGifSrc;
-    case ImageType.SPIDER:
-      return SpiderGifSrc;
-    case ImageType.ZOMBIE:
-      return ZombieGifSrc;
-    case ImageType.GRAVESTONE:
-      return GravestoneImgSrc;
     case ImageType.CHEST_CLOSED:
       return ChestClosedImgSrc;
     case ImageType.CHEST_OPEN:
@@ -119,5 +99,31 @@ export const getUrlByType = (type: ImageType) => {
       return RewardGoldImgSrc;
     default:
       throw new Error(`Tyimg fetch url for unknown type ${ImageType[type]}`);
+  }
+};
+
+export const getTypeByName = (name: string) => {
+  switch (name) {
+    case "snake":
+      return ImageType.SNAKE;
+    case "goblin":
+      return ImageType.GOBLIN;
+    case "moth":
+      return ImageType.MOTH;
+    default:
+      throw new Error(`Tyimg fetch url for unknown name ${name}`);
+  }
+};
+
+export const getUrlByName = (name: string) => {
+  switch (name) {
+    case "snake-prt":
+      return SnakePrtImgSrc;
+    case "goblin-prt":
+      return GoblinPrtImgSrc;
+    case "moth-prt":
+      return MothPrtImgSrc;
+    default:
+      throw new Error(`Tyimg fetch url for unknown name ${name}`);
   }
 };

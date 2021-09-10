@@ -137,11 +137,15 @@ export const getHeroesHP = async (questId: number) => {
   );
 };
 
-export const adjustHeroGold = (heroId: number, amount: number) => {
+export const adjustHealth = (heroId: number, amount: number) => {
+  return query<void>("adjustHealth", `update public.hero set health = (health + $2) where id = $1`, [heroId, amount]);
+};
+
+export const adjustGold = (heroId: number, amount: number) => {
   return query<void>("adjustGold", `update public.hero set gold = (gold + $2) where id = $1`, [heroId, amount]);
 };
 
-export const adjustHeroGoldExperience = (heroId: number, gold: number, experience: number) => {
+export const adjustGoldExperience = (heroId: number, gold: number, experience: number) => {
   return query<void>(
     "adjustExperience",
     `update public.hero set gold = (gold + $2), experience = (experience + $3) where id = $1`,

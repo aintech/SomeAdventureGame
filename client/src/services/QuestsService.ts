@@ -1,3 +1,4 @@
+import { HeroEvent } from "../components/gameplay/quest-process-display/battle-process/BattleProcess";
 import { AuthProps } from "../contexts/AuthContext";
 import GameStats from "../models/GameStats";
 import Quest from "../models/Quest";
@@ -73,7 +74,8 @@ export const embarkOnQuest = async (auth: AuthProps, questId: number, heroIds: n
 
 export interface CheckpointPassedBody {
   id: number;
-  collected: { actorId: number; drops: number[] }[];
+  collected?: { actorId: number; drops: number[] }[];
+  events?: { heroId: number; events: HeroEvent[] }[];
 }
 
 export interface CheckpointPassedResponse {

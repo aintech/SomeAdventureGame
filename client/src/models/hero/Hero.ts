@@ -16,6 +16,7 @@ export default class Hero {
     public type: HeroType,
     public level: HeroLevel,
     public stats: PersonageStats,
+    public equipStats: PersonageStats, // aggregation of equipment stats surpluses
     public health: number,
     public gold: number,
     public equipment: Equipment[],
@@ -32,19 +33,22 @@ export default class Hero {
 }
 
 export const calcHealthFraction = (hero: Hero): number => {
-  return hero.health / ((hero.stats.vitality + getEquipmentStats(hero.equipment).vitality) * HEALTH_PER_VITALITY);
+  return hero.health / ((hero.stats.vitality + hero.equipStats.vitality) * HEALTH_PER_VITALITY);
 };
 
 export const convert = (response: HeroResponse): Hero => {
+  const equipment = response.equipment.map((e) => convertEquipment(e));
+  const equipStats = getEquipmentStats(equipment);
   return new Hero(
     response.id,
     response.name,
     response.type,
     convertLevel(response.level),
     new PersonageStats(response.power, response.defence, response.vitality, response.initiative),
+    equipStats,
     response.health,
     response.gold,
-    response.equipment.map((e) => convertEquipment(e)),
+    equipment,
     response.items.map((i) => convertHeroItem(i)),
     response.perks.map((p) => convertPerk(p)),
     response.skills.map((s) => convertSkill(s)),
