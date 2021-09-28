@@ -87,14 +87,14 @@ export const drawTreasure = (checkpoint: QuestCheckpoint, opened: boolean, offse
   }
 };
 
-export const drawCircle = (pos: Position, radius: number) => {
-  dynamicCanvasCtx.beginPath();
-  dynamicCanvasCtx.arc(pos.x, pos.y, radius, 0, 2 * Math.PI, false);
-  dynamicCanvasCtx.fillStyle = "rgba(0, 255, 0, .3)";
-  dynamicCanvasCtx.fill();
-  dynamicCanvasCtx.lineWidth = 2;
-  dynamicCanvasCtx.strokeStyle = "white";
-  dynamicCanvasCtx.stroke();
+export const drawTarget = (pos: Position, radius: number) => {
+  canvasCtx.beginPath();
+  canvasCtx.arc(pos.x, pos.y, radius, 0, 2 * Math.PI, false);
+  canvasCtx.fillStyle = "rgba(0, 255, 0, .3)";
+  canvasCtx.fill();
+  canvasCtx.lineWidth = 2;
+  canvasCtx.strokeStyle = "white";
+  canvasCtx.stroke();
 };
 
 export const drawDrops = (drops: Drop[]) => {
@@ -198,7 +198,7 @@ export const drawBattleCompleted = (checkpoint: QuestCheckpoint, won: boolean, d
   }
 };
 
-export const drawTreasureChestCracked = (checkpoint: QuestCheckpoint) => {
+export const drawTreasureChestCracked = (checkpoint: QuestCheckpoint, aftermath: boolean) => {
   canvasCtx.fillStyle = `rgba(0, 0, 0, .4)`;
   canvasCtx.fillRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
 
@@ -211,9 +211,11 @@ export const drawTreasureChestCracked = (checkpoint: QuestCheckpoint) => {
     img.height() * 0.5
   );
 
-  // img = drawDatas.get(ImageType.REWARD_GOLD)!;
-  // canvasCtx.drawImage(img.image(), 150, 300, img.width() * 0.75, img.height() * 0.75);
-  // drawText(canvasCtx, `${checkpoint.tribute}`, { x: 250, y: 375 }, 72);
+  if (aftermath) {
+    img = drawDatas.get(ImageType.REWARD_GOLD)!;
+    canvasCtx.drawImage(img.image(), 150, 300, img.width() * 0.75, img.height() * 0.75);
+    drawText(canvasCtx, `${checkpoint.tribute}`, { x: 250, y: 375 }, 72);
+  }
 };
 
 const drawText = (

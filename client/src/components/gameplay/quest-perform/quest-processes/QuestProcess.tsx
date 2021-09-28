@@ -53,6 +53,7 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
     this.checkTimeoutedDrops();
   }
 
+  //CONTINUE: gold drops to the ground with arc
   moveDrops() {
     this.state.drops
       .filter((d) => !d.collected && !d.timeouted)
@@ -126,7 +127,7 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
     this.setState({ drops });
   }
 
-  calcHeroRewards() {
+  calcHeroRewards(addTribute?: boolean) {
     const rewards = new Map<number, { gold: number; experience: number }>();
 
     const { checkpoint } = this.props;
@@ -134,15 +135,16 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
     const { drops } = this.state;
 
     let experience = 0;
-    let gold = 0;
     if (checkpoint.enemies) {
       experience = Math.ceil(checkpoint.enemies.reduce((a, b) => a + b.experience, 0) / heroes.length);
-      const collectedGold = drops
-        .filter((d) => d.type === DropType.GOLD && d.collected)
-        .reduce((a, b) => a + b.amount, 0);
-
-      gold = Math.ceil((collectedGold + checkpoint.tribute) / heroes.length);
     }
+
+    let gold = 0;
+    const collectedGold = drops
+      .filter((d) => d.type === DropType.GOLD && d.collected)
+      .reduce((a, b) => a + b.amount, 0);
+
+    gold = Math.ceil((collectedGold + (addTribute ? checkpoint.tribute : 0)) / heroes.length);
 
     heroes.forEach((h) => rewards.set(h.id, { gold, experience }));
 

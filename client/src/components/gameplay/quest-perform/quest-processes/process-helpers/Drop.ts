@@ -25,11 +25,13 @@ export type Drop = {
   timeouted?: boolean;
 };
 
-export const defineDrop = (template: EnemyDrop, canvasDims: Dimensions, actorId?: number): Drop => {
-  const position = {
-    x: canvasDims.width * 0.5 + Math.random() * 30 * (Math.random() < 0.5 ? 1 : -1),
-    y: canvasDims.height * 0.5 + Math.random() * canvasDims.height * 0.2 * (Math.random() < 0.5 ? 1 : -1),
-  };
+export const defineDrop = (template: EnemyDrop, canvasDims: Dimensions, actorId?: number, initial?: Position): Drop => {
+  const position = initial
+    ? initial
+    : {
+        x: canvasDims.width * 0.5 + Math.random() * 30 * (Math.random() < 0.5 ? 1 : -1),
+        y: canvasDims.height * 0.5 + Math.random() * canvasDims.height * 0.2 * (Math.random() < 0.5 ? 1 : -1),
+      };
 
   const xOffset = (Math.random() * 200 + 100) * (position.x > canvasDims.width * 0.5 ? 1 : -1);
   const yOffset = (Math.random() * 100 + 100) * (position.y > canvasDims.height * 0.5 ? 1 : -1);

@@ -213,7 +213,7 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     let description;
 
     if (this.props.activeQuestPerform) {
-      description = "На квесет";
+      description = "Квест";
     } else if (this.state.seconds >= 0) {
       description = "Лагерь";
     } else {
