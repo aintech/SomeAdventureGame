@@ -231,14 +231,14 @@ export const showConfirmDialog = (
   };
 };
 
-export const beginQuestProcess = (quest: Quest, heroes: Hero[]): PayloadedAction => {
+export const beginQuestPerform = (quest: Quest, heroes: Hero[]): PayloadedAction => {
   return {
     type: ActionType.BEGIN_QUEST_PROCESS,
     payload: { quest, heroes },
   };
 };
 
-export const closeQuestProcess = (): Action => {
+export const closeQuestPerform = (): Action => {
   return {
     type: ActionType.CLOSE_QUEST_PROCESS,
   };

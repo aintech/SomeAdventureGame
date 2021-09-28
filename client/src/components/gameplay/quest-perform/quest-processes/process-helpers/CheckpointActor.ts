@@ -1,8 +1,8 @@
-import Hero from "../../../../models/hero/Hero";
-import { display } from "../../../../models/hero/HeroType";
-import PersonageStats from "../../../../models/PersonageStats";
-import { CheckpointEnemy, EnemyDrop } from "../../../../models/QuestCheckpoint";
-import { HEALTH_PER_VITALITY } from "../../../../utils/variables";
+import Hero from "../../../../../models/hero/Hero";
+import { display } from "../../../../../models/hero/HeroType";
+import PersonageStats from "../../../../../models/PersonageStats";
+import { CheckpointEnemy, EnemyDrop } from "../../../../../models/QuestCheckpoint";
+import { HEALTH_PER_VITALITY } from "../../../../../utils/variables";
 
 type CheckpointActor = {
   actorId: number;

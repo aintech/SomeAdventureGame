@@ -3,10 +3,10 @@
 @import "../../../../utils/mixins.scss";
 @import "../../../../utils/animations.scss";
 
-.quest-progress-item {
-  width: to-gameplay-scale($progress-item_width);
+.quest-travel-item {
+  width: to-gameplay-scale($travel-item_width);
   height: to-gameplay-scale(118px);
-  background-image: url(../../../../img/quest-progress/quest-progress_holder.png);
+  background-image: url(../../../../img/quest-travel/quest-travel_holder.png);
   background-size: contain;
   cursor: default;
 
@@ -38,23 +38,6 @@
     font-size: to-gameplay-scale(2.2rem);
     color: white;
     @include strokeText;
-  }
-
-  &__chest {
-    grid-row: 2;
-    grid-column: 2;
-    width: to-gameplay-scale(68px);
-    height: to-gameplay-scale(68px);
-    background-image: url(../../../../img/quest-progress/quest-progress_chest.png);
-    background-size: contain;
-    transform: translateX(to-gameplay-scale(50px));
-    z-index: 900;
-
-    cursor: pointer;
-
-    &:hover {
-      animation: pulsate 1s infinite;
-    }
   }
 
   &__actors {

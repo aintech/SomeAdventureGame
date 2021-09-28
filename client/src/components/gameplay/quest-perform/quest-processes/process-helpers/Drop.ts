@@ -1,5 +1,5 @@
-import { EnemyDrop } from "../../../../models/QuestCheckpoint";
-import { Dimensions, Position } from "../../../../utils/Utils";
+import { EnemyDrop } from "../../../../../models/QuestCheckpoint";
+import { Dimensions, Position } from "../../../../../utils/Utils";
 import { Direction } from "./EventMessage";
 
 export enum DropType {
@@ -7,11 +7,12 @@ export enum DropType {
 }
 
 export type Drop = {
-  actorId: number;
-  appearAt: number;
-
   type: DropType;
   amount: number;
+
+  actorId?: number;
+  appearAt?: number;
+
   position: Position;
   target: Position;
   dimensions: Dimensions;
@@ -24,18 +25,18 @@ export type Drop = {
   timeouted?: boolean;
 };
 
-export const defineDrop = (actorId: number, template: EnemyDrop, canvas: HTMLCanvasElement): Drop => {
+export const defineDrop = (template: EnemyDrop, canvasDims: Dimensions, actorId?: number): Drop => {
   const position = {
-    x: canvas.width * 0.5 + Math.random() * 30 * (Math.random() < 0.5 ? 1 : -1),
-    y: canvas.height * 0.5 + Math.random() * canvas.height * 0.2 * (Math.random() < 0.5 ? 1 : -1),
+    x: canvasDims.width * 0.5 + Math.random() * 30 * (Math.random() < 0.5 ? 1 : -1),
+    y: canvasDims.height * 0.5 + Math.random() * canvasDims.height * 0.2 * (Math.random() < 0.5 ? 1 : -1),
   };
 
-  const xOffset = (Math.random() * 200 + 100) * (position.x > canvas.width * 0.5 ? 1 : -1);
-  const yOffset = (Math.random() * 100 + 100) * (position.y > canvas.height * 0.5 ? 1 : -1);
+  const xOffset = (Math.random() * 200 + 100) * (position.x > canvasDims.width * 0.5 ? 1 : -1);
+  const yOffset = (Math.random() * 100 + 100) * (position.y > canvasDims.height * 0.5 ? 1 : -1);
 
   const target = {
-    x: Math.max(100, Math.min(canvas.width - 100, position.x + xOffset)),
-    y: Math.max(100, Math.min(canvas.height - 100, position.y + yOffset)),
+    x: Math.max(100, Math.min(canvasDims.width - 100, position.x + xOffset)),
+    y: Math.max(100, Math.min(canvasDims.height - 100, position.y + yOffset)),
   };
 
   const direction = {

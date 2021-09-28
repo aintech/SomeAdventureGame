@@ -3,7 +3,7 @@
 @import "../../../utils/mixins.scss";
 @import "../../../utils/animations.scss";
 
-.quest-process-display {
+.quest-perform {
   @include absoluteCenter;
   display: flex;
   width: $gameplay_width;

@@ -2,7 +2,7 @@ import { PayloadedAction } from "../actions/Actions";
 import { ActionType } from "../actions/ActionType";
 import { ConfirmDialogType } from "../components/confirm-dialog/ConfirmDialog";
 import { Tooltip } from "../components/gameplay-tooltip/GameplayTooltip";
-import { QuestProcess } from "../components/gameplay/quest-process-display/QuestProcessDisplay";
+import { QuestPerformData } from "../components/gameplay/quest-perform/QuestPerform";
 import { Message } from "../components/message-popup/MessagePopup";
 import Building from "../models/Building";
 import Equipment, { convert as convertEquipment } from "../models/Equipment";
@@ -29,7 +29,7 @@ export type State = {
   messages: Message[];
   tooltip: Tooltip;
   confirmDialog?: ConfirmDialogType;
-  activeQuestProcess?: QuestProcess;
+  activeQuestPerform?: QuestPerformData;
 };
 
 const intialState = {
@@ -215,7 +215,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         quests: [...state.quests.slice(0, qIdx), convertQuest(embQuest), ...state.quests.slice(qIdx + 1)],
         heroes: uHeroes,
         chosenHero,
-        activeQuestProcess: { quest: convertQuest(embQuest), heroes: embHeroes.map((h) => convertHero(h)) },
+        activeQuestPerform: { quest: convertQuest(embQuest), heroes: embHeroes.map((h) => convertHero(h)) },
       };
 
     case ActionType.COLLECTING_QUEST_REWARD:
@@ -324,13 +324,13 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
     case ActionType.BEGIN_QUEST_PROCESS:
       return {
         ...state,
-        activeQuestProcess: action.payload,
+        activeQuestPerform: action.payload,
       };
 
     case ActionType.CLOSE_QUEST_PROCESS:
       return {
         ...state,
-        activeQuestProcess: undefined,
+        activeQuestPerform: undefined,
       };
 
     default:

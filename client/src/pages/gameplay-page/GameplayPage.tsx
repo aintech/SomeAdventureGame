@@ -7,8 +7,8 @@ import GameplayTooltip from "../../components/gameplay-tooltip/GameplayTooltip";
 import GameTimer from "../../components/gameplay/game-timer/GameTimer";
 import GameWorld from "../../components/gameplay/game-world/GameWorld";
 import HeroStatsDisplay from "../../components/gameplay/hero-stats-display/HeroStatsDisplay";
-import QuestProcessDisplay from "../../components/gameplay/quest-process-display/QuestProcessDisplay";
-import QuestProgressList from "../../components/gameplay/quest-progress/quest-progress-list/QuestProgressList";
+import QuestPerform from "../../components/gameplay/quest-perform/QuestPerform";
+import QuestProgressList from "../../components/gameplay/quest-travel/quest-travel-list/QuestTravelList";
 import QuestRewardContainer from "../../components/gameplay/quest-reward/QuestReward";
 import BuildingDisplay from "../../components/gameplay/village-building-display/building-details/BuildingDetails";
 import Loader from "../../components/loader/Loader";
@@ -27,7 +27,7 @@ const GameplayPage = () => {
       <QuestRewardContainer />
       <HeroStatsDisplay />
       <QuestProgressList />
-      <QuestProcessDisplay />
+      <QuestPerform />
       <ConfirmDialog />
     </>
   );

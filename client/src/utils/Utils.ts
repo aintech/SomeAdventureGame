@@ -43,7 +43,20 @@ export const distance = (a: Position, b: Position) => {
 };
 
 export const lerp = (from: Position, to: Position, speed: number) => {
-  return { x: (1 - speed) * from.x + speed * to.x, y: (1 - speed) * from.y + speed * to.y };
+  return { x: lerpXY(from.x, to.x, speed), y: lerpXY(from.y, to.y, speed) };
+};
+
+export const lerpXY = (x: number, y: number, speed: number) => {
+  return (1 - speed) * x + speed * y;
+};
+
+export const clickInBox = (click: Position, box: { center: Position; edgeHalf: number }) => {
+  return (
+    box.center.x - box.edgeHalf < click.x &&
+    box.center.x + box.edgeHalf > click.x &&
+    box.center.y - box.edgeHalf < click.y &&
+    box.center.y + box.edgeHalf > click.y
+  );
 };
 
 export const shallowCopy = <T>(original: T): T => {

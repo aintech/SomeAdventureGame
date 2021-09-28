@@ -1,4 +1,4 @@
-import Gif from "../../../../utils/Gif";
+import Gif from "../../../../../utils/Gif";
 
 class DrawData {
   private _rotation: number = 0;

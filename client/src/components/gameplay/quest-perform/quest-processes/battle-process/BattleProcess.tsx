@@ -1,24 +1,20 @@
-import { Component, createRef, MouseEvent } from "react";
-import Hero from "../../../../models/hero/Hero";
-import QuestCheckpoint from "../../../../models/QuestCheckpoint";
-import { distance, lerp, Position } from "../../../../utils/Utils";
-import Loader from "../../../loader/Loader";
-import CheckpointActor, { convertToActor } from "../process-helpers/CheckpointActor";
-import { create } from "../process-helpers/Color";
+import { MouseEvent } from "react";
+import Loader from "../../../../loader/Loader";
+import CheckpointActor, { convertToActor } from "../../quest-processes/process-helpers/CheckpointActor";
+import { create } from "../../quest-processes/process-helpers/Color";
 import {
+  addToHitsDrawQueue,
   clearCtx as clearDrawCtx,
   clearDynamicCtx as clearDynamicDrawCtx,
   drawBattleCompleted,
-  drawDrops,
   drawHits,
-  drawMessages,
   drawOpponent,
-  dropToHits,
   prepare,
-} from "../process-helpers/DrawManager";
-import { defineDrop, Drop, DropType } from "../process-helpers/Drop";
-import { Direction, Effect, EventMessage } from "../process-helpers/EventMessage";
-import { getTypeByName, getUrlByName, ImageType } from "../process-helpers/ImageLoader";
+} from "../../quest-processes/process-helpers/DrawManager";
+import { defineDrop } from "../../quest-processes/process-helpers/Drop";
+import { Direction, Effect, EventMessage } from "../../quest-processes/process-helpers/EventMessage";
+import { getTypeByName, getUrlByName, ImageType } from "../../quest-processes/process-helpers/ImageLoader";
+import QuestProcess, { QuestProcessProps, QuestProcessState } from "../QuestProcess";
 import "./battle-process.scss";
 
 enum ProcessState {
@@ -37,14 +33,9 @@ const mandatoryGifs = () => {
   return [ImageType.ATTACK];
 };
 
-type BattleProcessProps = {
-  checkpoint: QuestCheckpoint;
-  heroes: Hero[];
+type BattleProcessProps = QuestProcessProps & {
   heroHit: (heroId: number, hpLoss: number) => void;
   resetAnim: () => void;
-  closeCheckpoint: () => void;
-  // checkpointPassed: () => void;
-  setHeroRewards: (rewards: Map<number, { gold: number; experience: number }>) => void;
   moveOnwards: (
     won: boolean,
     collectedDrops: Map<number, number[]>, // actorId to enemy health amount refered to drop
@@ -58,24 +49,15 @@ export type HeroEvent = {
   hpAlter?: number;
 };
 
-type BattleProcessState = {
-  seconds: number;
-  eventMessages: EventMessage[];
+type BattleProcessState = QuestProcessState & {
   processState: ProcessState;
-  beginTime?: Date;
   enemies: CheckpointActor[];
   currentEnemy?: CheckpointActor;
   clickPower: number;
-  drops: Drop[];
   battleEvents: Map<number, HeroEvent[]>; // heroId to events
 };
 
-class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
-  private roundTimer?: NodeJS.Timeout;
-  private frameTimer?: NodeJS.Timeout;
-  private canvasRef: React.RefObject<HTMLCanvasElement>;
-  private dynamicCanvasRef: React.RefObject<HTMLCanvasElement>;
-
+class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState> {
   constructor(props: BattleProcessProps) {
     super(props);
     this.state = {
@@ -87,8 +69,6 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
       drops: [],
       battleEvents: new Map(),
     };
-    this.canvasRef = createRef();
-    this.dynamicCanvasRef = createRef();
     this.startTimers = this.startTimers.bind(this);
     this.updateRound = this.updateRound.bind(this);
     this.updateFrame = this.updateFrame.bind(this);
@@ -133,13 +113,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   }
 
   componentWillUnmount() {
-    if (this.roundTimer) {
-      clearInterval(this.roundTimer);
-    }
-    if (this.frameTimer) {
-      clearInterval(this.frameTimer);
-    }
-
+    this.onUnmount();
     this.state.enemies.forEach((e) => {
       e.drop.forEach((d) => (d.dropped = undefined));
     });
@@ -192,20 +166,9 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     if (this.state.processState === ProcessState.LOADING) {
       return;
     }
-    this.moveDrops();
-    this.drawFrame();
-    this.checkEndedMessages();
-    this.checkTimeoutedDrops();
-  }
 
-  moveDrops() {
-    this.state.drops
-      .filter((d) => !d.collected && !d.timeouted)
-      .forEach((drop) => {
-        if (distance(drop.position, drop.target) > 5) {
-          drop.position = lerp(drop.position, drop.target, 0.08);
-        }
-      });
+    this.drawFrame();
+    this.updateCommon();
   }
 
   drawStatic() {
@@ -225,8 +188,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   drawFrame() {
     clearDynamicDrawCtx();
     drawHits();
-    drawDrops(this.state.drops.filter((d) => !d.collected && !d.timeouted));
-    drawMessages(this.state.eventMessages);
+    this.drawCommon();
   }
 
   canvasClickHandler(e: MouseEvent) {
@@ -234,14 +196,13 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     e.preventDefault();
     if (this.state.processState === ProcessState.BATTLE) {
       if (this.state.currentEnemy) {
-        const rect = this.canvasRef.current!.getBoundingClientRect();
-        const click = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        const click = this.getClickPoint(e);
 
         if (this.checkDropClicked(click)) {
           return;
         }
 
-        dropToHits(click);
+        addToHitsDrawQueue(click);
 
         const { currentEnemy } = this.state;
 
@@ -253,7 +214,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
           if (drop) {
             drop.dropped = true;
             const { drops } = this.state;
-            drops.push(defineDrop(currentEnemy.actorId, drop, this.canvasRef.current!));
+            drops.push(defineDrop(drop, this.dynamicCanvasRef.current!, currentEnemy.actorId));
             this.setState({ drops });
           }
 
@@ -269,43 +230,11 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     }
   }
 
-  checkDropClicked(click: Position) {
-    const { drops } = this.state;
-
-    const msgs: EventMessage[] = [];
-    drops.forEach((drop) => {
-      if (!drop.collected && !drop.timeouted) {
-        if (
-          drop.position.x <= click.x &&
-          drop.position.x + drop.dimensions.width >= click.x &&
-          drop.position.y <= click.y &&
-          drop.position.y + drop.dimensions.height >= click.y
-        ) {
-          drop.collected = true;
-          msgs.push(
-            new EventMessage(1, click, 32, `+ ${drop.amount} g`, create(255, 255), Direction.RIGHT, Effect.FLY_AWAY)
-          );
-        }
-      }
-    });
-
-    if (msgs.length > 0) {
-      this.setState((state) => {
-        return { drops, eventMessages: [...state.eventMessages, ...msgs] };
-      });
-      return true;
-    }
-
-    return false;
-  }
-
   checkEnemyActions(seconds: number) {
     if (seconds <= 0) {
       return;
     }
     this.props.resetAnim();
-
-    console.log(seconds);
 
     this.state.enemies
       .filter((e) => e.currentHealth > 0)
@@ -380,29 +309,6 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     return false;
   }
 
-  calcHeroRewards() {
-    const rewards = new Map<number, { gold: number; experience: number }>();
-
-    const { checkpoint } = this.props;
-    const { heroes } = this.props;
-    const { drops } = this.state;
-
-    let experience = 0;
-    let gold = 0;
-    if (checkpoint.enemies) {
-      experience = Math.ceil(checkpoint.enemies.reduce((a, b) => a + b.experience, 0) / heroes.length);
-      const collectedGold = drops
-        .filter((d) => d.type === DropType.GOLD && d.collected)
-        .reduce((a, b) => a + b.amount, 0);
-
-      gold = Math.ceil((collectedGold + checkpoint.tribute) / heroes.length);
-    }
-
-    heroes.forEach((h) => rewards.set(h.id, { gold, experience }));
-
-    return rewards;
-  }
-
   completeCheckpointClickHandler(e: MouseEvent) {
     this.props.moveOnwards(
       this.state.processState === ProcessState.BATTLE_WON,
@@ -420,42 +326,14 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     this.state.drops
       .filter((drop) => drop.collected)
       .forEach((drop) => {
-        if (collected.has(drop.actorId)) {
-          collected.get(drop.actorId)!.push(drop.appearAt);
+        if (collected.has(drop.actorId!)) {
+          collected.get(drop.actorId!)!.push(drop.appearAt!);
         } else {
-          collected.set(drop.actorId, [drop.appearAt]);
+          collected.set(drop.actorId!, [drop.appearAt!]);
         }
       });
 
     return collected;
-  }
-
-  checkEndedMessages() {
-    const endedMessages = this.state.eventMessages.filter(
-      (m) => m.fireTime().getTime() + m.lifetime * 1000 < new Date().getTime()
-    );
-
-    if (endedMessages.length > 0) {
-      const filteredMessages = this.state.eventMessages;
-      for (let i = 0; i < endedMessages.length; i++) {
-        const idx = filteredMessages.findIndex((m) => m.id() === endedMessages[i].id());
-        filteredMessages.splice(idx, 1);
-      }
-      this.setState({ eventMessages: filteredMessages });
-    }
-  }
-
-  checkTimeoutedDrops() {
-    const { drops } = this.state;
-    const time = new Date().getTime();
-
-    drops.forEach((d) => {
-      if (!d.collected && !d.timeouted && d.lifeTill < time) {
-        d.timeouted = true;
-      }
-    });
-
-    this.setState({ drops });
   }
 
   render() {

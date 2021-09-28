@@ -1,6 +1,6 @@
-import QuestCheckpoint from "../../../../models/QuestCheckpoint";
-import Gif from "../../../../utils/Gif";
-import { CenteredPosition, Position } from "../../../../utils/Utils";
+import QuestCheckpoint from "../../../../../models/QuestCheckpoint";
+import Gif from "../../../../../utils/Gif";
+import { CenteredPosition, Position } from "../../../../../utils/Utils";
 import CheckpointActor from "./CheckpointActor";
 import Color, { stringify } from "./Color";
 import DrawData from "./DrawData";
@@ -29,7 +29,7 @@ export const prepare = async (
   ]);
 };
 
-export const dropToHits = (pos: Position) => {
+export const addToHitsDrawQueue = (pos: Position) => {
   hits.push({ idx: new Date().getTime(), pos, gif: drawDatas.get(ImageType.ATTACK)!.raw() as Gif, frame: 1 });
 };
 
@@ -69,25 +69,32 @@ export const drawOpponent = (actor: CheckpointActor) => {
 export const drawTreasure = (checkpoint: QuestCheckpoint, opened: boolean, offset: Position & { rotation: number }) => {
   let img = drawDatas.get(opened ? ImageType.CHEST_OPEN : ImageType.CHEST_CLOSED)!;
 
-  if (offset.rotation !== 0) {
-    dynamicCanvasCtx.setTransform(1, 0, 0, 1, canvasCtx.canvas.width * 0.5, canvasCtx.canvas.height * 0.5);
-    dynamicCanvasCtx.rotate((offset.rotation * Math.PI) / 180);
-    dynamicCanvasCtx.drawImage(img.image(), -img.width() * 0.5, -img.height() * 0.5, img.width(), img.height());
-    dynamicCanvasCtx.rotate((-offset.rotation * Math.PI) / 180);
-    dynamicCanvasCtx.setTransform(1, 0, 0, 1, 0, 0);
-  } else {
-    dynamicCanvasCtx.drawImage(
-      img.image(),
-      canvasCtx.canvas.width * 0.5 - img.width() * 0.5 + offset.x,
-      340 + offset.y,
-      img.width(),
-      img.height()
-    );
-  }
+  dynamicCanvasCtx.setTransform(
+    1,
+    0,
+    0,
+    1,
+    dynamicCanvasCtx.canvas.width * 0.5 + offset.x,
+    dynamicCanvasCtx.canvas.height + offset.y - 100
+  );
+  dynamicCanvasCtx.rotate((offset.rotation * Math.PI) / 180);
+  dynamicCanvasCtx.drawImage(img.image(), -img.width() * 0.5, -img.height() * 0.5, img.width(), img.height());
+  dynamicCanvasCtx.rotate((-offset.rotation * Math.PI) / 180);
+  dynamicCanvasCtx.setTransform(1, 0, 0, 1, 0, 0);
 
   if (!opened) {
-    drawText(dynamicCanvasCtx, "Cracking treasure chest...", { centerX: true, x: 0, y: 100 }, 32, "lightgreen");
+    drawText(dynamicCanvasCtx, "Cracking treasure chest...", { centerX: true, x: 0, y: 50 }, 32, "lightgreen");
   }
+};
+
+export const drawCircle = (pos: Position, radius: number) => {
+  dynamicCanvasCtx.beginPath();
+  dynamicCanvasCtx.arc(pos.x, pos.y, radius, 0, 2 * Math.PI, false);
+  dynamicCanvasCtx.fillStyle = "rgba(0, 255, 0, .3)";
+  dynamicCanvasCtx.fill();
+  dynamicCanvasCtx.lineWidth = 2;
+  dynamicCanvasCtx.strokeStyle = "white";
+  dynamicCanvasCtx.stroke();
 };
 
 export const drawDrops = (drops: Drop[]) => {
@@ -189,6 +196,24 @@ export const drawBattleCompleted = (checkpoint: QuestCheckpoint, won: boolean, d
       72
     );
   }
+};
+
+export const drawTreasureChestCracked = (checkpoint: QuestCheckpoint) => {
+  canvasCtx.fillStyle = `rgba(0, 0, 0, .4)`;
+  canvasCtx.fillRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
+
+  let img = drawDatas.get(ImageType.REWARD_BACK)!;
+  canvasCtx.drawImage(
+    img.image(),
+    canvasCtx.canvas.width * 0.5 - img.width() * 0.25,
+    -img.height() * 0.25,
+    img.width() * 0.5,
+    img.height() * 0.5
+  );
+
+  // img = drawDatas.get(ImageType.REWARD_GOLD)!;
+  // canvasCtx.drawImage(img.image(), 150, 300, img.width() * 0.75, img.height() * 0.75);
+  // drawText(canvasCtx, `${checkpoint.tribute}`, { x: 250, y: 375 }, 72);
 };
 
 const drawText = (

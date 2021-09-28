@@ -2,15 +2,15 @@ import React from "react";
 import { connect } from "react-redux";
 import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
-import QuestProgressItem from "../quest-progress-item/QuestProgressItem";
-import "./quest-progress-list.scss";
+import QuestTravelItem from "../quest-travel-item/QuestTravelItem";
+import "./quest-travel-list.scss";
 
-type QuestProgressListProps = {
+type QuestTravelListProps = {
   quests?: Quest[];
   heroes?: Hero[];
 };
 
-const QuestProgressList = ({ quests, heroes }: QuestProgressListProps) => {
+const QuestTravelList = ({ quests, heroes }: QuestTravelListProps) => {
   if (!quests || quests.length === 0 || !heroes || heroes.length === 0) {
     return null;
   }
@@ -26,22 +26,22 @@ const QuestProgressList = ({ quests, heroes }: QuestProgressListProps) => {
   }
 
   return (
-    <div className="quest-progress-list">
+    <div className="quest-travel-list">
       {embarked.map((eq) => {
         const { key: quest, value: heroes } = eq;
-        return <QuestProgressItem key={quest.id} quest={quest} heroes={heroes} />;
+        return <QuestTravelItem key={quest.id} quest={quest} heroes={heroes} />;
       })}
     </div>
   );
 };
 
-type QuestProgressListState = {
+type QuestTravelListState = {
   quests: Quest[];
   heroes: Hero[];
 };
 
-const mapStateToProps = ({ quests, heroes }: QuestProgressListState) => {
+const mapStateToProps = ({ quests, heroes }: QuestTravelListState) => {
   return { quests, heroes };
 };
 
-export default connect(mapStateToProps, null)(QuestProgressList);
+export default connect(mapStateToProps, null)(QuestTravelList);
