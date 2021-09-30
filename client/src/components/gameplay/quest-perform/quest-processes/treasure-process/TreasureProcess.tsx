@@ -16,7 +16,11 @@ import "./treasure-process.scss";
 
 enum ProcessState {
   LOADING,
-  CRACKING,
+  CHOOSING,
+
+  SMASHING,
+  LOCKPICKING,
+
   DROPS,
   AFTERMATH,
 }
@@ -77,7 +81,7 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
     ).then((_) => {
       this.setState(
         {
-          processState: ProcessState.CRACKING,
+          processState: ProcessState.CHOOSING,
           beginTime: new Date(),
         },
         () => this.drawStatic()
@@ -113,7 +117,7 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
       return;
     }
 
-    if (this.state.processState === ProcessState.CRACKING) {
+    if (this.state.processState === ProcessState.SMASHING) {
       if (this.chestPos.y < 0) {
         this.chestPos.y += Math.min(10, (new Date().getTime() - this.chestPos.clickTime) * 0.01);
         this.chestPos.rotation = lerpXY(this.chestPos.rotation, 0, 0.1);
@@ -142,7 +146,7 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
       if (this.dropsInitiated) {
         if (this.dropChunks.length === 0 && this.state.drops.filter((d) => !d.collected && !d.timeouted).length === 0) {
           this.props.setHeroRewards(this.calcHeroRewards(false));
-          this.setState({ processState: ProcessState.AFTERMATH });
+          this.setState({ processState: ProcessState.AFTERMATH }, () => this.drawStatic());
         }
       }
     }
@@ -219,7 +223,7 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
     e.stopPropagation();
     e.preventDefault();
 
-    if (this.state.processState === ProcessState.CRACKING) {
+    if (this.state.processState === ProcessState.SMASHING) {
       const click = this.getClickPoint(e);
       const chestPos = {
         x: this.dynamicCanvasRef.current!.width * 0.5 + this.chestPos.x,
@@ -267,6 +271,18 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
           ref={this.dynamicCanvasRef}
           onClick={(e) => this.canvasClickHandler(e)}
         ></canvas>
+        {processState === ProcessState.CHOOSING ? (
+          <div>
+            <button
+              className="treasure-process__btn--smashing"
+              onClick={(e) => this.completeCheckpointClickHandler(e)}
+            ></button>
+            <button
+              className="treasure-process__btn--lockpicking"
+              onClick={(e) => this.completeCheckpointClickHandler(e)}
+            ></button>
+          </div>
+        ) : null}
         {processState === ProcessState.AFTERMATH ? (
           <button className="treasure-process__btn--onwards" onClick={(e) => this.completeCheckpointClickHandler(e)}>
             На карту локации

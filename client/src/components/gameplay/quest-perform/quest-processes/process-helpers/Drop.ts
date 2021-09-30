@@ -17,6 +17,7 @@ export type Drop = {
   target: Position;
   dimensions: Dimensions;
   direction: { x: Direction; y: Direction };
+  acceleration: { x: number; y: number };
 
   lifeTill: number; // in ms
   blinkCtr: number;
@@ -46,6 +47,11 @@ export const defineDrop = (template: EnemyDrop, canvasDims: Dimensions, actorId?
     y: position.y > target.y ? Direction.UP : Direction.DOWN,
   };
 
+  const acceleration = {
+    x: (20 - Math.random() * 10) * (Math.random() > 0.5 ? -1 : 1),
+    y: -5 - Math.random() * 10,
+  };
+
   return {
     actorId,
     appearAt: template.fraction,
@@ -55,6 +61,7 @@ export const defineDrop = (template: EnemyDrop, canvasDims: Dimensions, actorId?
     target,
     direction,
     dimensions: { width: 50, height: 50 },
+    acceleration,
     lifeTill: new Date().getTime() + 10000,
     blinkCtr: 0,
   };

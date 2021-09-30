@@ -1,7 +1,7 @@
 import { Component, createRef, MouseEvent } from "react";
 import Hero from "../../../../models/hero/Hero";
 import QuestCheckpoint from "../../../../models/QuestCheckpoint";
-import { distance, lerp, Position } from "../../../../utils/Utils";
+import { lerpXY, Position } from "../../../../utils/Utils";
 import { create } from "./process-helpers/Color";
 import { drawDrops, drawMessages } from "./process-helpers/DrawManager";
 import { Drop, DropType } from "./process-helpers/Drop";
@@ -53,13 +53,22 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
     this.checkTimeoutedDrops();
   }
 
-  //CONTINUE: gold drops to the ground with arc
   moveDrops() {
     this.state.drops
       .filter((d) => !d.collected && !d.timeouted)
       .forEach((drop) => {
-        if (distance(drop.position, drop.target) > 5) {
-          drop.position = lerp(drop.position, drop.target, 0.08);
+        if (drop.position.y < this.dynamicCanvasRef.current!.height - 100) {
+          drop.position = { x: drop.position.x + drop.acceleration.x, y: drop.position.y + drop.acceleration.y };
+          drop.acceleration.x = lerpXY(drop.acceleration.x, 0, 0.1);
+          drop.acceleration.y = lerpXY(drop.acceleration.y, 10, 0.1);
+
+          if (drop.position.y > this.dynamicCanvasRef.current!.height - 100) {
+            drop.position.y = this.dynamicCanvasRef.current!.height - 100;
+          }
+
+          if (drop.position.x < 0 || drop.position.x > this.dynamicCanvasRef.current!.width - 50) {
+            drop.acceleration.x *= -1;
+          }
         }
       });
   }
