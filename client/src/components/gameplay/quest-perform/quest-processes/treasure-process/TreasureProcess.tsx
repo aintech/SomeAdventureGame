@@ -2,17 +2,20 @@ import { MouseEvent } from "react";
 import { clickInBox, distance, lerpXY, Position } from "../../../../../utils/Utils";
 import Loader from "../../../../loader/Loader";
 import {
-  clearCtx as clearDrawCtx,
+  clearCtx as clearStaticDrawCtx,
   clearDynamicCtx as clearDynamicDrawCtx,
+  drawStaticText,
   drawTarget,
-  drawTreasure,
-  drawTreasureChestCracked,
+  drawTreasureChest,
+  drawTreasureCompleted,
   prepare,
 } from "../process-helpers/DrawManager";
-import { defineDrop } from "../process-helpers/Drop";
+import { defineDrop, DropType } from "../process-helpers/Drop";
 import { ImageType } from "../process-helpers/ImageLoader";
 import QuestProcess, { QuestProcessProps, QuestProcessState } from "../QuestProcess";
 import "./treasure-process.scss";
+
+//TODO: Сделать открытие сундуков пинболом!
 
 enum ProcessState {
   LOADING,
@@ -135,7 +138,7 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
           { fraction: 1, gold: this.dropChunks.splice(idx, 1)[0].gold, dropped: true },
           this.dynamicCanvasRef.current!,
           undefined,
-          this.targetPos
+          { x: this.canvasRef.current!.width * 0.5 - 25, y: this.canvasRef.current!.height * 0.5 - 100 } // 25 - half of gold img size
         );
 
         this.setState((state) => {
@@ -145,7 +148,7 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
 
       if (this.dropsInitiated) {
         if (this.dropChunks.length === 0 && this.state.drops.filter((d) => !d.collected && !d.timeouted).length === 0) {
-          this.props.setHeroRewards(this.calcHeroRewards(false));
+          this.props.setHeroRewards(this.calcHeroRewards());
           this.setState({ processState: ProcessState.AFTERMATH }, () => this.drawStatic());
         }
       }
@@ -156,20 +159,40 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
   }
 
   drawStatic() {
-    clearDrawCtx();
+    clearStaticDrawCtx();
 
     if (this.state.processState === ProcessState.DROPS || this.state.processState === ProcessState.AFTERMATH) {
-      drawTreasureChestCracked(this.props.checkpoint, this.state.processState === ProcessState.AFTERMATH);
+      drawTreasureCompleted(
+        this.state.processState === ProcessState.AFTERMATH
+          ? this.state.drops.filter((d) => d.type === DropType.GOLD && d.collected).reduce((a, b) => a + b.amount, 0)
+          : undefined
+      );
     }
-    if (this.state.processState !== ProcessState.LOADING) {
-      drawTarget(this.targetPos, 50);
+    if (this.state.processState === ProcessState.SMASHING) {
+      drawTarget(this.targetPos, 30);
+    }
+
+    if (
+      this.state.processState === ProcessState.CHOOSING ||
+      this.state.processState === ProcessState.SMASHING ||
+      this.state.processState === ProcessState.LOCKPICKING
+    ) {
+      drawStaticText(
+        this.state.processState === ProcessState.CHOOSING
+          ? "Выбери как открыть сундук"
+          : this.state.processState === ProcessState.SMASHING
+          ? "забей сундук в цель"
+          : "Вскрой замок отмычкой",
+        { centerX: true, x: 0, y: 50 },
+        32,
+        "lightgreen"
+      );
     }
   }
 
   drawFrame() {
     clearDynamicDrawCtx();
-    drawTreasure(
-      this.props.checkpoint,
+    drawTreasureChest(
       this.state.processState === ProcessState.DROPS || this.state.processState === ProcessState.AFTERMATH,
       this.chestPos
     );
@@ -182,10 +205,10 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
       y: this.dynamicCanvasRef.current!.height + this.chestPos.y - 100,
     };
 
-    if (distance(this.targetPos, chestPos) < 60) {
+    if (distance(this.targetPos, chestPos) < 30) {
       this.chestPos.rotation = 0;
-      this.chestPos.x = this.targetPos.x - this.dynamicCanvasRef.current!.width * 0.5;
-      this.chestPos.y = this.targetPos.y - this.dynamicCanvasRef.current!.height + 100;
+      this.chestPos.x = 0;
+      this.chestPos.y = -200;
 
       this.prepareTreasureDrops();
 
@@ -201,11 +224,22 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
     let total = 0;
     let time = new Date().getTime();
 
+    this.dropChunks = [];
+
+    console.log("-----");
+    console.log(
+      "before: ",
+      this.dropChunks.reduce((a, b) => a + b.gold, 0)
+    );
+
     for (;;) {
       let gold = Math.ceil(Math.random() * tribute * 0.1);
+
       if (total + gold > tribute) {
         gold = tribute - gold;
       }
+
+      console.log(gold);
 
       time += (0.1 + Math.random() + 0.2) * 1000;
       this.dropChunks.push({ time, gold });
@@ -215,6 +249,10 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
         break;
       }
     }
+    console.log(
+      "after: ",
+      this.dropChunks.reduce((a, b) => a + b.gold, 0)
+    );
 
     this.dropsInitiated = true;
   }
@@ -255,7 +293,12 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
   }
 
   collectedTreasureDrops() {
-    return [{ actorId: 0, drops: this.dropChunks.map((d) => d.gold) }];
+    return [
+      {
+        actorId: 0,
+        drops: this.state.drops.filter((d) => d.type === DropType.GOLD && d.collected).map((d) => d.amount),
+      },
+    ];
   }
 
   render() {
@@ -274,12 +317,16 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
         {processState === ProcessState.CHOOSING ? (
           <div>
             <button
-              className="treasure-process__btn--smashing"
-              onClick={(e) => this.completeCheckpointClickHandler(e)}
+              className="treasure-process__btn-choosing treasure-process__btn-choosing--smashing"
+              onClick={(e) => {
+                this.setState({ processState: ProcessState.SMASHING }, () => this.drawStatic());
+              }}
             ></button>
             <button
-              className="treasure-process__btn--lockpicking"
-              onClick={(e) => this.completeCheckpointClickHandler(e)}
+              className="treasure-process__btn-choosing treasure-process__btn-choosing--lockpicking"
+              onClick={(e) => {
+                this.setState({ processState: ProcessState.SMASHING }, () => this.drawStatic());
+              }}
             ></button>
           </div>
         ) : null}

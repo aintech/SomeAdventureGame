@@ -37,7 +37,7 @@ export type HeroEvent = {
 export type CheckpointPassedBody = {
   id: number;
   collected: { actorId: number; drops: number[] }[];
-  events: { heroId: number; events: HeroEvent[] }[];
+  events?: { heroId: number; events: HeroEvent[] }[];
 };
 
 questsRouter.post("/checkpoint-passed", AuthMiddleware, async (req, res) => {

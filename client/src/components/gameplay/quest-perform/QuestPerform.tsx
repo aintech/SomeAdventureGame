@@ -108,6 +108,7 @@ const QuestPerform = ({ quest, heroes, heroClicked, onCheckpointPassed, closeDis
             // checkpointPassed={() => {}}
             moveOnwards={(collected: { actorId: number; drops: number[] }[]) => {
               setActiveCheckpoint(undefined);
+              setHeroRewards(new Map());
               onCheckpointPassed(quest, { id: activeCheckpoint.id, collected });
             }}
             closeCheckpoint={() => setActiveCheckpoint(undefined)}

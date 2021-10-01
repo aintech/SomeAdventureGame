@@ -9,6 +9,7 @@ import {
   drawBattleCompleted,
   drawHits,
   drawOpponent,
+  getPixel,
   prepare,
 } from "../../quest-processes/process-helpers/DrawManager";
 import { defineDrop } from "../../quest-processes/process-helpers/Drop";
@@ -202,6 +203,16 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
           return;
         }
 
+        const clickPoint = getPixel(click);
+
+        if (!clickPoint) {
+          return;
+        }
+
+        if (clickPoint.data[3] === 0) {
+          return;
+        }
+
         addToHitsDrawQueue(click);
 
         const { currentEnemy } = this.state;
@@ -301,7 +312,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
       );
 
       if (won) {
-        this.props.setHeroRewards(this.calcHeroRewards());
+        this.props.setHeroRewards(this.calcHeroRewards(true));
       }
 
       return true;

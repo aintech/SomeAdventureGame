@@ -62,12 +62,15 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
           drop.acceleration.x = lerpXY(drop.acceleration.x, 0, 0.1);
           drop.acceleration.y = lerpXY(drop.acceleration.y, 10, 0.1);
 
-          if (drop.position.y > this.dynamicCanvasRef.current!.height - 100) {
-            drop.position.y = this.dynamicCanvasRef.current!.height - 100;
-          }
-
+          // bouncing from side wall
           if (drop.position.x < 0 || drop.position.x > this.dynamicCanvasRef.current!.width - 50) {
             drop.acceleration.x *= -1;
+          }
+
+          // stop on floor
+          if (drop.position.y > this.dynamicCanvasRef.current!.height - 100) {
+            drop.position.y = this.dynamicCanvasRef.current!.height - 100;
+            drop.acceleration = { x: 0, y: 0 };
           }
         }
       });
@@ -81,26 +84,34 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
   checkDropClicked(click: Position) {
     const { drops } = this.state;
 
-    const msgs: EventMessage[] = [];
-    drops.forEach((drop) => {
+    let msg: EventMessage | undefined = undefined;
+    for (let i = drops.length - 1; i >= 0; i--) {
+      const drop = drops[i];
       if (!drop.collected && !drop.timeouted) {
         if (
           drop.position.x <= click.x &&
           drop.position.x + drop.dimensions.width >= click.x &&
-          drop.position.y <= click.y &&
+          drop.position.y - Math.max(0, drop.acceleration.y * 5) <= click.y &&
           drop.position.y + drop.dimensions.height >= click.y
         ) {
           drop.collected = true;
-          msgs.push(
-            new EventMessage(1, click, 32, `+ ${drop.amount} g`, create(255, 255), Direction.RIGHT, Effect.FLY_AWAY)
+          msg = new EventMessage(
+            1,
+            click,
+            32,
+            `+ ${drop.amount} g`,
+            create(255, 255),
+            Direction.RIGHT,
+            Effect.FLY_AWAY
           );
+          break;
         }
       }
-    });
+    }
 
-    if (msgs.length > 0) {
+    if (msg) {
       this.setState((state) => {
-        return { drops, eventMessages: [...state.eventMessages, ...msgs] };
+        return { drops, eventMessages: [...state.eventMessages, msg!] };
       });
       return true;
     }
@@ -136,7 +147,7 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
     this.setState({ drops });
   }
 
-  calcHeroRewards(addTribute?: boolean) {
+  calcHeroRewards(withTribute?: boolean) {
     const rewards = new Map<number, { gold: number; experience: number }>();
 
     const { checkpoint } = this.props;
@@ -153,7 +164,7 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
       .filter((d) => d.type === DropType.GOLD && d.collected)
       .reduce((a, b) => a + b.amount, 0);
 
-    gold = Math.ceil((collectedGold + (addTribute ? checkpoint.tribute : 0)) / heroes.length);
+    gold = Math.ceil((collectedGold + (withTribute ? checkpoint.tribute : 0)) / heroes.length);
 
     heroes.forEach((h) => rewards.set(h.id, { gold, experience }));
 

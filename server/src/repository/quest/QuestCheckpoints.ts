@@ -143,10 +143,11 @@ export const checkpointPassed = async (
   //   throw new Error(`Unknown checkpoint type! ${checkpoint}`);
   // }
 
-  let gold = 0;
+  let totalGold = checkpoint.type === CheckpointType.BATTLE ? checkpoint.tribute : 0;
+
+  let collectedGold = 0;
   let experience = 0;
   if (checkpoint.enemies) {
-    let collectedGold = 0;
     result.collected.forEach((drop) => {
       const enemy = checkpoint.enemies!.find((e) => e.actorId === drop.actorId)!;
       enemy.drop.forEach((d) => {
@@ -156,26 +157,34 @@ export const checkpointPassed = async (
       });
     });
 
-    gold = Math.ceil((collectedGold + checkpoint.tribute) / heroes.length);
-    experience = Math.ceil(checkpoint.enemies.reduce((a, b) => a + b.experience, 0) / heroes.length);
+    experience = checkpoint.enemies.reduce((a, b) => a + b.experience, 0);
+  } else {
+    collectedGold = result.collected.map((c) => c.drops.reduce((a, b) => a + b, 0)).reduce((a, b) => a + b, 0);
+  }
+
+  totalGold += collectedGold;
+
+  const goldPerHero = totalGold > 0 ? Math.ceil(totalGold / heroes.length) : 0;
+  const experiencePerHero = experience > 0 ? Math.ceil(experience / heroes.length) : 0;
+
+  if (result.events) {
+    heroes.forEach((h) => {
+      const events = result.events!.find((e) => e.heroId === h.id)?.events;
+      if (events) {
+        let hpAdjust = 0;
+        events
+          .sort((a, b) => a.time - b.time)
+          .forEach((e) => {
+            hpAdjust += e.hpAlter ?? 0;
+          });
+
+        adjustments.push(adjustHealth(h.id, hpAdjust));
+      }
+    });
   }
 
   heroes.forEach((h) => {
-    const events = result.events.find((e) => e.heroId === h.id)?.events;
-    if (events) {
-      let hpAdjust = 0;
-      events
-        .sort((a, b) => a.time - b.time)
-        .forEach((e) => {
-          hpAdjust += e.hpAlter ?? 0;
-        });
-
-      adjustments.push(adjustHealth(h.id, hpAdjust));
-    }
-  });
-
-  heroes.forEach((h) => {
-    adjustments.push(adjustGoldExperience(h.id, gold, experience));
+    adjustments.push(adjustGoldExperience(h.id, goldPerHero, experiencePerHero));
   });
 
   if (adjustments.length > 0) {

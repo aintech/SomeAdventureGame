@@ -15,6 +15,8 @@ const drawDatas: Map<ImageType, DrawData> = new Map();
 
 const hits: { idx: number; pos: Position; gif: Gif; frame: number }[] = [];
 
+/**-------------------------- COMMON -------------------------------*/
+
 export const prepare = async (
   ctx: CanvasRenderingContext2D,
   dynamicCtx: CanvasRenderingContext2D,
@@ -29,19 +31,18 @@ export const prepare = async (
   ]);
 };
 
-export const addToHitsDrawQueue = (pos: Position) => {
-  hits.push({ idx: new Date().getTime(), pos, gif: drawDatas.get(ImageType.ATTACK)!.raw() as Gif, frame: 1 });
+const loadGifs = async (types?: ImageType[]) => {
+  if (!types) {
+    return Promise.resolve(new Map());
+  }
+  return await getGifs(types);
 };
 
-export const drawHits = () => {
-  hits.forEach((s) => {
-    if (s.frame >= s.gif.frameCount) {
-      hits.splice(hits.findIndex((a) => a.idx === s.idx));
-    } else {
-      dynamicCanvasCtx.drawImage(s.gif.image, s.pos.x - 64, s.pos.y - 64);
-      s.frame++;
-    }
-  });
+const loadImages = async (types?: ImageType[]) => {
+  if (!types) {
+    return Promise.resolve(new Map());
+  }
+  return await getImages(types);
 };
 
 export const clearCtx = () => {
@@ -50,51 +51,6 @@ export const clearCtx = () => {
 
 export const clearDynamicCtx = () => {
   dynamicCanvasCtx.clearRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
-};
-
-export const drawOpponent = (actor: CheckpointActor) => {
-  const img = drawDatas.get(imageByActorType(actor.type))!;
-
-  canvasCtx.drawImage(img.image(), canvasCtx.canvas.width * 0.5 - img.width() * 0.5, 0, img.width(), img.height());
-
-  const hpBarWidth = Math.floor((actor.currentHealth / actor.totalHealth) * 100) * 5;
-  canvasCtx.fillStyle = "rgba(255, 0, 0, .7)";
-  canvasCtx.fillRect(canvasCtx.canvas.width * 0.5 - hpBarWidth * 0.5, 20, hpBarWidth, 20);
-
-  if (actor.currentHealth > 0) {
-    drawText(canvasCtx, `${actor.currentHealth}/${actor.totalHealth}`, { centerX: true, x: 0, y: 38 }, 24);
-  }
-};
-
-export const drawTreasure = (checkpoint: QuestCheckpoint, opened: boolean, offset: Position & { rotation: number }) => {
-  let img = drawDatas.get(opened ? ImageType.CHEST_OPEN : ImageType.CHEST_CLOSED)!;
-
-  dynamicCanvasCtx.setTransform(
-    1,
-    0,
-    0,
-    1,
-    dynamicCanvasCtx.canvas.width * 0.5 + offset.x,
-    dynamicCanvasCtx.canvas.height + offset.y - 100
-  );
-  dynamicCanvasCtx.rotate((offset.rotation * Math.PI) / 180);
-  dynamicCanvasCtx.drawImage(img.image(), -img.width() * 0.5, -img.height() * 0.5, img.width(), img.height());
-  dynamicCanvasCtx.rotate((-offset.rotation * Math.PI) / 180);
-  dynamicCanvasCtx.setTransform(1, 0, 0, 1, 0, 0);
-
-  if (!opened) {
-    drawText(dynamicCanvasCtx, "Cracking treasure chest...", { centerX: true, x: 0, y: 50 }, 32, "lightgreen");
-  }
-};
-
-export const drawTarget = (pos: Position, radius: number) => {
-  canvasCtx.beginPath();
-  canvasCtx.arc(pos.x, pos.y, radius, 0, 2 * Math.PI, false);
-  canvasCtx.fillStyle = "rgba(0, 255, 0, .3)";
-  canvasCtx.fill();
-  canvasCtx.lineWidth = 2;
-  canvasCtx.strokeStyle = "white";
-  canvasCtx.stroke();
 };
 
 export const drawDrops = (drops: Drop[]) => {
@@ -167,6 +123,84 @@ export const drawMessages = (msgs: EventMessage[]) => {
   });
 };
 
+const drawText = (
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  pos: CenteredPosition,
+  fontSize?: number,
+  color?: Color | string,
+  stroke?: Color | string
+) => {
+  ctx.font = `${fontSize ?? 18}px Pattaya`;
+  let x = pos.centerX ? ctx.canvas.width * 0.5 - ctx.measureText(text).width * 0.5 : pos.x ?? 0;
+
+  ctx.strokeStyle = stroke ? stringify(stroke) : `black`;
+  ctx.lineWidth = 2;
+  ctx.strokeText(text, x, pos.y);
+  ctx.fillStyle = color ? stringify(color) : "white";
+  // ctx.miterLimit = 2;
+  ctx.fillText(text, x, pos.y);
+  ctx.lineCap = "round";
+};
+
+export const drawStaticText = (
+  text: string,
+  pos: CenteredPosition,
+  fontSize?: number,
+  color?: Color | string,
+  stroke?: Color | string
+) => {
+  drawText(canvasCtx, text, pos, fontSize, color, stroke);
+};
+
+export const getPixel = (point: Position) => {
+  return canvasCtx.getImageData(point.x, point.y, 1, 1);
+};
+
+/**-------------------------- BATTLE -------------------------------*/
+
+const imageByActorType = (type: string) => {
+  switch (type) {
+    case "snake":
+      return ImageType.SNAKE;
+    case "goblin":
+      return ImageType.GOBLIN;
+    case "moth":
+      return ImageType.MOTH;
+    default:
+      throw new Error(`Unknown actor type ${type}`);
+  }
+};
+
+export const addToHitsDrawQueue = (pos: Position) => {
+  hits.push({ idx: new Date().getTime(), pos, gif: drawDatas.get(ImageType.ATTACK)!.raw() as Gif, frame: 1 });
+};
+
+export const drawHits = () => {
+  hits.forEach((s) => {
+    if (s.frame >= s.gif.frameCount) {
+      hits.splice(hits.findIndex((a) => a.idx === s.idx));
+    } else {
+      dynamicCanvasCtx.drawImage(s.gif.image, s.pos.x - 64, s.pos.y - 64);
+      s.frame++;
+    }
+  });
+};
+
+export const drawOpponent = (actor: CheckpointActor) => {
+  const img = drawDatas.get(imageByActorType(actor.type))!;
+
+  canvasCtx.drawImage(img.image(), canvasCtx.canvas.width * 0.5 - img.width() * 0.5, 0, img.width(), img.height());
+
+  const hpBarWidth = Math.floor((actor.currentHealth / actor.totalHealth) * 100) * 5;
+  canvasCtx.fillStyle = "rgba(255, 0, 0, .7)";
+  canvasCtx.fillRect(canvasCtx.canvas.width * 0.5 - hpBarWidth * 0.5, 20, hpBarWidth, 20);
+
+  if (actor.currentHealth > 0) {
+    drawText(canvasCtx, `${actor.currentHealth}/${actor.totalHealth}`, { centerX: true, x: 0, y: 38 }, 24);
+  }
+};
+
 export const drawBattleCompleted = (checkpoint: QuestCheckpoint, won: boolean, drops: Drop[]) => {
   canvasCtx.fillStyle = `rgba(0, 0, 0, .4)`;
   canvasCtx.fillRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
@@ -198,7 +232,36 @@ export const drawBattleCompleted = (checkpoint: QuestCheckpoint, won: boolean, d
   }
 };
 
-export const drawTreasureChestCracked = (checkpoint: QuestCheckpoint, aftermath: boolean) => {
+/**-------------------------- TREASURE -------------------------------*/
+
+export const drawTarget = (pos: Position, radius: number) => {
+  canvasCtx.beginPath();
+  canvasCtx.arc(pos.x, pos.y, radius, 0, 2 * Math.PI, false);
+  canvasCtx.fillStyle = "rgba(0, 255, 0, .3)";
+  canvasCtx.fill();
+  canvasCtx.lineWidth = 2;
+  canvasCtx.strokeStyle = "white";
+  canvasCtx.stroke();
+};
+
+export const drawTreasureChest = (opened: boolean, offset: Position & { rotation: number }) => {
+  let img = drawDatas.get(opened ? ImageType.CHEST_OPEN : ImageType.CHEST_CLOSED)!;
+
+  dynamicCanvasCtx.setTransform(
+    1,
+    0,
+    0,
+    1,
+    dynamicCanvasCtx.canvas.width * 0.5 + offset.x,
+    dynamicCanvasCtx.canvas.height + offset.y - 100
+  );
+  dynamicCanvasCtx.rotate((offset.rotation * Math.PI) / 180);
+  dynamicCanvasCtx.drawImage(img.image(), -img.width() * 0.5, -img.height() * 0.5, img.width(), img.height());
+  dynamicCanvasCtx.rotate((-offset.rotation * Math.PI) / 180);
+  dynamicCanvasCtx.setTransform(1, 0, 0, 1, 0, 0);
+};
+
+export const drawTreasureCompleted = (gold?: number) => {
   canvasCtx.fillStyle = `rgba(0, 0, 0, .4)`;
   canvasCtx.fillRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
 
@@ -211,56 +274,9 @@ export const drawTreasureChestCracked = (checkpoint: QuestCheckpoint, aftermath:
     img.height() * 0.5
   );
 
-  if (aftermath) {
+  if (gold) {
     img = drawDatas.get(ImageType.REWARD_GOLD)!;
     canvasCtx.drawImage(img.image(), 150, 300, img.width() * 0.75, img.height() * 0.75);
-    drawText(canvasCtx, `${checkpoint.tribute}`, { x: 250, y: 375 }, 72);
+    drawText(canvasCtx, `${gold}`, { x: 250, y: 375 }, 72);
   }
-};
-
-const drawText = (
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  pos: CenteredPosition,
-  fontSize?: number,
-  color?: Color | string,
-  stroke?: Color | string
-) => {
-  ctx.font = `${fontSize ?? 18}px Pattaya`;
-  let x = pos.centerX ? ctx.canvas.width * 0.5 - ctx.measureText(text).width * 0.5 : pos.x ?? 0;
-
-  ctx.strokeStyle = stroke ? stringify(stroke) : `black`;
-  ctx.lineWidth = 2;
-  ctx.strokeText(text, x, pos.y);
-  ctx.fillStyle = color ? stringify(color) : "white";
-  // ctx.miterLimit = 2;
-  ctx.fillText(text, x, pos.y);
-  ctx.lineCap = "round";
-};
-
-const imageByActorType = (type: string) => {
-  switch (type) {
-    case "snake":
-      return ImageType.SNAKE;
-    case "goblin":
-      return ImageType.GOBLIN;
-    case "moth":
-      return ImageType.MOTH;
-    default:
-      throw new Error(`Unknown actor type ${type}`);
-  }
-};
-
-const loadGifs = async (types?: ImageType[]) => {
-  if (!types) {
-    return Promise.resolve(new Map());
-  }
-  return await getGifs(types);
-};
-
-const loadImages = async (types?: ImageType[]) => {
-  if (!types) {
-    return Promise.resolve(new Map());
-  }
-  return await getImages(types);
 };
