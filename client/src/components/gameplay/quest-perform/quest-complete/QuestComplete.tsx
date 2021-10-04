@@ -5,9 +5,10 @@ import "./quest-complete.scss";
 type QuestCompleteProps = {
   quest: Quest;
   heroes: Hero[];
+  completeQuest: () => void;
 };
 
-const QuestComplete = ({ quest, heroes }: QuestCompleteProps) => {
+const QuestComplete = ({ quest, heroes, completeQuest }: QuestCompleteProps) => {
   return <div className="quest-complete">QUEST {quest.title} COMPLETED!!!</div>;
 };
 

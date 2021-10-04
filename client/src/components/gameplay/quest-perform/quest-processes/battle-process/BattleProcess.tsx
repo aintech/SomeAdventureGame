@@ -27,7 +27,7 @@ enum ProcessState {
 }
 
 const mandatoryImages = () => {
-  return [ImageType.REWARD_BACK, ImageType.REWARD_GOLD];
+  return [ImageType.RESULT_BACK, ImageType.RESULT_GOLD];
 };
 
 const mandatoryGifs = () => {

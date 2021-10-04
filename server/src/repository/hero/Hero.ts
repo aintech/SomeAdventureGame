@@ -177,8 +177,8 @@ export const rewardHeroesForQuest = async (
   heroesTribute: number,
   experience: number
 ) => {
-  const tributePerHero = Math.floor(heroesTribute / heroIds.length);
-  const experiencePerHero = Math.floor(experience / heroIds.length);
+  const tributePerHero = Math.ceil(heroesTribute / heroIds.length);
+  const experiencePerHero = Math.ceil(experience / heroIds.length);
 
   await query<void>(
     "completeHeroesQuest",

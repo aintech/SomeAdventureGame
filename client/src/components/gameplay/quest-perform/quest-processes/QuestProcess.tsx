@@ -57,7 +57,7 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
     this.state.drops
       .filter((d) => !d.collected && !d.timeouted)
       .forEach((drop) => {
-        if (drop.position.y < this.dynamicCanvasRef.current!.height - 100) {
+        if (drop.position.y < this.dynamicCanvasRef.current!.height - 50) {
           drop.position = { x: drop.position.x + drop.acceleration.x, y: drop.position.y + drop.acceleration.y };
           drop.acceleration.x = lerpXY(drop.acceleration.x, 0, 0.1);
           drop.acceleration.y = lerpXY(drop.acceleration.y, 10, 0.1);
@@ -68,8 +68,8 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
           }
 
           // stop on floor
-          if (drop.position.y > this.dynamicCanvasRef.current!.height - 100) {
-            drop.position.y = this.dynamicCanvasRef.current!.height - 100;
+          if (drop.position.y >= this.dynamicCanvasRef.current!.height - 50) {
+            drop.position.y = this.dynamicCanvasRef.current!.height - 50;
             drop.acceleration = { x: 0, y: 0 };
           }
         }

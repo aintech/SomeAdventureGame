@@ -5,7 +5,7 @@
     height: 500px;
     align-self: center;
     justify-self: center;
-    background-image: url(../../../../img/quest-perform/quest-map.png);
+    background-image: url(../../../../img/quest-perform/quest-map/quest-map.png);
     background-size: cover;
     grid-row: 1 / -1;
     padding-left: 100px;
@@ -19,12 +19,12 @@
     background-size: cover;
 
     &--passed {
-      background-image: url(../../../../img/quest-perform/checkpoint-marker-passed.png);
+      background-image: url(../../../../img/quest-perform/quest-map/__marker/quest-map__marker_passed.png);
     }
 
     &--active {
       cursor: pointer;
-      background-image: url(../../../../img/quest-perform/checkpoint-marker-active.png);
+      background-image: url(../../../../img/quest-perform/quest-map/__marker/quest-map__marker_active.png);
 
       &:hover {
         scale: 1.1;
@@ -33,7 +33,7 @@
     }
 
     &--inactive {
-      background-image: url(../../../../img/quest-perform/checkpoint-marker-inactive.png);
+      background-image: url(../../../../img/quest-perform/quest-map/__marker/quest-map__marker_inactive.png);
       opacity: 0.3;
     }
   }

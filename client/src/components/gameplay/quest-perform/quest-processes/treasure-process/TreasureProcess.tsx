@@ -29,7 +29,7 @@ enum ProcessState {
 }
 
 const mandatoryImages = () => {
-  return [ImageType.CHEST_CLOSED, ImageType.CHEST_OPEN, ImageType.REWARD_BACK, ImageType.REWARD_GOLD];
+  return [ImageType.CHEST_CLOSED, ImageType.CHEST_OPENED, ImageType.RESULT_BACK, ImageType.RESULT_GOLD];
 };
 
 const mandatoryGifs = () => {

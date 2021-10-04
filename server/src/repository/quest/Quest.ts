@@ -126,8 +126,7 @@ export const completeQuest = async (userId: number, questId: number, canceled = 
   if (canceled) {
     queries.push(deleteProgress(quest.progressId!));
   } else {
-    const checkpointsTribute = quest.checkpoints!.map((c) => +c.tribute).reduce((a, b) => a + b, 0);
-    const heroesTribute = Math.floor(quest.tribute * (1 - GUILD_SHARE)) + checkpointsTribute;
+    const heroesTribute = Math.floor(quest.tribute * (1 - GUILD_SHARE));
     const playerTribute = Math.floor(quest.tribute * GUILD_SHARE);
 
     queries.push(rewardHeroesForQuest(userId, heroIds, heroesTribute, quest.experience));

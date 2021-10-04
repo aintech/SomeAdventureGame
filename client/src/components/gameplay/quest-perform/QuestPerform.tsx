@@ -2,7 +2,7 @@ import React, { Component, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { closeQuestPerform, heroStatsChoosed } from "../../../actions/Actions";
-import { onCheckpointPassed } from "../../../actions/ApiActions";
+import { onCheckpointPassed, onCompleteQuest } from "../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService";
 import Hero from "../../../models/hero/Hero";
 import Quest from "../../../models/Quest";
@@ -27,10 +27,18 @@ type QuestPerformProps = {
   heroes: Hero[];
   heroClicked: (hero: Hero) => void;
   onCheckpointPassed: (quest: Quest, result: CheckpointPassedBody) => void;
+  onCompleteQuest: (quest: Quest) => void;
   closeDisplay: () => void;
 };
 
-const QuestPerform = ({ quest, heroes, heroClicked, onCheckpointPassed, closeDisplay }: QuestPerformProps) => {
+const QuestPerform = ({
+  quest,
+  heroes,
+  heroClicked,
+  onCheckpointPassed,
+  onCompleteQuest,
+  closeDisplay,
+}: QuestPerformProps) => {
   const [activeCheckpoint, setActiveCheckpoint] = useState<QuestCheckpoint>();
   const [heroRewards, setHeroRewards] = useState<Map<number, { gold: number; experience: number }>>(new Map());
   const [heroActors, setHeroActors] = useState<Hero[]>([]);
@@ -123,7 +131,7 @@ const QuestPerform = ({ quest, heroes, heroClicked, onCheckpointPassed, closeDis
     display = quest.progress!.checkpoints.find((c) => !c.passed) ? (
       <QuestMap quest={quest} checkpointActivated={checkpointActivated} />
     ) : (
-      <QuestComplete quest={quest} heroes={heroes} />
+      <QuestComplete quest={quest} heroes={heroes} completeQuest={() => onCompleteQuest(quest)} />
     );
   }
 
@@ -156,12 +164,13 @@ type QuestPerformContainerProps = {
   activeQuestPerform: QuestPerformData;
   heroClicked: (hero: Hero) => void;
   onCheckpointPassed: (quest: Quest, checkpoint: CheckpointPassedBody) => void;
+  onCompleteQuest: (quest: Quest) => void;
   closeQuestPerform: () => void;
 };
 
 class QuestPerformContainer extends Component<QuestPerformContainerProps> {
   render() {
-    const { heroClicked, onCheckpointPassed, closeQuestPerform } = this.props;
+    const { heroClicked, closeQuestPerform, onCheckpointPassed, onCompleteQuest } = this.props;
 
     if (!this.props.activeQuestPerform) {
       return null;
@@ -179,11 +188,12 @@ class QuestPerformContainer extends Component<QuestPerformContainerProps> {
 
     return (
       <QuestPerform
-        onCheckpointPassed={onCheckpointPassed}
         quest={quest}
         heroes={heroes}
         closeDisplay={closeQuestPerform}
         heroClicked={heroClicked}
+        onCheckpointPassed={onCheckpointPassed}
+        onCompleteQuest={onCompleteQuest}
       />
     );
   }
@@ -204,6 +214,7 @@ const mapDispatchToProps = (dispatch: Dispatch, customProps: WithApiServiceProps
       heroClicked: heroStatsChoosed,
       closeQuestPerform,
       onCheckpointPassed: onCheckpointPassed(apiService, auth),
+      onCompleteQuest: onCompleteQuest(apiService, auth),
     },
     dispatch
   );

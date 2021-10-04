@@ -1,14 +1,14 @@
-import GoblinImgSrc from "../../../../../img/quest-perform/actors/goblin.png";
-import GoblinPrtImgSrc from "../../../../../img/quest-perform/actors/goblin-prt.png";
-import SnakeImgSrc from "../../../../../img/quest-perform/actors/snake.png";
-import SnakePrtImgSrc from "../../../../../img/quest-perform/actors/snake-prt.png";
-import MothImgSrc from "../../../../../img/quest-perform/actors/moth.png";
-import MothPrtImgSrc from "../../../../../img/quest-perform/actors/moth-prt.png";
-import AttackGifSrc from "../../../../../img/quest-perform/attack.gif";
-import ChestClosedImgSrc from "../../../../../img/quest-perform/chest-closed.png";
-import ChestOpenImgSrc from "../../../../../img/quest-perform/chest-open.png";
-import RewardBackImgSrc from "../../../../../img/quest-perform/reward-back.png";
-import RewardGoldImgSrc from "../../../../../img/quest-perform/reward-gold.png";
+import GoblinImgSrc from "../../../../../img/quest-perform/battle-process/actors/goblin.png";
+import GoblinPrtImgSrc from "../../../../../img/quest-perform/battle-process/actors/goblin-prt.png";
+import SnakeImgSrc from "../../../../../img/quest-perform/battle-process/actors/snake.png";
+import SnakePrtImgSrc from "../../../../../img/quest-perform/battle-process/actors/snake-prt.png";
+import MothImgSrc from "../../../../../img/quest-perform/battle-process/actors/moth.png";
+import MothPrtImgSrc from "../../../../../img/quest-perform/battle-process/actors/moth-prt.png";
+import AttackGifSrc from "../../../../../img/quest-perform/battle-process/attack.gif";
+import ChestClosedImgSrc from "../../../../../img/quest-perform/treasure-process/treasure__chest_closed.png";
+import ChestOpenedImgSrc from "../../../../../img/quest-perform/treasure-process/treasure__chest_opened.png";
+import ResultBackImgSrc from "../../../../../img/quest-perform/quest-process-result/result__background.png";
+import ResultGoldImgSrc from "../../../../../img/quest-perform/quest-process-result/result__gold_icon.png";
 import Gif from "../../../../../utils/Gif";
 import GifLoader from "../../../../../utils/gif-loader";
 
@@ -20,10 +20,10 @@ export enum ImageType {
   ATTACK,
 
   CHEST_CLOSED,
-  CHEST_OPEN,
+  CHEST_OPENED,
 
-  REWARD_BACK,
-  REWARD_GOLD,
+  RESULT_BACK,
+  RESULT_GOLD,
 }
 
 const gifs: Map<ImageType, Gif> = new Map();
@@ -91,12 +91,12 @@ export const getUrlByType = (type: ImageType) => {
       return AttackGifSrc;
     case ImageType.CHEST_CLOSED:
       return ChestClosedImgSrc;
-    case ImageType.CHEST_OPEN:
-      return ChestOpenImgSrc;
-    case ImageType.REWARD_BACK:
-      return RewardBackImgSrc;
-    case ImageType.REWARD_GOLD:
-      return RewardGoldImgSrc;
+    case ImageType.CHEST_OPENED:
+      return ChestOpenedImgSrc;
+    case ImageType.RESULT_BACK:
+      return ResultBackImgSrc;
+    case ImageType.RESULT_GOLD:
+      return ResultGoldImgSrc;
     default:
       throw new Error(`Tyimg fetch url for unknown type ${ImageType[type]}`);
   }

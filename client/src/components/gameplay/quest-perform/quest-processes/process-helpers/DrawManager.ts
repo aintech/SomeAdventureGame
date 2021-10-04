@@ -65,7 +65,7 @@ export const drawDrops = (drops: Drop[]) => {
       let img;
       switch (drop.type) {
         case DropType.GOLD:
-          img = drawDatas.get(ImageType.REWARD_GOLD)!.image();
+          img = drawDatas.get(ImageType.RESULT_GOLD)!.image();
           break;
         default:
           throw new Error(`Unknown drop type ${DropType[drop.type]}`);
@@ -205,7 +205,7 @@ export const drawBattleCompleted = (checkpoint: QuestCheckpoint, won: boolean, d
   canvasCtx.fillStyle = `rgba(0, 0, 0, .4)`;
   canvasCtx.fillRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
 
-  let img = drawDatas.get(ImageType.REWARD_BACK)!;
+  let img = drawDatas.get(ImageType.RESULT_BACK)!;
   canvasCtx.drawImage(
     img.image(),
     canvasCtx.canvas.width * 0.5 - img.width() * 0.25,
@@ -215,7 +215,7 @@ export const drawBattleCompleted = (checkpoint: QuestCheckpoint, won: boolean, d
   );
 
   if (won) {
-    img = drawDatas.get(ImageType.REWARD_GOLD)!;
+    img = drawDatas.get(ImageType.RESULT_GOLD)!;
     canvasCtx.drawImage(img.image(), 150, 300, img.width() * 0.75, img.height() * 0.75);
 
     drawText(canvasCtx, `Exp: ${checkpoint.enemies!.reduce((a, b) => a + b.experience, 0)}`, { x: 150, y: 275 }, 72);
@@ -245,7 +245,7 @@ export const drawTarget = (pos: Position, radius: number) => {
 };
 
 export const drawTreasureChest = (opened: boolean, offset: Position & { rotation: number }) => {
-  let img = drawDatas.get(opened ? ImageType.CHEST_OPEN : ImageType.CHEST_CLOSED)!;
+  let img = drawDatas.get(opened ? ImageType.CHEST_OPENED : ImageType.CHEST_CLOSED)!;
 
   dynamicCanvasCtx.setTransform(
     1,
@@ -265,7 +265,7 @@ export const drawTreasureCompleted = (gold?: number) => {
   canvasCtx.fillStyle = `rgba(0, 0, 0, .4)`;
   canvasCtx.fillRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
 
-  let img = drawDatas.get(ImageType.REWARD_BACK)!;
+  let img = drawDatas.get(ImageType.RESULT_BACK)!;
   canvasCtx.drawImage(
     img.image(),
     canvasCtx.canvas.width * 0.5 - img.width() * 0.25,
@@ -275,7 +275,7 @@ export const drawTreasureCompleted = (gold?: number) => {
   );
 
   if (gold) {
-    img = drawDatas.get(ImageType.REWARD_GOLD)!;
+    img = drawDatas.get(ImageType.RESULT_GOLD)!;
     canvasCtx.drawImage(img.image(), 150, 300, img.width() * 0.75, img.height() * 0.75);
     drawText(canvasCtx, `${gold}`, { x: 250, y: 375 }, 72);
   }
