@@ -131,7 +131,12 @@ const QuestPerform = ({
     display = quest.progress!.checkpoints.find((c) => !c.passed) ? (
       <QuestMap quest={quest} checkpointActivated={checkpointActivated} />
     ) : (
-      <QuestComplete quest={quest} heroes={heroes} completeQuest={() => onCompleteQuest(quest)} />
+      <QuestComplete
+        quest={quest}
+        heroes={heroes}
+        completeQuest={() => onCompleteQuest(quest)}
+        setHeroRewards={setHeroRewards}
+      />
     );
   }
 

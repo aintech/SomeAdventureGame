@@ -9,7 +9,6 @@ import GameWorld from "../../components/gameplay/game-world/GameWorld";
 import HeroStatsDisplay from "../../components/gameplay/hero-stats-display/HeroStatsDisplay";
 import QuestPerform from "../../components/gameplay/quest-perform/QuestPerform";
 import QuestProgressList from "../../components/gameplay/quest-travel/quest-travel-list/QuestTravelList";
-import QuestRewardContainer from "../../components/gameplay/quest-reward/QuestReward";
 import BuildingDisplay from "../../components/gameplay/village-building-display/building-details/BuildingDetails";
 import Loader from "../../components/loader/Loader";
 import withApiService, { WithApiServiceProps } from "../../hoc/WithApiService";
@@ -24,7 +23,6 @@ const GameplayPage = () => {
       <GameWorld />
       <GameTimer />
       <BuildingDisplay />
-      <QuestRewardContainer />
       <HeroStatsDisplay />
       <QuestProgressList />
       <QuestPerform />

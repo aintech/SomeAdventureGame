@@ -40,7 +40,8 @@ const convert = (response: QuestResponse): Quest => {
           response.progressId,
           response.progressDuration,
           Date.parse(response.embarkedTime),
-          (response.checkpoints as any[]).map((c) => convertCheckpoint(c))
+          // then quest completed come with progress but without checkpoints
+          response.checkpoints ? response.checkpoints.map((c) => convertCheckpoint(c)) : []
         )
       : undefined
   );

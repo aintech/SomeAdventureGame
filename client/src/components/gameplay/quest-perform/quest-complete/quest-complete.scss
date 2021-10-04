@@ -1,14 +1,62 @@
+@import "../../../../utils/mixins.scss";
+@import "../../../../utils/variables.scss";
+@import "../../../../utils/functions.scss";
+
 .quest-complete {
-  &__container {
+  display: flex;
+  width: 750px;
+  height: 500px;
+  background-image: url(../../../../img/quest-perform/quest-complete/quest-complete__background.png);
+  background-size: cover;
+  grid-row: 1 / -1;
+  padding-left: 150px;
+  padding-top: 100px;
+  flex-direction: column;
+
+  &__title {
+    font-size: 5rem;
+    max-width: 350px;
+  }
+
+  &__tribute {
     display: flex;
-    width: 750px;
-    height: 500px;
-    align-self: center;
-    justify-self: center;
-    background-image: url(../../../../img/quest-perform/quest-complete/quest-complete__background.png);
-    background-size: cover;
-    grid-row: 1 / -1;
-    padding-left: 100px;
-    gap: 50px;
+    color: white;
+    font-size: to-gameplay-scale(8rem);
+    @include strokeText;
+
+    & img {
+      width: 80px;
+      height: 80px;
+      margin-right: 10px;
+    }
+
+    &--text {
+      align-self: center;
+    }
+  }
+
+  &__fame {
+    display: flex;
+    color: white;
+    font-size: to-gameplay-scale(8rem);
+    @include strokeText;
+
+    & img {
+      width: 80px;
+      height: 80px;
+      margin-right: 10px;
+    }
+
+    &--text {
+      align-self: center;
+    }
+  }
+
+  &__btn_accept {
+    font-family: inherit;
+    font-size: 3rem;
+    width: 320px;
+    margin-top: 50px;
+    cursor: pointer;
   }
 }
