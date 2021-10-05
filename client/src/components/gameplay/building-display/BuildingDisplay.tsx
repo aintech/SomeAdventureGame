@@ -1,27 +1,27 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { buildingClicked } from "../../../../actions/Actions";
-import Building, { BuildingType } from "../../../../models/Building";
-import BlacksmithDisplay from "../blacksmith-display/BlacksmithDisplay";
-import GuildDisplay from "../guild-display/GuildDisplay";
-import HealerDisplay from "../healer-display/HealerDisplay";
-import AlchemistDisplay from "../alchemist-display/AlchemistDisplay";
-import TavernDisplay from "../tavern-display/TavernDisplay";
-import TempleDisplay from "../temple-display/TempleDisplay";
-import TrainingGroundDisplay from "../training-ground-display/TrainingGroundDisplay";
-import TreasuryDisplay from "../treasury-display/TreasuryDisplay";
-import "./building-details.scss";
-import StablesDisplay from "../stables-display/StablesDisplay";
-import StorageDisplayContainer from "../storage-display/StorageDisplay";
-import MarketDisplay from "../market-display/MarketDisplay";
+import { buildingClicked } from "../../../actions/Actions";
+import Building, { BuildingType } from "../../../models/Building";
+import BlacksmithDisplay from "./blacksmith-display/BlacksmithDisplay";
+import GuildDisplay from "./guild-display/GuildDisplay";
+import HealerDisplay from "./healer-display/HealerDisplay";
+import AlchemistDisplay from "./alchemist-display/AlchemistDisplay";
+import TavernDisplay from "./tavern-display/TavernDisplay";
+import TempleDisplay from "./temple-display/TempleDisplay";
+import TrainingGroundDisplay from "./training-ground-display/TrainingGroundDisplay";
+import TreasuryDisplay from "./treasury-display/TreasuryDisplay";
+import "./building-display.scss";
+import StablesDisplay from "./stables-display/StablesDisplay";
+import StorageDisplayContainer from "./storage-display/StorageDisplay";
+import MarketDisplay from "./market-display/MarketDisplay";
 
-type BuildingDetailsProps = {
+type BuildingDisplayProps = {
   chosenBuilding: Building;
   hideBuildingDisplay: () => void;
 };
 
-const BuildingDetails = ({ chosenBuilding, hideBuildingDisplay }: BuildingDetailsProps) => {
+const BuildingDisplay = ({ chosenBuilding, hideBuildingDisplay }: BuildingDisplayProps) => {
   if (!chosenBuilding) {
     return null;
   }
@@ -72,11 +72,11 @@ const BuildingDetails = ({ chosenBuilding, hideBuildingDisplay }: BuildingDetail
   );
 };
 
-type BuildingDetailsState = {
+type BuildingDisplayState = {
   chosenBuilding: Building;
 };
 
-const mapStateToProps = ({ chosenBuilding }: BuildingDetailsState) => {
+const mapStateToProps = ({ chosenBuilding }: BuildingDisplayState) => {
   return { chosenBuilding };
 };
 
@@ -86,4 +86,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(BuildingDetails);
+export default connect(mapStateToProps, mapDispatchToProps)(BuildingDisplay);

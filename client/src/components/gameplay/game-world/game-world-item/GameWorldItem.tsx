@@ -16,7 +16,7 @@ const GameWorldItem = ({ building, onBuildingClicked }: GameWorldItemProps) => {
       <div
         className={`game-world__building-${BuildingType[building.type]}`}
         onClick={onBuildingClicked}
-        onMouseOver={() => dispatch(showTooltip(true, `${toDisplay(building.type)} ур. ${building.level}`))}
+        onMouseOver={() => dispatch(showTooltip(true, `${toDisplay(building.type)} - ур. ${building.level}`))}
         onMouseOut={() => dispatch(showTooltip())}
       ></div>
     </div>

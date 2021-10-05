@@ -10,7 +10,7 @@ import QuestCheckpoint, { CheckpointType } from "../../../models/QuestCheckpoint
 import { CheckpointPassedBody } from "../../../services/QuestService";
 import { shallowCopy } from "../../../utils/Utils";
 import Loader from "../../loader/Loader";
-import HeroItem from "../village-building-display/guild-display/heroes/hero-item/HeroItem";
+import HeroItem from "../building-display/guild-display/heroes/hero-item/HeroItem";
 import BattleProcess, { HeroEvent } from "./quest-processes/battle-process/BattleProcess";
 import QuestComplete from "./quest-complete/QuestComplete";
 import QuestMap from "./quest-map/QuestMap";
