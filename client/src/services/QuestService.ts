@@ -3,10 +3,10 @@ import { AuthProps } from "../contexts/AuthContext";
 import GameStats from "../models/GameStats";
 import Quest from "../models/Quest";
 import { BattleRound, CheckpointType } from "../models/QuestCheckpoint";
-import { HeroResponse } from "./HeroesService";
+import { HeroResponse } from "./HeroService";
 import sendHttp from "./SendHttp";
 
-const baseUrl = "/api/quests";
+const baseUrl = "/api/quest";
 
 export interface EnemyDropResponse {
   fraction: number;

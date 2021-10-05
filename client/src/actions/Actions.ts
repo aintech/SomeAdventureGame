@@ -5,13 +5,13 @@ import Building from "../models/Building";
 import GameStats from "../models/GameStats";
 import Hero from "../models/hero/Hero";
 import Quest from "../models/Quest";
-import { EquipmentResponse, HeroResponse, HireHeroResponse, ItemResponse } from "../services/HeroesService";
+import { EquipmentResponse, HeroResponse, HireHeroResponse, ItemResponse } from "../services/HeroService";
 import {
   CheckpointPassedResponse,
   CompleteCancelQuestResponse,
   EmbarkOnQuestResponse,
   QuestResponse,
-} from "../services/QuestsService";
+} from "../services/QuestService";
 import { ActionType } from "./ActionType";
 
 export interface PayloadedAction extends Action<ActionType> {
@@ -54,6 +54,19 @@ export const heroesLoaded = (heroes: HeroResponse[]): PayloadedAction => {
   return {
     type: ActionType.FETCH_HEROES_SUCCESS,
     payload: heroes,
+  };
+};
+
+export const buildingsRequested = (): PayloadedAction => {
+  return {
+    type: ActionType.FETCH_BUILDINGS_REQUEST,
+  };
+};
+
+export const buildingsLoaded = (buildings: Building[]): PayloadedAction => {
+  return {
+    type: ActionType.FETCH_BUILDINGS_SUCCESS,
+    payload: buildings,
   };
 };
 

@@ -2,7 +2,8 @@ import { AuthProps } from "../contexts/AuthContext";
 import Hero from "../models/hero/Hero";
 import { HeroActivityType } from "../models/hero/HeroActivity";
 import Quest from "../models/Quest";
-import { dismissHero, getHeroes, getTavernPatrons, hireHero, updateHeroActivities } from "./HeroesService";
+import { getBuildings } from "./BuildingService";
+import { dismissHero, getHeroes, getTavernPatrons, hireHero, updateHeroActivities } from "./HeroService";
 import {
   cancelQuest,
   checkpointPassed,
@@ -10,8 +11,8 @@ import {
   completeQuest,
   embarkOnQuest,
   getQuests,
-} from "./QuestsService";
-import { getAlchemistAssortment, getMarketAssortment } from "./ShopsService";
+} from "./QuestService";
+import { getAlchemistAssortment, getMarketAssortment } from "./ShopService";
 import { getStats } from "./StatsService";
 
 export default class ApiService {
@@ -25,6 +26,10 @@ export default class ApiService {
 
   getHeroes(auth: AuthProps) {
     return getHeroes(auth);
+  }
+
+  getBuildings(auth: AuthProps) {
+    return getBuildings(auth);
   }
 
   getTavernPatrons(auth: AuthProps) {

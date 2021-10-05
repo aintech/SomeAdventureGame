@@ -9,7 +9,7 @@ import {
   EQUIPMENT_UPGRADE_COST_FRACTION,
   HEALTH_PER_VITALITY,
   MAX_HEROES_SAME_ACTIVITIES,
-} from "../../../utils/variables";
+} from "../../../utils/Variables";
 
 const checkHeroActivity = (
   hero: Hero,

@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
 import { onHireHero } from "../../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../../hoc/WithApiService";
-import { BuildingType, buildingTypeToName } from "../../../../models/Building";
+import { BuildingType, toDisplay } from "../../../../models/Building";
 import Hero from "../../../../models/hero/Hero";
 import "./tavern-display.scss";
 import TavernPatron from "./tavern-patron/TavernPatron";
@@ -19,7 +19,7 @@ const TavernDisplay = ({ patrons, closeDisplay, hirePatron }: TavernDisplayProps
     <div className="tavern-display" onClick={closeDisplay}>
       <button className="tavern-display__btn--close" onClick={closeDisplay}></button>
       <div className="tavern-display__container">
-        <div className="tavern-display__name">{buildingTypeToName(BuildingType.TAVERN)}</div>
+        <div className="tavern-display__name">{toDisplay(BuildingType.TAVERN)}</div>
         <div className="tavern-display__patrons-holder">
           {patrons.map((p) => (
             <TavernPatron key={p.id} patron={p} hirePatron={hirePatron} />

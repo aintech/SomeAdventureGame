@@ -1,4 +1,4 @@
-import { HeroItemResponse, ItemResponse } from "../services/HeroesService";
+import { HeroItemResponse, ItemResponse } from "../services/HeroService";
 
 export enum ItemType {
   POTION,

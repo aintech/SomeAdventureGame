@@ -1,4 +1,4 @@
-import { HeroActivityResponse } from "../../services/HeroesService";
+import { HeroActivityResponse } from "../../services/HeroService";
 
 export enum HeroActivityType {
   IDLE /** Do nothing */,

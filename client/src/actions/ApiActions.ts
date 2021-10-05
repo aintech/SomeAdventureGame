@@ -1,6 +1,8 @@
 import {
   alchemistAssortmentLoaded,
   alchemistAssortmentRequested,
+  buildingsLoaded,
+  buildingsRequested,
   cancelQuest,
   checkpointPassed,
   completeQuest,
@@ -24,7 +26,7 @@ import Hero from "../models/hero/Hero";
 import { HeroActivityType } from "../models/hero/HeroActivity";
 import Quest from "../models/Quest";
 import ApiService from "../services/ApiService";
-import { CheckpointPassedBody } from "../services/QuestsService";
+import { CheckpointPassedBody } from "../services/QuestService";
 
 export const fetchGameStats = (apiService: ApiService, auth: AuthProps) => () => (dispatch: any) => {
   dispatch(gameStatsRequested);
@@ -37,6 +39,8 @@ export const fetchInitials = (apiService: ApiService, auth: AuthProps) => () => 
     .then((data) => dispatch(questsLoaded(data)))
     .then(() => apiService.getHeroes(auth))
     .then((data) => dispatch(heroesLoaded(data)))
+    .then(() => apiService.getBuildings(auth))
+    .then((data) => dispatch(buildingsLoaded(data)))
     .then(() => apiService.getTavernPatrons(auth))
     .then((data) => dispatch(tavernPatronsLoaded(data)))
     .then(() => apiService.getMarketAssortment(auth))
@@ -53,6 +57,11 @@ export const fetchQuests = (apiService: ApiService, auth: AuthProps) => () => (d
 export const fetchHeroes = (apiService: ApiService, auth: AuthProps) => () => (dispatch: any) => {
   dispatch(heroesRequested);
   apiService.getHeroes(auth).then((data) => dispatch(heroesLoaded(data)));
+};
+
+export const fetchBuildings = (apiService: ApiService, auth: AuthProps) => () => (dispatch: any) => {
+  dispatch(buildingsRequested);
+  apiService.getBuildings(auth).then((data) => dispatch(buildingsLoaded(data)));
 };
 
 export const fetchTavernPatrons = (apiService: ApiService, auth: AuthProps) => () => (dispatch: any) => {

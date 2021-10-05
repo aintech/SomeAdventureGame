@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { BuildingType, buildingTypeToName } from "../../../../models/Building";
+import { BuildingType, toDisplay } from "../../../../models/Building";
 import Quest from "../../../../models/Quest";
-import { MAX_EMBARKED_QUESTS } from "../../../../utils/variables";
+import { MAX_EMBARKED_QUESTS } from "../../../../utils/Variables";
 import Loader from "../../../loader/Loader";
 import "./stables-display.scss";
 
@@ -22,7 +22,7 @@ const StablesDisplay = ({ embarked, closeDisplay }: StablesDisplayProps) => {
     <div className="stables-display" id="stables-display" onClick={clickHandler}>
       <button className="stables-display__btn--close" onClick={closeDisplay}></button>
       <div className="stables-display__container">
-        <div className="stables-display__name">{buildingTypeToName(BuildingType.STABLES)}</div>
+        <div className="stables-display__name">{toDisplay(BuildingType.STABLES)}</div>
         <div className="stables-display__stats">
           <div>
             Выполняемые квесты {embarked.length}/{MAX_EMBARKED_QUESTS}

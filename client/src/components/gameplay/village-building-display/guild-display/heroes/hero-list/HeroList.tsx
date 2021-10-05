@@ -7,7 +7,7 @@ import Quest from "../../../../../../models/Quest";
 import HeroItem from "../hero-item/HeroItem";
 import "./hero-list.scss";
 import { HeroActivityType } from "../../../../../../models/hero/HeroActivity";
-import { MAX_EMBARKED_QUESTS } from "../../../../../../utils/variables";
+import { MAX_EMBARKED_QUESTS } from "../../../../../../utils/Variables";
 
 type HeroListProps = {
   heroes: Hero[];

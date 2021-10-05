@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsChoosed } from "../../../../actions/Actions";
-import { BuildingType, buildingTypeToName } from "../../../../models/Building";
+import { BuildingType, toDisplay } from "../../../../models/Building";
 import Hero from "../../../../models/hero/Hero";
 import { HeroActivityType } from "../../../../models/hero/HeroActivity";
 import Item from "../../../../models/Item";
@@ -34,7 +34,7 @@ const AlchemistDisplay = ({ visitors, alchemistAssortment, visitorClicked, close
     <div className="alchemist-display" id="alchemist-display" onClick={clickHandler}>
       <button className="alchemist-display__btn--close" onClick={closeDisplay}></button>
       <div className="alchemist-display__container">
-        <div className="alchemist-display__name">{buildingTypeToName(BuildingType.ALCHEMIST)}</div>
+        <div className="alchemist-display__name">{toDisplay(BuildingType.ALCHEMIST)}</div>
         <div className="alchemist-display__assortment-holder">
           <div className="alchemist-display__assortment__list">
             <ul>

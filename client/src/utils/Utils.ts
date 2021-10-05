@@ -1,4 +1,4 @@
-import { gameplayScale } from "./variables";
+import { gameplayScale } from "./Variables";
 
 export type Position = {
   x: number;

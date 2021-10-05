@@ -1,6 +1,7 @@
 import { LoginUser } from "../routes/AuthRoutes";
+import { initiateBuildings } from "./Building";
 import query, { single } from "./Db";
-import { createStats } from "./Stats";
+import { initiateStats } from "./Stats";
 
 type User = {
   id: number;
@@ -14,7 +15,8 @@ export const createUser = async (user: LoginUser) => {
 
   const persisted = await getUser(user.login);
 
-  await createStats(persisted.id);
+  await initiateStats(persisted.id);
+  await initiateBuildings(persisted.id);
 
   return Promise.resolve(persisted);
 };

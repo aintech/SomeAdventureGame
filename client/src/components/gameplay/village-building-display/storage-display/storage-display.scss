@@ -1,6 +1,4 @@
-@import "../../../../utils/variables.scss";
-@import "../../../../utils/functions.scss";
-@import "../../../../utils/mixins.scss";
+@import "../../../../utils/css/index.scss";
 
 .storage-display {
   @include absoluteCenter;

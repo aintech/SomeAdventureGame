@@ -1,4 +1,4 @@
-import { CheckpointEnemyResponse, CheckpointResponse } from "../services/QuestsService";
+import { CheckpointEnemyResponse, CheckpointResponse } from "../services/QuestService";
 import PersonageStats from "./PersonageStats";
 
 export enum CheckpointType {

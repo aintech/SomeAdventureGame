@@ -1,4 +1,4 @@
-import { HeroPerkResponse } from "../../services/HeroesService";
+import { HeroPerkResponse } from "../../services/HeroService";
 
 export default class HeroPerk {
   constructor(public id: number, public name: string, public description: string) {}

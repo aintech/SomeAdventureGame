@@ -9,7 +9,7 @@ shopsRouter.get("/market", AuthMiddleware, async (req, res) => {
   try {
     const assortment = await getMarketAssortment(user_id);
     res.json(assortment);
-  } catch (e) {
+  } catch (e: any) {
     res.status(500).json({ message: e.message });
   }
 });
@@ -19,7 +19,7 @@ shopsRouter.get("/alchemist", AuthMiddleware, async (req, res) => {
   try {
     const assortment = await getAlchemistAssortment(user_id);
     res.json(assortment);
-  } catch (e) {
+  } catch (e: any) {
     res.status(500).json({ message: e.message });
   }
 });

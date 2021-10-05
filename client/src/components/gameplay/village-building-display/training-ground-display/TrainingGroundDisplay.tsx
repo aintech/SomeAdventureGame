@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsChoosed } from "../../../../actions/Actions";
+import { BuildingType, toDisplay } from "../../../../models/Building";
 import Hero from "../../../../models/hero/Hero";
 import { HeroActivityType } from "../../../../models/hero/HeroActivity";
 import Loader from "../../../loader/Loader";
 import HeroItem from "../guild-display/heroes/hero-item/HeroItem";
-import { BuildingType, buildingTypeToName } from "../../../../models/Building";
 import "./training-ground-display.scss";
 
 type TrainingGroundDisplayProps = {
@@ -31,7 +31,7 @@ const TrainingGroundDisplay = ({ trainies, traineeClicked, closeDisplay }: Train
     <div className="training-ground-display" id="training-ground-display" onClick={clickHandler}>
       <button className="training-ground-display__btn--close" onClick={closeDisplay}></button>
       <div className="training-ground-display__container">
-        <div className="training-ground-display__name">{buildingTypeToName(BuildingType.TRAINING_GROUND)}</div>
+        <div className="training-ground-display__name">{toDisplay(BuildingType.TRAINING_GROUND)}</div>
         <div className="training-ground-display__trainies-holder">
           {trainies.map((trainee) => (
             <HeroItem

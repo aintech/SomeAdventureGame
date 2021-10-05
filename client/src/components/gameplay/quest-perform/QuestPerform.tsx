@@ -7,7 +7,7 @@ import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService
 import Hero from "../../../models/hero/Hero";
 import Quest from "../../../models/Quest";
 import QuestCheckpoint, { CheckpointType } from "../../../models/QuestCheckpoint";
-import { CheckpointPassedBody } from "../../../services/QuestsService";
+import { CheckpointPassedBody } from "../../../services/QuestService";
 import { shallowCopy } from "../../../utils/Utils";
 import Loader from "../../loader/Loader";
 import HeroItem from "../village-building-display/guild-display/heroes/hero-item/HeroItem";

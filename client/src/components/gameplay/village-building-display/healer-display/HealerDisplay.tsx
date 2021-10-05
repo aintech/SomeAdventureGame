@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsChoosed } from "../../../../actions/Actions";
+import { BuildingType, toDisplay } from "../../../../models/Building";
 import Hero from "../../../../models/hero/Hero";
 import { HeroActivityType } from "../../../../models/hero/HeroActivity";
 import Loader from "../../../loader/Loader";
 import HeroItem from "../guild-display/heroes/hero-item/HeroItem";
-import { BuildingType, buildingTypeToName } from "../../../../models/Building";
 import "./healer-display.scss";
 
 type HealerDisplayProps = {
@@ -31,7 +31,7 @@ const HealerDisplay = ({ visitors, visitorClicked, closeDisplay }: HealerDisplay
     <div className="healer-display" id="healer-display" onClick={clickHandler}>
       <button className="healer-display__btn--close" onClick={closeDisplay}></button>
       <div className="healer-display__container">
-        <div className="healer-display__name">{buildingTypeToName(BuildingType.HEALER)}</div>
+        <div className="healer-display__name">{toDisplay(BuildingType.HEALER)}</div>
         <div className="healer-display__visitors-holder">
           {visitors.map((visitor) => (
             <HeroItem

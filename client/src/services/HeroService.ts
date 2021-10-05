@@ -7,7 +7,7 @@ import { HeroType } from "../models/hero/HeroType";
 import { ItemSubtype, ItemType } from "../models/Item";
 import sendHttp from "./SendHttp";
 
-const baseUrl = "/api/heroes";
+const baseUrl = "/api/hero";
 
 export interface StatsHolderResponse {
   power: number;

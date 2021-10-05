@@ -1,10 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { showTooltip } from "../../../../actions/Actions";
-import Building, {
-  BuildingType,
-  buildingTypeToName,
-} from "../../../../models/Building";
+import Building, { BuildingType, toDisplay } from "../../../../models/Building";
 import "./game-world-item.scss";
 
 type GameWorldItemProps = {
@@ -19,9 +16,7 @@ const GameWorldItem = ({ building, onBuildingClicked }: GameWorldItemProps) => {
       <div
         className={`game-world__building-${BuildingType[building.type]}`}
         onClick={onBuildingClicked}
-        onMouseOver={() =>
-          dispatch(showTooltip(true, buildingTypeToName(building.type)))
-        }
+        onMouseOver={() => dispatch(showTooltip(true, `${toDisplay(building.type)} ур. ${building.level}`))}
         onMouseOut={() => dispatch(showTooltip())}
       ></div>
     </div>

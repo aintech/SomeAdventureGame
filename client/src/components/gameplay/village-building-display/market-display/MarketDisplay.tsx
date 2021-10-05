@@ -2,13 +2,13 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsChoosed } from "../../../../actions/Actions";
+import { BuildingType, toDisplay } from "../../../../models/Building";
+import Equipment from "../../../../models/Equipment";
 import Hero from "../../../../models/hero/Hero";
 import { HeroActivityType } from "../../../../models/hero/HeroActivity";
 import Loader from "../../../loader/Loader";
 import HeroItem from "../guild-display/heroes/hero-item/HeroItem";
-import { BuildingType, buildingTypeToName } from "../../../../models/Building";
 import "./market-display.scss";
-import Equipment from "../../../../models/Equipment";
 import { MarketItem } from "./market-item/MarketItem";
 
 type MarketDisplayProps = {
@@ -34,7 +34,7 @@ const MarketDisplay = ({ visitors, marketAssortment, visitorClicked, closeDispla
     <div className="market-display" id="market-display" onClick={clickHandler}>
       <button className="market-display__btn--close" onClick={closeDisplay}></button>
       <div className="market-display__container">
-        <div className="market-display__name">{buildingTypeToName(BuildingType.MARKET)}</div>
+        <div className="market-display__name">{toDisplay(BuildingType.MARKET)}</div>
         <div className="market-display__assortment-holder">
           <div className="market-display__assortment__list">
             <ul>

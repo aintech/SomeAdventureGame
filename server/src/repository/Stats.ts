@@ -6,7 +6,7 @@ type Stats = {
   fame: number;
 };
 
-export const createStats = (userId: number) => {
+export const initiateStats = (userId: number) => {
   return query<void>("createStats", "insert into public.stats (user_id, gold, fame) values ($1, $2, $3)", [
     userId,
     1000,

@@ -125,22 +125,6 @@ export const withEquipment = async (heroes: Hero[]) => {
 
 export const replaceHeroEquipment = async (heroId: number, prevEquipment: Equipment, equipment: Equipment) => {
   return Promise.all([
-    // query<void>(
-    //   "replaceEquipment - stats",
-    //   `update public.hero set
-    //    power = power + $2,
-    //    defence = defence + $3,
-    //    vitality = vitality + $4,
-    //    initiative = initiative + $5
-    //    where id = $1`,
-    //   [
-    //     heroId,
-    //     equipment.power - prevEquipment.power,
-    //     equipment.defence - prevEquipment.defence,
-    //     equipment.vitality - prevEquipment.vitality,
-    //     equipment.initiative - prevEquipment.initiative,
-    //   ]
-    // ),
     query<void>(
       "replaceHeroEquipment - equip",
       "update public.hero_equipment set equipment_id = $3, tier = $4 where hero_id = $1 and equipment_id = $2",

@@ -2,7 +2,7 @@ import Hero from "../../../../../models/hero/Hero";
 import { display } from "../../../../../models/hero/HeroType";
 import PersonageStats from "../../../../../models/PersonageStats";
 import { CheckpointEnemy, EnemyDrop } from "../../../../../models/QuestCheckpoint";
-import { HEALTH_PER_VITALITY } from "../../../../../utils/variables";
+import { HEALTH_PER_VITALITY } from "../../../../../utils/Variables";
 
 type CheckpointActor = {
   actorId: number;

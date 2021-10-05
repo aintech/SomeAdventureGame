@@ -1,4 +1,4 @@
-import { EquipmentResponse } from "../services/HeroesService";
+import { EquipmentResponse } from "../services/HeroService";
 import { HeroType } from "./hero/HeroType";
 import PersonageStats from "./PersonageStats";
 

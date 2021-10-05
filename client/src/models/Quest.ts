@@ -1,4 +1,4 @@
-import { QuestResponse } from "../services/QuestsService";
+import { QuestResponse } from "../services/QuestService";
 import QuestCheckpoint from "./QuestCheckpoint";
 import { convert as convertCheckpoint } from "./QuestCheckpoint";
 

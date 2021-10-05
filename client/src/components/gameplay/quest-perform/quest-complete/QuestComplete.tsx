@@ -2,7 +2,7 @@ import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
 import goldIconImg from "../../../../img/quest-perform/quest-complete/quest-complete__gold.png";
 import fameIconImg from "../../../../img/quest-perform/quest-complete/quest-complete__star.png";
-import { GUILD_SHARE } from "../../../../utils/variables";
+import { GUILD_SHARE } from "../../../../utils/Variables";
 import "./quest-complete.scss";
 import { useEffect } from "react";
 

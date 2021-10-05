@@ -1,5 +1,5 @@
-import { HeroResponse } from "../../services/HeroesService";
-import { HEALTH_PER_VITALITY } from "../../utils/variables";
+import { HeroResponse } from "../../services/HeroService";
+import { HEALTH_PER_VITALITY } from "../../utils/Variables";
 import Equipment, { convert as convertEquipment, getEquipmentStats } from "../Equipment";
 import PersonageStats from "../PersonageStats";
 import HeroActivity, { convert as convertActivity } from "./HeroActivity";

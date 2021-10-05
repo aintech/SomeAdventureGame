@@ -1,27 +1,27 @@
 export enum BuildingType {
-  GUILD /** Send heroes to quest, Limit number of hired heroes */,
-  TAVERN /** Hiring heroes */,
-  STABLES /** Limit number of simultaneous embarked quests */,
-  HEALER /** Healing heroes */,
-  TREASURY /** Management village accounts */,
-  TRAINING_GROUND /** Level up heroes */,
-  ALCHEMIST /** Selling potions to heroes */,
-  TEMPLE /** Buff heroes */,
-  BLACKSMITH /** Upgrade heroes equipment to better tier*/,
-  STORAGE /** Limit amount of items user can store */,
-  MARKET /** Heroes buy new equipment */,
+  GUILD,
+  TAVERN,
+  STABLES,
+  HEALER,
+  TREASURY,
+  TRAINING_GROUND,
+  ALCHEMIST,
+  TEMPLE,
+  BLACKSMITH,
+  STORAGE,
+  MARKET,
 }
 
 export default class Building {
-  constructor(public id: number, public type: BuildingType) {}
+  constructor(public type: BuildingType, public level: number) {}
 }
 
-export const buildingTypeToName = (type: BuildingType) => {
+export const toDisplay = (type: BuildingType) => {
   switch (type) {
     case BuildingType.GUILD:
       return "Гильдия героев";
     case BuildingType.TAVERN:
-      return "Таверна 'Пьяный вепрь'";
+      return "Таверна 'Пьяный кузнечик'";
     case BuildingType.STABLES:
       return "Конюшни";
     case BuildingType.HEALER:
@@ -33,13 +33,13 @@ export const buildingTypeToName = (type: BuildingType) => {
     case BuildingType.ALCHEMIST:
       return "Лаборатория алхимика";
     case BuildingType.TEMPLE:
-      return "Святилище Первого огня";
+      return "Храм бабочки";
     case BuildingType.BLACKSMITH:
       return "Кузница гномов";
     case BuildingType.STORAGE:
-      return "Городское хранилище";
+      return "Хранилище";
     case BuildingType.MARKET:
-      return "Торговая площадь";
+      return "Кибитка торговца";
     default:
       throw new Error(`Unknown building type ${BuildingType[type]}`);
   }

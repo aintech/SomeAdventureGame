@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BuildingType, buildingTypeToName } from "../../../../models/Building";
+import { BuildingType, toDisplay } from "../../../../models/Building";
 import "./storage-display.scss";
 
 type StorageDisplayProps = {
@@ -17,7 +17,7 @@ const StorageDisplay = ({ closeDisplay }: StorageDisplayProps) => {
     <div className="storage-display" id="storage-display" onClick={clickHandler}>
       <button className="storage-display__btn--close" onClick={closeDisplay}></button>
       <div className="storage-display__container">
-        <div className="storage-display__name">{buildingTypeToName(BuildingType.STORAGE)}</div>
+        <div className="storage-display__name">{toDisplay(BuildingType.STORAGE)}</div>
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ heroesRouter.get("/", AuthMiddleware, async (req, res) => {
   try {
     const heroes = await getHeroes(user_id);
     res.json(heroes);
-  } catch (e) {
+  } catch (e: any) {
     res.status(500).json({ message: e.message });
   }
 });
@@ -22,7 +22,7 @@ heroesRouter.get("/tavern", AuthMiddleware, async (req, res) => {
   try {
     const tavernPatrons = await getTavernPatrons(user_id);
     res.json(tavernPatrons);
-  } catch (e) {
+  } catch (e: any) {
     res.status(500).json({ message: e.message });
   }
 });
@@ -34,7 +34,7 @@ heroesRouter.put("/hire", AuthMiddleware, async (req, res) => {
     const hired = (await hireHero(user_id, hero_id))[0];
     const stats = await getStats(user_id);
     res.json({ stats, hired });
-  } catch (e) {
+  } catch (e: any) {
     res.status(500).json({ message: e.message });
   }
 });
@@ -44,7 +44,7 @@ heroesRouter.put("/dismiss", AuthMiddleware, async (req, res) => {
   try {
     dismissHero(hero_id);
     res.json({ heroId: hero_id });
-  } catch (e) {
+  } catch (e: any) {
     res.status(500).json({ message: e.message });
   }
 });
@@ -54,7 +54,7 @@ heroesRouter.put("/activity", AuthMiddleware, async (req, res) => {
   try {
     const heroes = await updateHeroActivities(user_id, req.body);
     res.json(heroes);
-  } catch (e) {
+  } catch (e: any) {
     res.status(500).json({ message: e.message });
   }
 });

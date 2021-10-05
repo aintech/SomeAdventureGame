@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsChoosed } from "../../../../actions/Actions";
-import { BuildingType, buildingTypeToName } from "../../../../models/Building";
+import { BuildingType, toDisplay } from "../../../../models/Building";
 import Hero from "../../../../models/hero/Hero";
 import { HeroActivityType } from "../../../../models/hero/HeroActivity";
 import Loader from "../../../loader/Loader";
@@ -31,7 +31,7 @@ const BlacksmithDisplay = ({ visitors, visitorClicked, closeDisplay }: Blacksmit
     <div className="blacksmith-display" id="blacksmith-display" onClick={clickHandler}>
       <button className="blacksmith-display__btn--close" onClick={closeDisplay}></button>
       <div className="blacksmith-display__container">
-        <div className="blacksmith-display__name">{buildingTypeToName(BuildingType.BLACKSMITH)}</div>
+        <div className="blacksmith-display__name">{toDisplay(BuildingType.BLACKSMITH)}</div>
         <div className="blacksmith-display__visitors-holder">
           {visitors.map((visitor) => (
             <HeroItem

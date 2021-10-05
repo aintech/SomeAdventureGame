@@ -10,14 +10,15 @@ import GameStats from "../models/GameStats";
 import Hero, { convert as convertHero } from "../models/hero/Hero";
 import Item, { convertItem } from "../models/Item";
 import Quest, { convert as convertQuest } from "../models/Quest";
-import { EquipmentResponse, HeroResponse, HireHeroResponse, ItemResponse } from "../services/HeroesService";
-import { QuestResponse } from "../services/QuestsService";
+import { EquipmentResponse, HeroResponse, HireHeroResponse, ItemResponse } from "../services/HeroService";
+import { QuestResponse } from "../services/QuestService";
 import { remove, replace } from "../utils/arrays";
 
 export type State = {
   stats: GameStats;
   quests: Quest[];
   heroes: Hero[];
+  buildings: Building[];
   tavernPatrons: Hero[];
   marketAssortment: Equipment[];
   alchemistAssortment: Item[];
@@ -36,6 +37,7 @@ const intialState = {
   stats: { gold: 0, fame: 0 },
   quests: [],
   heroes: [],
+  buildings: [],
   tavernPatrons: [],
   marketAssortment: [],
   alchemistAssortment: [],
@@ -82,6 +84,18 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       return {
         ...state,
         heroes: action.payload.map((h: HeroResponse) => convertHero(h)),
+      };
+
+    case ActionType.FETCH_BUILDINGS_REQUEST:
+      return {
+        ...state,
+        buildings: [],
+      };
+
+    case ActionType.FETCH_BUILDINGS_SUCCESS:
+      return {
+        ...state,
+        buildings: action.payload,
       };
 
     case ActionType.FETCH_TAVERN_PATRONS_REQUEST:

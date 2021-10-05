@@ -34,9 +34,7 @@ authRouter.post(
       const candidate = await getUser(login);
 
       if (candidate) {
-        return res
-          .status(400)
-          .json({ message: "User with such credentials already exists" });
+        return res.status(400).json({ message: "User with such credentials already exists" });
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
@@ -46,7 +44,7 @@ authRouter.post(
       await createUser(user);
 
       res.status(201).json({ message: "user registered" });
-    } catch (e) {
+    } catch (e: any) {
       res.status(500).json({ message: e.message });
     }
   }
@@ -88,9 +86,7 @@ authRouter.post(
 
       res.json({ token, userId: user.id });
     } catch (e) {
-      res
-        .status(500)
-        .json({ message: "Something goes very wrong, try again later" });
+      res.status(500).json({ message: "Something goes very wrong, try again later" });
     }
   }
 );

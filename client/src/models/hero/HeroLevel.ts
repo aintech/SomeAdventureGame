@@ -1,4 +1,4 @@
-import { HeroLevelResponse } from "../../services/HeroesService";
+import { HeroLevelResponse } from "../../services/HeroService";
 
 export default class HeroLevel {
   constructor(

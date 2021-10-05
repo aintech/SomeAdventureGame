@@ -7,7 +7,7 @@ import Hero from "../../../../../../models/hero/Hero";
 import { HeroType } from "../../../../../../models/hero/HeroType";
 import Quest from "../../../../../../models/Quest";
 import { convertDuration } from "../../../../../../utils/Utils";
-import { GUILD_SHARE, MAX_EMBARKED_QUESTS } from "../../../../../../utils/variables";
+import { GUILD_SHARE, MAX_EMBARKED_QUESTS } from "../../../../../../utils/Variables";
 import "./quest-details.scss";
 
 type QuestDetailsProps = {

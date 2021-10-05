@@ -1,9 +1,10 @@
 import config from "config";
 import express from "express";
 import authRouter from "./routes/AuthRoutes";
-import heroesRouter from "./routes/HeroesRoutes";
-import questsRouter from "./routes/QuestRoutes";
-import shopsRouter from "./routes/ShopsRoutes";
+import buildingRouter from "./routes/BuildingRoutes";
+import heroRouter from "./routes/HeroRoutes";
+import questRouter from "./routes/QuestRoutes";
+import shopRouter from "./routes/ShopRoutes";
 import statsRouter from "./routes/StatsRoutes";
 
 const server = express();
@@ -15,10 +16,11 @@ server.use("/api/ping", async (_, res) => {
 });
 
 server.use("/api/auth", authRouter);
-server.use("/api/heroes", heroesRouter);
+server.use("/api/hero", heroRouter);
+server.use("/api/building", buildingRouter);
 server.use("/api/stats", statsRouter);
-server.use("/api/quests", questsRouter);
-server.use("/api/shops", shopsRouter);
+server.use("/api/quest", questRouter);
+server.use("/api/shop", shopRouter);
 
 const port = config.get("serverPort") || 8081;
 server.listen(port, () => console.log(`Server has been running on port ${port}...`));
