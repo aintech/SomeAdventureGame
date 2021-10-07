@@ -1,4 +1,3 @@
-import { BattleRound } from "../../generators/BattleGenerator";
 import { CheckpointPassedBody } from "../../routes/QuestRoutes";
 import query, { single } from "../Db";
 import { adjustGoldExperience, adjustHealth, HeroWithSkills } from "../hero/Hero";
@@ -14,11 +13,8 @@ export type QuestCheckpoint = {
   id?: number /** empty when checkpoint not persist yet */;
   type: CheckpointType;
   occuredAt: number;
-  duration: number;
   passed: boolean;
   tribute: number;
-  rounds?: Map<number, BattleRound[]>;
-  stringifiedRounds?: string /** rounds as Map are not sending properly through http, send them as string */;
   enemies?: Monster[];
 };
 
@@ -35,9 +31,7 @@ export const persistQuestCheckpoints = async (progressId: number, checkpoints: Q
         `select 
           ${progressId},
           '${CheckpointType[checkpoint.type].toLowerCase()}', 
-          ${checkpoint.occuredAt}, 
-          ${checkpoint.duration},
-          ${checkpoint.rounds ? `'${stringifyRounds(checkpoint.rounds)}'` : null},
+          ${checkpoint.occuredAt},
           ${checkpoint.enemies ? `'${JSON.stringify(checkpoint.enemies)}'` : null},
           ${checkpoint.tribute},
           ${checkpoint.passed}`
@@ -47,7 +41,7 @@ export const persistQuestCheckpoints = async (progressId: number, checkpoints: Q
   await query<void>(
     "persistQuestCheckpoints",
     `insert into public.quest_checkpoint 
-     (quest_progress_id, type, occured_at, duration, rounds, enemies, tribute, passed)
+     (quest_progress_id, type, occured_at, enemies, tribute, passed)
      select * from (${checkpointsData}) as vals`
   );
 
@@ -105,43 +99,6 @@ export const checkpointPassed = async (
   }
 
   const adjustments: Promise<any>[] = [];
-
-  // if (checkpoint.type === CheckpointType.BATTLE) {
-  //   // const adjustments: Promise<any>[] = [];
-  //   // // const rounds = checkpoint.rounds!;
-  //   // const heroesHP = await getHeroesHP(checkpoint.questId);
-  //   // const healthValues = new Map<number, number>();
-  //   // const usedItems = new Map<{ heroId: number; itemId: number }, number>();
-  //   // heroesHP.forEach((h) => {
-  //   //   healthValues.set(h.id, h.health);
-  //   // });
-  //   // const maxSec = Math.max(...Array.from(rounds.keys()));
-  //   // for (let sec = 0; sec <= maxSec; sec++) {
-  //   //   const process = rounds.get(sec);
-  //   //   if (!process) {
-  //   //     continue;
-  //   //   }
-  //   //   for (const round of process) {
-  //   //     if (round.action === BattleActionType.ENEMY_ATTACK) {
-  //   //       healthValues.set(round.heroId, healthValues.get(round.heroId)! - +round.hpAdjust!);
-  //   //     }
-  //   //     if (round.action === BattleActionType.USE_POTION) {
-  //   //       const key = { heroId: round.heroId, itemId: round.itemId! };
-  //   //       usedItems.set(key, (usedItems.get(key) ?? 0) - 1);
-  //   //       healthValues.set(round.heroId, healthValues.get(round.heroId)! + +round.hpAdjust!);
-  //   //     }
-  //   //   }
-  //   // }
-  //   // healthValues.forEach((v, k) => adjustments.push(setHeroHealth(k, v)));
-  //   // usedItems.forEach((v, k) => adjustments.push(adjustItems(k.heroId, k.itemId, v)));
-  //   // if (adjustments.length > 0) {
-  //   //   await Promise.all(adjustments);
-  //   // }
-  // } else if (checkpoint.type === CheckpointType.TREASURE) {
-  //   //do nothing
-  // } else {
-  //   throw new Error(`Unknown checkpoint type! ${checkpoint}`);
-  // }
 
   let totalGold = checkpoint.type === CheckpointType.BATTLE ? checkpoint.tribute : 0;
 
@@ -211,8 +168,6 @@ type CheckpointWithProgressRow = {
   id: string;
   type: string;
   occured_at: string;
-  duration: string;
-  rounds: string | null;
   enemies: string | null;
   passed: boolean;
   tribute: string;
@@ -226,9 +181,6 @@ const mapQuestCheckpointWithProgress = (row: CheckpointWithProgressRow): QuestCh
     id: +row.id,
     type: mapCheckpointType(row.type),
     occuredAt: +row.occured_at,
-    duration: +row.duration,
-    rounds: mapRounds(row.rounds),
-    stringifiedRounds: row.rounds ?? undefined,
     enemies: mapEnemies(row.enemies),
     passed: row.passed,
     tribute: +row.tribute,
@@ -249,30 +201,9 @@ const mapCheckpointType = (type: string) => {
   }
 };
 
-/** duplicate code in client */
-const mapRounds = (rounds: string | null) => {
-  if (!rounds) {
-    return undefined;
-  }
-  const result: Map<number, BattleRound[]> = new Map();
-  rounds.split(",\n").forEach((s) => {
-    const roundToTime = s.split("::");
-    result.set(+roundToTime[0], JSON.parse(roundToTime[1]));
-  });
-  return result;
-};
-
 const mapEnemies = (enemies: string | null) => {
   if (!enemies) {
     return undefined;
   }
   return JSON.parse(enemies) as Monster[];
-};
-
-const stringifyRounds = (rounds: Map<number, BattleRound[]>) => {
-  let result = "";
-  rounds.forEach((v, k) => {
-    result += `${k}::${JSON.stringify(v)},\n`;
-  });
-  return result.slice(0, -2); /** removing last ,\n */
 };

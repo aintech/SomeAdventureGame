@@ -5,7 +5,7 @@
   display: flex;
   width: $gameplay_width;
   height: $gameplay_height;
-  background-image: url(../../../img/tavern-display/tavern-display_bg.png);
+  background-image: url(../../../img/building-display/building-display__background.png);
   background-size: cover;
   z-index: 1010;
 
@@ -16,7 +16,7 @@
     right: 3rem;
     width: to-gameplay-scale(84px);
     height: to-gameplay-scale(84px);
-    background-image: url(../../../img/guild-display/guild-btn_dismiss_hero.png);
+    background-image: url(../../../img/building-display/guild-display/guild-btn_dismiss_hero.png);
     border: none;
     outline: none;
     background-color: transparent;

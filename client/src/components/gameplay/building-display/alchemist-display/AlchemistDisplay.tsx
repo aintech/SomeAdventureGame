@@ -32,28 +32,25 @@ const AlchemistDisplay = ({ visitors, alchemistAssortment, visitorClicked, close
 
   return (
     <div className="alchemist-display" id="alchemist-display" onClick={clickHandler}>
-      <button className="alchemist-display__btn--close" onClick={closeDisplay}></button>
-      <div className="alchemist-display__container">
-        <div className="alchemist-display__name">{toDisplay(BuildingType.ALCHEMIST)}</div>
-        <div className="alchemist-display__assortment-holder">
-          <div className="alchemist-display__assortment__list">
-            <ul>
-              {alchemistAssortment.map((assortment) => (
-                <AlchemistItem key={assortment.id} item={assortment} />
-              ))}
-            </ul>
-          </div>
+      <div className="alchemist-display__name">{toDisplay(BuildingType.ALCHEMIST)}</div>
+      <div className="alchemist-display__assortment-holder">
+        <div className="alchemist-display__assortment__list">
+          <ul>
+            {alchemistAssortment.map((assortment) => (
+              <AlchemistItem key={assortment.id} item={assortment} />
+            ))}
+          </ul>
         </div>
-        <div className="alchemist-display__visitors-holder">
-          {visitors.map((visitor) => (
-            <HeroItem
-              key={visitor.id}
-              hero={visitor}
-              enabled={true}
-              itemClickHandler={(event) => visitorClickHandler(visitor, event)}
-            />
-          ))}
-        </div>
+      </div>
+      <div className="alchemist-display__visitors-holder">
+        {visitors.map((visitor) => (
+          <HeroItem
+            key={visitor.id}
+            hero={visitor}
+            enabled={true}
+            itemClickHandler={(event) => visitorClickHandler(visitor, event)}
+          />
+        ))}
       </div>
     </div>
   );

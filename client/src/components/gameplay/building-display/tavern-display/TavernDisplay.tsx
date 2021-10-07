@@ -16,7 +16,7 @@ type TavernDisplayProps = {
 
 const TavernDisplay = ({ patrons, closeDisplay, hirePatron }: TavernDisplayProps) => {
   return (
-    <div className="tavern-display" onClick={closeDisplay}>
+    <div className="tavern-display">
       <button className="tavern-display__btn--close" onClick={closeDisplay}></button>
       <div className="tavern-display__container">
         <div className="tavern-display__name">{toDisplay(BuildingType.TAVERN)}</div>

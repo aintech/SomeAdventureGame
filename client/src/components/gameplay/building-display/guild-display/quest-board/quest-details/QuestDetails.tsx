@@ -6,7 +6,6 @@ import { useDisplayMessage } from "../../../../../../hooks/UseDisplayMessages";
 import Hero from "../../../../../../models/hero/Hero";
 import { HeroType } from "../../../../../../models/hero/HeroType";
 import Quest from "../../../../../../models/Quest";
-import { convertDuration } from "../../../../../../utils/Utils";
 import { GUILD_SHARE, MAX_EMBARKED_QUESTS } from "../../../../../../utils/Variables";
 import "./quest-details.scss";
 
@@ -77,7 +76,6 @@ const QuestDetails = ({
       <div className="quest-details__description">
         {quest.description.replace(":tribute", quest.tribute.toString())}
       </div>
-      <div className="quest-details__duration">{convertDuration(quest.duration)}</div>
       <div className="quest-details__tribute">
         Доля гильдии {Math.floor(quest.tribute * GUILD_SHARE)} монет ({GUILD_SHARE * 100}%)
       </div>

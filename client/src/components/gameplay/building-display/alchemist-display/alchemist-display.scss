@@ -1,48 +1,19 @@
 @import "../../../../utils/css/index.scss";
 
 .alchemist-display {
-  @include absoluteCenter;
-  display: block;
-  width: $gameplay_width;
-  height: $gameplay_height;
-  background-image: url(../../../../img/tavern-display/tavern-display_bg.png);
-  background-size: cover;
-  z-index: 1010;
-
-  &__btn--close {
-    position: absolute;
-    float: right;
-    top: 1rem;
-    right: 3rem;
-    width: to-gameplay-scale(84px);
-    height: to-gameplay-scale(84px);
-    background-image: url(../../../../img/guild-display/guild-btn_dismiss_hero.png);
-    border: none;
-    outline: none;
-    background-color: transparent;
-    z-index: inherit;
-    cursor: pointer;
-
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
-
-  &__container {
-    display: grid;
-    width: 85%;
-    margin: 0 auto;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 100px 1fr;
-    gap: 30px;
-  }
+  display: grid;
+  width: 90%;
+  margin: 0 auto;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 65px 1fr;
+  gap: 30px;
 
   &__name {
     font-family: inherit;
     font-size: 3.4rem;
     color: peru;
-    margin-top: 65px;
     text-align: center;
+    align-self: flex-end;
     grid-row: 1;
     grid-column: 1 / -1;
     @include strokeText;

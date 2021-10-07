@@ -62,12 +62,6 @@ const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest, closeDisplay }: G
     setShowUnabledHeroes(show);
   };
 
-  const clickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLDivElement).id === "guild-display") {
-      closeDisplay();
-    }
-  };
-
   const prevPageBtnStyle: CSSProperties = {
     opacity: page === 0 ? 0.5 : 1,
     cursor: page === 0 ? "default" : "pointer",
@@ -81,7 +75,7 @@ const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest, closeDisplay }: G
   };
 
   return (
-    <div className="guild-display" id="guild-display" onClick={clickHandler}>
+    <div className="guild-display" id="guild-display" onClick={(e) => e.stopPropagation()}>
       <QuestScrollList quests={quests} />
       <HeroList heroes={heroesOnPage} quests={quests} heroesAssignedToQuest={heroesAssignedToQuest} />
       <button className="guild-display__btn--close" onClick={closeDisplay}></button>

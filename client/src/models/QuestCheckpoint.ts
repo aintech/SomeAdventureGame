@@ -42,15 +42,10 @@ export class BattleRound {
 export default class QuestCheckpoint {
   constructor(
     public id: number,
-    /** moment (second) on which checkpoint occures from quest start */
     public occuredTime: number,
     public type: CheckpointType,
-    /** duration of checkpoint in seconds */
-    public duration: number,
     public tribute: number,
     public passed: boolean,
-    /** key of this Map is second on which action occures */
-    public rounds?: Map<number, BattleRound[]>,
     public enemies?: CheckpointEnemy[]
   ) {}
 }
@@ -60,10 +55,8 @@ export const convert = (response: CheckpointResponse): QuestCheckpoint => {
     response.id,
     response.occuredAt,
     response.type,
-    response.duration,
     response.tribute,
     response.passed,
-    mapRounds(response.stringifiedRounds),
     response.enemies ? response.enemies.map((e) => convertEnemy(e)) : undefined
   );
 };
@@ -79,18 +72,4 @@ const convertEnemy = (res: CheckpointEnemyResponse): CheckpointEnemy => {
     res.drop,
     false
   );
-};
-
-/** duplicate code in server */
-const mapRounds = (rounds?: string) => {
-  if (!rounds) {
-    return undefined;
-  }
-  const result: Map<number, BattleRound[]> = new Map();
-  rounds.split(",\n").forEach((s) => {
-    const roundToTime = s.split("::");
-    result.set(+roundToTime[0], JSON.parse(roundToTime[1]));
-  });
-
-  return result;
 };

@@ -66,8 +66,11 @@ const BuildingDisplay = ({ chosenBuilding, hideBuildingDisplay }: BuildingDispla
   }
 
   return (
-    <div className="building-details">
-      <div>{display}</div>
+    <div className="building-display" onClick={hideBuildingDisplay}>
+      <button className="building-display__btn-close" onClick={hideBuildingDisplay}></button>
+      <div className="building-display__container" onClick={(e) => e.stopPropagation()}>
+        {display}
+      </div>
     </div>
   );
 };

@@ -1,10 +1,39 @@
 @import "../../../utils/css/index.scss";
 
-.building-container {
+.building-display {
   @include absoluteCenter;
   width: 100vw;
   height: 100vh;
   background-color: rgba($color: black, $alpha: 0.8);
   cursor: default;
-  z-index: 2000;
+  z-index: 1000;
+
+  &__container {
+    @include absoluteCenter;
+    display: block;
+    width: $building_display_width;
+    height: $building_display_height;
+    z-index: 1010;
+    background-image: url(../../../img/building-display/building-display__background.png);
+    background-size: contain;
+  }
+
+  &__btn-close {
+    position: absolute;
+    float: right;
+    top: 70px;
+    right: 70px;
+    width: to-gameplay-scale(84px);
+    height: to-gameplay-scale(84px);
+    background-image: url(../../../img/building-display/guild-display/guild-btn_dismiss_hero.png);
+    border: none;
+    outline: none;
+    background-color: transparent;
+    z-index: 1020;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
 }

@@ -5,7 +5,7 @@
   display: block;
   width: $gameplay_width;
   height: $gameplay_height;
-  background-image: url(../../../../img/guild-display/guild-quest_board.png);
+  background-image: url(../../../../img/building-display/guild-display/guild-display_background.png);
   background-size: cover;
 
   &__btn--close {
@@ -14,7 +14,7 @@
     margin-top: 1rem;
     width: to-gameplay-scale(84px);
     height: to-gameplay-scale(84px);
-    background-image: url(../../../../img/guild-display/guild-btn_dismiss_hero.png);
+    background-image: url(../../../../img/building-display/guild-display/guild-btn_dismiss_hero.png);
     border: none;
     outline: none;
     background-color: transparent;
@@ -58,7 +58,7 @@
     top: to-gameplay-scale(700px);
     width: to-gameplay-scale(260px);
     height: to-gameplay-scale(38px);
-    background-image: url(../../../../img/guild-display/guild-scroll_hero.png);
+    background-image: url(../../../../img/building-display/guild-display/guild-scroll_hero.png);
     background-size: cover;
     border: none;
     outline: none;
@@ -70,7 +70,7 @@
     left: to-gameplay-scale(900px);
 
     &:hover {
-      background-image: url(../../../../img/guild-display/guild-btn_scroll_hero_hover.png);
+      background-image: url(../../../../img/building-display/guild-display/guild-btn_scroll_hero_hover.png);
     }
   }
 
@@ -80,7 +80,7 @@
     transform: scale(-1);
 
     &:hover {
-      background-image: url(../../../../img/guild-display/guild-btn_scroll_hero_hover.png);
+      background-image: url(../../../../img/building-display/guild-display/guild-btn_scroll_hero_hover.png);
     }
   }
 }

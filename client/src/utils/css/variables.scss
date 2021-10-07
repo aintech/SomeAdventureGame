@@ -7,4 +7,7 @@ $gameplay_scale: 1.5;
 $gameplay_width: calc(1600px / #{$gameplay_scale});
 $gameplay_height: calc(900px / #{$gameplay_scale});
 
+$building_display_width: calc(1440px / #{$gameplay_scale});
+$building_display_height: calc(790px / #{$gameplay_scale});
+
 $travel-item_width: 312px;

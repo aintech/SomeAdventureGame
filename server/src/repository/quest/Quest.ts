@@ -12,7 +12,6 @@ export type Quest = {
   title: string;
   description: string;
   travelTime: number;
-  duration: number;
   fame: number;
   tribute: number;
   experience: number;
@@ -36,7 +35,6 @@ export const getQuestById = async (userId: number, questId: number, withCheckpoi
           quest.*, 
           progress.id as progress_id,
           progress.embarked_time, 
-          progress.duration as progress_duration,
           progress.completed 
      from public.quest quest 
      left join public.quest_progress progress 
@@ -65,7 +63,6 @@ export const getQuests = async (userId: number) => {
             quest.*, 
             progress.id as progress_id, 
             progress.embarked_time, 
-            progress.duration as progress_duration,
             progress.completed
      from public.quest quest
      left join public.quest_progress progress 
@@ -163,7 +160,6 @@ type QuestWithProgressRow = {
   title: string;
   description: string;
   travel_time: string;
-  duration: string;
   fame: string;
   tribute: string;
   experience: string;
@@ -180,7 +176,6 @@ const mapQuestWithProgress = (row: QuestWithProgressRow): QuestWithProgress => {
     title: row.title,
     description: row.description,
     travelTime: +row.travel_time,
-    duration: +row.duration,
     fame: +row.fame,
     tribute: +row.tribute,
     experience: +row.experience,

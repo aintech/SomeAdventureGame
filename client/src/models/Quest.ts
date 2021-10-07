@@ -18,7 +18,6 @@ export default class Quest {
     public title: string,
     public description: string,
     public experience: number,
-    public duration: number,
     public tribute: number,
     public fame: number,
     public progress?: Progress
@@ -32,7 +31,6 @@ const convert = (response: QuestResponse): Quest => {
     response.title,
     response.description,
     response.experience,
-    response.duration,
     response.tribute,
     response.fame,
     response.progressId

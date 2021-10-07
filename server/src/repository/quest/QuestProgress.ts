@@ -10,20 +10,17 @@ type QuestProgress = {
   questId: number;
   embarkedTime: Date;
   completed: boolean;
-  duration: number;
 };
 
 const persistProgress = (userId: number, questId: number, checkpoints: QuestCheckpoint[]) => {
-  const checkpointsDuration = checkpoints.map((c) => c.duration).reduce((a, b) => a + b);
-
   return query<number>(
     "persistProgress",
-    `with quest_time as (select duration as d, travel_time tt from public.quest where id = $2)
+    `with quest_time as (select travel_time tt from public.quest where id = $2)
      insert into public.quest_progress 
-     (user_id, quest_id, duration, embarked_time) 
-     values ($1, $2, (select d from quest_time) + $3, (now() + ((select tt from quest_time) * interval '1 second'))) 
+     (user_id, quest_id, embarked_time) 
+     values ($1, $2, (now() + ((select tt from quest_time) * interval '1 second'))) 
      returning id`,
-    [userId, questId, checkpointsDuration],
+    [userId, questId],
     defaultMapper,
     (res: { id: number }[]) => res[0].id
   );
@@ -66,7 +63,6 @@ type QuestProgressRow = {
   quest_id: string;
   embarked_time: Date;
   completed: boolean;
-  duration: string;
 };
 
 const mapQuestProgress = (row: QuestProgressRow) => {
@@ -76,6 +72,5 @@ const mapQuestProgress = (row: QuestProgressRow) => {
     questId: +row.quest_id,
     embarkedTime: row.embarked_time,
     completed: row.completed,
-    duration: +row.duration,
   };
 };

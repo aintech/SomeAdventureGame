@@ -6,7 +6,7 @@
   height: to-gameplay-scale(600px);
   top: 20%;
   left: 8%;
-  background-image: url(../../../../../../img/guild-display/guild-quest_scroll_maxed.png);
+  background-image: url(../../../../../../img/building-display/guild-display/guild-quest_scroll_maxed.png);
   background-repeat: no-repeat;
   background-size: cover;
   cursor: default;
@@ -30,7 +30,7 @@
     width: to-gameplay-scale(70px);
     height: to-gameplay-scale(70px);
     right: to-gameplay-scale(30px);
-    background-image: url(../../../../../../img/guild-display/guild-btn_dismiss_hero.png);
+    background-image: url(../../../../../../img/building-display/guild-display/guild-btn_dismiss_hero.png);
     background-size: cover;
     border: none;
     outline: none;
@@ -48,7 +48,7 @@
     bottom: 0;
     width: to-gameplay-scale(104px);
     height: to-gameplay-scale(154px);
-    background-image: url(../../../../../../img/guild-display/guild-btn_accept_quest.png);
+    background-image: url(../../../../../../img/building-display/guild-display/guild-btn_accept_quest.png);
     background-size: cover;
     border: none;
     outline: none;
@@ -125,7 +125,7 @@
       justify-self: center;
       height: to-gameplay-scale(150px);
       margin-top: -15px;
-      background-image: url(../../../../../../img/guild-display/guild-assigned_hero_bg.png);
+      background-image: url(../../../../../../img/building-display/guild-display/guild-assigned_hero_bg.png);
       background-size: cover;
       background-repeat: no-repeat;
 
@@ -137,7 +137,7 @@
         &--#{$type} {
           width: to-gameplay-scale(80px);
           height: to-gameplay-scale(80px);
-          background-image: url(../../../../../../img/guild-display/guild-hero_icon_#{$type}.png);
+          background-image: url(../../../../../../img/building-display/guild-display/guild-hero_icon_#{$type}.png);
           background-repeat: no-repeat;
           background-size: cover;
         }
@@ -152,7 +152,7 @@
         align-self: center;
         width: to-gameplay-scale(40px);
         height: to-gameplay-scale(40px);
-        background-image: url(../../../../../../img/guild-display/guild-btn_dismiss_hero.png);
+        background-image: url(../../../../../../img/building-display/guild-display/guild-btn_dismiss_hero.png);
         background-repeat: no-repeat;
         background-size: cover;
         border: none;
