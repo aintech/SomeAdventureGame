@@ -33,7 +33,7 @@ export const toDisplay = (type: BuildingType) => {
     case BuildingType.ALCHEMIST:
       return "Лаборатория алхимика";
     case BuildingType.TEMPLE:
-      return "Храм бабочки";
+      return "Храм бабочек";
     case BuildingType.BLACKSMITH:
       return "Кузница гномов";
     case BuildingType.STORAGE:

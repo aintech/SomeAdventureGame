@@ -1,44 +1,16 @@
 @import "../../../../utils/css/index.scss";
 
 .training-ground-display {
-  @include absoluteCenter;
-  display: block;
-  width: $gameplay_width;
-  height: $gameplay_height;
-  background-image: url(../../../../img/building-display/building-display__background.png);
-  background-size: cover;
-  z-index: 1010;
-
-  &__btn--close {
-    position: absolute;
-    float: right;
-    top: 1rem;
-    right: 3rem;
-    width: to-gameplay-scale(84px);
-    height: to-gameplay-scale(84px);
-    background-image: url(../../../../img/building-display/guild-display/guild-btn_dismiss_hero.png);
-    border: none;
-    outline: none;
-    background-color: transparent;
-    z-index: inherit;
-    cursor: pointer;
-
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
-
-  &__container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
+  display: flex;
+  width: 90%;
+  margin: 0 auto;
+  flex-direction: column;
 
   &__name {
     font-family: inherit;
     font-size: 3.4rem;
     color: peru;
-    margin-top: 65px;
+    margin-top: 30px;
     align-self: center;
     @include strokeText;
     cursor: default;

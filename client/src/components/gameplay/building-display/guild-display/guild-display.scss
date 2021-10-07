@@ -1,37 +1,18 @@
 @import "../../../../utils/css/index.scss";
 
 .guild-display {
-  @include absoluteCenter;
-  display: block;
-  width: $gameplay_width;
-  height: $gameplay_height;
+  width: $building_display_width;
+  height: $building_display_height;
   background-image: url(../../../../img/building-display/guild-display/guild-display_background.png);
-  background-size: cover;
-
-  &__btn--close {
-    float: right;
-    margin-right: 3rem;
-    margin-top: 1rem;
-    width: to-gameplay-scale(84px);
-    height: to-gameplay-scale(84px);
-    background-image: url(../../../../img/building-display/guild-display/guild-btn_dismiss_hero.png);
-    border: none;
-    outline: none;
-    background-color: transparent;
-    z-index: inherit;
-    cursor: pointer;
-
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
+  background-size: contain;
 
   &__btn--show-unabled {
     font-family: inherit;
+    font-size: 20px;
     display: flex;
     position: absolute;
-    top: 65px;
-    left: 820px;
+    top: 20px;
+    right: 85px;
     background-color: transparent;
     border: 1px solid yellowgreen;
     color: yellowgreen;
@@ -44,6 +25,7 @@
     }
 
     & > i {
+      align-self: center;
       color: yellowgreen;
     }
 
@@ -67,7 +49,7 @@
 
   &__btn--previous {
     @include pageBtn;
-    left: to-gameplay-scale(900px);
+    left: to-gameplay-scale(830px);
 
     &:hover {
       background-image: url(../../../../img/building-display/guild-display/guild-btn_scroll_hero_hover.png);
@@ -76,7 +58,7 @@
 
   &__btn--next {
     @include pageBtn;
-    left: to-gameplay-scale(1160px);
+    left: to-gameplay-scale(1090px);
     transform: scale(-1);
 
     &:hover {

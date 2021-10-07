@@ -2,8 +2,8 @@
 
 .quest-scroll-list {
   position: absolute;
-  top: calc(240px / #{$gameplay_scale});
-  left: calc(120px / #{$gameplay_scale});
+  top: calc(180px / #{$gameplay_scale});
+  left: calc(45px / #{$gameplay_scale});
   width: calc(690px / #{$gameplay_scale});
 
   display: grid;

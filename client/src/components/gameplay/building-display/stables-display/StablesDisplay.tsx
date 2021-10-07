@@ -8,31 +8,21 @@ import "./stables-display.scss";
 
 type StablesDisplayProps = {
   embarked: Quest[];
-  closeDisplay: () => void;
 };
 
-const StablesDisplay = ({ embarked, closeDisplay }: StablesDisplayProps) => {
-  const clickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLDivElement).id === "stables-display") {
-      closeDisplay();
-    }
-  };
-
+const StablesDisplay = ({ embarked }: StablesDisplayProps) => {
   return (
-    <div className="stables-display" id="stables-display" onClick={clickHandler}>
-      <button className="stables-display__btn--close" onClick={closeDisplay}></button>
-      <div className="stables-display__container">
-        <div className="stables-display__name">{toDisplay(BuildingType.STABLES)}</div>
-        <div className="stables-display__stats">
-          <div>
-            Выполняемые квесты {embarked.length}/{MAX_EMBARKED_QUESTS}
-          </div>
-          <li>
-            {embarked.map((q) => (
-              <ul key={q.id}>- {q.title}</ul>
-            ))}
-          </li>
+    <div className="stables-display">
+      <div className="stables-display__name">{toDisplay(BuildingType.STABLES)}</div>
+      <div className="stables-display__stats">
+        <div>
+          Выполняемые квесты {embarked.length}/{MAX_EMBARKED_QUESTS}
         </div>
+        <li>
+          {embarked.map((q) => (
+            <ul key={q.id}>- {q.title}</ul>
+          ))}
+        </li>
       </div>
     </div>
   );
@@ -40,12 +30,11 @@ const StablesDisplay = ({ embarked, closeDisplay }: StablesDisplayProps) => {
 
 type StablesDisplayContainerProps = {
   quests: Quest[];
-  closeDisplay: () => void;
 };
 
 class StablesDisplayContainer extends Component<StablesDisplayContainerProps> {
   render() {
-    const { quests, closeDisplay } = this.props;
+    const { quests } = this.props;
 
     if (!quests) {
       return <Loader message={`Wating for heroes`} />;
@@ -53,7 +42,7 @@ class StablesDisplayContainer extends Component<StablesDisplayContainerProps> {
 
     const embarkedQuests = quests.filter((q) => q.progress !== undefined);
 
-    return <StablesDisplay embarked={embarkedQuests} closeDisplay={closeDisplay} />;
+    return <StablesDisplay embarked={embarkedQuests} />;
   }
 }
 

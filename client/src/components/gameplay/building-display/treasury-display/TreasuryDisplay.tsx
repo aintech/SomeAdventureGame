@@ -8,26 +8,16 @@ import "./treasury-display.scss";
 
 type TreasuryDisplayProps = {
   stats: GameStats;
-  closeDisplay: () => void;
 };
 
-const TreasuryDisplay = ({ stats, closeDisplay }: TreasuryDisplayProps) => {
-  const clickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLDivElement).id === "treasury-display") {
-      closeDisplay();
-    }
-  };
-
+const TreasuryDisplay = ({ stats }: TreasuryDisplayProps) => {
   return (
-    <div className="treasury-display" id="treasury-display" onClick={clickHandler}>
-      <button className="treasury-display__btn--close" onClick={closeDisplay}></button>
-      <div className="treasury-display__container">
-        <div className="treasury-display__name">{toDisplay(BuildingType.TREASURY)}</div>
-        <div className="treasury-display__stats">
-          <div>Уровень славы городка {stats.fame}</div>
-          <div>Золота в сокровищнице {stats.gold} g</div>
-          <div>Доля гильдии в квестах {GUILD_SHARE * 100}% </div>
-        </div>
+    <div className="treasury-display">
+      <div className="treasury-display__name">{toDisplay(BuildingType.TREASURY)}</div>
+      <div className="treasury-display__stats">
+        <div>Уровень славы городка {stats.fame}</div>
+        <div>Золота в сокровищнице {stats.gold} g</div>
+        <div>Доля гильдии в квестах {GUILD_SHARE * 100}% </div>
       </div>
     </div>
   );
@@ -35,18 +25,17 @@ const TreasuryDisplay = ({ stats, closeDisplay }: TreasuryDisplayProps) => {
 
 type TreasuryDisplayContainerProps = {
   stats: GameStats;
-  closeDisplay: () => void;
 };
 
 class TreasuryDisplayContainer extends Component<TreasuryDisplayContainerProps> {
   render() {
-    const { stats, closeDisplay } = this.props;
+    const { stats } = this.props;
 
     if (!stats) {
       return <Loader message={"Fetching for stats..."} />;
     }
 
-    return <TreasuryDisplay stats={stats} closeDisplay={closeDisplay} />;
+    return <TreasuryDisplay stats={stats} />;
   }
 }
 

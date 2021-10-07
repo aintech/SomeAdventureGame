@@ -15,45 +15,35 @@ type MarketDisplayProps = {
   visitors: Hero[];
   marketAssortment: Equipment[];
   visitorClicked: (visitor: Hero) => void;
-  closeDisplay: () => void;
 };
 
-const MarketDisplay = ({ visitors, marketAssortment, visitorClicked, closeDisplay }: MarketDisplayProps) => {
+const MarketDisplay = ({ visitors, marketAssortment, visitorClicked }: MarketDisplayProps) => {
   const visitorClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     visitorClicked(hero);
   };
 
-  const clickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLDivElement).id === "market-display") {
-      closeDisplay();
-    }
-  };
-
   return (
-    <div className="market-display" id="market-display" onClick={clickHandler}>
-      <button className="market-display__btn--close" onClick={closeDisplay}></button>
-      <div className="market-display__container">
-        <div className="market-display__name">{toDisplay(BuildingType.MARKET)}</div>
-        <div className="market-display__assortment-holder">
-          <div className="market-display__assortment__list">
-            <ul>
-              {marketAssortment.map((assortment) => (
-                <MarketItem key={assortment.id} item={assortment} />
-              ))}
-            </ul>
-          </div>
+    <div className="market-display">
+      <div className="market-display__name">{toDisplay(BuildingType.MARKET)}</div>
+      <div className="market-display__assortment-holder">
+        <div className="market-display__assortment__list">
+          <ul>
+            {marketAssortment.map((assortment) => (
+              <MarketItem key={assortment.id} item={assortment} />
+            ))}
+          </ul>
         </div>
-        <div className="market-display__visitors-holder">
-          {visitors.map((visitor) => (
-            <HeroItem
-              key={visitor.id}
-              hero={visitor}
-              enabled={true}
-              itemClickHandler={(event) => visitorClickHandler(visitor, event)}
-            />
-          ))}
-        </div>
+      </div>
+      <div className="market-display__visitors-holder">
+        {visitors.map((visitor) => (
+          <HeroItem
+            key={visitor.id}
+            hero={visitor}
+            enabled={true}
+            itemClickHandler={(event) => visitorClickHandler(visitor, event)}
+          />
+        ))}
       </div>
     </div>
   );
@@ -63,12 +53,11 @@ type MarketDisplayContainerProps = {
   heroes: Hero[];
   marketAssortment: Equipment[];
   heroClicked: (hero: Hero) => void;
-  closeDisplay: () => void;
 };
 
 class MarketDisplayContainer extends Component<MarketDisplayContainerProps> {
   render() {
-    const { heroes, marketAssortment, heroClicked, closeDisplay } = this.props;
+    const { heroes, marketAssortment, heroClicked } = this.props;
 
     if (!heroes) {
       return <Loader message={`Wating for heroes`} />;
@@ -76,14 +65,7 @@ class MarketDisplayContainer extends Component<MarketDisplayContainerProps> {
 
     const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.PURCHASING_EQUIPMENT);
 
-    return (
-      <MarketDisplay
-        visitors={visitors}
-        marketAssortment={marketAssortment}
-        closeDisplay={closeDisplay}
-        visitorClicked={heroClicked}
-      />
-    );
+    return <MarketDisplay visitors={visitors} marketAssortment={marketAssortment} visitorClicked={heroClicked} />;
   }
 }
 

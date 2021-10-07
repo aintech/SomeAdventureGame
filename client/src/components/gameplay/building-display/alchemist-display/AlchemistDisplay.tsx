@@ -15,23 +15,16 @@ type AlchemistDisplayProps = {
   visitors: Hero[];
   alchemistAssortment: Item[];
   visitorClicked: (visitor: Hero) => void;
-  closeDisplay: () => void;
 };
 
-const AlchemistDisplay = ({ visitors, alchemistAssortment, visitorClicked, closeDisplay }: AlchemistDisplayProps) => {
+const AlchemistDisplay = ({ visitors, alchemistAssortment, visitorClicked }: AlchemistDisplayProps) => {
   const visitorClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     visitorClicked(hero);
   };
 
-  const clickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLDivElement).id === "alchemist-display") {
-      closeDisplay();
-    }
-  };
-
   return (
-    <div className="alchemist-display" id="alchemist-display" onClick={clickHandler}>
+    <div className="alchemist-display">
       <div className="alchemist-display__name">{toDisplay(BuildingType.ALCHEMIST)}</div>
       <div className="alchemist-display__assortment-holder">
         <div className="alchemist-display__assortment__list">
@@ -60,12 +53,11 @@ type AlchemistDisplayContainerProps = {
   heroes: Hero[];
   alchemistAssortment: Item[];
   heroClicked: (hero: Hero) => void;
-  closeDisplay: () => void;
 };
 
 class AlchemistDisplayContainer extends Component<AlchemistDisplayContainerProps> {
   render() {
-    const { heroes, alchemistAssortment, heroClicked, closeDisplay } = this.props;
+    const { heroes, alchemistAssortment, heroClicked } = this.props;
 
     if (!heroes) {
       return <Loader message={`Wating for heroes`} />;
@@ -74,12 +66,7 @@ class AlchemistDisplayContainer extends Component<AlchemistDisplayContainerProps
     const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.PURCHASING_POTIONS);
 
     return (
-      <AlchemistDisplay
-        visitors={visitors}
-        alchemistAssortment={alchemistAssortment}
-        closeDisplay={closeDisplay}
-        visitorClicked={heroClicked}
-      />
+      <AlchemistDisplay visitors={visitors} alchemistAssortment={alchemistAssortment} visitorClicked={heroClicked} />
     );
   }
 }

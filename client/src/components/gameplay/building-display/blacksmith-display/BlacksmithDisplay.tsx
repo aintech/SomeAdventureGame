@@ -12,36 +12,26 @@ import "./blacksmith-display.scss";
 type BlacksmithDisplayProps = {
   visitors: Hero[];
   visitorClicked: (visitor: Hero) => void;
-  closeDisplay: () => void;
 };
 
-const BlacksmithDisplay = ({ visitors, visitorClicked, closeDisplay }: BlacksmithDisplayProps) => {
+const BlacksmithDisplay = ({ visitors, visitorClicked }: BlacksmithDisplayProps) => {
   const visitorClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     visitorClicked(hero);
   };
 
-  const clickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLDivElement).id === "blacksmith-display") {
-      closeDisplay();
-    }
-  };
-
   return (
-    <div className="blacksmith-display" id="blacksmith-display" onClick={clickHandler}>
-      <button className="blacksmith-display__btn--close" onClick={closeDisplay}></button>
-      <div className="blacksmith-display__container">
-        <div className="blacksmith-display__name">{toDisplay(BuildingType.BLACKSMITH)}</div>
-        <div className="blacksmith-display__visitors-holder">
-          {visitors.map((visitor) => (
-            <HeroItem
-              key={visitor.id}
-              hero={visitor}
-              enabled={true}
-              itemClickHandler={(event) => visitorClickHandler(visitor, event)}
-            />
-          ))}
-        </div>
+    <div className="blacksmith-display">
+      <div className="blacksmith-display__name">{toDisplay(BuildingType.BLACKSMITH)}</div>
+      <div className="blacksmith-display__visitors-holder">
+        {visitors.map((visitor) => (
+          <HeroItem
+            key={visitor.id}
+            hero={visitor}
+            enabled={true}
+            itemClickHandler={(event) => visitorClickHandler(visitor, event)}
+          />
+        ))}
       </div>
     </div>
   );
@@ -50,12 +40,11 @@ const BlacksmithDisplay = ({ visitors, visitorClicked, closeDisplay }: Blacksmit
 type BlacksmithDisplayContainerProps = {
   heroes: Hero[];
   heroClicked: (hero: Hero) => void;
-  closeDisplay: () => void;
 };
 
 class BlacksmithDisplayContainer extends Component<BlacksmithDisplayContainerProps> {
   render() {
-    const { heroes, heroClicked, closeDisplay } = this.props;
+    const { heroes, heroClicked } = this.props;
 
     if (!heroes) {
       return <Loader message={`Wating for heroes`} />;
@@ -63,7 +52,7 @@ class BlacksmithDisplayContainer extends Component<BlacksmithDisplayContainerPro
 
     const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.UPGRADING_EQUIPMENT);
 
-    return <BlacksmithDisplay visitors={visitors} closeDisplay={closeDisplay} visitorClicked={heroClicked} />;
+    return <BlacksmithDisplay visitors={visitors} visitorClicked={heroClicked} />;
   }
 }
 

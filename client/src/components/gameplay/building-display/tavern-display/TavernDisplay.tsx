@@ -10,21 +10,17 @@ import TavernPatron from "./tavern-patron/TavernPatron";
 
 type TavernDisplayProps = {
   patrons: Hero[];
-  closeDisplay: () => void;
   hirePatron: (patron: Hero) => void;
 };
 
-const TavernDisplay = ({ patrons, closeDisplay, hirePatron }: TavernDisplayProps) => {
+const TavernDisplay = ({ patrons, hirePatron }: TavernDisplayProps) => {
   return (
     <div className="tavern-display">
-      <button className="tavern-display__btn--close" onClick={closeDisplay}></button>
-      <div className="tavern-display__container">
-        <div className="tavern-display__name">{toDisplay(BuildingType.TAVERN)}</div>
-        <div className="tavern-display__patrons-holder">
-          {patrons.map((p) => (
-            <TavernPatron key={p.id} patron={p} hirePatron={hirePatron} />
-          ))}
-        </div>
+      <div className="tavern-display__name">{toDisplay(BuildingType.TAVERN)}</div>
+      <div className="tavern-display__patrons-holder">
+        {patrons.map((p) => (
+          <TavernPatron key={p.id} patron={p} hirePatron={hirePatron} />
+        ))}
       </div>
     </div>
   );
@@ -32,7 +28,6 @@ const TavernDisplay = ({ patrons, closeDisplay, hirePatron }: TavernDisplayProps
 
 type TavernDisplayContainerProps = {
   tavernPatrons: Hero[];
-  closeDisplay: () => void;
   hirePatron: (patron: Hero) => void;
 };
 
@@ -42,11 +37,9 @@ class TavernDisplayContainer extends Component<TavernDisplayContainerProps> {
   }
 
   render() {
-    const { tavernPatrons, closeDisplay } = this.props;
+    const { tavernPatrons } = this.props;
 
-    return (
-      <TavernDisplay patrons={tavernPatrons} closeDisplay={closeDisplay} hirePatron={this.onHirePatron.bind(this)} />
-    );
+    return <TavernDisplay patrons={tavernPatrons} hirePatron={this.onHirePatron.bind(this)} />;
   }
 }
 

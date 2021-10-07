@@ -13,7 +13,7 @@ import TrainingGroundDisplay from "./training-ground-display/TrainingGroundDispl
 import TreasuryDisplay from "./treasury-display/TreasuryDisplay";
 import "./building-display.scss";
 import StablesDisplay from "./stables-display/StablesDisplay";
-import StorageDisplayContainer from "./storage-display/StorageDisplay";
+import StorageDisplay from "./storage-display/StorageDisplay";
 import MarketDisplay from "./market-display/MarketDisplay";
 
 type BuildingDisplayProps = {
@@ -29,37 +29,37 @@ const BuildingDisplay = ({ chosenBuilding, hideBuildingDisplay }: BuildingDispla
   let display = null;
   switch (chosenBuilding.type) {
     case BuildingType.TAVERN:
-      display = <TavernDisplay closeDisplay={hideBuildingDisplay} />;
+      display = <TavernDisplay />;
       break;
     case BuildingType.GUILD:
-      display = <GuildDisplay closeDisplay={hideBuildingDisplay} />;
+      display = <GuildDisplay />;
       break;
     case BuildingType.HEALER:
-      display = <HealerDisplay closeDisplay={hideBuildingDisplay} />;
+      display = <HealerDisplay />;
       break;
     case BuildingType.TREASURY:
-      display = <TreasuryDisplay closeDisplay={hideBuildingDisplay} />;
+      display = <TreasuryDisplay />;
       break;
     case BuildingType.TRAINING_GROUND:
-      display = <TrainingGroundDisplay closeDisplay={hideBuildingDisplay} />;
+      display = <TrainingGroundDisplay />;
       break;
     case BuildingType.ALCHEMIST:
-      display = <AlchemistDisplay closeDisplay={hideBuildingDisplay} />;
+      display = <AlchemistDisplay />;
       break;
     case BuildingType.TEMPLE:
-      display = <TempleDisplay closeDisplay={hideBuildingDisplay} />;
+      display = <TempleDisplay />;
       break;
     case BuildingType.BLACKSMITH:
-      display = <BlacksmithDisplay closeDisplay={hideBuildingDisplay} />;
+      display = <BlacksmithDisplay />;
       break;
     case BuildingType.STABLES:
-      display = <StablesDisplay closeDisplay={hideBuildingDisplay} />;
+      display = <StablesDisplay />;
       break;
     case BuildingType.STORAGE:
-      display = <StorageDisplayContainer closeDisplay={hideBuildingDisplay} />;
+      display = <StorageDisplay />;
       break;
     case BuildingType.MARKET:
-      display = <MarketDisplay closeDisplay={hideBuildingDisplay} />;
+      display = <MarketDisplay />;
       break;
     default:
       throw new Error(`Unknown building type ${BuildingType[chosenBuilding.type]}`);

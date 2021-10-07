@@ -14,14 +14,13 @@ type GuildDisplayProps = {
   quests: Quest[];
   heroes: Hero[];
   heroesAssignedToQuest: Hero[];
-  closeDisplay: () => void;
 };
 
 /**
  * TODO: Переключалка setShowUnabledHeroes сбрасывается если переоткрыть гильдию -
  * лучше сделать через редюсер чтобы запоминалась
  */
-const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest, closeDisplay }: GuildDisplayProps) => {
+const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest }: GuildDisplayProps) => {
   const [page, setPage] = useState<number>(0);
   const [lastPage, setLastPage] = useState<number>(0);
   const [heroesOnPage, setHeroesOnPage] = useState<Hero[]>([]);
@@ -75,10 +74,9 @@ const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest, closeDisplay }: G
   };
 
   return (
-    <div className="guild-display" id="guild-display" onClick={(e) => e.stopPropagation()}>
+    <div className="guild-display">
       <QuestScrollList quests={quests} />
       <HeroList heroes={heroesOnPage} quests={quests} heroesAssignedToQuest={heroesAssignedToQuest} />
-      <button className="guild-display__btn--close" onClick={closeDisplay}></button>
       <button className="guild-display__btn--show-unabled" onClick={switchShowUnabled}>
         <i className="material-icons guild-display__btn--show-unabled-icon">
           {!showUnabledHeroes ? "check_box" : "check_box_outline_blank"}
@@ -101,31 +99,22 @@ type GuildDisplayContainerProps = {
   quests: Quest[];
   heroes: Hero[];
   heroesAssignedToQuest: Hero[];
-  closeDisplay: () => void;
   closeQuestScroll: () => void;
 };
 
 class GuildDisplayContainer extends Component<GuildDisplayContainerProps> {
+  componentWillUnmount() {
+    this.props.closeQuestScroll();
+  }
+
   render() {
-    const { quests, heroes, heroesAssignedToQuest, closeDisplay, closeQuestScroll } = this.props;
+    const { quests, heroes, heroesAssignedToQuest } = this.props;
 
     if (!quests) {
       return <Loader message={"Fetching quests for guild..."} />;
     }
 
-    const closeDisplayProcedure = () => {
-      closeQuestScroll();
-      closeDisplay();
-    };
-
-    return (
-      <GuildDisplay
-        closeDisplay={closeDisplayProcedure}
-        quests={quests}
-        heroes={heroes}
-        heroesAssignedToQuest={heroesAssignedToQuest}
-      />
-    );
+    return <GuildDisplay quests={quests} heroes={heroes} heroesAssignedToQuest={heroesAssignedToQuest} />;
   }
 }
 

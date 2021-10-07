@@ -22,14 +22,14 @@
     position: absolute;
     float: right;
     top: 70px;
-    right: 70px;
+    right: 72px;
     width: to-gameplay-scale(84px);
     height: to-gameplay-scale(84px);
     background-image: url(../../../img/building-display/guild-display/guild-btn_dismiss_hero.png);
     border: none;
     outline: none;
     background-color: transparent;
-    z-index: 1020;
+    z-index: 2000;
     cursor: pointer;
 
     &:hover {

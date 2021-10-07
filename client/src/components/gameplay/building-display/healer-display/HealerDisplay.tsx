@@ -12,36 +12,26 @@ import "./healer-display.scss";
 type HealerDisplayProps = {
   visitors: Hero[];
   visitorClicked: (visitor: Hero) => void;
-  closeDisplay: () => void;
 };
 
-const HealerDisplay = ({ visitors, visitorClicked, closeDisplay }: HealerDisplayProps) => {
+const HealerDisplay = ({ visitors, visitorClicked }: HealerDisplayProps) => {
   const visitorClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     visitorClicked(hero);
   };
 
-  const clickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLDivElement).id === "healer-display") {
-      closeDisplay();
-    }
-  };
-
   return (
-    <div className="healer-display" id="healer-display" onClick={clickHandler}>
-      <button className="healer-display__btn--close" onClick={closeDisplay}></button>
-      <div className="healer-display__container">
-        <div className="healer-display__name">{toDisplay(BuildingType.HEALER)}</div>
-        <div className="healer-display__visitors-holder">
-          {visitors.map((visitor) => (
-            <HeroItem
-              key={visitor.id}
-              hero={visitor}
-              enabled={true}
-              itemClickHandler={(event) => visitorClickHandler(visitor, event)}
-            />
-          ))}
-        </div>
+    <div className="healer-display">
+      <div className="healer-display__name">{toDisplay(BuildingType.HEALER)}</div>
+      <div className="healer-display__visitors-holder">
+        {visitors.map((visitor) => (
+          <HeroItem
+            key={visitor.id}
+            hero={visitor}
+            enabled={true}
+            itemClickHandler={(event) => visitorClickHandler(visitor, event)}
+          />
+        ))}
       </div>
     </div>
   );
@@ -50,12 +40,11 @@ const HealerDisplay = ({ visitors, visitorClicked, closeDisplay }: HealerDisplay
 type HealerDisplayContainerProps = {
   heroes: Hero[];
   heroClicked: (hero: Hero) => void;
-  closeDisplay: () => void;
 };
 
 class HealerDisplayContainer extends Component<HealerDisplayContainerProps> {
   render() {
-    const { heroes, heroClicked, closeDisplay } = this.props;
+    const { heroes, heroClicked } = this.props;
 
     if (!heroes) {
       return <Loader message={`Wating for heroes`} />;
@@ -63,7 +52,7 @@ class HealerDisplayContainer extends Component<HealerDisplayContainerProps> {
 
     const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.HEALING);
 
-    return <HealerDisplay visitors={visitors} closeDisplay={closeDisplay} visitorClicked={heroClicked} />;
+    return <HealerDisplay visitors={visitors} visitorClicked={heroClicked} />;
   }
 }
 

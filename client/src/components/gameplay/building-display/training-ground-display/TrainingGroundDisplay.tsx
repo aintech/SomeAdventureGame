@@ -12,36 +12,26 @@ import "./training-ground-display.scss";
 type TrainingGroundDisplayProps = {
   trainies: Hero[];
   traineeClicked: (visitor: Hero) => void;
-  closeDisplay: () => void;
 };
 
-const TrainingGroundDisplay = ({ trainies, traineeClicked, closeDisplay }: TrainingGroundDisplayProps) => {
+const TrainingGroundDisplay = ({ trainies, traineeClicked }: TrainingGroundDisplayProps) => {
   const traineeClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     traineeClicked(hero);
   };
 
-  const clickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLDivElement).id === "training-ground-display") {
-      closeDisplay();
-    }
-  };
-
   return (
-    <div className="training-ground-display" id="training-ground-display" onClick={clickHandler}>
-      <button className="training-ground-display__btn--close" onClick={closeDisplay}></button>
-      <div className="training-ground-display__container">
-        <div className="training-ground-display__name">{toDisplay(BuildingType.TRAINING_GROUND)}</div>
-        <div className="training-ground-display__trainies-holder">
-          {trainies.map((trainee) => (
-            <HeroItem
-              key={trainee.id}
-              hero={trainee}
-              enabled={true}
-              itemClickHandler={(event) => traineeClickHandler(trainee, event)}
-            />
-          ))}
-        </div>
+    <div className="training-ground-display">
+      <div className="training-ground-display__name">{toDisplay(BuildingType.TRAINING_GROUND)}</div>
+      <div className="training-ground-display__trainies-holder">
+        {trainies.map((trainee) => (
+          <HeroItem
+            key={trainee.id}
+            hero={trainee}
+            enabled={true}
+            itemClickHandler={(event) => traineeClickHandler(trainee, event)}
+          />
+        ))}
       </div>
     </div>
   );
@@ -50,12 +40,11 @@ const TrainingGroundDisplay = ({ trainies, traineeClicked, closeDisplay }: Train
 type TrainingGroundDisplayContainerProps = {
   heroes: Hero[];
   heroClicked: (hero: Hero) => void;
-  closeDisplay: () => void;
 };
 
 class TrainingGroundDisplayContainer extends Component<TrainingGroundDisplayContainerProps> {
   render() {
-    const { heroes, heroClicked, closeDisplay } = this.props;
+    const { heroes, heroClicked } = this.props;
 
     if (!heroes) {
       return <Loader message={`Wating for heroes`} />;
@@ -63,7 +52,7 @@ class TrainingGroundDisplayContainer extends Component<TrainingGroundDisplayCont
 
     const trainies = heroes.filter((h) => h.activity!.type === HeroActivityType.TRAINING);
 
-    return <TrainingGroundDisplay trainies={trainies} closeDisplay={closeDisplay} traineeClicked={heroClicked} />;
+    return <TrainingGroundDisplay trainies={trainies} traineeClicked={heroClicked} />;
   }
 }
 

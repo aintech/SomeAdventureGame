@@ -12,36 +12,26 @@ import "./temple-display.scss";
 type TempleDisplayProps = {
   visitors: Hero[];
   visitorClicked: (visitor: Hero) => void;
-  closeDisplay: () => void;
 };
 
-const TempleDisplay = ({ visitors, visitorClicked, closeDisplay }: TempleDisplayProps) => {
+const TempleDisplay = ({ visitors, visitorClicked }: TempleDisplayProps) => {
   const visitorClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     visitorClicked(hero);
   };
 
-  const clickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLDivElement).id === "temple-display") {
-      closeDisplay();
-    }
-  };
-
   return (
-    <div className="temple-display" id="temple-display" onClick={clickHandler}>
-      <button className="temple-display__btn--close" onClick={closeDisplay}></button>
-      <div className="temple-display__container">
-        <div className="temple-display__name">{toDisplay(BuildingType.TEMPLE)}</div>
-        <div className="temple-display__visitors-holder">
-          {visitors.map((visitor) => (
-            <HeroItem
-              key={visitor.id}
-              hero={visitor}
-              enabled={true}
-              itemClickHandler={(event) => visitorClickHandler(visitor, event)}
-            />
-          ))}
-        </div>
+    <div className="temple-display">
+      <div className="temple-display__name">{toDisplay(BuildingType.TEMPLE)}</div>
+      <div className="temple-display__visitors-holder">
+        {visitors.map((visitor) => (
+          <HeroItem
+            key={visitor.id}
+            hero={visitor}
+            enabled={true}
+            itemClickHandler={(event) => visitorClickHandler(visitor, event)}
+          />
+        ))}
       </div>
     </div>
   );
@@ -50,12 +40,11 @@ const TempleDisplay = ({ visitors, visitorClicked, closeDisplay }: TempleDisplay
 type TempleDisplayContainerProps = {
   heroes: Hero[];
   heroClicked: (hero: Hero) => void;
-  closeDisplay: () => void;
 };
 
 class TempleDisplayContainer extends Component<TempleDisplayContainerProps> {
   render() {
-    const { heroes, heroClicked, closeDisplay } = this.props;
+    const { heroes, heroClicked } = this.props;
 
     if (!heroes) {
       return <Loader message={`Wating for heroes`} />;
@@ -63,7 +52,7 @@ class TempleDisplayContainer extends Component<TempleDisplayContainerProps> {
 
     const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.PRAYING);
 
-    return <TempleDisplay visitors={visitors} closeDisplay={closeDisplay} visitorClicked={heroClicked} />;
+    return <TempleDisplay visitors={visitors} visitorClicked={heroClicked} />;
   }
 }
 
