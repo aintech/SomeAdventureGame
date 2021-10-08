@@ -43,11 +43,11 @@ const BuildingDisplay = ({ chosenBuilding, hideBuildingDisplay }: BuildingDispla
   let display = displayByType(chosenBuilding.type);
   return (
     <div className="building-display" onClick={hideBuildingDisplay}>
-      <button className="building-display__btn-close" onClick={hideBuildingDisplay}></button>
       <div className="building-display__container" onClick={(e) => e.stopPropagation()}>
+        <button className="building-display__btn-close" onClick={hideBuildingDisplay}></button>
         {display}
+        {upgradeBtn}
       </div>
-      {upgradeBtn}
     </div>
   );
 };

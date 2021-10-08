@@ -12,8 +12,8 @@
   &__container {
     @include absoluteCenter;
     display: block;
-    width: $building_display_width;
-    height: $building_display_height;
+    width: $overlay_display_width;
+    height: $overlay_display_height;
     z-index: 1010;
     background-image: url(../../../img/building-display/building-display__background.png);
     background-size: contain;
@@ -21,9 +21,9 @@
 
   &__btn-upgrade {
     position: absolute;
-    bottom: 40px;
-    right: 80px;
-    padding: 10px 20px;
+    bottom: -30px;
+    right: 0px;
+    padding: 5px 20px;
     font-size: 24px;
     border: none;
     outline: none;
@@ -40,15 +40,14 @@
     }
 
     &:hover {
-      transform: scale(1.1);
-      right: 90px;
+      background-color: darkgreen;
     }
   }
 
   &__btn-close {
     position: absolute;
-    top: 70px;
-    right: 72px;
+    top: -30px;
+    right: -30px;
     width: to-gameplay-scale(84px);
     height: to-gameplay-scale(84px);
     background-image: url(../../../img/building-display/guild-display/guild-btn_dismiss_hero.png);

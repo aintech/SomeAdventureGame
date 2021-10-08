@@ -197,6 +197,7 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
       this.chestPos
     );
     this.drawCommon();
+    this.checkTreasureInTarget();
   }
 
   checkTreasureInTarget() {
@@ -259,7 +260,6 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
 
   canvasClickHandler(e: MouseEvent) {
     e.stopPropagation();
-    e.preventDefault();
 
     if (this.state.processState === ProcessState.SMASHING) {
       const click = this.getClickPoint(e);
@@ -279,8 +279,6 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
         this.chestPos.rotation -= Math.random() * xOff;
         this.chestPos.x -= Math.random() * xOff;
       }
-
-      this.checkTreasureInTarget();
     }
 
     if (this.state.processState === ProcessState.DROPS) {
@@ -301,19 +299,11 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
     ];
   }
 
-  render() {
+  childRender() {
     const { processState } = this.state;
     return (
-      <div className="treasure-process">
+      <>
         {processState === ProcessState.LOADING ? <Loader message="Loading assets" /> : null}
-        <canvas className="treasure-process__canvas" width={650} height={500} ref={this.canvasRef}></canvas>
-        <canvas
-          className="treasure-process__canvas--dynamic"
-          width={650}
-          height={500}
-          ref={this.dynamicCanvasRef}
-          onClick={(e) => this.canvasClickHandler(e)}
-        ></canvas>
         {processState === ProcessState.CHOOSING ? (
           <div>
             <button
@@ -331,11 +321,11 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
           </div>
         ) : null}
         {processState === ProcessState.AFTERMATH ? (
-          <button className="treasure-process__btn--onwards" onClick={(e) => this.completeCheckpointClickHandler(e)}>
+          <button className="quest-process__btn_onwards" onClick={(e) => this.completeCheckpointClickHandler(e)}>
             На карту локации
           </button>
         ) : null}
-      </div>
+      </>
     );
   }
 }

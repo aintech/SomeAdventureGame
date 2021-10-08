@@ -16,11 +16,13 @@ const StablesDisplay = ({ embarked }: StablesDisplayProps) => {
       <div className="stables-display__name">{toDisplay(BuildingType.STABLES)}</div>
       <div className="stables-display__stats">
         <div>
-          Выполняемые квесты {embarked.length}/{MAX_EMBARKED_QUESTS}
+          Свободных экипажей {MAX_EMBARKED_QUESTS - embarked.length}/{MAX_EMBARKED_QUESTS}
         </div>
         <li>
-          {embarked.map((q) => (
-            <ul key={q.id}>- {q.title}</ul>
+          {embarked.map((q, idx) => (
+            <ul key={q.id}>
+              {idx + 1} - на квесте '{q.title}'
+            </ul>
           ))}
         </li>
       </div>

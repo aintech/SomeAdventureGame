@@ -26,7 +26,6 @@ export type State = {
   chosenQuest?: Quest;
   chosenHero?: Hero;
   heroesAssignedToQuest: Hero[];
-  collectingQuestReward?: Quest;
   messages: Message[];
   tooltip: Tooltip;
   confirmDialog?: ConfirmDialogType;
@@ -232,12 +231,6 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         activeQuestPerform: { quest: convertQuest(embQuest), heroes: embHeroes.map((h) => convertHero(h)) },
       };
 
-    case ActionType.COLLECTING_QUEST_REWARD:
-      return {
-        ...state,
-        collectingQuestReward: action.payload,
-      };
-
     case ActionType.COMPLETE_QUEST:
     case ActionType.CANCEL_QUEST:
       const { stats, quest, heroes } = action.payload;
@@ -262,7 +255,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         quests: changeQuest,
         heroes: changeHeroes,
         chosenHero,
-        collectingQuestReward: undefined,
+        activeQuestPerform: undefined,
       };
 
     case ActionType.SHOW_USER_MESSAGE:

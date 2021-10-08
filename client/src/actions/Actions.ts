@@ -170,13 +170,6 @@ export const checkpointPassed = (embarked: CheckpointPassedResponse) => {
   };
 };
 
-export const collectingQuestReward = (quest: Quest): PayloadedAction => {
-  return {
-    type: ActionType.COLLECTING_QUEST_REWARD,
-    payload: quest,
-  };
-};
-
 export const completeQuest = (questResponse: CompleteCancelQuestResponse): PayloadedAction => {
   return {
     type: ActionType.COMPLETE_QUEST,

@@ -53,12 +53,6 @@ const QuestPerform = ({
     heroClicked(hero);
   };
 
-  const clickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLDivElement).id === "quest-perform") {
-      closeDisplay();
-    }
-  };
-
   const checkpointActivated = (checkpoint: QuestCheckpoint) => {
     setActiveCheckpoint(checkpoint);
   };
@@ -91,11 +85,11 @@ const QuestPerform = ({
     setHitted(hero.id);
   };
 
-  let display;
+  let process;
   if (activeCheckpoint) {
     switch (activeCheckpoint.type) {
       case CheckpointType.BATTLE:
-        display = (
+        process = (
           <BattleProcess
             checkpoint={activeCheckpoint}
             heroes={heroActors}
@@ -109,7 +103,7 @@ const QuestPerform = ({
         );
         break;
       case CheckpointType.TREASURE:
-        display = (
+        process = (
           <TreasureProcess
             checkpoint={activeCheckpoint}
             heroes={heroActors}
@@ -128,7 +122,7 @@ const QuestPerform = ({
         throw new Error(`Unknown checkpoint type ${CheckpointType[activeCheckpoint.type]}`);
     }
   } else {
-    display = quest.progress!.checkpoints.find((c) => !c.passed) ? (
+    process = quest.progress!.checkpoints.find((c) => !c.passed) ? (
       <QuestMap quest={quest} checkpointActivated={checkpointActivated} />
     ) : (
       <QuestComplete
@@ -141,13 +135,10 @@ const QuestPerform = ({
   }
 
   return (
-    <div className="quest-perform" id="quest-perform" onClick={clickHandler}>
-      <button className="quest-perform__btn--close" onClick={closeDisplay}></button>
+    <div className="quest-perform">
       <div className="quest-perform__container">
+        <button className="quest-perform__btn--close" onClick={closeDisplay}></button>
         <div className="quest-perform__name">{quest.title}</div>
-
-        {display}
-
         <div className="quest-perform__heroes-holder">
           {heroActors.map((hero) => (
             <HeroItem
@@ -160,6 +151,7 @@ const QuestPerform = ({
             />
           ))}
         </div>
+        {process}
       </div>
     </div>
   );

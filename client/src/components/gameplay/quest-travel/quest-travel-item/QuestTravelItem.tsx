@@ -1,7 +1,7 @@
 import React, { Component, createRef, MouseEvent } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose, Dispatch } from "redux";
-import { beginQuestPerform, collectingQuestReward, showConfirmDialog } from "../../../../actions/Actions";
+import { beginQuestPerform, showConfirmDialog } from "../../../../actions/Actions";
 import { onCancelQuest, onCheckpointPassed } from "../../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../../hoc/WithApiService";
 import horseImgSrc from "../../../../img/quest-travel/quest-travel_animation.gif";
@@ -21,7 +21,6 @@ type QuestProgressItemProps = {
   quest: Quest;
   heroes: Hero[];
   activeQuestPerform?: QuestPerformData;
-  collectingQuestReward: (quest: Quest) => void;
   beginQuestPerform: (quest: Quest, heroes: Hero[]) => void;
   onCheckpointPassed: (quest: Quest, checkpoint: QuestCheckpoint) => void;
   onCancelQuest: (quest: Quest) => void;
@@ -277,7 +276,6 @@ const mapDispatchToProps = (dispatch: Dispatch, customProps: WithApiServiceProps
   const { apiService, auth } = customProps;
   return bindActionCreators(
     {
-      collectingQuestReward,
       beginQuestPerform,
       onCheckpointPassed: onCheckpointPassed(apiService, auth),
       onCancelQuest: onCancelQuest(apiService, auth),

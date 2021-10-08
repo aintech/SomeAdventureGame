@@ -347,25 +347,17 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
     return collected;
   }
 
-  render() {
+  childRender() {
     const { processState } = this.state;
     return (
-      <div className="battle-process">
+      <>
         {processState === ProcessState.LOADING ? <Loader message="Loading assets" /> : null}
-        <canvas className="battle-process__canvas" width={650} height={500} ref={this.canvasRef}></canvas>
-        <canvas
-          className="battle-process__canvas--dynamic"
-          width={650}
-          height={500}
-          ref={this.dynamicCanvasRef}
-          onClick={(e) => this.canvasClickHandler(e)}
-        ></canvas>
         {processState === ProcessState.BATTLE_WON ? (
-          <button className="battle-process__btn--onwards" onClick={(e) => this.completeCheckpointClickHandler(e)}>
+          <button className="quest-process__btn_onwards" onClick={(e) => this.completeCheckpointClickHandler(e)}>
             На карту локации
           </button>
         ) : processState === ProcessState.BATTLE_LOST ? (
-          <button className="battle-process__btn--onwards" onClick={(e) => this.completeCheckpointClickHandler(e)}>
+          <button className="quest-process__btn_onwards" onClick={(e) => this.completeCheckpointClickHandler(e)}>
             Отступить
           </button>
         ) : null}
@@ -391,7 +383,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
             </div>
           ))}
         </div>
-      </div>
+      </>
     );
   }
 }

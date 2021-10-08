@@ -6,6 +6,7 @@ import { create } from "./process-helpers/Color";
 import { drawDrops, drawMessages } from "./process-helpers/DrawManager";
 import { Drop, DropType } from "./process-helpers/Drop";
 import { Direction, Effect, EventMessage } from "./process-helpers/EventMessage";
+import "./quest-process.scss";
 
 export type QuestProcessProps = {
   checkpoint: QuestCheckpoint;
@@ -169,6 +170,30 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
     heroes.forEach((h) => rewards.set(h.id, { gold, experience }));
 
     return rewards;
+  }
+
+  canvasClickHandler(e: MouseEvent) {}
+
+  childRender() {
+    return <div>Override child render in subclass!</div>;
+  }
+
+  render() {
+    return (
+      <>
+        <div className="quest-process__canvas">
+          <canvas className="quest-process__canvas-static" width={650} height={500} ref={this.canvasRef}></canvas>
+          <canvas
+            className="quest-process__canvas-dynamic"
+            width={650}
+            height={500}
+            ref={this.dynamicCanvasRef}
+            onClick={(e) => this.canvasClickHandler(e)}
+          ></canvas>
+          {this.childRender()}
+        </div>
+      </>
+    );
   }
 }
 
