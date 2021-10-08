@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { buildingClicked } from "../../../actions/Actions";
@@ -15,6 +15,7 @@ import "./building-display.scss";
 import StablesDisplay from "./stables-display/StablesDisplay";
 import StorageDisplay from "./storage-display/StorageDisplay";
 import MarketDisplay from "./market-display/MarketDisplay";
+import { convertDuration } from "../../../utils/Utils";
 
 type BuildingDisplayProps = {
   chosenBuilding: Building;
@@ -26,53 +27,58 @@ const BuildingDisplay = ({ chosenBuilding, hideBuildingDisplay }: BuildingDispla
     return null;
   }
 
-  let display = null;
-  switch (chosenBuilding.type) {
-    case BuildingType.TAVERN:
-      display = <TavernDisplay />;
-      break;
-    case BuildingType.GUILD:
-      display = <GuildDisplay />;
-      break;
-    case BuildingType.HEALER:
-      display = <HealerDisplay />;
-      break;
-    case BuildingType.TREASURY:
-      display = <TreasuryDisplay />;
-      break;
-    case BuildingType.TRAINING_GROUND:
-      display = <TrainingGroundDisplay />;
-      break;
-    case BuildingType.ALCHEMIST:
-      display = <AlchemistDisplay />;
-      break;
-    case BuildingType.TEMPLE:
-      display = <TempleDisplay />;
-      break;
-    case BuildingType.BLACKSMITH:
-      display = <BlacksmithDisplay />;
-      break;
-    case BuildingType.STABLES:
-      display = <StablesDisplay />;
-      break;
-    case BuildingType.STORAGE:
-      display = <StorageDisplay />;
-      break;
-    case BuildingType.MARKET:
-      display = <MarketDisplay />;
-      break;
-    default:
-      throw new Error(`Unknown building type ${BuildingType[chosenBuilding.type]}`);
-  }
+  const upgradeBuilding = (e: MouseEvent) => {
+    e.stopPropagation();
+    console.log("Upgrade");
+  };
 
+  const upgradeBtn = chosenBuilding.upgrade ? (
+    <button className="building-display__btn-upgrade" onClick={upgradeBuilding}>
+      &uarr; Up to lvl <span className="building-display__btn-upgrade__span">{chosenBuilding.level + 1}</span> =={" "}
+      <span className="building-display__btn-upgrade__span">{chosenBuilding.upgrade.cost}</span> g ::{" "}
+      <span className="building-display__btn-upgrade__span">{convertDuration(chosenBuilding.upgrade.duration)}</span>
+    </button>
+  ) : null;
+
+  let display = displayByType(chosenBuilding.type);
   return (
     <div className="building-display" onClick={hideBuildingDisplay}>
       <button className="building-display__btn-close" onClick={hideBuildingDisplay}></button>
       <div className="building-display__container" onClick={(e) => e.stopPropagation()}>
         {display}
       </div>
+      {upgradeBtn}
     </div>
   );
+};
+
+const displayByType = (type: BuildingType) => {
+  switch (type) {
+    case BuildingType.TAVERN:
+      return <TavernDisplay />;
+    case BuildingType.GUILD:
+      return <GuildDisplay />;
+    case BuildingType.HEALER:
+      return <HealerDisplay />;
+    case BuildingType.TREASURY:
+      return <TreasuryDisplay />;
+    case BuildingType.TRAINING_GROUND:
+      return <TrainingGroundDisplay />;
+    case BuildingType.ALCHEMIST:
+      return <AlchemistDisplay />;
+    case BuildingType.TEMPLE:
+      return <TempleDisplay />;
+    case BuildingType.BLACKSMITH:
+      return <BlacksmithDisplay />;
+    case BuildingType.STABLES:
+      return <StablesDisplay />;
+    case BuildingType.STORAGE:
+      return <StorageDisplay />;
+    case BuildingType.MARKET:
+      return <MarketDisplay />;
+    default:
+      throw new Error(`Unknown building type ${BuildingType[type]}`);
+  }
 };
 
 type BuildingDisplayState = {

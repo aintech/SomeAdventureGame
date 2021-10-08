@@ -18,6 +18,7 @@
 
   &__patrons-holder {
     display: flex;
+    flex-wrap: wrap;
     gap: 40px;
     margin-top: 40px;
   }
