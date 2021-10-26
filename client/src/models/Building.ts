@@ -13,7 +13,11 @@ export enum BuildingType {
 }
 
 export default class Building {
-  constructor(public type: BuildingType, public level: number, public upgrade?: { cost: number; duration: number }) {}
+  constructor(
+    public type: BuildingType,
+    public level: number,
+    public upgrade?: { upgradeStarted?: number; cost: number; duration: number }
+  ) {}
 }
 
 export const toDisplay = (type: BuildingType) => {

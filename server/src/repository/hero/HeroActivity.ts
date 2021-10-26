@@ -6,14 +6,7 @@ import {
   MAX_HEROES_SAME_ACTIVITIES,
 } from "../../utils/Variables";
 import query from "../Db";
-import {
-  changeHeroEquipmentTier,
-  Equipment,
-  EquipmentType,
-  getEquipmentStats,
-  getHeroEquipmentLink,
-  replaceHeroEquipment,
-} from "../Equipment";
+import { changeHeroEquipmentTier, Equipment, EquipmentType, getEquipmentStats, getHeroEquipmentLink, replaceHeroEquipment } from "../Equipment";
 import { adjustGold, getHeroesByIds, HeroType, HeroWithPerks, setHeroHealth, updateHeroLevel } from "../hero/Hero";
 import { adjustItems, Item, ItemSubtype } from "../Item";
 import { getAlchemistAssortment, getMarketAssortment } from "../ShopsAssortment";
@@ -156,16 +149,12 @@ const toIdle = async (userId: number, hero: HeroWithPerks, heroActivity: HeroAct
   };
 };
 
-const idleToHealing = async (
-  userId: number,
-  hero: HeroWithPerks,
-  heroActivity: HeroActivityUpdate
-): Promise<HeroActivityUpdate> => {
+const idleToHealing = async (userId: number, hero: HeroWithPerks, heroActivity: HeroActivityUpdate): Promise<HeroActivityUpdate> => {
   const hpLoss = hero.vitality * HEALTH_PER_VITALITY - hero.health;
   const cost = hpLoss * CURE_COST_PER_HP;
 
   if (cost > hero.gold) {
-    throw new Error(`Not enought gold for healing!`);
+    throw new Error(`Not enough gold for healing!`);
   }
 
   await Promise.all([adjustGold(hero.id, -cost), addStats(userId, cost)]);
@@ -177,18 +166,14 @@ const idleToHealing = async (
   };
 };
 
-const idleToTraining = async (
-  userId: number,
-  hero: HeroWithPerks,
-  heroActivity: HeroActivityUpdate
-): Promise<HeroActivityUpdate> => {
+const idleToTraining = async (userId: number, hero: HeroWithPerks, heroActivity: HeroActivityUpdate): Promise<HeroActivityUpdate> => {
   const nextLevel = getLevelExp(hero.level.lvl + 1);
 
   if (nextLevel.cost > hero.gold) {
-    throw new Error(`Not enought gold for level up!`);
+    throw new Error(`Not enough gold for level up!`);
   }
   if (hero.level.experience < nextLevel.experience) {
-    throw new ErrorEvent(`Not enought experience for level up!`);
+    throw new ErrorEvent(`Not enough experience for level up!`);
   }
 
   await Promise.all([adjustGold(hero.id, -nextLevel.cost), addStats(userId, nextLevel.cost)]);
@@ -200,19 +185,13 @@ const idleToTraining = async (
   };
 };
 
-const idleToPurchasingEquipment = async (
-  userId: number,
-  hero: HeroWithPerks,
-  heroActivity: HeroActivityUpdate
-): Promise<HeroActivityUpdate> => {
+const idleToPurchasingEquipment = async (userId: number, hero: HeroWithPerks, heroActivity: HeroActivityUpdate): Promise<HeroActivityUpdate> => {
   const assortment = await getMarketAssortment(userId);
 
   let purchase: Equipment | undefined;
 
   const weapon = hero.equipment.filter((e) => e.type === EquipmentType.WEAPON)[0];
-  const newWeapon = assortment.filter(
-    (e) => appropriateEquipment(hero, EquipmentType.WEAPON, e) && e.level === weapon.level + 1
-  );
+  const newWeapon = assortment.filter((e) => appropriateEquipment(hero, EquipmentType.WEAPON, e) && e.level === weapon.level + 1);
   if (newWeapon.length > 0) {
     if (newWeapon[0].price <= hero.gold) {
       purchase = newWeapon[0];
@@ -221,9 +200,7 @@ const idleToPurchasingEquipment = async (
 
   if (!purchase) {
     const armor = hero.equipment.filter((e) => e.type === EquipmentType.ARMOR)[0];
-    const newArmor = assortment.filter(
-      (e) => appropriateEquipment(hero, EquipmentType.ARMOR, e) && e.level === armor.level + 1
-    );
+    const newArmor = assortment.filter((e) => appropriateEquipment(hero, EquipmentType.ARMOR, e) && e.level === armor.level + 1);
     if (newArmor.length > 0) {
       if (newArmor[0].price <= hero.gold) {
         purchase = newArmor[0];
@@ -256,11 +233,7 @@ const appropriateEquipment = (hero: HeroWithPerks, type: EquipmentType, equipmen
   );
 };
 
-const idleToPurchasingPotions = async (
-  userId: number,
-  hero: HeroWithPerks,
-  heroActivity: HeroActivityUpdate
-): Promise<HeroActivityUpdate> => {
+const idleToPurchasingPotions = async (userId: number, hero: HeroWithPerks, heroActivity: HeroActivityUpdate): Promise<HeroActivityUpdate> => {
   let potion: Item | undefined;
 
   const assortment = await getAlchemistAssortment(userId);
@@ -319,11 +292,7 @@ const idleToPurchasingPotions = async (
   };
 };
 
-const idleToUpgradingEquipment = async (
-  userId: number,
-  hero: HeroWithPerks,
-  heroActivity: HeroActivityUpdate
-): Promise<HeroActivityUpdate> => {
+const idleToUpgradingEquipment = async (userId: number, hero: HeroWithPerks, heroActivity: HeroActivityUpdate): Promise<HeroActivityUpdate> => {
   let equipment: Equipment | undefined;
 
   hero.equipment.forEach((e) => {

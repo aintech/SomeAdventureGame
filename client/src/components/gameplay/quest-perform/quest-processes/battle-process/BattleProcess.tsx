@@ -58,6 +58,8 @@ type BattleProcessState = QuestProcessState & {
   battleEvents: Map<number, HeroEvent[]>; // heroId to events
 };
 
+//TODO: Периодически герои дропают пикапы соответственно своим скилам, если на них кликнуть скилл сработает
+
 class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState> {
   constructor(props: BattleProcessProps) {
     super(props);

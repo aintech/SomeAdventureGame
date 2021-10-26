@@ -6,12 +6,7 @@ import GameStats from "../models/GameStats";
 import Hero from "../models/hero/Hero";
 import Quest from "../models/Quest";
 import { EquipmentResponse, HeroResponse, HireHeroResponse, ItemResponse } from "../services/HeroService";
-import {
-  CheckpointPassedResponse,
-  CompleteCancelQuestResponse,
-  EmbarkOnQuestResponse,
-  QuestResponse,
-} from "../services/QuestService";
+import { CheckpointPassedResponse, CompleteCancelQuestResponse, EmbarkOnQuestResponse, QuestResponse } from "../services/QuestService";
 import { ActionType } from "./ActionType";
 
 export interface PayloadedAction extends Action<ActionType> {
@@ -226,11 +221,7 @@ export const showTooltip = (appear: boolean = false, message: string = ""): Payl
   };
 };
 
-export const showConfirmDialog = (
-  message?: string,
-  callback?: (e: MouseEvent) => void,
-  event?: MouseEvent
-): PayloadedAction => {
+export const showConfirmDialog = (message?: string, callback?: (e: MouseEvent) => void, event?: MouseEvent): PayloadedAction => {
   return {
     type: ActionType.SHOW_CONFIRM_DIALOG,
     payload: message ? { message, callback, event } : undefined,
@@ -247,5 +238,12 @@ export const beginQuestPerform = (quest: Quest, heroes: Hero[]): PayloadedAction
 export const closeQuestPerform = (): Action => {
   return {
     type: ActionType.CLOSE_QUEST_PROCESS,
+  };
+};
+
+export const buildingUpgradeStarted = (data: { stats: GameStats; buildings: Building[] }): PayloadedAction => {
+  return {
+    type: ActionType.BUILDING_UPGRADE_STARTED,
+    payload: data,
   };
 };

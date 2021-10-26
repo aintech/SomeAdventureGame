@@ -19,6 +19,25 @@
     background-size: contain;
   }
 
+  &__msg-upgrade {
+    position: absolute;
+    left: 50%;
+    bottom: -30px;
+    transform: translateX(-50%);
+    font-family: inherit;
+    font-size: 24px;
+    color: peru;
+    @include strokeText;
+    cursor: default;
+    text-align: center;
+    z-index: 2000;
+
+    &__span {
+      font-size: larger;
+      color: white;
+    }
+  }
+
   &__btn-upgrade {
     position: absolute;
     bottom: -30px;
@@ -60,5 +79,14 @@
     &:hover {
       transform: scale(1.1);
     }
+  }
+}
+
+.btn-upgrade_disabled {
+  cursor: default;
+  opacity: 0.5;
+
+  &:hover {
+    background-color: green;
   }
 }

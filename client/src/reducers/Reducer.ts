@@ -174,10 +174,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       const idx = state.heroesAssignedToQuest.findIndex((hero) => hero.id === action.payload.id);
       return {
         ...state,
-        heroesAssignedToQuest: [
-          ...state.heroesAssignedToQuest.slice(0, idx),
-          ...state.heroesAssignedToQuest.slice(idx + 1),
-        ],
+        heroesAssignedToQuest: [...state.heroesAssignedToQuest.slice(0, idx), ...state.heroesAssignedToQuest.slice(idx + 1)],
       };
 
     case ActionType.HEROES_EMBARKED_ON_QUEST:
@@ -245,9 +242,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         }
       }
 
-      let changeQuest = quest.completed
-        ? remove(state.quests, convertQuest(quest))
-        : replace(state.quests, convertQuest(quest));
+      let changeQuest = quest.completed ? remove(state.quests, convertQuest(quest)) : replace(state.quests, convertQuest(quest));
 
       return {
         ...state,
@@ -338,6 +333,21 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       return {
         ...state,
         activeQuestPerform: undefined,
+      };
+
+    case ActionType.BUILDING_UPGRADE_STARTED:
+      const data: { stats: GameStats; buildings: Building[] } = action.payload;
+      let chosenBuilding = undefined;
+
+      if (state.chosenBuilding) {
+        chosenBuilding = data.buildings.find((b) => b.type === state.chosenBuilding!.type)!;
+      }
+
+      return {
+        ...state,
+        stats: data.stats,
+        buildings: data.buildings,
+        chosenBuilding,
       };
 
     default:

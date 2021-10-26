@@ -1,8 +1,9 @@
 import { AuthProps } from "../contexts/AuthContext";
+import { BuildingType } from "../models/Building";
 import Hero from "../models/hero/Hero";
 import { HeroActivityType } from "../models/hero/HeroActivity";
 import Quest from "../models/Quest";
-import { getBuildings } from "./BuildingService";
+import { getBuildings, startBuildingUpgrade } from "./BuildingService";
 import { dismissHero, getHeroes, getTavernPatrons, hireHero, updateHeroActivities } from "./HeroService";
 import {
   cancelQuest,
@@ -74,5 +75,9 @@ export default class ApiService {
 
   updateHeroActivities(auth: AuthProps, activities: { heroId: number; type: HeroActivityType }[]) {
     return updateHeroActivities(auth, activities);
+  }
+
+  startBuildingUpgrade(auth: AuthProps, type: BuildingType) {
+    return startBuildingUpgrade(auth, type);
   }
 }

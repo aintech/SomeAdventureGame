@@ -3,6 +3,7 @@ import {
   alchemistAssortmentRequested,
   buildingsLoaded,
   buildingsRequested,
+  buildingUpgradeStarted,
   cancelQuest,
   checkpointPassed,
   completeQuest,
@@ -22,6 +23,7 @@ import {
   tavernPatronsRequested,
 } from "../actions/Actions";
 import { AuthProps } from "../contexts/AuthContext";
+import { BuildingType } from "../models/Building";
 import Hero from "../models/hero/Hero";
 import { HeroActivityType } from "../models/hero/HeroActivity";
 import Quest from "../models/Quest";
@@ -110,4 +112,9 @@ export const onHeroActivities =
   (activities: { heroId: number; type: HeroActivityType }[]) =>
   (dispatch: any) => {
     apiService.updateHeroActivities(auth, activities).then((data) => dispatch(heroActivitiesUpdated(data)));
+  };
+
+export const onStartBuildingUpgrade =
+  (apiService: ApiService, auth: AuthProps) => (type: BuildingType) => (dispatch: any) => {
+    apiService.startBuildingUpgrade(auth, type).then((data) => dispatch(buildingUpgradeStarted(data)));
   };
