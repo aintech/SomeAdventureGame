@@ -10,6 +10,7 @@ import { convertDuration } from "../../../utils/Utils";
 import AlchemistDisplay from "./alchemist-display/AlchemistDisplay";
 import BlacksmithDisplay from "./blacksmith-display/BlacksmithDisplay";
 import "./building-display.scss";
+import ElderDisplay from "./elder-display/ElderDisplay";
 import GuildDisplay from "./guild-display/GuildDisplay";
 import HealerDisplay from "./healer-display/HealerDisplay";
 import MarketDisplay from "./market-display/MarketDisplay";
@@ -175,6 +176,8 @@ const displayByType = (type: BuildingType) => {
       return <StorageDisplay />;
     case BuildingType.MARKET:
       return <MarketDisplay />;
+    case BuildingType.ELDER:
+      return <ElderDisplay />;
     default:
       throw new Error(`Unknown building type ${BuildingType[type]}`);
   }

@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { BuildingType, toDisplay } from "../../../../models/Building";
 import GameStats from "../../../../models/GameStats";
-import { GUILD_SHARE } from "../../../../utils/Variables";
 import Loader from "../../../loader/Loader";
 import "./treasury-display.scss";
 
@@ -15,9 +14,7 @@ const TreasuryDisplay = ({ stats }: TreasuryDisplayProps) => {
     <div className="treasury-display">
       <div className="treasury-display__name">{toDisplay(BuildingType.TREASURY)}</div>
       <div className="treasury-display__stats">
-        <div>Уровень славы городка {stats.fame}</div>
-        <div>Золота в сокровищнице {stats.gold} g</div>
-        <div>Доля гильдии в квестах {GUILD_SHARE * 100}% </div>
+        <div>Волшебной пыльцы в сокровищнице {stats.gold}</div>
       </div>
     </div>
   );

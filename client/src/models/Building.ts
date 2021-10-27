@@ -10,14 +10,11 @@ export enum BuildingType {
   BLACKSMITH,
   STORAGE,
   MARKET,
+  ELDER,
 }
 
 export default class Building {
-  constructor(
-    public type: BuildingType,
-    public level: number,
-    public upgrade?: { upgradeStarted?: number; cost: number; duration: number }
-  ) {}
+  constructor(public type: BuildingType, public level: number, public upgrade?: { upgradeStarted?: number; cost: number; duration: number }) {}
 }
 
 export const toDisplay = (type: BuildingType) => {
@@ -44,6 +41,8 @@ export const toDisplay = (type: BuildingType) => {
       return "Хранилище";
     case BuildingType.MARKET:
       return "Кибитка торговца";
+    case BuildingType.ELDER:
+      return "Старейшена";
     default:
       throw new Error(`Unknown building type ${BuildingType[type]}`);
   }

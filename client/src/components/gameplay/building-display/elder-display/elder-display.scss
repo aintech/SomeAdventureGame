@@ -1,0 +1,30 @@
+@import "../../../../utils/css/index.scss";
+
+.elder-display {
+  display: flex;
+  width: 90%;
+  margin: 0 auto;
+  flex-direction: column;
+
+  &__name {
+    font-family: inherit;
+    font-size: 3.4rem;
+    color: peru;
+    margin-top: 30px;
+    align-self: center;
+    @include strokeText;
+    cursor: default;
+  }
+
+  &__stats {
+    display: flex;
+    flex-flow: column;
+    gap: 10px;
+    font-family: inherit;
+    font-size: 2.4rem;
+    color: white;
+    @include strokeText;
+    margin-left: 50px;
+    margin-top: 50px;
+  }
+}

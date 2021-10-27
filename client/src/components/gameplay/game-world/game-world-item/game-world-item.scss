@@ -149,11 +149,26 @@
 
   &-STORAGE {
     position: absolute;
-    top: 350px;
+    top: 450px;
     left: 730px;
     width: 83px;
     height: 76px;
     background-image: url(../../../../img/map/storage.png);
+    background-size: cover;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  &-ELDER {
+    position: absolute;
+    top: 310px;
+    left: 661px;
+    width: 170px;
+    height: 110px;
+    background-image: url(../../../../img/map/treasury.png);
     background-size: cover;
     cursor: pointer;
 
