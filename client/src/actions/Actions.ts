@@ -247,3 +247,10 @@ export const buildingUpgradeStarted = (data: { stats: GameStats; buildings: Buil
     payload: data,
   };
 };
+
+export const buildingUpgradeCompleted = (buildings: Building[]): PayloadedAction => {
+  return {
+    type: ActionType.BUILDING_UPGRADE_COMPLETED,
+    payload: buildings,
+  };
+};

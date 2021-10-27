@@ -47,6 +47,7 @@ const intialState = {
 
 const reducer = (state: State = intialState, action: PayloadedAction) => {
   let chosenHero = state.chosenHero;
+  let chosenBuilding = state.chosenBuilding;
 
   switch (action.type) {
     case ActionType.FETCH_GAME_STATS_REQUEST:
@@ -337,7 +338,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
 
     case ActionType.BUILDING_UPGRADE_STARTED:
       const data: { stats: GameStats; buildings: Building[] } = action.payload;
-      let chosenBuilding = undefined;
+      chosenBuilding = undefined;
 
       if (state.chosenBuilding) {
         chosenBuilding = data.buildings.find((b) => b.type === state.chosenBuilding!.type)!;
@@ -347,6 +348,20 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         ...state,
         stats: data.stats,
         buildings: data.buildings,
+        chosenBuilding,
+      };
+
+    case ActionType.BUILDING_UPGRADE_COMPLETED:
+      const buildings: Building[] = action.payload;
+      chosenBuilding = undefined;
+
+      if (state.chosenBuilding) {
+        chosenBuilding = buildings.find((b) => b.type === state.chosenBuilding!.type)!;
+      }
+
+      return {
+        ...state,
+        buildings: buildings,
         chosenBuilding,
       };
 

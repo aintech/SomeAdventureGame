@@ -73,6 +73,14 @@ export const checkEnoughGoldForUpgrade = async (userId: number, type: number) =>
   );
 };
 
+export const completeBuildingUpgrade = async (userId: number, type: number) => {
+  return query<void>(
+    "completeBuildingUpgrade",
+    `update public.building set level = level + 1, upgrade_started = null where user_id = $1 and type = $2`,
+    [userId, type]
+  );
+};
+
 type BuildingRow = {
   user_id: string;
   type: string;

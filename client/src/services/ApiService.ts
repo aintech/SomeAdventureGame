@@ -3,16 +3,9 @@ import { BuildingType } from "../models/Building";
 import Hero from "../models/hero/Hero";
 import { HeroActivityType } from "../models/hero/HeroActivity";
 import Quest from "../models/Quest";
-import { getBuildings, startBuildingUpgrade } from "./BuildingService";
+import { completeBuildingUpgrade, getBuildings, startBuildingUpgrade } from "./BuildingService";
 import { dismissHero, getHeroes, getTavernPatrons, hireHero, updateHeroActivities } from "./HeroService";
-import {
-  cancelQuest,
-  checkpointPassed,
-  CheckpointPassedBody,
-  completeQuest,
-  embarkOnQuest,
-  getQuests,
-} from "./QuestService";
+import { cancelQuest, checkpointPassed, CheckpointPassedBody, completeQuest, embarkOnQuest, getQuests } from "./QuestService";
 import { getAlchemistAssortment, getMarketAssortment } from "./ShopService";
 import { getStats } from "./StatsService";
 
@@ -79,5 +72,9 @@ export default class ApiService {
 
   startBuildingUpgrade(auth: AuthProps, type: BuildingType) {
     return startBuildingUpgrade(auth, type);
+  }
+
+  completeBuildingUpgrade(auth: AuthProps, type: BuildingType) {
+    return completeBuildingUpgrade(auth, type);
   }
 }

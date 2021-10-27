@@ -12,3 +12,7 @@ export const getBuildings = async (auth: AuthProps) => {
 export const startBuildingUpgrade = async (auth: AuthProps, type: number) => {
   return await sendHttp<{ stats: GameStats; buildings: Building[] }>(`${baseUrl}/upgrade`, auth, [`type=${type}`]);
 };
+
+export const completeBuildingUpgrade = async (auth: AuthProps, type: number) => {
+  return await sendHttp<Building[]>(`${baseUrl}/complete`, auth, [`type=${type}`]);
+};

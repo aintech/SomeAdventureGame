@@ -3,6 +3,7 @@ import {
   alchemistAssortmentRequested,
   buildingsLoaded,
   buildingsRequested,
+  buildingUpgradeCompleted,
   buildingUpgradeStarted,
   cancelQuest,
   checkpointPassed,
@@ -81,10 +82,9 @@ export const fetchAlchemistAssortment = (apiService: ApiService, auth: AuthProps
   apiService.getAlchemistAssortment(auth).then((data) => dispatch(alchemistAssortmentLoaded(data)));
 };
 
-export const embarkHeroesOnQuest =
-  (apiService: ApiService, auth: AuthProps) => (quest: Quest, assignedHeroes: Hero[]) => (dispatch: any) => {
-    apiService.embarkHeroesOnQuest(auth, quest, assignedHeroes).then((data) => dispatch(heroesEmbarkedOnQuest(data)));
-  };
+export const embarkHeroesOnQuest = (apiService: ApiService, auth: AuthProps) => (quest: Quest, assignedHeroes: Hero[]) => (dispatch: any) => {
+  apiService.embarkHeroesOnQuest(auth, quest, assignedHeroes).then((data) => dispatch(heroesEmbarkedOnQuest(data)));
+};
 
 export const onCheckpointPassed =
   (apiService: ApiService, auth: AuthProps) => (quest: Quest, checkpoint: CheckpointPassedBody) => (dispatch: any) => {
@@ -108,13 +108,14 @@ export const onDismissHero = (apiService: ApiService, auth: AuthProps) => (hero:
 };
 
 export const onHeroActivities =
-  (apiService: ApiService, auth: AuthProps) =>
-  (activities: { heroId: number; type: HeroActivityType }[]) =>
-  (dispatch: any) => {
+  (apiService: ApiService, auth: AuthProps) => (activities: { heroId: number; type: HeroActivityType }[]) => (dispatch: any) => {
     apiService.updateHeroActivities(auth, activities).then((data) => dispatch(heroActivitiesUpdated(data)));
   };
 
-export const onStartBuildingUpgrade =
-  (apiService: ApiService, auth: AuthProps) => (type: BuildingType) => (dispatch: any) => {
-    apiService.startBuildingUpgrade(auth, type).then((data) => dispatch(buildingUpgradeStarted(data)));
-  };
+export const onStartBuildingUpgrade = (apiService: ApiService, auth: AuthProps) => (type: BuildingType) => (dispatch: any) => {
+  apiService.startBuildingUpgrade(auth, type).then((data) => dispatch(buildingUpgradeStarted(data)));
+};
+
+export const onCompleteBuildingUpgrade = (apiService: ApiService, auth: AuthProps) => (type: BuildingType) => (dispatch: any) => {
+  apiService.completeBuildingUpgrade(auth, type).then((data) => dispatch(buildingUpgradeCompleted(data)));
+};

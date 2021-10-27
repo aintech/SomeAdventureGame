@@ -25,9 +25,7 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
 
   const updateActivityTime = () => {
     if (hero?.activity?.duration) {
-      const remained = millisToSecs(
-        hero.activity.startedAt.getTime() + hero.activity.duration * 1000 - new Date().getTime()
-      );
+      const remained = millisToSecs(hero.activity.startedAt.getTime() + hero.activity.duration * 1000 - new Date().getTime());
       setActivityTime(convertDuration(remained + 1));
     } else {
       setActivityTime("");
@@ -47,9 +45,7 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
       expBar.fillRect(0, 0, 124 * hero.level.progress, 21);
 
       if (hero?.activity?.duration) {
-        const remained = millisToSecs(
-          hero.activity.startedAt.getTime() + hero.activity.duration * 1000 - new Date().getTime()
-        );
+        const remained = millisToSecs(hero.activity.startedAt.getTime() + hero.activity.duration * 1000 - new Date().getTime());
         setActivityTime(convertDuration(remained + 1));
       } else {
         setActivityTime("");
@@ -121,15 +117,11 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
           <div className={`hero-stats__portrait--${HeroType[hero.type].toLowerCase()}`}></div>
         </div>
         <button
-          className={`hero-stats__dismiss-btn ${
-            hero.activity!.type === HeroActivityType.QUEST ? "hero-stats__dismiss-btn__hidden" : ""
-          }`}
+          className={`hero-stats__dismiss-btn ${hero.activity!.type === HeroActivityType.QUEST ? "hero-stats__dismiss-btn__hidden" : ""}`}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            dispatch(
-              showConfirmDialog(`${hero.name} отправится на поиски новых приключений в другие гильдии`, dismissHero, e)
-            );
+            dispatch(showConfirmDialog(`${hero.name} отправится на поиски новых приключений в другие гильдии`, dismissHero, e));
           }}
         >
           <span className="hero-stats__dismiss-btn--text">
@@ -216,10 +208,7 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
             <li>
               {hero.skills.map((skill) => {
                 return (
-                  <ul
-                    key={skill.name}
-                    className={`${skill.level > hero.level.lvl ? "hero-stats__skills--disabled" : ""}`}
-                  >
+                  <ul key={skill.name} className={`${skill.level > hero.level.lvl ? "hero-stats__skills--disabled" : ""}`}>
                     <span className="hero-stats__skills--name">
                       {skill.name} ({skill.level} ур)
                     </span>{" "}
