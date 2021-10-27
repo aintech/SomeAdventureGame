@@ -30,16 +30,10 @@ const WelcomePage = () => {
     } catch (e) {}
   };
 
-  const loginHandler = async (
-    event:
-      | React.KeyboardEvent<HTMLDivElement>
-      | React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const loginHandler = async (event: React.KeyboardEvent<HTMLDivElement> | React.MouseEvent<HTMLButtonElement>) => {
     const btnPressed = event.currentTarget.id === "login_btn";
 
-    const enterPressed =
-      "code" in event &&
-      (event.code === "Enter" || event.code === "NumpadEnter");
+    const enterPressed = "code" in event && (event.code === "Enter" || event.code === "NumpadEnter");
 
     if (btnPressed || enterPressed) {
       performLogin();
@@ -52,9 +46,7 @@ const WelcomePage = () => {
       auth.login(data.token!, data.userId!);
       displayMessage(`Добро пожаловать!`);
     } catch (e) {
-      displayMessage(
-        `Ой, залогиниться не получилось :( Проверь пожалуйста что логин и пароль указаны верно!`
-      );
+      displayMessage(`Ой, залогиниться не получилось :( Проверь пожалуйста что логин и пароль указаны верно!`);
     }
   };
 
@@ -62,17 +54,14 @@ const WelcomePage = () => {
     history.push("gameplay");
   };
 
+  const gotoWiki = () => {
+    history.push("wiki");
+  };
+
   const loginForm = (
     <div className="login__form" onKeyPress={loginHandler}>
       <form>
-        <input
-          className="login__form--input"
-          placeholder="Login"
-          name="login"
-          value={form.login}
-          onChange={changeHandler}
-          required
-        />
+        <input className="login__form--input" placeholder="Login" name="login" value={form.login} onChange={changeHandler} required />
         <input
           className="login__form--input"
           placeholder="Password"
@@ -82,19 +71,10 @@ const WelcomePage = () => {
           onChange={changeHandler}
           required
         />
-        <button
-          className="login__form--btn"
-          type="button"
-          onClick={registerHandler}
-        >
+        <button className="login__form--btn" type="button" onClick={registerHandler}>
           REGISTER
         </button>
-        <button
-          id="login_btn"
-          className="login__form--btn"
-          type="button"
-          onClick={loginHandler}
-        >
+        <button id="login_btn" className="login__form--btn" type="button" onClick={loginHandler}>
           LOGIN
         </button>
       </form>
@@ -105,11 +85,14 @@ const WelcomePage = () => {
     <div className="welcome">
       {auth.isAuthenticated ? (
         <button className="btn-continue" onClick={gotoGameplay}>
-          Continue Play
+          Играть
         </button>
       ) : (
         loginForm
       )}
+      <button className="btn-wiki" onClick={gotoWiki}>
+        Посмотреть Wiki
+      </button>
     </div>
   );
 };

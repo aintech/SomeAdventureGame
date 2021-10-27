@@ -1,0 +1,22 @@
+@import "../../utils/css/index.scss";
+
+.wiki-page {
+  padding: 0 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__title {
+    @include strokeText;
+    padding-top: 80px;
+    color: wheat;
+    font-size: 48px;
+  }
+
+  &__description {
+    @include strokeText;
+    padding-top: 50px;
+    color: white;
+    font-size: 28px;
+  }
+}
