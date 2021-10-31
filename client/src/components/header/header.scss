@@ -1,7 +1,7 @@
 @import "../../utils/css/index.scss";
 
 .header {
-  font-size: 2rem;
+  font-size: 22px;
   height: $header_height;
   background-color: #777;
   border-bottom: 1px solid #f4f2f2;
@@ -17,7 +17,7 @@
 
   &__btn-logout {
     height: $header_height;
-    width: 7%;
+    width: 100px;
     display: inline-block;
     cursor: pointer;
     color: white;
@@ -31,28 +31,25 @@
   }
 
   &__resources {
+    padding-right: 20px;
+    display: flex;
     color: khaki;
+    align-items: center;
+
     &-fame {
-      display: inline-block;
-      transform: translateY(-20%);
-      margin-right: 30px;
       &--img {
-        display: inline-block;
-        width: to_gameplay_scale(40px);
-        height: to_gameplay_scale(40px);
+        width: 30px;
+        height: 30px;
         background-image: url(../../img/header/header-fame.png);
         background-size: cover;
       }
     }
 
     &-gold {
-      display: inline-block;
-      transform: translateY(-20%);
-      margin-right: 30px;
       &--img {
-        display: inline-block;
-        width: to_gameplay_scale(40px);
-        height: to_gameplay_scale(40px);
+        margin-left: 20px;
+        width: 30px;
+        height: 30px;
         background-image: url(../../img/header/header-gold.png);
         background-size: cover;
       }

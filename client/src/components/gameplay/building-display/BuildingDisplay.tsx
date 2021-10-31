@@ -17,7 +17,6 @@ import MarketDisplay from "./market-display/MarketDisplay";
 import StablesDisplay from "./stables-display/StablesDisplay";
 import StorageDisplay from "./storage-display/StorageDisplay";
 import TavernDisplay from "./tavern-display/TavernDisplay";
-import TempleDisplay from "./temple-display/TempleDisplay";
 import TrainingGroundDisplay from "./training-ground-display/TrainingGroundDisplay";
 import TreasuryDisplay from "./treasury-display/TreasuryDisplay";
 
@@ -166,8 +165,6 @@ const displayByType = (type: BuildingType) => {
       return <TrainingGroundDisplay />;
     case BuildingType.ALCHEMIST:
       return <AlchemistDisplay />;
-    case BuildingType.TEMPLE:
-      return <TempleDisplay />;
     case BuildingType.BLACKSMITH:
       return <BlacksmithDisplay />;
     case BuildingType.STABLES:

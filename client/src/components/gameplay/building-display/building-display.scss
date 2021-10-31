@@ -15,7 +15,7 @@
     width: $overlay_display_width;
     height: $overlay_display_height;
     z-index: 1010;
-    background-image: url(../../../img/building-display/building-display__background.png);
+    background-image: url(../../../img/building-display/building-display__container.png);
     background-size: contain;
   }
 
@@ -67,8 +67,8 @@
     position: absolute;
     top: -30px;
     right: -30px;
-    width: to-gameplay-scale(84px);
-    height: to-gameplay-scale(84px);
+    width: 65px; // to-gameplay-scale(84px);
+    height: 65px; // to-gameplay-scale(84px);
     background-image: url(../../../img/building-display/guild-display/guild-btn_dismiss_hero.png);
     border: none;
     outline: none;

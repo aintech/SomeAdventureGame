@@ -25,7 +25,7 @@
     grid-column: 2;
     display: grid;
     grid-template-columns: repeat(2, min-content);
-    gap: to-gameplay-scale(20px);
+    gap: 15px; // to-gameplay-scale(20px);
   }
 
   &__assortment__list {

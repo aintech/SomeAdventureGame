@@ -15,12 +15,7 @@ type HeaderProps = {
   logout: () => void;
 };
 
-const Header = ({
-  stats,
-  fetchGameStats,
-  isAuthenticated,
-  logout,
-}: HeaderProps) => {
+const Header = ({ stats, fetchGameStats, isAuthenticated, logout }: HeaderProps) => {
   const displayMessage = useDisplayMessage();
   const authContext = useContext(AuthContext);
 
@@ -39,9 +34,9 @@ const Header = ({
     <>
       <div className="header__resources">
         <div className="header__resources-fame--img"></div>
-        <div className="header__resources-fame">Слава: {stats.fame}</div>
+        <div className="header__resources-fame">{stats.fame}</div>
         <div className="header__resources-gold--img"></div>
-        <div className="header__resources-gold">Золото: {stats.gold}</div>
+        <div className="header__resources-gold">{stats.gold}</div>
       </div>
       <button className="header__btn-logout" onClick={onLogout}>
         LOGOUT
@@ -65,18 +60,9 @@ const mapStateToProps = ({ stats }: HeaderState) => {
   return { stats };
 };
 
-const mapDispatchToProps = (
-  dispatch: Dispatch,
-  customProps: WithApiServiceProps
-) => {
+const mapDispatchToProps = (dispatch: Dispatch, customProps: WithApiServiceProps) => {
   const { apiService, auth } = customProps;
-  return bindActionCreators(
-    { fetchGameStats: fetchGameStats(apiService, auth) },
-    dispatch
-  );
+  return bindActionCreators({ fetchGameStats: fetchGameStats(apiService, auth) }, dispatch);
 };
 
-export default compose(
-  withApiService(),
-  connect(mapStateToProps, mapDispatchToProps)
-)(Header);
+export default compose(withApiService(), connect(mapStateToProps, mapDispatchToProps))(Header);

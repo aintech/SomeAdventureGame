@@ -6,7 +6,6 @@ export enum BuildingType {
   TREASURY,
   TRAINING_GROUND,
   ALCHEMIST,
-  TEMPLE,
   BLACKSMITH,
   STORAGE,
   MARKET,
@@ -33,8 +32,6 @@ export const toDisplay = (type: BuildingType) => {
       return "Тренировочная площадка";
     case BuildingType.ALCHEMIST:
       return "Лаборатория алхимика";
-    case BuildingType.TEMPLE:
-      return "Храм бабочек";
     case BuildingType.BLACKSMITH:
       return "Кузница гномов";
     case BuildingType.STORAGE:

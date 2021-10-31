@@ -7,7 +7,6 @@ export enum HeroActivityType {
   TRAINING /** Training new level in Training ground */,
   PURCHASING_EQUIPMENT /** Buying equipment on Market */,
   PURCHASING_POTIONS /** Buying potions in Alchemist */,
-  PRAYING /** Seeking buffs in Temple */,
   UPGRADING_EQUIPMENT /** Upgrade equipment in Blacksmith */,
 }
 
@@ -22,11 +21,5 @@ export default class HeroActivity {
 }
 
 export const convert = (response: HeroActivityResponse): HeroActivity => {
-  return new HeroActivity(
-    response.type,
-    new Date(response.startedAt),
-    response.description,
-    response.duration,
-    response.activityId
-  );
+  return new HeroActivity(response.type, new Date(response.startedAt), response.description, response.duration, response.activityId);
 };

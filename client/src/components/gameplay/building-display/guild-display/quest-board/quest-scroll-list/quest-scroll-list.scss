@@ -2,13 +2,13 @@
 
 .quest-scroll-list {
   position: absolute;
-  top: calc(180px / #{$gameplay_scale});
-  left: calc(45px / #{$gameplay_scale});
-  width: calc(690px / #{$gameplay_scale});
+  top: 140px; // calc(180px / #{$gameplay_scale});
+  left: 35px; // calc(45px / #{$gameplay_scale});
+  width: 530px; // calc(690px / #{$gameplay_scale});
 
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  row-gap: calc(56px / #{$gameplay_scale});
+  row-gap: 45px; // calc(56px / #{$gameplay_scale});
   justify-items: center;
 }

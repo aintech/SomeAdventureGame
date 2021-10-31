@@ -4,7 +4,7 @@ import { bindActionCreators, compose, Dispatch } from "redux";
 import { closeQuestPerform, heroStatsChoosed } from "../../../actions/Actions";
 import { onCheckpointPassed, onCompleteQuest } from "../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService";
-import Hero from "../../../models/hero/Hero";
+import Hero, { maxHealth } from "../../../models/hero/Hero";
 import Quest from "../../../models/Quest";
 import QuestCheckpoint, { CheckpointType } from "../../../models/QuestCheckpoint";
 import { CheckpointPassedBody } from "../../../services/QuestService";
@@ -16,6 +16,11 @@ import QuestComplete from "./quest-complete/QuestComplete";
 import QuestMap from "./quest-map/QuestMap";
 import "./quest-perform.scss";
 import TreasureProcess from "./quest-processes/treasure-process/TreasureProcess";
+
+export enum HeroReactionType {
+  HIT,
+  HEAL,
+}
 
 export type QuestPerformData = {
   quest: Quest;
@@ -31,18 +36,12 @@ type QuestPerformProps = {
   closeDisplay: () => void;
 };
 
-const QuestPerform = ({
-  quest,
-  heroes,
-  heroClicked,
-  onCheckpointPassed,
-  onCompleteQuest,
-  closeDisplay,
-}: QuestPerformProps) => {
+const QuestPerform = ({ quest, heroes, heroClicked, onCheckpointPassed, onCompleteQuest, closeDisplay }: QuestPerformProps) => {
   const [activeCheckpoint, setActiveCheckpoint] = useState<QuestCheckpoint>();
   const [heroRewards, setHeroRewards] = useState<Map<number, { gold: number; experience: number }>>(new Map());
   const [heroActors, setHeroActors] = useState<Hero[]>([]);
   const [hitted, setHitted] = useState<number>(-1);
+  const [healed, setHealed] = useState<number>(-1);
 
   useEffect(() => {
     setHeroActors(heroes.map((h) => shallowCopy(h)));
@@ -57,11 +56,7 @@ const QuestPerform = ({
     setActiveCheckpoint(checkpoint);
   };
 
-  const completeCheckpoint = (
-    won: boolean,
-    collectedDrops: Map<number, number[]>,
-    battleEvents: Map<number, HeroEvent[]>
-  ) => {
+  const completeCheckpoint = (won: boolean, collectedDrops: Map<number, number[]>, battleEvents: Map<number, HeroEvent[]>) => {
     setActiveCheckpoint(undefined);
     setHeroRewards(new Map());
     if (activeCheckpoint && won) {
@@ -74,15 +69,27 @@ const QuestPerform = ({
     }
   };
 
-  const heroHit = (heroId: number, hpLoss: number) => {
+  const heroReaction = (heroId: number, type: HeroReactionType, amount: number) => {
     const actors = [...heroActors];
     const hero = actors.find((h) => h.id === heroId)!;
-    hero.health -= hpLoss;
+    hero.health += amount;
     if (hero.health < 0) {
       hero.health = 0;
     }
+    if (hero.health > maxHealth(hero)) {
+      hero.health = maxHealth(hero);
+    }
     setHeroActors(actors);
-    setHitted(hero.id);
+    switch (type) {
+      case HeroReactionType.HIT:
+        setHitted(heroId);
+        break;
+      case HeroReactionType.HEAL:
+        setHealed(heroId);
+        break;
+      default:
+        throw new Error(`Unknown reaction type ${HeroReactionType[type]}`);
+    }
   };
 
   let process;
@@ -93,8 +100,11 @@ const QuestPerform = ({
           <BattleProcess
             checkpoint={activeCheckpoint}
             heroes={heroActors}
-            heroHit={heroHit}
-            resetAnim={() => setHitted(-1)}
+            heroReaction={heroReaction}
+            resetAnim={() => {
+              setHitted(-1);
+              setHealed(-1);
+            }}
             // checkpointPassed={passCheckpoint}
             moveOnwards={completeCheckpoint}
             closeCheckpoint={() => setActiveCheckpoint(undefined)}
@@ -125,12 +135,7 @@ const QuestPerform = ({
     process = quest.progress!.checkpoints.find((c) => !c.passed) ? (
       <QuestMap quest={quest} checkpointActivated={checkpointActivated} />
     ) : (
-      <QuestComplete
-        quest={quest}
-        heroes={heroes}
-        completeQuest={() => onCompleteQuest(quest)}
-        setHeroRewards={setHeroRewards}
-      />
+      <QuestComplete quest={quest} heroes={heroes} completeQuest={() => onCompleteQuest(quest)} setHeroRewards={setHeroRewards} />
     );
   }
 
@@ -146,6 +151,7 @@ const QuestPerform = ({
               hero={hero}
               enabled={true}
               hitted={hitted === hero.id}
+              healed={healed === hero.id}
               itemClickHandler={(event) => heroClickHandler(hero, event)}
               reward={heroRewards.get(hero.id)}
             />

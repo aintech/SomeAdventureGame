@@ -33,7 +33,11 @@ export default class Hero {
 }
 
 export const calcHealthFraction = (hero: Hero): number => {
-  return hero.health / ((hero.stats.vitality + hero.equipStats.vitality) * HEALTH_PER_VITALITY);
+  return hero.health / maxHealth(hero);
+};
+
+export const maxHealth = (hero: Hero): number => {
+  return (hero.stats.vitality + hero.equipStats.vitality) * HEALTH_PER_VITALITY;
 };
 
 export const convert = (response: HeroResponse): Hero => {

@@ -15,6 +15,7 @@ import {
 import { defineDrop } from "../../quest-processes/process-helpers/Drop";
 import { Direction, Effect, EventMessage } from "../../quest-processes/process-helpers/EventMessage";
 import { getTypeByName, getUrlByName, ImageType } from "../../quest-processes/process-helpers/ImageLoader";
+import { HeroReactionType } from "../../QuestPerform";
 import QuestProcess, { QuestProcessProps, QuestProcessState } from "../QuestProcess";
 import "./battle-process.scss";
 
@@ -35,7 +36,7 @@ const mandatoryGifs = () => {
 };
 
 type BattleProcessProps = QuestProcessProps & {
-  heroHit: (heroId: number, hpLoss: number) => void;
+  heroReaction: (heroId: number, type: HeroReactionType, amount: number) => void;
   resetAnim: () => void;
   moveOnwards: (
     won: boolean,
@@ -104,9 +105,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
       this.setState({
         processState: ProcessState.PREPARE,
         beginTime: new Date(),
-        eventMessages: [
-          new EventMessage(2, { x: 0, y: 0 }, 72, "BEGIN", create(255, 255), Direction.CENTER, Effect.FADE_IN_OUT),
-        ],
+        eventMessages: [new EventMessage(2, { x: 0, y: 0 }, 72, "BEGIN", create(255, 255), Direction.CENTER, Effect.FADE_IN_OUT)],
       });
 
       this.drawStatic();
@@ -157,7 +156,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
         }
         break;
       case ProcessState.BATTLE:
-        this.checkEnemyActions(seconds);
+        this.battleStep(seconds);
         break;
       default:
         throw new Error(`Process ${ProcessState[processState]} is not implemented yet!`);
@@ -232,9 +231,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
           }
 
           const { eventMessages } = this.state;
-          eventMessages.push(
-            new EventMessage(1, click, 32, `- ${damage} hp`, create(255), Direction.RIGHT, Effect.FLY_AWAY)
-          );
+          eventMessages.push(new EventMessage(1, click, 32, `- ${damage} hp`, create(255), Direction.RIGHT, Effect.FLY_AWAY));
 
           this.setState({ currentEnemy, eventMessages }, () => this.drawStatic());
         }
@@ -243,11 +240,14 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
     }
   }
 
-  checkEnemyActions(seconds: number) {
+  battleStep(seconds: number) {
     if (seconds <= 0) {
       return;
     }
+    //TODO: отдельный метод на анимации, чтобы могли длиться больше секунды, что-то типа countDownAnim
     this.props.resetAnim();
+
+    // Map<number, Map<HeroRe
 
     this.state.enemies
       .filter((e) => e.currentHealth > 0)
@@ -261,7 +261,10 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
               if (damage > target.health) {
                 damage = target.health;
               }
-              this.props.heroHit(target.id, damage);
+
+              // CONTINUE: На одной секунде должно быть одна рекакция героя (лечение имеет приоритет над уроном)
+              // чтобы нормально отыгрывалась анимация
+              this.props.heroReaction(target.id, HeroReactionType.HEAL, -damage);
 
               const { battleEvents } = this.state;
               const event = { time: new Date().getTime(), hpAlter: -damage };
@@ -323,11 +326,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
   }
 
   completeCheckpointClickHandler(e: MouseEvent) {
-    this.props.moveOnwards(
-      this.state.processState === ProcessState.BATTLE_WON,
-      this.collectCheckpointDrops(),
-      this.state.battleEvents
-    );
+    this.props.moveOnwards(this.state.processState === ProcessState.BATTLE_WON, this.collectCheckpointDrops(), this.state.battleEvents);
   }
 
   collectCheckpointDrops() {
@@ -368,11 +367,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
             <div key={e.actorId}>
               <img
                 className={`battle-process__opponent-portrait${
-                  e.actorId === this.state.currentEnemy?.actorId
-                    ? "--current"
-                    : e.currentHealth <= 0
-                    ? "--disabled"
-                    : ""
+                  e.actorId === this.state.currentEnemy?.actorId ? "--current" : e.currentHealth <= 0 ? "--disabled" : ""
                 }`}
                 src={getUrlByName(`${e.type}-prt`)}
                 alt="enemy"

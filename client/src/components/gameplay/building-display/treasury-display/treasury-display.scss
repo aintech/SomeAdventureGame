@@ -7,13 +7,7 @@
   flex-direction: column;
 
   &__name {
-    font-family: inherit;
-    font-size: 3.4rem;
-    color: peru;
-    margin-top: 30px;
-    align-self: center;
-    @include strokeText;
-    cursor: default;
+    @include buildingDisplayName;
   }
 
   &__stats {

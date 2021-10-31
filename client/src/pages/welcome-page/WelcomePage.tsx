@@ -91,7 +91,7 @@ const WelcomePage = () => {
         loginForm
       )}
       <button className="btn-wiki" onClick={gotoWiki}>
-        Посмотреть Wiki
+        Wiki
       </button>
     </div>
   );

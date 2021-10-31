@@ -155,13 +155,7 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     if (backImg) {
       if (this.state.seconds < 0) {
         this.canvasCtx.drawImage(backImg, this.state.bgOffset, 0, this.canvas.width, this.canvas.height);
-        this.canvasCtx.drawImage(
-          backImg,
-          this.state.bgOffset + this.canvas.width - 1,
-          0,
-          this.canvas.width,
-          this.canvas.height
-        );
+        this.canvasCtx.drawImage(backImg, this.state.bgOffset + this.canvas.width - 1, 0, this.canvas.width, this.canvas.height);
       } else {
         this.canvasCtx.drawImage(backImg, 0, 0, this.canvas.width, this.canvas.height);
       }
@@ -230,10 +224,10 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
         <div className="quest-travel-item__duration">{description}</div>
 
         <canvas
-          width={toGameplayScale(244)}
-          height={toGameplayScale(75)}
+          width={188}
+          height={57}
           style={{
-            marginLeft: `${toGameplayScale(35)}px`,
+            marginLeft: `27px`,
             zIndex: -1,
             marginTop: `-5px`,
             gridRow: 2,

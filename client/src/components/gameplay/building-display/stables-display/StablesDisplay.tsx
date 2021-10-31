@@ -21,7 +21,7 @@ const StablesDisplay = ({ embarked }: StablesDisplayProps) => {
         <li>
           {embarked.map((q, idx) => (
             <ul key={q.id}>
-              {idx + 1} - на квесте '{q.title}'
+              {idx + 1} экипаж на выполнении квеста '{q.title}'
             </ul>
           ))}
         </li>

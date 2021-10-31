@@ -101,7 +101,7 @@
     justify-self: center;
     transition: all 0.3s;
     margin-left: 4px;
-    margin-top: to-gameplay-scale(-8px);
+    margin-top: 6px; // to-gameplay-scale(-8px);
 
     &__price {
       color: lawngreen;

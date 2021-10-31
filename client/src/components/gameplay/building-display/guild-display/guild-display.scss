@@ -3,7 +3,7 @@
 .guild-display {
   width: $overlay_display_width;
   height: $overlay_display_height;
-  background-image: url(../../../../img/building-display/guild-display/guild-display_background.png);
+  background-image: url(../../../../img/building-display/guild-display/guild-display__container.png);
   background-size: contain;
 
   &__btn--show-unabled {
@@ -37,9 +37,9 @@
 
   @mixin pageBtn {
     position: absolute;
-    top: to-gameplay-scale(700px);
-    width: to-gameplay-scale(260px);
-    height: to-gameplay-scale(38px);
+    top: 540px; // to-gameplay-scale(700px);
+    width: 200px; // to-gameplay-scale(260px);
+    height: 30px; // to-gameplay-scale(38px);
     background-image: url(../../../../img/building-display/guild-display/guild-scroll_hero.png);
     background-size: cover;
     border: none;
@@ -49,7 +49,7 @@
 
   &__btn--previous {
     @include pageBtn;
-    left: to-gameplay-scale(830px);
+    left: 640px; // to-gameplay-scale(830px);
 
     &:hover {
       background-image: url(../../../../img/building-display/guild-display/guild-btn_scroll_hero_hover.png);
@@ -58,7 +58,7 @@
 
   &__btn--next {
     @include pageBtn;
-    left: to-gameplay-scale(1090px);
+    left: 840px; // to-gameplay-scale(1090px);
     transform: scale(-1);
 
     &:hover {

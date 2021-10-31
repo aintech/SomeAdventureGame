@@ -3,177 +3,144 @@
 .game-world__building {
   &-TAVERN {
     position: absolute;
-    top: 167px;
-    left: 856px;
-    width: 111px;
-    height: 124px;
+    top: 240px;
+    left: 530px;
+    width: 170px;
+    height: 105px;
     cursor: pointer;
 
     &:hover {
-      background-image: url(../../../../img/map/tavern-frame.png);
-      background-size: cover;
+      border: 1px solid yellow;
     }
   }
 
   &-GUILD {
     position: absolute;
-    top: 0px;
-    left: 465px;
-    width: 196px;
-    height: 175px;
+    top: 30px;
+    left: 905px;
+    width: 185px;
+    height: 200px;
     cursor: pointer;
 
     &:hover {
-      background-image: url(../../../../img/map/guild-frame.png);
-      background-size: cover;
+      border: 1px solid yellow;
     }
   }
 
   &-ALCHEMIST {
     position: absolute;
-    top: 297px;
-    left: 401px;
-    width: 57px;
-    height: 177px;
+    top: 480px;
+    left: 325px;
+    width: 145px;
+    height: 100px;
     cursor: pointer;
 
     &:hover {
-      background-image: url(../../../../img/map/alchemist-frame.png);
-      background-size: cover;
+      border: 1px solid yellow;
     }
   }
 
   &-MARKET {
     position: absolute;
-    top: 58px;
-    left: 141px;
-    width: 157px;
-    height: 151px;
+    top: 255px;
+    left: 770px;
+    width: 215px;
+    height: 150px;
     cursor: pointer;
 
     &:hover {
-      background-image: url(../../../../img/map/market-frame.png);
-      background-size: cover;
+      border: 1px solid yellow;
     }
   }
 
   &-HEALER {
     position: absolute;
-    top: 430px;
-    left: 545px;
-    width: 114px;
-    height: 89px;
-    background-image: url(../../../../img/map/healer.png);
-    background-size: cover;
+    top: 425px;
+    left: 685px;
+    width: 140px;
+    height: 160px;
     cursor: pointer;
 
     &:hover {
-      transform: scale(1.05);
+      border: 1px solid yellow;
     }
   }
 
   &-TREASURY {
     position: absolute;
-    top: 196px;
-    left: 261px;
-    width: 170px;
-    height: 110px;
-    background-image: url(../../../../img/map/treasury.png);
-    background-size: cover;
+    top: 15px;
+    left: 250px;
+    width: 155px;
+    height: 145px;
     cursor: pointer;
 
     &:hover {
-      transform: scale(1.05);
+      border: 1px solid yellow;
     }
   }
 
   &-TRAINING_GROUND {
     position: absolute;
-    top: 30px;
-    left: 671px;
-    width: 164px;
-    height: 89px;
-    background-image: url(../../../../img/map/training_ground.png);
-    background-size: cover;
+    top: 310px;
+    left: 235px;
+    width: 210px;
+    height: 115px;
     cursor: pointer;
 
     &:hover {
-      transform: scale(1.05);
-    }
-  }
-
-  &-TEMPLE {
-    position: absolute;
-    top: 236px;
-    left: 45px;
-    width: 198px;
-    height: 190px;
-    background-image: url(../../../../img/map/temple.png);
-    background-size: cover;
-    cursor: pointer;
-
-    &:hover {
-      transform: scale(1.05);
+      border: 1px solid yellow;
     }
   }
 
   &-BLACKSMITH {
     position: absolute;
     top: 450px;
-    left: 250px;
-    width: 83px;
-    height: 76px;
-    background-image: url(../../../../img/map/blacksmith.png);
-    background-size: cover;
+    left: 90px;
+    width: 140px;
+    height: 95px;
     cursor: pointer;
 
     &:hover {
-      transform: scale(1.05);
+      border: 1px solid yellow;
     }
   }
 
   &-STABLES {
     position: absolute;
-    top: 378px;
-    left: 904px;
-    width: 83px;
-    height: 76px;
-    background-image: url(../../../../img/map/stables.png);
-    background-size: cover;
+    top: 415px;
+    left: 920px;
+    width: 185px;
+    height: 150px;
     cursor: pointer;
 
     &:hover {
-      transform: scale(1.05);
+      border: 1px solid yellow;
     }
   }
 
   &-STORAGE {
     position: absolute;
-    top: 450px;
-    left: 730px;
-    width: 83px;
-    height: 76px;
-    background-image: url(../../../../img/map/storage.png);
-    background-size: cover;
+    top: 35px;
+    left: 40px;
+    width: 170px;
+    height: 240px;
     cursor: pointer;
 
     &:hover {
-      transform: scale(1.05);
+      border: 1px solid yellow;
     }
   }
 
   &-ELDER {
     position: absolute;
-    top: 310px;
-    left: 661px;
-    width: 170px;
+    top: 65px;
+    left: 665px;
+    width: 175px;
     height: 110px;
-    background-image: url(../../../../img/map/treasury.png);
-    background-size: cover;
     cursor: pointer;
 
     &:hover {
-      transform: scale(1.05);
+      border: 1px solid yellow;
     }
   }
 }

@@ -8,7 +8,6 @@ export enum BuildingType {
   TREASURY /** Limit maximum dust amount */,
   TRAINING_GROUND /** Level up heroes */,
   ALCHEMIST /** Selling potions to heroes */,
-  TEMPLE /** Buff heroes */,
   BLACKSMITH /** Upgrade heroes equipment to better tier*/,
   STORAGE /** Limit amount of items user can store */,
   MARKET /** Heroes buy new equipment */,

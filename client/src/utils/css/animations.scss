@@ -14,17 +14,17 @@
 
 @keyframes pulsate {
   0% {
-    transform: translateX(to-gameplay-scale(50px)) scale(1.4);
+    transform: translateX(38px) scale(1.4);
     box-shadow: 0 1rem 4rem rgba($color: black, $alpha: 0.25);
   }
 
   50% {
-    transform: translateX(to-gameplay-scale(50px)) scale(1.5);
+    transform: translateX(38px) scale(1.5);
     box-shadow: 0 2rem 4rem rgba($color: black, $alpha: 0.25);
   }
 
   100% {
-    transform: translateX(to-gameplay-scale(50px)) scale(1.4);
+    transform: translateX(38px) scale(1.4);
     box-shadow: 0 1rem 4rem rgba($color: black, $alpha: 0.25);
   }
 }
@@ -50,20 +50,5 @@
   }
   100% {
     transform: translateX(0);
-  }
-}
-
-@keyframes hitted {
-  0% {
-    transform: translate(-3px, -5px);
-  }
-  25% {
-    transform: translate(3px, -3px);
-  }
-  50% {
-    transform: translate(-3px, -1px);
-  }
-  100% {
-    transform: translate(0);
   }
 }

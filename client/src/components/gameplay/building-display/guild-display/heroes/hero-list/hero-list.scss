@@ -2,13 +2,13 @@
 
 .hero-list {
   position: absolute;
-  top: to-gameplay-scale(120px);
-  right: to-gameplay-scale(120px);
-  width: to-gameplay-scale(460px);
-  height: to-gameplay-scale(500px);
+  top: 92px; // to-gameplay-scale(120px);
+  right: 92px; // to-gameplay-scale(120px);
+  width: 355px; // to-gameplay-scale(460px);
+  height: 385px; // to-gameplay-scale(500px);
 
   display: grid;
   grid-template-rows: repeat(2, 1fr);
   grid-template-columns: repeat(2, 1fr);
-  gap: to-gameplay-scale(20px);
+  gap: 15px; // to-gameplay-scale(20px);
 }

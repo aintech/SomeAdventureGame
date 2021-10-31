@@ -3,6 +3,7 @@ import Hero, { calcHealthFraction } from "../../../../../../models/hero/Hero";
 import { display, HeroType } from "../../../../../../models/hero/HeroType";
 import Quest from "../../../../../../models/Quest";
 import { toGameplayScale } from "../../../../../../utils/Utils";
+import HealIconImg from "../../../../../../img/quest-perform/battle-process/heal-icon.png";
 import "./hero-item.scss";
 
 type HeroItemProps = {
@@ -13,9 +14,10 @@ type HeroItemProps = {
   reward?: { gold: number; experience: number };
   embarkedLimit?: boolean;
   hitted?: boolean;
+  healed?: boolean;
 };
 
-const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, hitted, reward, embarkedLimit }: HeroItemProps) => {
+const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, hitted, healed, reward, embarkedLimit }: HeroItemProps) => {
   const healthRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const expRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const canvasW = toGameplayScale(80);
@@ -49,7 +51,9 @@ const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, hitted, reward
     display: reward ? "block" : "none",
   };
 
-  const className = `hero-item ${reward ? "" : "hero-item--hoverable"} ${hitted ? "hero-item--hitted" : ""}`;
+  const className = `hero-item${reward ? "" : " hero-item--hoverable"}${hitted ? " hero-item--hitted" : ""}`;
+
+  const healClass = `hero-item__heal-icon${healed ? " heal-icon_playing" : ""}`;
 
   const power = hero.stats.power + hero.equipStats.power;
 
@@ -74,6 +78,7 @@ const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, hitted, reward
       <div className="hero-item__reward--experience" style={rewardStyle}>
         {reward?.experience}
       </div>
+      <img src={HealIconImg} alt="heal" className={healClass}></img>
     </div>
   );
 };
