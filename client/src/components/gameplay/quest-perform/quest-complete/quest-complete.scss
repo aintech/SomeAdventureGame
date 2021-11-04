@@ -12,7 +12,7 @@
   flex-direction: column;
 
   &__title {
-    font-size: 5rem;
+    font-size: 50px;
     max-width: 350px;
   }
 
@@ -36,7 +36,7 @@
   &__fame {
     display: flex;
     color: white;
-    font-size: 6px; // to-gameplay-scale(8rem);
+    font-size: 6px;
     @include strokeText;
 
     & img {
@@ -52,7 +52,7 @@
 
   &__btn_accept {
     font-family: inherit;
-    font-size: 3rem;
+    font-size: 30px;
     width: 320px;
     margin-top: 50px;
     cursor: pointer;

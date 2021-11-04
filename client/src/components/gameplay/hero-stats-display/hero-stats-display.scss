@@ -1,10 +1,10 @@
 @import "../../../utils/css/index.scss";
 
 .hero-stats {
-  font-size: 3rem;
+  font-size: 30px;
   @include absoluteCenter;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background-color: rgba($color: black, $alpha: 0.8);
   cursor: default;
   z-index: 2000;
@@ -49,7 +49,7 @@
 
   &__dismiss-btn {
     font-family: inherit;
-    font-size: 2rem;
+    font-size: 20px;
     width: fit-content;
     height: fit-content;
     color: black;
@@ -148,7 +148,7 @@
   }
 
   &__health {
-    font-size: 2rem;
+    font-size: 20px;
     grid-row: health-row;
     grid-column: 5;
     align-self: center;
@@ -157,7 +157,7 @@
   }
 
   &__experience {
-    font-size: 2rem;
+    font-size: 20px;
     grid-row: experience-row;
     grid-column: 5;
     align-self: center;
@@ -268,7 +268,7 @@
       &-level {
         grid-row: 2;
         display: block;
-        font-size: 2rem;
+        font-size: 20px;
         font-weight: bold;
         align-self: flex-end;
         margin-left: auto;
@@ -338,7 +338,7 @@
     }
 
     &--list {
-      font-size: 2rem;
+      font-size: 20px;
       list-style: none;
 
       & ul {
@@ -364,7 +364,7 @@
     }
 
     &--list {
-      font-size: 2rem;
+      font-size: 20px;
       list-style: none;
 
       & ul {
@@ -390,7 +390,7 @@
     }
 
     &--list {
-      font-size: 2rem;
+      font-size: 20px;
       list-style: none;
 
       & ul {

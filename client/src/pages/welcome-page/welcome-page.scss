@@ -16,9 +16,9 @@
 .btn-continue {
   margin: 100px auto 0;
   font-family: inherit;
-  font-size: 2rem;
-  width: 15rem;
-  height: 5rem;
+  font-size: 20px;
+  width: 150px;
+  height: 50px;
   border-radius: 10px;
   cursor: pointer;
 }
@@ -26,14 +26,14 @@
 .btn-wiki {
   margin: 60px auto 0;
   font-family: inherit;
-  font-size: 2rem;
-  height: 5rem;
-  width: 15rem;
+  font-size: 20px;
+  height: 50px;
+  width: 150px;
   border-radius: 10px;
   cursor: pointer;
 }
 
-$font-size: 1.4rem;
+$font-size: 14px;
 $font-color: #2a293e;
 $form-bg: #f8f4e5;
 $form-shadow: #ffa580;

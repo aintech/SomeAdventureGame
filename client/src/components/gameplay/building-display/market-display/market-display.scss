@@ -17,7 +17,7 @@
     grid-column: 2;
     display: grid;
     grid-template-columns: repeat(2, min-content);
-    gap: 15px; // to-gameplay-scale(20px);
+    gap: 15px;
   }
 
   &__assortment__list {
@@ -30,7 +30,7 @@
     grid-column: 1;
     display: flex;
     font-family: inherit;
-    font-size: 2rem;
+    font-size: 20px;
     @include strokeText;
     color: whitesmoke;
     overflow-y: scroll;

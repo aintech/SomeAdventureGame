@@ -25,7 +25,7 @@ const AlchemistDisplay = ({ visitors, alchemistAssortment, visitorClicked }: Alc
 
   return (
     <div className="alchemist-display">
-      <div className="alchemist-display__name">{toDisplay(BuildingType.ALCHEMIST)}</div>
+      <div className="alchemist-display__name">{toDisplay(BuildingType.LABORATORY)}</div>
       <div className="alchemist-display__assortment-holder">
         <div className="alchemist-display__assortment__list">
           <ul>
@@ -37,12 +37,7 @@ const AlchemistDisplay = ({ visitors, alchemistAssortment, visitorClicked }: Alc
       </div>
       <div className="alchemist-display__visitors-holder">
         {visitors.map((visitor) => (
-          <HeroItem
-            key={visitor.id}
-            hero={visitor}
-            enabled={true}
-            itemClickHandler={(event) => visitorClickHandler(visitor, event)}
-          />
+          <HeroItem key={visitor.id} hero={visitor} enabled={true} itemClickHandler={(event) => visitorClickHandler(visitor, event)} />
         ))}
       </div>
     </div>
@@ -65,9 +60,7 @@ class AlchemistDisplayContainer extends Component<AlchemistDisplayContainerProps
 
     const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.PURCHASING_POTIONS);
 
-    return (
-      <AlchemistDisplay visitors={visitors} alchemistAssortment={alchemistAssortment} visitorClicked={heroClicked} />
-    );
+    return <AlchemistDisplay visitors={visitors} alchemistAssortment={alchemistAssortment} visitorClicked={heroClicked} />;
   }
 }
 

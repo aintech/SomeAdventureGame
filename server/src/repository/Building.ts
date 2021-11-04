@@ -1,18 +1,33 @@
 import query, { single } from "./Db";
 
 export enum BuildingType {
-  GUILD /** Send heroes to quest, Limit number of hired heroes */,
-  TAVERN /** Hiring heroes */,
-  STABLES /** Limit number of simultaneous embarked quests */,
-  HEALER /** Healing heroes */,
-  TREASURY /** Limit maximum dust amount */,
+  GUILD_OFFICE /** Send heroes to quest */,
+  GOLO_HUB /** Hiring heroes */,
+  CABINS /** Limit number of hired heroes */,
+  HANGAR /** Limit number of simultaneous embarked quests */,
+  MEDBAY /** Healing heroes */,
+  COMMAND_CENTER /** Management station statuses */,
   TRAINING_GROUND /** Level up heroes */,
-  ALCHEMIST /** Selling potions to heroes */,
-  BLACKSMITH /** Upgrade heroes equipment to better tier*/,
+  LABORATORY /** Selling potions to heroes */,
+  PRODUCTION_COMPLEX /** Upgrade heroes equipment to better tier*/,
   STORAGE /** Limit amount of items user can store */,
   MARKET /** Heroes buy new equipment */,
-  ELDER /** Management village accounts */,
+  POWER_STATION /** Limit maximum energy amount */,
 }
+
+// export enum BuildingType {
+//   GUILD /** Corporation office - Send heroes to quest, Limit number of hired heroes */,
+//   TAVERN /** Galactic Hub - Hiring heroes */,
+//   STABLES /** Hangar - Limit number of simultaneous embarked quests */,
+//   HEALER /** Medbay - Healing heroes */,
+//   TREASURY /** Energy hub - Limit maximum dust amount */,
+//   TRAINING_GROUND /** Trainig center - Level up heroes */,
+//   ALCHEMIST /** Laboratory - Selling potions to heroes */,
+//   BLACKSMITH /** Production complex - Upgrade heroes equipment to better tier*/,
+//   STORAGE /** Storage - Limit amount of items user can store */,
+//   MARKET /** Marketplace - Heroes buy new equipment */,
+//   ELDER /** Administration - Management village accounts */,
+// }
 
 export type Building = {
   userId: number;

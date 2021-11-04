@@ -11,7 +11,6 @@
 
   &__container {
     @include absoluteCenter;
-    display: block;
     width: $overlay_display_width;
     height: $overlay_display_height;
     z-index: 1010;
@@ -41,15 +40,14 @@
   &__btn-upgrade {
     position: absolute;
     bottom: -30px;
-    right: 0px;
-    padding: 5px 20px;
-    font-size: 24px;
-    border: none;
+    right: 10px;
+    padding: 5px 5px;
+    font-size: 18px;
+    border: solid 1px white;
     outline: none;
     background-color: green;
     color: yellow;
-    @include strokeText;
-    border-radius: 5px;
+    // @include strokeText;
     z-index: 2000;
     cursor: pointer;
 
@@ -65,11 +63,11 @@
 
   &__btn-close {
     position: absolute;
-    top: -30px;
-    right: -30px;
-    width: 65px; // to-gameplay-scale(84px);
-    height: 65px; // to-gameplay-scale(84px);
-    background-image: url(../../../img/building-display/guild-display/guild-btn_dismiss_hero.png);
+    top: 10px;
+    right: 10px;
+    width: 64px;
+    height: 64px;
+    background-image: url(../../../img/building-display/building-display__btn-close.png);
     border: none;
     outline: none;
     background-color: transparent;
@@ -77,7 +75,7 @@
     cursor: pointer;
 
     &:hover {
-      transform: scale(1.1);
+      background-image: url(../../../img/building-display/building-display__btn-close_hover.png);
     }
   }
 }

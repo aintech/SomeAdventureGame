@@ -13,15 +13,15 @@ type StablesDisplayProps = {
 const StablesDisplay = ({ embarked }: StablesDisplayProps) => {
   return (
     <div className="stables-display">
-      <div className="stables-display__name">{toDisplay(BuildingType.STABLES)}</div>
+      <div className="stables-display__name">{toDisplay(BuildingType.HANGAR)}</div>
       <div className="stables-display__stats">
         <div>
-          Свободных экипажей {MAX_EMBARKED_QUESTS - embarked.length}/{MAX_EMBARKED_QUESTS}
+          Свободных шатлов {MAX_EMBARKED_QUESTS - embarked.length}/{MAX_EMBARKED_QUESTS}
         </div>
         <li>
           {embarked.map((q, idx) => (
             <ul key={q.id}>
-              {idx + 1} экипаж на выполнении квеста '{q.title}'
+              {idx + 1} - на выполнении квеста '{q.title}'
             </ul>
           ))}
         </li>

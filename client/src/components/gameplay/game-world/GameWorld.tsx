@@ -15,9 +15,7 @@ const GameWorld = ({ buildings, onBuildingClicked }: GameWorldProps) => {
   return (
     <div className="game-world">
       {buildings.map((building) => (
-        <div key={building.type}>
-          <GameWorldItem building={building} onBuildingClicked={() => onBuildingClicked(building)} />
-        </div>
+        <GameWorldItem key={building.type} building={building} onBuildingClicked={() => onBuildingClicked(building)} />
       ))}
     </div>
   );

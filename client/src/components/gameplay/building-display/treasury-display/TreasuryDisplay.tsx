@@ -12,7 +12,7 @@ type TreasuryDisplayProps = {
 const TreasuryDisplay = ({ stats }: TreasuryDisplayProps) => {
   return (
     <div className="treasury-display">
-      <div className="treasury-display__name">{toDisplay(BuildingType.TREASURY)}</div>
+      <div className="treasury-display__name">{toDisplay(BuildingType.COMMAND_CENTER)}</div>
       <div className="treasury-display__stats">
         <div>Волшебной пыльцы в сокровищнице {stats.gold}</div>
       </div>

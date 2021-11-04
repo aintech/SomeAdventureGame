@@ -1,0 +1,35 @@
+@font-face {
+  font-family: "Oswald";
+  src: url(./Oswald-Regular.woff2) format("woff2"), url(./Oswald-Regular.woff) format("woff");
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Oswald";
+  src: url(./Oswald-Bold.woff2) format("woff2"), url(./Oswald-Bold.woff) format("woff");
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "Roboto Slab";
+  src: url(./RobotoSlab-Regular.woff2) format("woff2"), url(./RobotoSlab-Regular.woff) format("woff");
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Roboto Slab";
+  src: url(./RobotoSlab-Bold.woff2) format("woff2"), url(./RobotoSlab-Bold.woff2) format("woff2");
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "Yanone Kaffeesatz";
+  src: url(./YanoneKaffeesatz-Regular.woff2) format("woff2"), url(./YanoneKaffeesatz-Regular.woff) format("woff");
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Yanone Kaffeesatz";
+  src: url(./YanoneKaffeesatz-Bold.woff2) format("woff2"), url(./YanoneKaffeesatz-Bold.woff) format("woff");
+  font-weight: bold;
+}

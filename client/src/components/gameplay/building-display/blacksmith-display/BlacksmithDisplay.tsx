@@ -22,15 +22,10 @@ const BlacksmithDisplay = ({ visitors, visitorClicked }: BlacksmithDisplayProps)
 
   return (
     <div className="blacksmith-display">
-      <div className="blacksmith-display__name">{toDisplay(BuildingType.BLACKSMITH)}</div>
+      <div className="blacksmith-display__name">{toDisplay(BuildingType.PRODUCTION_COMPLEX)}</div>
       <div className="blacksmith-display__visitors-holder">
         {visitors.map((visitor) => (
-          <HeroItem
-            key={visitor.id}
-            hero={visitor}
-            enabled={true}
-            itemClickHandler={(event) => visitorClickHandler(visitor, event)}
-          />
+          <HeroItem key={visitor.id} hero={visitor} enabled={true} itemClickHandler={(event) => visitorClickHandler(visitor, event)} />
         ))}
       </div>
     </div>

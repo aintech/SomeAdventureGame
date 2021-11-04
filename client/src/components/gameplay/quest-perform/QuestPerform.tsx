@@ -142,7 +142,7 @@ const QuestPerform = ({ quest, heroes, heroClicked, onCheckpointPassed, onComple
   return (
     <div className="quest-perform">
       <div className="quest-perform__container">
-        <button className="quest-perform__btn--close" onClick={closeDisplay}></button>
+        <button className="quest-perform__btn-close" onClick={closeDisplay}></button>
         <div className="quest-perform__name">{quest.title}</div>
         <div className="quest-perform__heroes-holder">
           {heroActors.map((hero) => (

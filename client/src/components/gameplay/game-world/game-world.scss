@@ -3,8 +3,7 @@
 .game-world {
   @include absoluteCenter;
   display: block;
-  width: $gameplay_width;
-  height: $gameplay_height;
-  background-image: url(../../../img/landing.png);
-  background-size: cover;
+  width: 733px;
+  height: 618px;
+  background-image: url(../../../img/station.png);
 }

@@ -1,4 +1,5 @@
 @import "../src/utils/css/variables.scss";
+@import "./vendor/fonts/fonts.css";
 
 //RESPONSIVE BREAKPOINTS
 $bp-largest: 75em; // 1200px
@@ -6,27 +7,19 @@ $bp-large: 62.5em; // 1000px
 $bp-medium: 50em; // 800px
 $bp-small: 37.5em; // 600px
 
-// * {
-//   outline: 1px solid red;
-// }
-
 *,
 *::before,
 *::after {
   margin: 0;
   padding: 0;
-  box-sizing: inherit;
-}
-
-html {
-  box-sizing: border-box;
-  font-size: 62.5%; // 10px/16px = 62.5% -> 1rem = 10px
 }
 
 body {
-  font-family: "Pattaya", sans-serif;
-  font-weight: 400;
+  // font-family: "Oswald", sans-serif;
+  // font-family: "Pattaya", sans-serif;
+  // font-family: "Roboto Slab", sans-serif;
+  font-family: "Yanone Kaffeesatz", sans-serif;
+  // font-weight: bold;
   line-height: 1;
-  background-color: #005050;
-  // min-height: 100vh;
+  background-color: #151515;
 }

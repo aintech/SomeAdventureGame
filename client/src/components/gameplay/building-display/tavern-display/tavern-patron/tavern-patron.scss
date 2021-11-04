@@ -3,11 +3,10 @@
 .tavern-patron {
   display: grid;
   font-family: inherit;
-  font-size: 2rem;
+  font-size: 20px;
   width: calc(513px / 2);
   height: calc(257px / 2);
   background-image: url(../../../../../img/building-display/tavern-display/tarvern-display_hero-bg.png);
-  // background-color: rgba($color: black, $alpha: 0.8);
   background-repeat: no-repeat;
   background-size: cover;
   cursor: default;
@@ -86,7 +85,7 @@
 
   &__btn--hire {
     font-family: inherit;
-    font-size: 2rem;
+    font-size: 20px;
     width: calc(301px / 2);
     height: calc(81px / 2);
     background-image: url(../../../../../img/building-display/tavern-display/tavern-display_hire-btn.png);
@@ -101,7 +100,7 @@
     justify-self: center;
     transition: all 0.3s;
     margin-left: 4px;
-    margin-top: 6px; // to-gameplay-scale(-8px);
+    margin-top: 6px;
 
     &__price {
       color: lawngreen;

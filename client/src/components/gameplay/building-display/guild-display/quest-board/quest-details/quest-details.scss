@@ -2,8 +2,8 @@
 
 .quest-details {
   position: absolute;
-  width: 540px; // to-gameplay-scale(700px);
-  height: 460px; // to-gameplay-scale(600px);
+  width: 540px;
+  height: 460px;
   top: 18%;
   left: 30px;
   background-image: url(../../../../../../img/building-display/guild-display/guild-quest_scroll_maxed.png);
@@ -12,13 +12,14 @@
   cursor: default;
 
   display: grid;
-  grid-template-rows: 77px // to-gameplay-scale(100px)
-    15px // to-gameplay-scale(20px)
-    223px // to-gameplay-scale(290px)
-    30px // to-gameplay-scale(40px)
-    45px; // to-gameplay-scale(60px);
+  grid-template-rows:
+    77px
+    15px
+    223px
+    30px
+    45px;
   grid-template-columns: repeat(2, 1fr);
-  row-gap: 11px; // to-gameplay-scale(15px);
+  row-gap: 11px;
 
   & > * {
     grid-column: 1/ -1;
@@ -26,9 +27,9 @@
 
   &__btn--close {
     position: inherit;
-    width: 55px; // to-gameplay-scale(70px);
-    height: 55px; // to-gameplay-scale(70px);
-    right: 23px; // to-gameplay-scale(30px);
+    width: 55px;
+    height: 55px;
+    right: 23px;
     background-image: url(../../../../../../img/building-display/guild-display/guild-btn_dismiss_hero.png);
     background-size: cover;
     border: none;
@@ -43,10 +44,10 @@
 
   &__btn--accept {
     position: inherit;
-    right: 30px; // to-gameplay-scale(40px);
+    right: 30px;
     bottom: 0;
-    width: 80px; // to-gameplay-scale(104px);
-    height: 120px; // to-gameplay-scale(154px);
+    width: 80px;
+    height: 120px;
     background-image: url(../../../../../../img/building-display/guild-display/guild-btn_accept_quest.png);
     background-size: cover;
     border: none;
@@ -55,14 +56,14 @@
   }
 
   &__max-quest-msg {
-    font-size: 1.9rem;
+    font-size: 19px;
     text-align: center;
     color: brown;
     margin-top: -10px;
   }
 
   &__title {
-    font-size: 2.7rem; // to-gameplay-scale(3.5rem);
+    font-size: 27px;
     text-transform: uppercase;
     grid-row: 2;
     align-self: center;
@@ -70,45 +71,45 @@
   }
 
   &__description {
-    font-size: 2rem; // to-gameplay-scale(2.6rem);
+    font-size: 20px;
     line-height: 1.4;
     grid-row: 3;
-    margin-left: 46px; // to-gameplay-scale(60px);
-    margin-right: 46px; // to-gameplay-scale(60px);
+    margin-left: 46px;
+    margin-right: 46px;
   }
 
   &__level {
-    font-size: 3.8rem; // to-gameplay-scale(5rem);
+    font-size: 38px;
     grid-row: 1;
     grid-column: 1;
     align-self: center;
     justify-self: center;
-    margin-top: 30px; // to-gameplay-scale(40px);
+    margin-top: 30px;
     margin-left: -20px;
   }
 
   &__duration {
     text-transform: uppercase;
-    font-size: 3.8rem; // to-gameplay-scale(5rem);
+    font-size: 38px;
     grid-row: 1;
     grid-column: 2;
     align-self: center;
     justify-self: center;
-    margin-top: 30px; // to-gameplay-scale(40px);
+    margin-top: 30px;
   }
 
   &__tribute {
-    font-size: 2.3rem; // to-gameplay-scale(3rem);
+    font-size: 24px;
     grid-row: 4;
     grid-column: 1/3;
-    margin-left: 46px; // to-gameplay-scale(60px);
+    margin-left: 46px;
   }
 
   &__experience {
-    font-size: 2.3rem; // to-gameplay-scale(3rem);
+    font-size: 24px;
     grid-row: 5;
     grid-column: 1/3;
-    margin-left: 46px; // to-gameplay-scale(60px);
+    margin-left: 46px;
   }
 
   &__assigned-heroes {
@@ -122,7 +123,7 @@
       display: flex;
       flex-flow: column;
       justify-self: center;
-      height: 115px; // to-gameplay-scale(150px);
+      height: 115px;
       margin-top: -15px;
       background-image: url(../../../../../../img/building-display/guild-display/guild-assigned_hero_bg.png);
       background-size: cover;
@@ -134,8 +135,8 @@
 
       @each $type in "warrior" "paladin" "thief" "mage" "healer" {
         &--#{$type} {
-          width: 61px; // to-gameplay-scale(80px);
-          height: 61px; // to-gameplay-scale(80px);
+          width: 61px;
+          height: 61px;
           background-image: url(../../../../../../img/building-display/guild-display/guild-hero_icon_#{$type}.png);
           background-repeat: no-repeat;
           background-size: cover;
@@ -143,14 +144,14 @@
       }
 
       &-name {
-        font-size: 1.2rem;
+        font-size: 12px;
         align-self: center;
       }
 
       &-dismiss {
         align-self: center;
-        width: 30px; // to-gameplay-scale(40px);
-        height: 30px; // to-gameplay-scale(40px);
+        width: 30px;
+        height: 30px;
         background-image: url(../../../../../../img/building-display/guild-display/guild-btn_dismiss_hero.png);
         background-repeat: no-repeat;
         background-size: cover;

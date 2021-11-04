@@ -10,6 +10,7 @@ import { convertDuration } from "../../../utils/Utils";
 import AlchemistDisplay from "./alchemist-display/AlchemistDisplay";
 import BlacksmithDisplay from "./blacksmith-display/BlacksmithDisplay";
 import "./building-display.scss";
+import CabinsDisplay from "./cabins-display/CabinsDisplay";
 import ElderDisplay from "./elder-display/ElderDisplay";
 import GuildDisplay from "./guild-display/GuildDisplay";
 import HealerDisplay from "./healer-display/HealerDisplay";
@@ -124,9 +125,8 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
           onClick={this.showUpgradeConfirm.bind(this)}
           disabled={upgradeDisabled}
         >
-          &uarr; Up to lvl <span className="building-display__btn-upgrade__span">{chosenBuilding.level + 1}</span> =={" "}
-          <span className="building-display__btn-upgrade__span">{chosenBuilding.upgrade.cost}</span> g ::{" "}
-          <span className="building-display__btn-upgrade__span">{convertDuration(chosenBuilding.upgrade.duration)}</span>
+          &uarr; lvl <span className="building-display__btn-upgrade__span">{chosenBuilding.level + 1}</span> -{" "}
+          <span className="building-display__btn-upgrade__span">{chosenBuilding.upgrade.cost}</span> ec
         </button>
       ) : null;
 
@@ -153,27 +153,29 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
 
 const displayByType = (type: BuildingType) => {
   switch (type) {
-    case BuildingType.GUILD:
+    case BuildingType.GUILD_OFFICE:
       return <GuildDisplay />;
-    case BuildingType.TAVERN:
+    case BuildingType.MERCENARY_HUB:
       return <TavernDisplay />;
-    case BuildingType.HEALER:
+    case BuildingType.CABINS:
+      return <CabinsDisplay />;
+    case BuildingType.HANGAR:
+      return <StablesDisplay />;
+    case BuildingType.MEDBAY:
       return <HealerDisplay />;
-    case BuildingType.TREASURY:
+    case BuildingType.COMMAND_CENTER:
       return <TreasuryDisplay />;
     case BuildingType.TRAINING_GROUND:
       return <TrainingGroundDisplay />;
-    case BuildingType.ALCHEMIST:
+    case BuildingType.LABORATORY:
       return <AlchemistDisplay />;
-    case BuildingType.BLACKSMITH:
+    case BuildingType.PRODUCTION_COMPLEX:
       return <BlacksmithDisplay />;
-    case BuildingType.STABLES:
-      return <StablesDisplay />;
     case BuildingType.STORAGE:
       return <StorageDisplay />;
     case BuildingType.MARKET:
       return <MarketDisplay />;
-    case BuildingType.ELDER:
+    case BuildingType.POWER_STATION:
       return <ElderDisplay />;
     default:
       throw new Error(`Unknown building type ${BuildingType[type]}`);

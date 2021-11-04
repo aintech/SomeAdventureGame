@@ -9,15 +9,7 @@
   gap: 30px;
 
   &__name {
-    font-family: inherit;
-    font-size: 3.4rem;
-    color: peru;
-    text-align: center;
-    align-self: flex-end;
-    grid-row: 1;
-    grid-column: 1 / -1;
-    @include strokeText;
-    cursor: default;
+    @include buildingDisplayName;
   }
 
   &__visitors-holder {
@@ -38,7 +30,7 @@
     grid-column: 1;
     display: flex;
     font-family: inherit;
-    font-size: 2rem;
+    font-size: 20px;
     @include strokeText;
     color: whitesmoke;
     overflow-y: scroll;

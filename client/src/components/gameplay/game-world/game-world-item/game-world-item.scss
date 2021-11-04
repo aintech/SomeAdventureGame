@@ -1,12 +1,12 @@
 @import "../../../../utils/css/index.scss";
 
 .game-world__building {
-  &-TAVERN {
+  &-GUILD_OFFICE {
     position: absolute;
-    top: 240px;
-    left: 530px;
-    width: 170px;
-    height: 105px;
+    top: 232px;
+    left: 317px;
+    width: 110px;
+    height: 88px;
     cursor: pointer;
 
     &:hover {
@@ -14,12 +14,12 @@
     }
   }
 
-  &-GUILD {
+  &-MERCENARY_HUB {
     position: absolute;
-    top: 30px;
-    left: 905px;
-    width: 185px;
-    height: 200px;
+    top: 373px;
+    left: 616px;
+    width: 114px;
+    height: 90px;
     cursor: pointer;
 
     &:hover {
@@ -27,12 +27,64 @@
     }
   }
 
-  &-ALCHEMIST {
+  &-CABINS {
     position: absolute;
-    top: 480px;
-    left: 325px;
-    width: 145px;
-    height: 100px;
+    top: 510px;
+    left: 532px;
+    width: 102px;
+    height: 95px;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid yellow;
+    }
+  }
+
+  &-HANGAR {
+    position: absolute;
+    top: 443px;
+    left: 35px;
+    width: 82px;
+    height: 93px;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid yellow;
+    }
+  }
+
+  &-MEDBAY {
+    position: absolute;
+    top: 0;
+    left: 203px;
+    width: 95px;
+    height: 85px;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid yellow;
+    }
+  }
+
+  &-LABORATORY {
+    position: absolute;
+    top: 275px;
+    left: 5px;
+    width: 110px;
+    height: 103px;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid yellow;
+    }
+  }
+
+  &-PRODUCTION_COMPLEX {
+    position: absolute;
+    top: 170px;
+    left: 580px;
+    width: 86px;
+    height: 60px;
     cursor: pointer;
 
     &:hover {
@@ -42,10 +94,10 @@
 
   &-MARKET {
     position: absolute;
-    top: 255px;
-    left: 770px;
-    width: 215px;
-    height: 150px;
+    top: 393px;
+    left: 276px;
+    width: 125px;
+    height: 120px;
     cursor: pointer;
 
     &:hover {
@@ -53,25 +105,12 @@
     }
   }
 
-  &-HEALER {
+  &-COMMAND_CENTER {
     position: absolute;
-    top: 425px;
-    left: 685px;
-    width: 140px;
-    height: 160px;
-    cursor: pointer;
-
-    &:hover {
-      border: 1px solid yellow;
-    }
-  }
-
-  &-TREASURY {
-    position: absolute;
-    top: 15px;
-    left: 250px;
-    width: 155px;
-    height: 145px;
+    top: 85px;
+    left: 57px;
+    width: 100px;
+    height: 110px;
     cursor: pointer;
 
     &:hover {
@@ -81,36 +120,10 @@
 
   &-TRAINING_GROUND {
     position: absolute;
-    top: 310px;
-    left: 235px;
-    width: 210px;
-    height: 115px;
-    cursor: pointer;
-
-    &:hover {
-      border: 1px solid yellow;
-    }
-  }
-
-  &-BLACKSMITH {
-    position: absolute;
-    top: 450px;
-    left: 90px;
-    width: 140px;
-    height: 95px;
-    cursor: pointer;
-
-    &:hover {
-      border: 1px solid yellow;
-    }
-  }
-
-  &-STABLES {
-    position: absolute;
-    top: 415px;
-    left: 920px;
-    width: 185px;
-    height: 150px;
+    top: 50px;
+    left: 343px;
+    width: 168px;
+    height: 100px;
     cursor: pointer;
 
     &:hover {
@@ -120,10 +133,10 @@
 
   &-STORAGE {
     position: absolute;
-    top: 35px;
-    left: 40px;
-    width: 170px;
-    height: 240px;
+    top: 232px;
+    left: 490px;
+    width: 110px;
+    height: 82px;
     cursor: pointer;
 
     &:hover {
@@ -131,12 +144,12 @@
     }
   }
 
-  &-ELDER {
+  &-POWER_STATION {
     position: absolute;
-    top: 65px;
-    left: 665px;
-    width: 175px;
-    height: 110px;
+    top: 10px;
+    left: 578px;
+    width: 135px;
+    height: 80px;
     cursor: pointer;
 
     &:hover {

@@ -38,13 +38,7 @@ const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest }: GuildDisplayPro
     }
 
     const start = page * 4;
-    const end =
-      start +
-      (page === 0
-        ? Math.min(4, idleHeroes.length)
-        : lPage === page && idleHeroes.length % 4 !== 0
-        ? idleHeroes.length % 4
-        : 4);
+    const end = start + (page === 0 ? Math.min(4, idleHeroes.length) : lPage === page && idleHeroes.length % 4 !== 0 ? idleHeroes.length % 4 : 4);
 
     setLastPage(lPage);
     setHeroesOnPage(idleHeroes.slice(start, end));
@@ -78,9 +72,7 @@ const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest }: GuildDisplayPro
       <QuestScrollList quests={quests} />
       <HeroList heroes={heroesOnPage} quests={quests} heroesAssignedToQuest={heroesAssignedToQuest} />
       <button className="guild-display__btn--show-unabled" onClick={switchShowUnabled}>
-        <i className="material-icons guild-display__btn--show-unabled-icon">
-          {!showUnabledHeroes ? "check_box" : "check_box_outline_blank"}
-        </i>
+        <i className="material-icons guild-display__btn--show-unabled-icon">{!showUnabledHeroes ? "check_box" : "check_box_outline_blank"}</i>
         <span>Только свободные</span>
       </button>
       <button className="guild-display__btn--previous" style={prevPageBtnStyle} onClick={() => switchPage(-1)}></button>
