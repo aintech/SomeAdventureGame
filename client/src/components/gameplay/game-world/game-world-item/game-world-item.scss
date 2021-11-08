@@ -3,10 +3,10 @@
 .game-world__building {
   &-GUILD_OFFICE {
     position: absolute;
-    top: 232px;
-    left: 317px;
-    width: 110px;
-    height: 88px;
+    top: 150px;
+    left: 280px;
+    width: 140px;
+    height: 130px;
     cursor: pointer;
 
     &:hover {
@@ -16,99 +16,8 @@
 
   &-MERCENARY_HUB {
     position: absolute;
-    top: 373px;
-    left: 616px;
-    width: 114px;
-    height: 90px;
-    cursor: pointer;
-
-    &:hover {
-      border: 1px solid yellow;
-    }
-  }
-
-  &-CABINS {
-    position: absolute;
-    top: 510px;
-    left: 532px;
-    width: 102px;
-    height: 95px;
-    cursor: pointer;
-
-    &:hover {
-      border: 1px solid yellow;
-    }
-  }
-
-  &-HANGAR {
-    position: absolute;
-    top: 443px;
-    left: 35px;
-    width: 82px;
-    height: 93px;
-    cursor: pointer;
-
-    &:hover {
-      border: 1px solid yellow;
-    }
-  }
-
-  &-MEDBAY {
-    position: absolute;
-    top: 0;
-    left: 203px;
-    width: 95px;
-    height: 85px;
-    cursor: pointer;
-
-    &:hover {
-      border: 1px solid yellow;
-    }
-  }
-
-  &-LABORATORY {
-    position: absolute;
-    top: 275px;
-    left: 5px;
-    width: 110px;
-    height: 103px;
-    cursor: pointer;
-
-    &:hover {
-      border: 1px solid yellow;
-    }
-  }
-
-  &-PRODUCTION_COMPLEX {
-    position: absolute;
-    top: 170px;
-    left: 580px;
-    width: 86px;
-    height: 60px;
-    cursor: pointer;
-
-    &:hover {
-      border: 1px solid yellow;
-    }
-  }
-
-  &-MARKET {
-    position: absolute;
-    top: 393px;
-    left: 276px;
-    width: 125px;
-    height: 120px;
-    cursor: pointer;
-
-    &:hover {
-      border: 1px solid yellow;
-    }
-  }
-
-  &-COMMAND_CENTER {
-    position: absolute;
-    top: 85px;
-    left: 57px;
+    top: 15px;
+    left: 350px;
     width: 100px;
     height: 110px;
     cursor: pointer;
@@ -118,12 +27,103 @@
     }
   }
 
+  &-CABINS {
+    position: absolute;
+    top: 300px;
+    left: 325px;
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid yellow;
+    }
+  }
+
+  &-HANGAR {
+    position: absolute;
+    top: 415px;
+    left: 55px;
+    width: 110px;
+    height: 90px;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid yellow;
+    }
+  }
+
+  &-MEDBAY {
+    position: absolute;
+    top: 15px;
+    left: 165px;
+    width: 105px;
+    height: 110px;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid yellow;
+    }
+  }
+
+  &-LABORATORY {
+    position: absolute;
+    top: 290px;
+    left: 10px;
+    width: 70px;
+    height: 105px;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid yellow;
+    }
+  }
+
+  &-PRODUCTION_COMPLEX {
+    position: absolute;
+    top: 280px;
+    left: 475px;
+    width: 75px;
+    height: 80px;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid yellow;
+    }
+  }
+
+  &-MARKET {
+    position: absolute;
+    top: 305px;
+    left: 125px;
+    width: 125px;
+    height: 95px;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid yellow;
+    }
+  }
+
+  &-COMMAND_CENTER {
+    position: absolute;
+    top: 115px;
+    left: 50px;
+    width: 105px;
+    height: 105px;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid yellow;
+    }
+  }
+
   &-TRAINING_GROUND {
     position: absolute;
-    top: 50px;
-    left: 343px;
-    width: 168px;
-    height: 100px;
+    top: 380px;
+    left: 430px;
+    width: 90px;
+    height: 110px;
     cursor: pointer;
 
     &:hover {
@@ -133,10 +133,10 @@
 
   &-STORAGE {
     position: absolute;
-    top: 232px;
-    left: 490px;
-    width: 110px;
-    height: 82px;
+    top: 150px;
+    left: 430px;
+    width: 90px;
+    height: 110px;
     cursor: pointer;
 
     &:hover {
@@ -146,10 +146,10 @@
 
   &-POWER_STATION {
     position: absolute;
-    top: 10px;
-    left: 578px;
-    width: 135px;
-    height: 80px;
+    top: 40px;
+    left: 490px;
+    width: 125px;
+    height: 105px;
     cursor: pointer;
 
     &:hover {

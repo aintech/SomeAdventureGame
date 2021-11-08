@@ -3,7 +3,8 @@
 .game-world {
   @include absoluteCenter;
   display: block;
-  width: 733px;
-  height: 618px;
+  width: 620px;
+  height: 620px;
   background-image: url(../../../img/station.png);
+  z-index: 10;
 }

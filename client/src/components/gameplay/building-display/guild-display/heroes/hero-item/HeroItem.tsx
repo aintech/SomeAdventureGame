@@ -64,7 +64,7 @@ const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, hitted, healed
       </button>
       <div className={`hero-item__portrait--${HeroType[hero.type].toLowerCase()}`}></div>
       <div className="hero-item__type-level">
-        {display(hero.type)} <br></br> {hero.level.lvl} ур. - {hero.level.definition}
+        {display(hero.type)} <br></br> {hero.level.definition}
       </div>
       <canvas className="hero-item__health-bar" ref={healthRef} width={canvasW} height={canvasH} />
       <canvas className="hero-item__exp-bar" ref={expRef} width={canvasW} height={canvasH} />

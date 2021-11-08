@@ -1,18 +1,17 @@
 @import "../../../../utils/css/index.scss";
 
 .guild-display {
-  width: $overlay_display_width;
-  height: $overlay_display_height;
-  background-image: url(../../../../img/building-display/guild-display/guild-display__container.png);
-  background-size: contain;
+  &__name {
+    @include buildingDisplayName;
+  }
 
   &__btn--show-unabled {
     font-family: inherit;
     font-size: 20px;
     display: flex;
     position: absolute;
-    top: 20px;
-    right: 85px;
+    top: 30px;
+    right: 90px;
     background-color: transparent;
     border: 1px solid yellowgreen;
     color: yellowgreen;
@@ -37,11 +36,12 @@
 
   @mixin pageBtn {
     position: absolute;
-    top: 540px; // to-gameplay-scale(700px);
-    width: 200px; // to-gameplay-scale(260px);
-    height: 30px; // to-gameplay-scale(38px);
+    top: 540px;
+    width: 150px;
+    height: 30px;
     background-image: url(../../../../img/building-display/guild-display/guild-scroll_hero.png);
     background-size: cover;
+    background-position-x: -20px;
     border: none;
     outline: none;
     background-color: transparent;
@@ -49,7 +49,7 @@
 
   &__btn--previous {
     @include pageBtn;
-    left: 640px; // to-gameplay-scale(830px);
+    left: 670px;
 
     &:hover {
       background-image: url(../../../../img/building-display/guild-display/guild-btn_scroll_hero_hover.png);
@@ -58,7 +58,7 @@
 
   &__btn--next {
     @include pageBtn;
-    left: 840px; // to-gameplay-scale(1090px);
+    left: 840px;
     transform: scale(-1);
 
     &:hover {

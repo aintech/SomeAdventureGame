@@ -125,8 +125,8 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
           onClick={this.showUpgradeConfirm.bind(this)}
           disabled={upgradeDisabled}
         >
-          &uarr; lvl <span className="building-display__btn-upgrade__span">{chosenBuilding.level + 1}</span> -{" "}
-          <span className="building-display__btn-upgrade__span">{chosenBuilding.upgrade.cost}</span> ec
+          &uarr; lvl <span className="building-display__btn-upgrade__span">{chosenBuilding.level + 1}</span> |
+          <span className="building-display__btn-upgrade__span"> {chosenBuilding.upgrade.cost}</span> ec
         </button>
       ) : null;
 

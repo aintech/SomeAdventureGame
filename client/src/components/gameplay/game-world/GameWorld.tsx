@@ -5,6 +5,7 @@ import { buildingClicked } from "../../../actions/Actions";
 import Building from "../../../models/Building";
 import GameWorldItem from "./game-world-item/GameWorldItem";
 import "./game-world.scss";
+import "./starfield.scss";
 
 type GameWorldProps = {
   buildings: Building[];
@@ -13,10 +14,12 @@ type GameWorldProps = {
 
 const GameWorld = ({ buildings, onBuildingClicked }: GameWorldProps) => {
   return (
-    <div className="game-world">
-      {buildings.map((building) => (
-        <GameWorldItem key={building.type} building={building} onBuildingClicked={() => onBuildingClicked(building)} />
-      ))}
+    <div className="starfield">
+      <div className="game-world">
+        {buildings.map((building) => (
+          <GameWorldItem key={building.type} building={building} onBuildingClicked={() => onBuildingClicked(building)} />
+        ))}
+      </div>
     </div>
   );
 };

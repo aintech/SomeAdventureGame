@@ -1,0 +1,7 @@
+@import "../../../utils/css/index.scss";
+
+.starfield {
+  width: 100%;
+  height: calc(100vh - #{$header_height});
+  background-image: url(../../../img/space.jpg);
+}
