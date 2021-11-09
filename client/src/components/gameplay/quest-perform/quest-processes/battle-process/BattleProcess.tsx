@@ -1,4 +1,6 @@
 import { MouseEvent } from "react";
+import Hero, { maxHealth } from "../../../../../models/hero/Hero";
+import { ItemSubtype } from "../../../../../models/Item";
 import Loader from "../../../../loader/Loader";
 import CheckpointActor, { convertToActor } from "../../quest-processes/process-helpers/CheckpointActor";
 import { create } from "../../quest-processes/process-helpers/Color";
@@ -36,7 +38,7 @@ const mandatoryGifs = () => {
 };
 
 type BattleProcessProps = QuestProcessProps & {
-  heroReaction: (heroId: number, type: HeroReactionType, amount: number) => void;
+  heroesReactions: (reactions: Map<number, Map<HeroReactionType, number>>) => void;
   resetAnim: () => void;
   moveOnwards: (
     won: boolean,
@@ -244,16 +246,21 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
     if (seconds <= 0) {
       return;
     }
-    //TODO: отдельный метод на анимации, чтобы могли длиться больше секунды, что-то типа countDownAnim
-    this.props.resetAnim();
 
-    // Map<number, Map<HeroRe
+    const { enemies, battleEvents } = this.state;
+    const { heroes, resetAnim, heroesReactions } = this.props;
 
-    this.state.enemies
-      .filter((e) => e.currentHealth > 0)
+    const events: Map<number, HeroEvent[]> = new Map(battleEvents);
+
+    resetAnim();
+
+    const reactions: Map<number, Map<HeroReactionType, number>> = new Map();
+
+    enemies
+      .filter((enemy) => enemy.currentHealth > 0)
       .forEach((enemy) => {
         if (seconds % enemy.stats.initiative === 0) {
-          const aliveHeroes = this.props.heroes.filter((h) => h.health > 0);
+          const aliveHeroes = heroes.filter((h) => h.health > 0);
           if (aliveHeroes.length > 0) {
             const target = aliveHeroes[Math.floor(Math.random() * aliveHeroes.length)];
             if (enemy.stats.power > target.stats.defence + target.equipStats.defence) {
@@ -262,22 +269,84 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
                 damage = target.health;
               }
 
-              // CONTINUE: На одной секунде должно быть одна рекакция героя (лечение имеет приоритет над уроном)
-              // чтобы нормально отыгрывалась анимация
-              this.props.heroReaction(target.id, HeroReactionType.HEAL, -damage);
+              this.addHeroReaction(reactions, target, HeroReactionType.HITTED, -damage);
 
-              const { battleEvents } = this.state;
               const event = { time: new Date().getTime(), hpAlter: -damage };
-              if (battleEvents.has(target.id)) {
-                battleEvents.get(target.id)!.push(event);
+              if (events.has(target.id)) {
+                events.get(target.id)!.push(event);
               } else {
-                battleEvents.set(target.id, [event]);
+                events.set(target.id, [event]);
               }
-              this.setState({ battleEvents });
             }
           }
         }
       });
+
+    heroes.forEach((hero) => {
+      const currHealth = hero.health + (reactions.get(hero.id)?.get(HeroReactionType.HITTED) ?? 0);
+      const totalHealth = maxHealth(hero);
+
+      if (currHealth > 0 && currHealth / totalHealth < 0.3) {
+        const potion = this.pickHealthPotion(hero);
+
+        if (potion) {
+          let healAmount = 0;
+
+          switch (potion.subtype) {
+            case ItemSubtype.HEALTH_ELIXIR:
+              healAmount = totalHealth - currHealth;
+              break;
+            case ItemSubtype.HEALTH_POTION:
+              healAmount = maxHealth(hero) * 0.5;
+              if (healAmount + currHealth > totalHealth) {
+                healAmount = totalHealth - currHealth;
+              }
+              break;
+            default:
+              throw new Error(`Unknown potion type ${ItemSubtype[potion.subtype]}`);
+          }
+
+          this.addHeroReaction(reactions, hero, HeroReactionType.HEALED, healAmount);
+
+          const event = { time: new Date().getTime(), hpAlter: healAmount };
+          if (events.has(hero.id)) {
+            events.get(hero.id)!.push(event);
+          } else {
+            events.set(hero.id, [event]);
+          }
+        }
+      }
+    });
+
+    if (events.size !== battleEvents.size) {
+      this.setState({ battleEvents: events });
+    }
+
+    heroesReactions(reactions);
+  }
+
+  pickHealthPotion(hero: Hero) {
+    let potion = hero.items.filter((i) => i.subtype === ItemSubtype.HEALTH_POTION)[0];
+    if (!potion) {
+      potion = hero.items.filter((i) => i.subtype === ItemSubtype.HEALTH_ELIXIR)[0];
+    }
+
+    return potion;
+  }
+
+  addHeroReaction(reactions: Map<number, Map<HeroReactionType, number>>, hero: Hero, type: HeroReactionType, amount: number) {
+    if (reactions.has(hero.id)) {
+      if (reactions.get(hero.id)!.has(type)) {
+        const existed = reactions.get(hero.id)!.get(type)!;
+        reactions.get(hero.id)!.set(type, existed + amount);
+      } else {
+        reactions.get(hero.id)!.set(type, amount);
+      }
+    } else {
+      const reaction: Map<HeroReactionType, number> = new Map();
+      reaction.set(type, amount);
+      reactions.set(hero.id, reaction);
+    }
   }
 
   checkCurrentEnemy() {

@@ -27,7 +27,37 @@
   }
 }
 
+@keyframes hitted2 {
+  0% {
+    transform: translate(3px, 5px);
+  }
+  25% {
+    transform: translate(-3px, 3px);
+  }
+  50% {
+    transform: translate(3px, 1px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
 @keyframes heal-playing {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.5);
+  }
+}
+
+@keyframes heal-playing2 {
   0% {
     opacity: 0;
     transform: scale(1);
@@ -215,12 +245,22 @@
   }
 
   &--hitted {
-    animation: hitted 0.8s;
+    animation: hitted 0.5s;
+    animation-iteration-count: 1;
+  }
+
+  &--hitted2 {
+    animation: hitted2 0.5s;
     animation-iteration-count: 1;
   }
 }
 
 .heal-icon_playing {
   animation: heal-playing 1s;
+  animation-iteration-count: 1;
+}
+
+.heal-icon_playing2 {
+  animation: heal-playing2 1s;
   animation-iteration-count: 1;
 }

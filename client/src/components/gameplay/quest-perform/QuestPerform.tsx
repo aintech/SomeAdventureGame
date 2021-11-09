@@ -11,16 +11,23 @@ import { CheckpointPassedBody } from "../../../services/QuestService";
 import { shallowCopy } from "../../../utils/Utils";
 import Loader from "../../loader/Loader";
 import HeroItem from "../building-display/guild-display/heroes/hero-item/HeroItem";
-import BattleProcess, { HeroEvent } from "./quest-processes/battle-process/BattleProcess";
 import QuestComplete from "./quest-complete/QuestComplete";
 import QuestMap from "./quest-map/QuestMap";
 import "./quest-perform.scss";
+import BattleProcess, { HeroEvent } from "./quest-processes/battle-process/BattleProcess";
 import TreasureProcess from "./quest-processes/treasure-process/TreasureProcess";
 
 export enum HeroReactionType {
-  HIT,
-  HEAL,
+  HITTED,
+  HEALED,
 }
+
+const initialReactions = () => {
+  const initials: Map<HeroReactionType, number[]> = new Map();
+  initials.set(HeroReactionType.HITTED, []);
+  initials.set(HeroReactionType.HEALED, []);
+  return initials;
+};
 
 export type QuestPerformData = {
   quest: Quest;
@@ -40,8 +47,13 @@ const QuestPerform = ({ quest, heroes, heroClicked, onCheckpointPassed, onComple
   const [activeCheckpoint, setActiveCheckpoint] = useState<QuestCheckpoint>();
   const [heroRewards, setHeroRewards] = useState<Map<number, { gold: number; experience: number }>>(new Map());
   const [heroActors, setHeroActors] = useState<Hero[]>([]);
-  const [hitted, setHitted] = useState<number>(-1);
-  const [healed, setHealed] = useState<number>(-1);
+
+  const [reacted, setReacted] = useState<Map<HeroReactionType, number[]>>(initialReactions());
+
+  // Т.к. герой может реагировать каждый раунд пришлось придумать такую переключалку
+  // иначе анимация не поймёт что ей надо переиграть, т.к. класс в HeroItem уже будет выставлен в анимацию
+  const [heroHittedMemo, setHeroHittedMemo] = useState<number[]>([]);
+  const [heroHealedMemo, setHeroHealedMemo] = useState<number[]>([]);
 
   useEffect(() => {
     setHeroActors(heroes.map((h) => shallowCopy(h)));
@@ -69,26 +81,57 @@ const QuestPerform = ({ quest, heroes, heroClicked, onCheckpointPassed, onComple
     }
   };
 
-  const heroReaction = (heroId: number, type: HeroReactionType, amount: number) => {
+  const heroesReactions = (reactions: Map<number, Map<HeroReactionType, number>>) => {
     const actors = [...heroActors];
-    const hero = actors.find((h) => h.id === heroId)!;
-    hero.health += amount;
-    if (hero.health < 0) {
-      hero.health = 0;
-    }
-    if (hero.health > maxHealth(hero)) {
-      hero.health = maxHealth(hero);
-    }
-    setHeroActors(actors);
-    switch (type) {
-      case HeroReactionType.HIT:
-        setHitted(heroId);
-        break;
-      case HeroReactionType.HEAL:
-        setHealed(heroId);
-        break;
-      default:
-        throw new Error(`Unknown reaction type ${HeroReactionType[type]}`);
+    const toReacted = initialReactions();
+
+    reactions.forEach((reaction, heroId) => {
+      const hero = actors.find((h) => h.id === heroId)!;
+
+      let healthAdjust = 0;
+
+      reaction.forEach((amount, type) => {
+        if (!toReacted.get(type)!.includes(heroId)) {
+          toReacted.get(type)!.push(heroId);
+        }
+        healthAdjust += amount;
+      });
+
+      hero.health += healthAdjust;
+      if (hero.health < 0) {
+        hero.health = 0;
+      }
+      if (hero.health > maxHealth(hero)) {
+        hero.health = maxHealth(hero);
+      }
+    });
+
+    if (reactions.size > 0) {
+      const toHitted = [...heroHittedMemo];
+      const toHealed = [...heroHealedMemo];
+
+      toReacted.get(HeroReactionType.HITTED)!.forEach((heroId) => {
+        if (toHitted.includes(heroId)) {
+          const idx = toHitted.indexOf(heroId);
+          toHitted.splice(idx, 1);
+        } else {
+          toHitted.push(heroId);
+        }
+      });
+
+      toReacted.get(HeroReactionType.HEALED)!.forEach((heroId) => {
+        if (toHealed.includes(heroId)) {
+          const idx = toHealed.indexOf(heroId);
+          toHealed.splice(idx, 1);
+        } else {
+          toHealed.push(heroId);
+        }
+      });
+
+      setHeroActors(actors);
+      setReacted(toReacted);
+      setHeroHittedMemo(toHitted);
+      setHeroHealedMemo(toHealed);
     }
   };
 
@@ -100,12 +143,10 @@ const QuestPerform = ({ quest, heroes, heroClicked, onCheckpointPassed, onComple
           <BattleProcess
             checkpoint={activeCheckpoint}
             heroes={heroActors}
-            heroReaction={heroReaction}
+            heroesReactions={heroesReactions}
             resetAnim={() => {
-              setHitted(-1);
-              setHealed(-1);
+              setReacted(initialReactions());
             }}
-            // checkpointPassed={passCheckpoint}
             moveOnwards={completeCheckpoint}
             closeCheckpoint={() => setActiveCheckpoint(undefined)}
             setHeroRewards={setHeroRewards}
@@ -150,8 +191,8 @@ const QuestPerform = ({ quest, heroes, heroClicked, onCheckpointPassed, onComple
               key={hero.id}
               hero={hero}
               enabled={true}
-              hitted={hitted === hero.id}
-              healed={healed === hero.id}
+              hitted={!reacted.get(HeroReactionType.HITTED)!.includes(hero.id) ? undefined : heroHittedMemo.includes(hero.id)}
+              healed={!reacted.get(HeroReactionType.HEALED)!.includes(hero.id) ? undefined : heroHealedMemo.includes(hero.id)}
               itemClickHandler={(event) => heroClickHandler(hero, event)}
               reward={heroRewards.get(hero.id)}
             />
