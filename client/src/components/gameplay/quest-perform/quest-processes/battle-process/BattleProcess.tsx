@@ -85,7 +85,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
 
     const enemies = [...checkpoint.enemies!.map((e, idx) => convertToActor(e, idx))].sort((a, b) => a.index - b.index);
 
-    const clickPower = this.props.heroes.reduce((a, b) => a + b.stats.power + b.equipStats.power, 0);
+    const clickPower = this.props.heroes.reduce((a, b) => a + b.stats.power + b.equipStats.power, 0) * 100;
 
     this.setState({ enemies, currentEnemy: enemies[0], clickPower });
 
@@ -286,7 +286,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
       const currHealth = hero.health + (reactions.get(hero.id)?.get(HeroReactionType.HITTED) ?? 0);
       const totalHealth = maxHealth(hero);
 
-      if (currHealth > 0 && currHealth / totalHealth < 0.3) {
+      if (currHealth > 0 && currHealth / totalHealth < 0.9) {
         const potion = this.pickHealthPotion(hero);
 
         if (potion) {
@@ -308,7 +308,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
 
           this.addHeroReaction(reactions, hero, HeroReactionType.HEALED, healAmount);
 
-          const event = { time: new Date().getTime(), hpAlter: healAmount };
+          const event = { time: new Date().getTime(), itemId: potion.id, hpAlter: healAmount };
           if (events.has(hero.id)) {
             events.get(hero.id)!.push(event);
           } else {
@@ -326,9 +326,20 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
   }
 
   pickHealthPotion(hero: Hero) {
-    let potion = hero.items.filter((i) => i.subtype === ItemSubtype.HEALTH_POTION)[0];
+    if (hero.items.length === 0) {
+      return;
+    }
+
+    let potions = hero.items.filter((i) => i.subtype === ItemSubtype.HEALTH_POTION && i.amount > 0);
+    let potion = potions.length === 0 ? undefined : potions[0];
+
     if (!potion) {
-      potion = hero.items.filter((i) => i.subtype === ItemSubtype.HEALTH_ELIXIR)[0];
+      potions = hero.items.filter((i) => i.subtype === ItemSubtype.HEALTH_ELIXIR && i.amount > 0);
+      potion = potions.length === 0 ? undefined : potions[0];
+    }
+
+    if (potion) {
+      potion.amount--;
     }
 
     return potion;

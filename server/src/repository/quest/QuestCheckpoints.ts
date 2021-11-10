@@ -1,6 +1,7 @@
 import { CheckpointPassedBody } from "../../routes/QuestRoutes";
 import query, { single } from "../Db";
 import { adjustGoldExperience, adjustHealth, HeroWithSkills } from "../hero/Hero";
+import { adjustItems } from "../Item";
 import { Monster } from "../Monster";
 import { getQuestProgress } from "./QuestProgress";
 
@@ -89,11 +90,7 @@ export const getQuestCheckpointsByQuest = async (userId: number, questId: number
   return getQuestCheckpoints([progress.id]);
 };
 
-export const checkpointPassed = async (
-  checkpoint: QuestCheckpointWithProgress,
-  heroes: HeroWithSkills[],
-  result: CheckpointPassedBody
-) => {
+export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress, heroes: HeroWithSkills[], result: CheckpointPassedBody) => {
   if (checkpoint.passed) {
     return;
   }
@@ -134,6 +131,17 @@ export const checkpointPassed = async (
           .forEach((e) => {
             hpAdjust += e.hpAlter ?? 0;
           });
+
+        const usedItems: Map<number, number> = new Map();
+        events
+          .filter((e) => e.itemId)
+          .forEach((e) => {
+            usedItems.set(e.itemId!, (usedItems.get(e.itemId!) ?? 0) - 1);
+          });
+
+        usedItems.forEach((amount, itemId) => {
+          adjustments.push(adjustItems(h.id, itemId, amount));
+        });
 
         adjustments.push(adjustHealth(h.id, hpAdjust));
       }
