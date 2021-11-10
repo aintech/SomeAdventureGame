@@ -3,7 +3,7 @@ import Hero, { maxHealth } from "../../../../../models/hero/Hero";
 import { ItemSubtype } from "../../../../../models/Item";
 import Loader from "../../../../loader/Loader";
 import CheckpointActor, { convertToActor } from "../../quest-processes/process-helpers/CheckpointActor";
-import { create } from "../../quest-processes/process-helpers/Color";
+import { rgba } from "../../quest-processes/process-helpers/Color";
 import {
   addToHitsDrawQueue,
   clearCtx as clearDrawCtx,
@@ -30,7 +30,7 @@ enum ProcessState {
 }
 
 const mandatoryImages = () => {
-  return [ImageType.RESULT_BACK, ImageType.RESULT_GOLD];
+  return [ImageType.RESULT_BACK, ImageType.RESULT_GOLD, ImageType.ENERGY_DROP];
 };
 
 const mandatoryGifs = () => {
@@ -85,7 +85,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
 
     const enemies = [...checkpoint.enemies!.map((e, idx) => convertToActor(e, idx))].sort((a, b) => a.index - b.index);
 
-    const clickPower = this.props.heroes.reduce((a, b) => a + b.stats.power + b.equipStats.power, 0) * 100;
+    const clickPower = this.props.heroes.reduce((a, b) => a + b.stats.power + b.equipStats.power, 0);
 
     this.setState({ enemies, currentEnemy: enemies[0], clickPower });
 
@@ -107,7 +107,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
       this.setState({
         processState: ProcessState.PREPARE,
         beginTime: new Date(),
-        eventMessages: [new EventMessage(2, { x: 0, y: 0 }, 72, "BEGIN", create(255, 255), Direction.CENTER, Effect.FADE_IN_OUT)],
+        eventMessages: [new EventMessage(2, { x: 0, y: 0 }, 72, "BEGIN", rgba(255, 255), Direction.CENTER, Effect.FADE_IN_OUT)],
       });
 
       this.drawStatic();
@@ -233,7 +233,9 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
           }
 
           const { eventMessages } = this.state;
-          eventMessages.push(new EventMessage(1, click, 32, `- ${damage} hp`, create(255), Direction.RIGHT, Effect.FLY_AWAY));
+          eventMessages.push(
+            new EventMessage(1, click, 32, `- ${damage}hp`, rgba(255), Math.random() < 0.5 ? Direction.RIGHT : Direction.LEFT, Effect.FLY_AWAY)
+          );
 
           this.setState({ currentEnemy, eventMessages }, () => this.drawStatic());
         }
@@ -286,7 +288,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
       const currHealth = hero.health + (reactions.get(hero.id)?.get(HeroReactionType.HITTED) ?? 0);
       const totalHealth = maxHealth(hero);
 
-      if (currHealth > 0 && currHealth / totalHealth < 0.9) {
+      if (currHealth > 0 && currHealth / totalHealth < 0.3) {
         const potion = this.pickHealthPotion(hero);
 
         if (potion) {

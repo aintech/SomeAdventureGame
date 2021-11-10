@@ -29,7 +29,7 @@ enum ProcessState {
 }
 
 const mandatoryImages = () => {
-  return [ImageType.CHEST_CLOSED, ImageType.CHEST_OPENED, ImageType.RESULT_BACK, ImageType.RESULT_GOLD];
+  return [ImageType.CHEST_CLOSED, ImageType.CHEST_OPENED, ImageType.RESULT_BACK, ImageType.RESULT_GOLD, ImageType.ENERGY_DROP];
 };
 
 const mandatoryGifs = () => {
@@ -192,10 +192,7 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
 
   drawFrame() {
     clearDynamicDrawCtx();
-    drawTreasureChest(
-      this.state.processState === ProcessState.DROPS || this.state.processState === ProcessState.AFTERMATH,
-      this.chestPos
-    );
+    drawTreasureChest(this.state.processState === ProcessState.DROPS || this.state.processState === ProcessState.AFTERMATH, this.chestPos);
     this.drawCommon();
     this.checkTreasureInTarget();
   }

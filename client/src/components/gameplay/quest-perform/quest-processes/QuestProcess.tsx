@@ -2,7 +2,7 @@ import { Component, createRef, MouseEvent } from "react";
 import Hero from "../../../../models/hero/Hero";
 import QuestCheckpoint from "../../../../models/QuestCheckpoint";
 import { lerpXY, Position } from "../../../../utils/Utils";
-import { create } from "./process-helpers/Color";
+import { rgba } from "./process-helpers/Color";
 import { drawDrops, drawMessages } from "./process-helpers/DrawManager";
 import { Drop, DropType } from "./process-helpers/Drop";
 import { Direction, Effect, EventMessage } from "./process-helpers/EventMessage";
@@ -100,9 +100,9 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
             1,
             click,
             32,
-            `+ ${drop.amount} g`,
-            create(255, 255),
-            Direction.RIGHT,
+            `+ ${drop.amount}c`,
+            rgba(230, 230, 255),
+            Math.random() < 0.5 ? Direction.RIGHT : Direction.LEFT,
             Effect.FLY_AWAY
           );
           break;
@@ -121,9 +121,7 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
   }
 
   checkEndedMessages() {
-    const endedMessages = this.state.eventMessages.filter(
-      (m) => m.fireTime().getTime() + m.lifetime * 1000 < new Date().getTime()
-    );
+    const endedMessages = this.state.eventMessages.filter((m) => m.fireTime().getTime() + m.lifetime * 1000 < new Date().getTime());
 
     if (endedMessages.length > 0) {
       const filteredMessages = this.state.eventMessages;
@@ -161,9 +159,7 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
     }
 
     let gold = 0;
-    const collectedGold = drops
-      .filter((d) => d.type === DropType.GOLD && d.collected)
-      .reduce((a, b) => a + b.amount, 0);
+    const collectedGold = drops.filter((d) => d.type === DropType.GOLD && d.collected).reduce((a, b) => a + b.amount, 0);
 
     gold = Math.ceil((collectedGold + (withTribute ? checkpoint.tribute : 0)) / heroes.length);
 

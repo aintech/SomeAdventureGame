@@ -9,6 +9,7 @@ import ChestClosedImgSrc from "../../../../../img/quest-perform/treasure-process
 import ChestOpenedImgSrc from "../../../../../img/quest-perform/treasure-process/treasure__chest_opened.png";
 import ResultBackImgSrc from "../../../../../img/quest-perform/quest-process-result/result__background.png";
 import ResultGoldImgSrc from "../../../../../img/quest-perform/quest-process-result/result__gold_icon.png";
+import EnergyDropImgSrc from "../../../../../img/quest-perform/energy-drop.png";
 import Gif from "../../../../../utils/Gif";
 import GifLoader from "../../../../../utils/gif-loader";
 
@@ -24,6 +25,8 @@ export enum ImageType {
 
   RESULT_BACK,
   RESULT_GOLD,
+
+  ENERGY_DROP,
 }
 
 const gifs: Map<ImageType, Gif> = new Map();
@@ -97,6 +100,8 @@ export const getUrlByType = (type: ImageType) => {
       return ResultBackImgSrc;
     case ImageType.RESULT_GOLD:
       return ResultGoldImgSrc;
+    case ImageType.ENERGY_DROP:
+      return EnergyDropImgSrc;
     default:
       throw new Error(`Tyimg fetch url for unknown type ${ImageType[type]}`);
   }

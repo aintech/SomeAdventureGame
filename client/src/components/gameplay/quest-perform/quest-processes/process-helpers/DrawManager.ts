@@ -17,12 +17,7 @@ const hits: { idx: number; pos: Position; gif: Gif; frame: number }[] = [];
 
 /**-------------------------- COMMON -------------------------------*/
 
-export const prepare = async (
-  ctx: CanvasRenderingContext2D,
-  dynamicCtx: CanvasRenderingContext2D,
-  images?: ImageType[],
-  gifs?: ImageType[]
-) => {
+export const prepare = async (ctx: CanvasRenderingContext2D, dynamicCtx: CanvasRenderingContext2D, images?: ImageType[], gifs?: ImageType[]) => {
   canvasCtx = ctx;
   dynamicCanvasCtx = dynamicCtx;
   return Promise.all([
@@ -65,7 +60,7 @@ export const drawDrops = (drops: Drop[]) => {
       let img;
       switch (drop.type) {
         case DropType.GOLD:
-          img = drawDatas.get(ImageType.RESULT_GOLD)!.image();
+          img = drawDatas.get(ImageType.ENERGY_DROP)!.image();
           break;
         default:
           throw new Error(`Unknown drop type ${DropType[drop.type]}`);
@@ -143,13 +138,7 @@ const drawText = (
   ctx.lineCap = "round";
 };
 
-export const drawStaticText = (
-  text: string,
-  pos: CenteredPosition,
-  fontSize?: number,
-  color?: Color | string,
-  stroke?: Color | string
-) => {
+export const drawStaticText = (text: string, pos: CenteredPosition, fontSize?: number, color?: Color | string, stroke?: Color | string) => {
   drawText(canvasCtx, text, pos, fontSize, color, stroke);
 };
 
@@ -206,13 +195,7 @@ export const drawBattleCompleted = (checkpoint: QuestCheckpoint, won: boolean, d
   canvasCtx.fillRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
 
   let img = drawDatas.get(ImageType.RESULT_BACK)!;
-  canvasCtx.drawImage(
-    img.image(),
-    canvasCtx.canvas.width * 0.5 - img.width() * 0.25,
-    -img.height() * 0.25,
-    img.width() * 0.5,
-    img.height() * 0.5
-  );
+  canvasCtx.drawImage(img.image(), canvasCtx.canvas.width * 0.5 - img.width() * 0.25, -img.height() * 0.25, img.width() * 0.5, img.height() * 0.5);
 
   if (won) {
     img = drawDatas.get(ImageType.RESULT_GOLD)!;
@@ -220,15 +203,8 @@ export const drawBattleCompleted = (checkpoint: QuestCheckpoint, won: boolean, d
 
     drawText(canvasCtx, `Exp: ${checkpoint.enemies!.reduce((a, b) => a + b.experience, 0)}`, { x: 150, y: 275 }, 72);
 
-    const collectedGold = drops
-      .filter((d) => d.type === DropType.GOLD && d.collected)
-      .reduce((a, b) => a + b.amount, 0);
-    drawText(
-      canvasCtx,
-      `${checkpoint.tribute}${collectedGold > 0 ? " + " + collectedGold : ""}`,
-      { x: 250, y: 375 },
-      72
-    );
+    const collectedGold = drops.filter((d) => d.type === DropType.GOLD && d.collected).reduce((a, b) => a + b.amount, 0);
+    drawText(canvasCtx, `${checkpoint.tribute}${collectedGold > 0 ? " + " + collectedGold : ""}`, { x: 250, y: 375 }, 72);
   }
 };
 
@@ -247,14 +223,7 @@ export const drawTarget = (pos: Position, radius: number) => {
 export const drawTreasureChest = (opened: boolean, offset: Position & { rotation: number }) => {
   let img = drawDatas.get(opened ? ImageType.CHEST_OPENED : ImageType.CHEST_CLOSED)!;
 
-  dynamicCanvasCtx.setTransform(
-    1,
-    0,
-    0,
-    1,
-    dynamicCanvasCtx.canvas.width * 0.5 + offset.x,
-    dynamicCanvasCtx.canvas.height + offset.y - 100
-  );
+  dynamicCanvasCtx.setTransform(1, 0, 0, 1, dynamicCanvasCtx.canvas.width * 0.5 + offset.x, dynamicCanvasCtx.canvas.height + offset.y - 100);
   dynamicCanvasCtx.rotate((offset.rotation * Math.PI) / 180);
   dynamicCanvasCtx.drawImage(img.image(), -img.width() * 0.5, -img.height() * 0.5, img.width(), img.height());
   dynamicCanvasCtx.rotate((-offset.rotation * Math.PI) / 180);
@@ -266,13 +235,7 @@ export const drawTreasureCompleted = (gold?: number) => {
   canvasCtx.fillRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
 
   let img = drawDatas.get(ImageType.RESULT_BACK)!;
-  canvasCtx.drawImage(
-    img.image(),
-    canvasCtx.canvas.width * 0.5 - img.width() * 0.25,
-    -img.height() * 0.25,
-    img.width() * 0.5,
-    img.height() * 0.5
-  );
+  canvasCtx.drawImage(img.image(), canvasCtx.canvas.width * 0.5 - img.width() * 0.25, -img.height() * 0.25, img.width() * 0.5, img.height() * 0.5);
 
   if (gold) {
     img = drawDatas.get(ImageType.RESULT_GOLD)!;
