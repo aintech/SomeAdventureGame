@@ -1,9 +1,12 @@
 import GoblinImgSrc from "../../../../../img/quest-perform/battle-process/actors/goblin.png";
 import GoblinPrtImgSrc from "../../../../../img/quest-perform/battle-process/actors/goblin-prt.png";
+import GoblinHitImgSrc from "../../../../../img/quest-perform/battle-process/actors/goblin_hit.png";
 import SnakeImgSrc from "../../../../../img/quest-perform/battle-process/actors/snake.png";
 import SnakePrtImgSrc from "../../../../../img/quest-perform/battle-process/actors/snake-prt.png";
+import SnakeHitImgSrc from "../../../../../img/quest-perform/battle-process/actors/snake_hit.png";
 import MothImgSrc from "../../../../../img/quest-perform/battle-process/actors/moth.png";
 import MothPrtImgSrc from "../../../../../img/quest-perform/battle-process/actors/moth-prt.png";
+import MothHitImgSrc from "../../../../../img/quest-perform/battle-process/actors/moth_hit.png";
 import AttackGifSrc from "../../../../../img/quest-perform/battle-process/attack.gif";
 import ChestClosedImgSrc from "../../../../../img/quest-perform/treasure-process/treasure__chest_closed.png";
 import ChestOpenedImgSrc from "../../../../../img/quest-perform/treasure-process/treasure__chest_opened.png";
@@ -15,8 +18,11 @@ import GifLoader from "../../../../../utils/gif-loader";
 
 export enum ImageType {
   SNAKE,
+  SNAKE_HIT,
   GOBLIN,
+  GOBLIN_HIT,
   MOTH,
+  MOTH_HIT,
 
   ATTACK,
 
@@ -86,10 +92,16 @@ export const getUrlByType = (type: ImageType) => {
   switch (type) {
     case ImageType.SNAKE:
       return SnakeImgSrc;
+    case ImageType.SNAKE_HIT:
+      return SnakeHitImgSrc;
     case ImageType.GOBLIN:
       return GoblinImgSrc;
+    case ImageType.GOBLIN_HIT:
+      return GoblinHitImgSrc;
     case ImageType.MOTH:
       return MothImgSrc;
+    case ImageType.MOTH_HIT:
+      return MothHitImgSrc;
     case ImageType.ATTACK:
       return AttackGifSrc;
     case ImageType.CHEST_CLOSED:
@@ -107,14 +119,14 @@ export const getUrlByType = (type: ImageType) => {
   }
 };
 
-export const getTypeByName = (name: string) => {
+export const getTypesByName = (name: string) => {
   switch (name) {
     case "snake":
-      return ImageType.SNAKE;
+      return [ImageType.SNAKE, ImageType.SNAKE_HIT];
     case "goblin":
-      return ImageType.GOBLIN;
+      return [ImageType.GOBLIN, ImageType.GOBLIN_HIT];
     case "moth":
-      return ImageType.MOTH;
+      return [ImageType.MOTH, ImageType.MOTH_HIT];
     default:
       throw new Error(`Tyimg fetch url for unknown name ${name}`);
   }

@@ -143,19 +143,19 @@ export const drawStaticText = (text: string, pos: CenteredPosition, fontSize?: n
 };
 
 export const getPixel = (point: Position) => {
-  return canvasCtx.getImageData(point.x, point.y, 1, 1);
+  return dynamicCanvasCtx.getImageData(point.x, point.y, 1, 1);
 };
 
 /**-------------------------- BATTLE -------------------------------*/
 
-const imageByActorType = (type: string) => {
+const imageByActorType = (type: string, hitted: boolean) => {
   switch (type) {
     case "snake":
-      return ImageType.SNAKE;
+      return hitted ? ImageType.SNAKE_HIT : ImageType.SNAKE;
     case "goblin":
-      return ImageType.GOBLIN;
+      return hitted ? ImageType.GOBLIN_HIT : ImageType.GOBLIN;
     case "moth":
-      return ImageType.MOTH;
+      return hitted ? ImageType.MOTH_HIT : ImageType.MOTH;
     default:
       throw new Error(`Unknown actor type ${type}`);
   }
@@ -177,16 +177,23 @@ export const drawHits = () => {
 };
 
 export const drawOpponent = (actor: CheckpointActor) => {
-  const img = drawDatas.get(imageByActorType(actor.type))!;
+  const hitted = actor.hitTime + 100 > new Date().getTime();
+  const img = drawDatas.get(imageByActorType(actor.type, hitted))!;
 
-  canvasCtx.drawImage(img.image(), canvasCtx.canvas.width * 0.5 - img.width() * 0.5, 0, img.width(), img.height());
+  dynamicCanvasCtx.drawImage(
+    img.image(),
+    dynamicCanvasCtx.canvas.width * 0.5 - img.width() * 0.5 + actor.xOffset,
+    hitted ? img.height() * 0.005 : 0,
+    img.width(),
+    hitted ? img.height() * 0.995 : img.height()
+  );
 
   const hpBarWidth = Math.floor((actor.currentHealth / actor.totalHealth) * 100) * 5;
-  canvasCtx.fillStyle = "rgba(255, 0, 0, .7)";
-  canvasCtx.fillRect(canvasCtx.canvas.width * 0.5 - hpBarWidth * 0.5, 20, hpBarWidth, 20);
+  dynamicCanvasCtx.fillStyle = "rgba(255, 0, 0, .7)";
+  dynamicCanvasCtx.fillRect(dynamicCanvasCtx.canvas.width * 0.5 - hpBarWidth * 0.5, 20, hpBarWidth, 20);
 
   if (actor.currentHealth > 0) {
-    drawText(canvasCtx, `${actor.currentHealth}/${actor.totalHealth}`, { centerX: true, x: 0, y: 38 }, 24);
+    drawText(dynamicCanvasCtx, `${actor.currentHealth}/${actor.totalHealth}`, { centerX: true, x: 0, y: 38 }, 24);
   }
 };
 

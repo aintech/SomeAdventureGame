@@ -24,19 +24,12 @@ export class CheckpointEnemy {
     public health: number,
     public experience: number,
     public stats: PersonageStats,
-    public drop: EnemyDrop[],
-    public isHero: boolean
+    public drop: EnemyDrop[]
   ) {}
 }
 
 export class BattleRound {
-  constructor(
-    public heroId: number,
-    public action: BattleActionType,
-    public enemyId?: number,
-    public itemId?: number,
-    public hpAdjust?: number
-  ) {}
+  constructor(public heroId: number, public action: BattleActionType, public enemyId?: number, public itemId?: number, public hpAdjust?: number) {}
 }
 
 export default class QuestCheckpoint {
@@ -69,7 +62,6 @@ const convertEnemy = (res: CheckpointEnemyResponse): CheckpointEnemy => {
     res.health,
     res.experience,
     { power: res.power, defence: res.defence, initiative: res.initiative, vitality: 0 },
-    res.drop,
-    false
+    res.drop
   );
 };

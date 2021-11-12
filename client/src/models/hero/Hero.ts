@@ -23,8 +23,7 @@ export default class Hero {
     public items: HeroItem[],
     public perks: HeroPerk[],
     public skills: HeroSkill[],
-    public activity?: HeroActivity,
-    public isHero: boolean = true
+    public activity?: HeroActivity
   ) {}
 
   public isAlive() {

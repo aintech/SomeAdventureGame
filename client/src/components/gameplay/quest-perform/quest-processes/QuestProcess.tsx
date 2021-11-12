@@ -28,10 +28,14 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
   protected canvasRef: React.RefObject<HTMLCanvasElement>;
   protected dynamicCanvasRef: React.RefObject<HTMLCanvasElement>;
 
+  protected background: string;
+
   constructor(props: P) {
     super(props);
     this.canvasRef = createRef();
     this.dynamicCanvasRef = createRef();
+    const rand = Math.random();
+    this.background = rand < 0.34 ? "moon" : rand < 0.67 ? "rocky" : "asteroid";
   }
 
   onUnmount() {
@@ -177,7 +181,7 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
   render() {
     return (
       <>
-        <div className="quest-process__canvas">
+        <div className={`quest-process__canvas quest-process__back_${this.background}`}>
           <canvas className="quest-process__canvas-static" width={650} height={500} ref={this.canvasRef}></canvas>
           <canvas
             className="quest-process__canvas-dynamic"

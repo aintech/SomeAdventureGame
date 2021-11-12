@@ -3,5 +3,6 @@
 .starfield {
   width: 100%;
   height: calc(100vh - #{$header_height});
+  position: relative;
   background-image: url(../../../img/space.jpg);
 }

@@ -4,7 +4,6 @@
     width: 650px;
     height: 500px;
     display: flex;
-    background-image: url(../../../../img/quest-perform/quest-process__back.jpg);
     background-size: cover;
 
     &-dynamic {
@@ -23,5 +22,17 @@
     cursor: pointer;
     border-radius: 6px;
     width: 30%;
+  }
+
+  &__back_asteroid {
+    background-image: url(../../../../img/quest-perform/backgrounds/asteroid.png);
+  }
+
+  &__back_moon {
+    background-image: url(../../../../img/quest-perform/backgrounds/moon.jpg);
+  }
+
+  &__back_rocky {
+    background-image: url(../../../../img/quest-perform/backgrounds/rocky.jpg);
   }
 }
