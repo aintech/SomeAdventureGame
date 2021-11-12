@@ -4,16 +4,16 @@ import { bindActionCreators, compose, Dispatch } from "redux";
 import { beginQuestPerform, showConfirmDialog } from "../../../../actions/Actions";
 import { onCancelQuest, onCheckpointPassed } from "../../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../../hoc/WithApiService";
-import spaceshipAnimImgSrc from "../../../../img/quest-travel/quest-travel_spaceship_moving.gif";
 import backgroundImgSrc from "../../../../img/quest-travel/quest-travel_background.png";
 import spaceshipImgSrc from "../../../../img/quest-travel/quest-travel_spaceship.png";
+import spaceshipAnimImgSrc from "../../../../img/quest-travel/quest-travel_spaceship_moving.gif";
 import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
 import QuestCheckpoint from "../../../../models/QuestCheckpoint";
 import store from "../../../../Store";
 import Gif from "../../../../utils/Gif";
 import GifLoader from "../../../../utils/gif-loader";
-import { convertDuration, millisToSecs, toGameplayScale } from "../../../../utils/Utils";
+import { convertDuration, millisToSecs } from "../../../../utils/Utils";
 import { QuestPerformData } from "../../quest-perform/QuestPerform";
 import "./quest-travel-item.scss";
 
