@@ -243,7 +243,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
 
           const { eventMessages } = this.state;
           eventMessages.push(
-            new EventMessage(1, click, 32, `- ${damage}hp`, rgba(255), Math.random() < 0.5 ? Direction.RIGHT : Direction.LEFT, Effect.FLY_AWAY)
+            new EventMessage(1, click, 32, `- ${damage}hp`, rgba(255, 255), Math.random() < 0.5 ? Direction.RIGHT : Direction.LEFT, Effect.FLY_AWAY)
           );
 
           this.setState({ currentEnemy, eventMessages }, () => this.drawStatic());

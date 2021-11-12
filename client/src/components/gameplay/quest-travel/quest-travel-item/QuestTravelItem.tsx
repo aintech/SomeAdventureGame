@@ -4,9 +4,9 @@ import { bindActionCreators, compose, Dispatch } from "redux";
 import { beginQuestPerform, showConfirmDialog } from "../../../../actions/Actions";
 import { onCancelQuest, onCheckpointPassed } from "../../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../../hoc/WithApiService";
-import horseImgSrc from "../../../../img/quest-travel/quest-travel_animation.gif";
+import spaceshipAnimImgSrc from "../../../../img/quest-travel/quest-travel_spaceship_moving.gif";
 import backgroundImgSrc from "../../../../img/quest-travel/quest-travel_background.png";
-import heroImgSrc from "../../../../img/quest-travel/quest-travel_hero.png";
+import spaceshipImgSrc from "../../../../img/quest-travel/quest-travel_spaceship.png";
 import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
 import QuestCheckpoint from "../../../../models/QuestCheckpoint";
@@ -60,8 +60,8 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     this.canvasCtx = this.canvas.getContext("2d")!;
 
     this.loadImage("background", backgroundImgSrc);
-    this.loadImage("hero", heroImgSrc);
-    this.loadGif("horse", horseImgSrc);
+    this.loadImage("spaceship", spaceshipImgSrc);
+    this.loadGif("spaceshipAnim", spaceshipAnimImgSrc);
 
     const { quest } = this.props;
 
@@ -161,21 +161,16 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
       }
     }
 
-    /* Draw traveler to quest location */
-    const horseGif = this.state.gifs.get("horse");
-    if (horseGif && this.state.seconds < 0) {
-      for (let i = 0; i < this.props.heroes.length; i++) {
-        this.canvasCtx.drawImage(horseGif.image, 10, -5, 80, 72);
-        this.drawStroked(this.canvasCtx, "Герои в пути", 70, 35, "aqua");
-      }
+    /* Draw spaceship travel to quest location */
+    const spaceshipAnim = this.state.gifs.get("spaceshipAnim");
+    if (spaceshipAnim && this.state.seconds < 0) {
+      this.canvasCtx.drawImage(spaceshipAnim.image, 10, 46, 78, 20);
     }
 
-    /* Draw heroes */
-    const heroImg = this.state.images.get("hero");
-    if (heroImg && this.state.seconds >= 0) {
-      for (let i = 0; i < this.props.heroes.length; i++) {
-        this.canvasCtx.drawImage(heroImg, 50 - i * 10, 14 + i * 1, toGameplayScale(48), toGameplayScale(54));
-      }
+    /* Draw spaceship arrived */
+    const spaceshipImg = this.state.images.get("spaceship");
+    if (spaceshipImg && this.state.seconds >= 0) {
+      this.canvasCtx.drawImage(spaceshipImg, 20, 46, 84, 29);
     }
   }
 
@@ -205,32 +200,27 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
 
     let description;
 
-    if (this.props.activeQuestPerform) {
-      description = "Квест";
-    } else if (this.state.seconds >= 0) {
-      description = "Лагерь";
+    if (this.state.seconds < 0) {
+      description = "На пути к цели";
+    } else if (this.props.activeQuestPerform) {
+      description = "В процессе";
     } else {
-      description = convertDuration(-this.state.seconds);
+      description = "Готовы к высадке";
     }
 
-    const dismissBtnClass = "quest-travel-item__btn--dismiss" + (this.props.activeQuestPerform ? "__hidden" : "");
+    const cancelBtnClass = "quest-travel-item__btn--cancel" + (this.props.activeQuestPerform ? "__hidden" : "");
 
     return (
       <div className="quest-travel-item">
         <div className="quest-travel-item__title">{quest.title}</div>
-
-        <div className="quest-travel-item__tribute">{quest.tribute}</div>
-
-        <div className="quest-travel-item__duration">{description}</div>
+        <div className="quest-travel-item__description">{description}</div>
 
         <canvas
-          width={188}
-          height={57}
+          width={223}
+          height={88}
           style={{
-            marginLeft: `27px`,
             zIndex: -1,
-            marginTop: `-5px`,
-            gridRow: 2,
+            gridRow: `1 / -1`,
             gridColumn: `1 / -1`,
           }}
           ref={this.canvasRef}
@@ -241,11 +231,18 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
           style={{ display: this.state.seconds >= 0 && !this.props.activeQuestPerform ? "block" : "none" }}
           onClick={this.beginQuest.bind(this)}
         >
-          {quest.progress!.checkpoints.find((c) => !c.passed) ? "Lets Go ->" : "Collect ->"}
+          {quest.progress!.checkpoints.find((c) => !c.passed) ? "Вперед ->" : "Забрать ->"}
         </button>
 
+        <div
+          className="quest-travel-item__travel-time"
+          style={{ display: this.state.seconds < 0 && !this.props.activeQuestPerform ? "block" : "none" }}
+        >
+          {convertDuration(-this.state.seconds)}
+        </div>
+
         <button
-          className={dismissBtnClass}
+          className={cancelBtnClass}
           onClick={(e) =>
             store.dispatch(
               showConfirmDialog(
