@@ -230,7 +230,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
         const damage = this.state.clickPower - currentEnemy.stats.defence;
         if (damage > 0) {
           currentEnemy.hitTime = new Date().getTime();
-          currentEnemy.xOffset = Math.random() * 5 * (Math.random() < 0.5 ? 1 : -1);
+          currentEnemy.xOffset = Math.random() * 3 * (Math.random() < 0.5 ? 1 : -1);
           currentEnemy.currentHealth -= damage;
 
           const drop = currentEnemy.drop.find((d) => !d.dropped && d.fraction >= currentEnemy.currentHealth);

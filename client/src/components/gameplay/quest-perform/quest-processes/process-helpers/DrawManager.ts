@@ -177,15 +177,15 @@ export const drawHits = () => {
 };
 
 export const drawOpponent = (actor: CheckpointActor) => {
-  const hitted = actor.hitTime + 100 > new Date().getTime();
+  const hitted = actor.hitTime + 300 > new Date().getTime();
   const img = drawDatas.get(imageByActorType(actor.type, hitted))!;
 
   dynamicCanvasCtx.drawImage(
     img.image(),
     dynamicCanvasCtx.canvas.width * 0.5 - img.width() * 0.5 + actor.xOffset,
-    hitted ? img.height() * 0.005 : 0,
+    (hitted ? img.height() * 0.01 : 0) - 12,
     img.width(),
-    hitted ? img.height() * 0.995 : img.height()
+    hitted ? img.height() * 0.99 : img.height()
   );
 
   const hpBarWidth = Math.floor((actor.currentHealth / actor.totalHealth) * 100) * 5;
