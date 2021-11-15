@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
+import { Store } from "redux";
+import { logout as logoutAction } from "../actions/Actions";
 
 const storageName = "someAdventureGameUserData";
 const storageLifetime = 24 * 60 * 60 * 1000;
@@ -28,10 +30,13 @@ const useAuth = () => {
     );
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback((store?: Store) => {
     setToken(undefined);
     setUserId(undefined);
     localStorage.removeItem(storageName);
+    if (store) {
+      store.dispatch(logoutAction());
+    }
   }, []);
 
   const isFreshLogin = (loginTime: number): boolean => {

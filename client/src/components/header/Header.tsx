@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators, compose, Dispatch } from "redux";
+import { connect, useStore } from "react-redux";
+import { bindActionCreators, compose, Dispatch, Store } from "redux";
 import { fetchGameStats } from "../../actions/ApiActions";
 import AuthContext from "../../contexts/AuthContext";
 import withApiService, { WithApiServiceProps } from "../../hoc/WithApiService";
@@ -12,12 +12,13 @@ type HeaderProps = {
   stats: GameStats;
   fetchGameStats: () => void;
   isAuthenticated: boolean;
-  logout: () => void;
+  logout: (store?: Store) => void;
 };
 
 const Header = ({ stats, fetchGameStats, isAuthenticated, logout }: HeaderProps) => {
   const displayMessage = useDisplayMessage();
   const authContext = useContext(AuthContext);
+  const store = useStore();
 
   useEffect(() => {
     if (authContext.userId) {
@@ -27,7 +28,7 @@ const Header = ({ stats, fetchGameStats, isAuthenticated, logout }: HeaderProps)
 
   const onLogout = () => {
     displayMessage(`До скорой встречи!`);
-    logout();
+    logout(store);
   };
 
   const headerBar = (

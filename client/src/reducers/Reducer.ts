@@ -50,6 +50,11 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
   let chosenBuilding = state.chosenBuilding;
 
   switch (action.type) {
+    case ActionType.LOGOUT:
+      return {
+        ...intialState,
+      };
+
     case ActionType.FETCH_GAME_STATS_REQUEST:
       return {
         ...state,

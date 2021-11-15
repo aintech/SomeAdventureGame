@@ -1,11 +1,13 @@
 @import "../../utils/css/index.scss";
 
 .header {
+  position: relative;
   font-size: 22px;
   height: $header_height;
   background-color: #777;
   border-bottom: 1px solid #f4f2f2;
   box-sizing: border-box;
+  z-index: 100;
 
   display: flex;
 
@@ -17,17 +19,18 @@
   }
 
   &__btn-logout {
+    font-family: inherit;
     height: $header_height;
-    width: 100px;
+    width: 80px;
     display: inline-block;
     cursor: pointer;
-    // color: white;
-    background-color: lightblue;
+    color: white;
+    background-color: yellowgreen;
     border: none;
     outline: none;
 
     &:hover {
-      background-color: blueviolet;
+      background-color: chocolate;
     }
   }
 

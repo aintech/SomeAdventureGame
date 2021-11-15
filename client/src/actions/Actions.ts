@@ -13,6 +13,12 @@ export interface PayloadedAction extends Action<ActionType> {
   payload?: any;
 }
 
+export const logout = (): PayloadedAction => {
+  return {
+    type: ActionType.LOGOUT,
+  };
+};
+
 export const gameStatsRequested = (): PayloadedAction => {
   return {
     type: ActionType.FETCH_GAME_STATS_REQUEST,

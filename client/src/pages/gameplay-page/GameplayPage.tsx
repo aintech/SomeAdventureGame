@@ -18,7 +18,7 @@ import "./gameplay-page.scss";
 
 const GameplayPage = () => {
   return (
-    <>
+    <section className="gameplay-page">
       <GameplayTooltip />
       <GameWorld />
       <GameTimer />
@@ -27,7 +27,7 @@ const GameplayPage = () => {
       <QuestProgressList />
       <QuestPerform />
       <ConfirmDialog />
-    </>
+    </section>
   );
 };
 

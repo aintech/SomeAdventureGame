@@ -29,7 +29,7 @@ enum ProcessState {
 }
 
 const mandatoryImages = () => {
-  return [ImageType.RESULT_BACK, ImageType.RESULT_GOLD, ImageType.ENERGY_DROP];
+  return [ImageType.RESULT_BACK, ImageType.RESULT_GOLD, ImageType.DUST_DROP, ImageType.DUST_DROP_MOONSHINE];
 };
 
 const mandatoryGifs = () => {
@@ -201,6 +201,11 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
     drawHits();
     this.drawCommon();
   }
+
+  //TODO: Энергия собирается не при клике а при наведении мышки, и улетает в сторону результатов,
+  //      каждая единичка энергии это отдельный дроп
+
+  // TODO: Урон это рендж а не точное значение
 
   canvasClickHandler(e: MouseEvent) {
     e.stopPropagation();

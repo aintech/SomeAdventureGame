@@ -1,4 +1,5 @@
 import { Context, createContext } from "react";
+import { Store } from "redux";
 
 export interface AuthProps {
   userId?: number;
@@ -7,7 +8,7 @@ export interface AuthProps {
 
 interface AuthContextProps extends AuthProps {
   login: (jwtToken: string, id: number) => void;
-  logout: () => void;
+  logout: (store?: Store) => void;
   isAuthenticated: boolean;
 }
 

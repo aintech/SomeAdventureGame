@@ -10,6 +10,7 @@ import useAuth from "./hooks/UseAuth";
 import { useRoutes } from "./Routes";
 import ApiService from "./services/ApiService";
 import store from "./Store";
+import "./app.scss";
 
 const App = () => {
   const { token, login, logout, userId, ready } = useAuth();
@@ -35,7 +36,7 @@ const App = () => {
       >
         <ApiServiceProvider value={apiService}>
           <BrowserRouter>
-            <main>
+            <main className="app-main">
               <MessagePopupContainer messages={[]} />
               <Header isAuthenticated={isAuthenticated} logout={logout} />
               {routes}

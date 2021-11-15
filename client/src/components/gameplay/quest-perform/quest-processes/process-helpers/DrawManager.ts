@@ -60,7 +60,7 @@ export const drawDrops = (drops: Drop[]) => {
       let img;
       switch (drop.type) {
         case DropType.GOLD:
-          img = drawDatas.get(ImageType.ENERGY_DROP)!.image();
+          img = drawDatas.get(ImageType.DUST_DROP)!.image();
           break;
         default:
           throw new Error(`Unknown drop type ${DropType[drop.type]}`);
