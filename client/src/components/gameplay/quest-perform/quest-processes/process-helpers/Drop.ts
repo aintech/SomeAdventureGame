@@ -23,6 +23,7 @@ export type Drop = {
   blinkCtr: number;
 
   collected?: boolean;
+  stored?: boolean;
   timeouted?: boolean;
 };
 
@@ -60,7 +61,7 @@ export const defineDrop = (template: EnemyDrop, canvasDims: Dimensions, actorId?
     position,
     target,
     direction,
-    dimensions: { width: 50, height: 50 },
+    dimensions: { width: 43, height: 43 },
     acceleration,
     lifeTill: new Date().getTime() + 10000,
     blinkCtr: 0,

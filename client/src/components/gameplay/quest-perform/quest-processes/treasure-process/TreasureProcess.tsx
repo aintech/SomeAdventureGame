@@ -266,7 +266,7 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
     e.stopPropagation();
 
     if (this.state.processState === ProcessState.SMASHING) {
-      const click = this.getClickPoint(e);
+      const click = this.getMousePoint(e);
       const chestPos = {
         x: this.dynamicCanvasRef.current!.width * 0.5 + this.chestPos.x,
         y: this.dynamicCanvasRef.current!.height + this.chestPos.y - 100,
@@ -285,9 +285,9 @@ class TreasureProcess extends QuestProcess<TreasureProcessProps, TreasureProcess
       }
     }
 
-    if (this.state.processState === ProcessState.DROPS) {
-      this.checkDropClicked(this.getClickPoint(e));
-    }
+    // if (this.state.processState === ProcessState.DROPS) {
+    //   this.checkDropClicked(this.getMousePoint(e));
+    // }
   }
 
   completeCheckpointClickHandler(e: MouseEvent) {

@@ -48,7 +48,7 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
   }
 
   drawCommon() {
-    drawDrops(this.state.drops.filter((d) => !d.collected && !d.timeouted));
+    drawDrops(this.state.drops.filter((d) => !d.stored && !d.timeouted));
     drawMessages(this.state.eventMessages);
   }
 
@@ -60,28 +60,38 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
 
   moveDrops() {
     this.state.drops
-      .filter((d) => !d.collected && !d.timeouted)
+      .filter((d) => !d.stored && !d.timeouted)
       .forEach((drop) => {
-        if (drop.position.y < this.dynamicCanvasRef.current!.height - 50) {
-          drop.position = { x: drop.position.x + drop.acceleration.x, y: drop.position.y + drop.acceleration.y };
-          drop.acceleration.x = lerpXY(drop.acceleration.x, 0, 0.1);
-          drop.acceleration.y = lerpXY(drop.acceleration.y, 10, 0.1);
+        if (!drop.collected) {
+          if (drop.position.y < this.dynamicCanvasRef.current!.height - drop.dimensions.height) {
+            drop.position = { x: drop.position.x + drop.acceleration.x, y: drop.position.y + drop.acceleration.y };
+            drop.acceleration.x = lerpXY(drop.acceleration.x, 0, 0.1);
+            drop.acceleration.y = lerpXY(drop.acceleration.y, 10, 0.1);
 
-          // bouncing from side wall
-          if (drop.position.x < 0 || drop.position.x > this.dynamicCanvasRef.current!.width - 50) {
-            drop.acceleration.x *= -1;
+            // bouncing from side wall
+            if (drop.position.x < 0 || drop.position.x > this.dynamicCanvasRef.current!.width - drop.dimensions.width) {
+              drop.acceleration.x *= -1;
+            }
+
+            // stop on floor
+            if (drop.position.y > this.dynamicCanvasRef.current!.height - drop.dimensions.height) {
+              drop.position.y = this.dynamicCanvasRef.current!.height - drop.dimensions.height;
+              drop.acceleration = { x: 0, y: 0 };
+            }
           }
-
-          // stop on floor
-          if (drop.position.y >= this.dynamicCanvasRef.current!.height - 50) {
-            drop.position.y = this.dynamicCanvasRef.current!.height - 50;
-            drop.acceleration = { x: 0, y: 0 };
+        } else {
+          if (drop.position.x > 0) {
+            drop.position = { x: drop.position.x + drop.acceleration.x, y: drop.position.y + drop.acceleration.y };
+            drop.acceleration.x = lerpXY(drop.acceleration.x, -drop.position.x * 0.05, 0.1);
+            drop.acceleration.y = lerpXY(drop.acceleration.y, -drop.position.y * 0.05, 0.1);
+          } else {
+            drop.stored = true;
           }
         }
       });
   }
 
-  getClickPoint(e: MouseEvent) {
+  getMousePoint(e: MouseEvent) {
     const rect = this.dynamicCanvasRef.current!.getBoundingClientRect();
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }
@@ -93,12 +103,7 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
     for (let i = drops.length - 1; i >= 0; i--) {
       const drop = drops[i];
       if (!drop.collected && !drop.timeouted) {
-        if (
-          drop.position.x <= click.x &&
-          drop.position.x + drop.dimensions.width >= click.x &&
-          drop.position.y - Math.max(0, drop.acceleration.y * 5) <= click.y &&
-          drop.position.y + drop.dimensions.height >= click.y
-        ) {
+        if (this.dropUnderMouse(click, drop)) {
           drop.collected = true;
           msg = new EventMessage(
             1,
@@ -122,6 +127,15 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
     }
 
     return false;
+  }
+
+  dropUnderMouse(point: Position, drop: Drop) {
+    return (
+      drop.position.x <= point.x &&
+      drop.position.x + drop.dimensions.width >= point.x &&
+      drop.position.y - Math.max(0, drop.acceleration.y * 5) <= point.y &&
+      drop.position.y + drop.dimensions.height >= point.y
+    );
   }
 
   checkEndedMessages() {
@@ -174,6 +188,17 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
 
   canvasClickHandler(e: MouseEvent) {}
 
+  canvasMouseMoveHandler(e: MouseEvent) {
+    const point = this.getMousePoint(e);
+    this.state.drops
+      .filter((d) => !d.collected && !d.timeouted)
+      .forEach((d) => {
+        if (this.dropUnderMouse(point, d)) {
+          d.collected = true;
+        }
+      });
+  }
+
   childRender() {
     return <div>Override child render in subclass!</div>;
   }
@@ -189,6 +214,7 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
             height={500}
             ref={this.dynamicCanvasRef}
             onClick={(e) => this.canvasClickHandler(e)}
+            onMouseMove={(e) => this.canvasMouseMoveHandler(e)}
           ></canvas>
           {this.childRender()}
         </div>

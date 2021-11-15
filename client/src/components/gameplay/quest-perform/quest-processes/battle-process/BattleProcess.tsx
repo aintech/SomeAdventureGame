@@ -212,11 +212,11 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
     e.preventDefault();
     if (this.state.processState === ProcessState.BATTLE) {
       if (this.state.currentEnemy) {
-        const click = this.getClickPoint(e);
+        const click = this.getMousePoint(e);
 
-        if (this.checkDropClicked(click)) {
-          return;
-        }
+        // if (this.checkDropClicked(click)) {
+        //   return;
+        // }
 
         const clickPoint = getPixel(click);
 
@@ -248,7 +248,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
 
           const { eventMessages } = this.state;
           eventMessages.push(
-            new EventMessage(1, click, 32, `- ${damage}hp`, rgba(255, 255), Math.random() < 0.5 ? Direction.RIGHT : Direction.LEFT, Effect.FLY_AWAY)
+            new EventMessage(1, click, 24, `- ${damage} hp`, rgba(255, 255), Math.random() < 0.5 ? Direction.RIGHT : Direction.LEFT, Effect.FLY_AWAY)
           );
 
           this.setState({ currentEnemy, eventMessages }, () => this.drawStatic());

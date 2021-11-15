@@ -73,12 +73,11 @@ const defineMonsterDrop = (monster: Monster) => {
     return drop;
   }
 
-  const dropCount = Math.floor(Math.random() * 3) + 2;
-  for (let i = 0; i < dropCount; i++) {
+  const goldMediana = monster.loot.gold;
+  const droppedGold = Math.floor(goldMediana + Math.random() * goldMediana * 0.25 * (Math.random() > 0.5 ? 1 : -1));
+  for (let i = 0; i < droppedGold; i++) {
     const fraction = Math.floor((0.1 + Math.random() * 0.8) * monster.health);
-    const goldMediana = monster.loot.gold;
-    const gold = Math.floor(goldMediana + Math.random() * goldMediana * 0.5 * (Math.random() > 0.5 ? 1 : -1));
-    drop.push({ fraction, gold });
+    drop.push({ fraction, gold: 1 });
   }
 
   monster.drop = drop;
