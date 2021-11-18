@@ -22,7 +22,7 @@ const HealerDisplay = ({ visitors, visitorClicked }: HealerDisplayProps) => {
 
   return (
     <div className="healer-display">
-      <div className="healer-display__name">{toDisplay(BuildingType.MEDBAY)}</div>
+      <div className="healer-display__name">{toDisplay(BuildingType.HEALER)}</div>
       <div className="healer-display__visitors-holder">
         {visitors.map((visitor) => (
           <HeroItem key={visitor.id} hero={visitor} enabled={true} itemClickHandler={(event) => visitorClickHandler(visitor, event)} />

@@ -10,13 +10,12 @@ import { convertDuration } from "../../../utils/Utils";
 import AlchemistDisplay from "./alchemist-display/AlchemistDisplay";
 import BlacksmithDisplay from "./blacksmith-display/BlacksmithDisplay";
 import "./building-display.scss";
-import CabinsDisplay from "./cabins-display/CabinsDisplay";
+import DwellingsDisplay from "./dwellings-display/DwellingsDisplay";
 import ElderDisplay from "./elder-display/ElderDisplay";
 import GuildDisplay from "./guild-display/GuildDisplay";
 import HealerDisplay from "./healer-display/HealerDisplay";
 import MarketDisplay from "./market-display/MarketDisplay";
 import StablesDisplay from "./stables-display/StablesDisplay";
-import StorageDisplay from "./storage-display/StorageDisplay";
 import TavernDisplay from "./tavern-display/TavernDisplay";
 import TrainingGroundDisplay from "./training-ground-display/TrainingGroundDisplay";
 import TreasuryDisplay from "./treasury-display/TreasuryDisplay";
@@ -153,29 +152,27 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
 
 const displayByType = (type: BuildingType) => {
   switch (type) {
-    case BuildingType.GUILD_OFFICE:
+    case BuildingType.QUEST_BOARD:
       return <GuildDisplay />;
-    case BuildingType.MERCENARY_HUB:
+    case BuildingType.TAVERN:
       return <TavernDisplay />;
-    case BuildingType.CABINS:
-      return <CabinsDisplay />;
-    case BuildingType.HANGAR:
+    case BuildingType.DWELLINGS:
+      return <DwellingsDisplay />;
+    case BuildingType.NESTS:
       return <StablesDisplay />;
-    case BuildingType.MEDBAY:
+    case BuildingType.HEALER:
       return <HealerDisplay />;
-    case BuildingType.COMMAND_CENTER:
+    case BuildingType.DUST_STORAGE:
       return <TreasuryDisplay />;
     case BuildingType.TRAINING_GROUND:
       return <TrainingGroundDisplay />;
-    case BuildingType.LABORATORY:
+    case BuildingType.ALCHEMIST:
       return <AlchemistDisplay />;
-    case BuildingType.PRODUCTION_COMPLEX:
+    case BuildingType.BLACKSMITH:
       return <BlacksmithDisplay />;
-    case BuildingType.STORAGE:
-      return <StorageDisplay />;
     case BuildingType.MARKET:
       return <MarketDisplay />;
-    case BuildingType.POWER_STATION:
+    case BuildingType.ELDER:
       return <ElderDisplay />;
     default:
       throw new Error(`Unknown building type ${BuildingType[type]}`);

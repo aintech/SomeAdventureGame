@@ -1,6 +1,6 @@
 @import "../../../../utils/css/index.scss";
 
-.storage-display {
+.dwellings-display {
   display: flex;
   width: 90%;
   margin: 0 auto;
@@ -8,5 +8,9 @@
 
   &__name {
     @include buildingDisplayName;
+  }
+
+  &__habitants {
+    display: flex;
   }
 }

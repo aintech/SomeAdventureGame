@@ -1,7 +1,7 @@
 @import "../../../../utils/css/index.scss";
 
 .game-world__building {
-  &-GUILD_OFFICE {
+  &-QUEST_BOARD {
     position: absolute;
     top: 150px;
     left: 280px;
@@ -14,7 +14,7 @@
     }
   }
 
-  &-MERCENARY_HUB {
+  &-TAVERN {
     position: absolute;
     top: 15px;
     left: 350px;
@@ -27,7 +27,7 @@
     }
   }
 
-  &-CABINS {
+  &-DWELLINGS {
     position: absolute;
     top: 300px;
     left: 325px;
@@ -40,7 +40,7 @@
     }
   }
 
-  &-HANGAR {
+  &-NESTS {
     position: absolute;
     top: 415px;
     left: 55px;
@@ -53,7 +53,7 @@
     }
   }
 
-  &-MEDBAY {
+  &-HEALER {
     position: absolute;
     top: 15px;
     left: 165px;
@@ -66,46 +66,7 @@
     }
   }
 
-  &-LABORATORY {
-    position: absolute;
-    top: 290px;
-    left: 10px;
-    width: 70px;
-    height: 105px;
-    cursor: pointer;
-
-    &:hover {
-      border: 1px solid yellow;
-    }
-  }
-
-  &-PRODUCTION_COMPLEX {
-    position: absolute;
-    top: 280px;
-    left: 475px;
-    width: 75px;
-    height: 80px;
-    cursor: pointer;
-
-    &:hover {
-      border: 1px solid yellow;
-    }
-  }
-
-  &-MARKET {
-    position: absolute;
-    top: 305px;
-    left: 125px;
-    width: 125px;
-    height: 95px;
-    cursor: pointer;
-
-    &:hover {
-      border: 1px solid yellow;
-    }
-  }
-
-  &-COMMAND_CENTER {
+  &-DUST_STORAGE {
     position: absolute;
     top: 115px;
     left: 50px;
@@ -131,12 +92,12 @@
     }
   }
 
-  &-STORAGE {
+  &-ALCHEMIST {
     position: absolute;
-    top: 150px;
-    left: 430px;
-    width: 90px;
-    height: 110px;
+    top: 290px;
+    left: 10px;
+    width: 70px;
+    height: 105px;
     cursor: pointer;
 
     &:hover {
@@ -144,7 +105,33 @@
     }
   }
 
-  &-POWER_STATION {
+  &-BLACKSMITH {
+    position: absolute;
+    top: 280px;
+    left: 475px;
+    width: 75px;
+    height: 80px;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid yellow;
+    }
+  }
+
+  &-MARKET {
+    position: absolute;
+    top: 305px;
+    left: 125px;
+    width: 125px;
+    height: 95px;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid yellow;
+    }
+  }
+
+  &-ELDER {
     position: absolute;
     top: 40px;
     left: 490px;

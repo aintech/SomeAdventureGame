@@ -13,7 +13,7 @@ type StablesDisplayProps = {
 const StablesDisplay = ({ embarked }: StablesDisplayProps) => {
   return (
     <div className="stables-display">
-      <div className="stables-display__name">{toDisplay(BuildingType.HANGAR)}</div>
+      <div className="stables-display__name">{toDisplay(BuildingType.NESTS)}</div>
       <div className="stables-display__stats">
         <div>
           Свободных шатлов {MAX_EMBARKED_QUESTS - embarked.length}/{MAX_EMBARKED_QUESTS}

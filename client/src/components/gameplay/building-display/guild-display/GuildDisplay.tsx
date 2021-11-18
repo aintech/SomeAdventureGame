@@ -70,7 +70,7 @@ const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest }: GuildDisplayPro
 
   return (
     <div className="guild-display">
-      <div className="guild-display__name">{toDisplay(BuildingType.GUILD_OFFICE)}</div>
+      <div className="guild-display__name">{toDisplay(BuildingType.QUEST_BOARD)}</div>
       <QuestScrollList quests={quests} />
       <HeroList heroes={heroesOnPage} quests={quests} heroesAssignedToQuest={heroesAssignedToQuest} />
       <button className="guild-display__btn--show-unabled" onClick={switchShowUnabled}>

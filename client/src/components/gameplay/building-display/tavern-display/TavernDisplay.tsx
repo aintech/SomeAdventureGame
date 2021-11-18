@@ -16,7 +16,7 @@ type TavernDisplayProps = {
 const TavernDisplay = ({ patrons, hirePatron }: TavernDisplayProps) => {
   return (
     <div className="tavern-display">
-      <div className="tavern-display__name">{toDisplay(BuildingType.MERCENARY_HUB)}</div>
+      <div className="tavern-display__name">{toDisplay(BuildingType.TAVERN)}</div>
       <div className="tavern-display__patrons-holder">
         {patrons.map((p) => (
           <TavernPatron key={p.id} patron={p} hirePatron={hirePatron} />

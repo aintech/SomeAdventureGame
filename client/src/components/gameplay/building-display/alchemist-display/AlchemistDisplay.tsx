@@ -25,7 +25,7 @@ const AlchemistDisplay = ({ visitors, alchemistAssortment, visitorClicked }: Alc
 
   return (
     <div className="alchemist-display">
-      <div className="alchemist-display__name">{toDisplay(BuildingType.LABORATORY)}</div>
+      <div className="alchemist-display__name">{toDisplay(BuildingType.ALCHEMIST)}</div>
       <div className="alchemist-display__assortment-holder">
         <div className="alchemist-display__assortment__list">
           <ul>
