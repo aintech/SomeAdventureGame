@@ -202,11 +202,6 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
     this.drawCommon();
   }
 
-  //TODO: Энергия собирается не при клике а при наведении мышки, и улетает в сторону результатов,
-  //      каждая единичка энергии это отдельный дроп
-
-  // TODO: Урон это рендж а не точное значение
-
   canvasClickHandler(e: MouseEvent) {
     e.stopPropagation();
     e.preventDefault();
@@ -214,46 +209,43 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
       if (this.state.currentEnemy) {
         const click = this.getMousePoint(e);
 
-        // if (this.checkDropClicked(click)) {
-        //   return;
-        // }
+        const pixel = getPixel(click);
 
-        const clickPoint = getPixel(click);
-
-        if (!clickPoint) {
+        if (!pixel) {
           return;
         }
 
-        if (clickPoint.data[3] === 0) {
+        if (pixel.data[3] === 0) {
           return;
         }
 
         addToHitsDrawQueue(click);
 
-        const { currentEnemy } = this.state;
+        const { currentEnemy, clickPower } = this.state;
 
-        const damage = this.state.clickPower - currentEnemy.stats.defence;
-        if (damage > 0) {
-          currentEnemy.hitTime = new Date().getTime();
-          currentEnemy.xOffset = Math.random() * 3 * (Math.random() < 0.5 ? 1 : -1);
-          currentEnemy.currentHealth -= damage;
+        const power = Math.round(clickPower + Math.random() * 0.25 * clickPower * (Math.random() < 0.5 ? 1 : -1));
+        const damage = Math.max(power - currentEnemy.stats.defence, 1);
 
-          const drop = currentEnemy.drop.find((d) => !d.dropped && d.fraction >= currentEnemy.currentHealth);
-          if (drop) {
-            drop.dropped = true;
-            const { drops } = this.state;
-            drops.push(defineDrop(drop, this.dynamicCanvasRef.current!, currentEnemy.actorId));
-            this.setState({ drops });
-          }
+        currentEnemy.hitTime = new Date().getTime();
+        currentEnemy.xOffset = Math.random() * 3 * (Math.random() < 0.5 ? 1 : -1);
+        currentEnemy.currentHealth -= damage;
 
-          const { eventMessages } = this.state;
-          eventMessages.push(
-            new EventMessage(1, click, 24, `- ${damage} hp`, rgba(255, 255), Math.random() < 0.5 ? Direction.RIGHT : Direction.LEFT, Effect.FLY_AWAY)
-          );
-
-          this.setState({ currentEnemy, eventMessages }, () => this.drawStatic());
+        const drop = currentEnemy.drop.find((d) => !d.dropped && d.fraction >= currentEnemy.currentHealth);
+        if (drop) {
+          drop.dropped = true;
+          const { drops } = this.state;
+          drops.push(defineDrop(drop, this.dynamicCanvasRef.current!, currentEnemy.actorId));
+          this.setState({ drops });
         }
+
+        const { eventMessages } = this.state;
+        eventMessages.push(
+          new EventMessage(1, click, 24, `- ${damage} hp`, rgba(255, 255), Math.random() < 0.5 ? Direction.RIGHT : Direction.LEFT, Effect.FLY_AWAY)
+        );
+
+        this.setState({ currentEnemy, eventMessages }, () => this.drawStatic());
       }
+
       this.checkCurrentEnemy();
     }
   }
