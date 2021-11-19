@@ -1,25 +1,10 @@
 @import "../../../../utils/css/index.scss";
 
 .healer-display {
-  display: flex;
-  width: 90%;
-  margin: 0 auto;
-  flex-direction: column;
+  width: 355px;
 
-  &__name {
-    @include buildingDisplayName;
-  }
-
-  &__visitors-holder {
-    position: absolute;
-    top: 155px; // to-gameplay-scale(200px);
-    left: 140px; // to-gameplay-scale(180px);
-    width: 355px; // to-gameplay-scale(460px);
-    height: 385px; // to-gameplay-scale(500px);
-
-    display: grid;
-    grid-template-rows: repeat(2, 1fr);
-    grid-template-columns: repeat(5, 1fr);
-    gap: 15px; // to-gameplay-scale(20px);
-  }
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
 }

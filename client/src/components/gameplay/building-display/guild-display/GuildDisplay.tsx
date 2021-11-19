@@ -2,7 +2,6 @@ import React, { Component, CSSProperties, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { questScrollClosed } from "../../../../actions/Actions";
-import { BuildingType, toDisplay } from "../../../../models/Building";
 import Hero from "../../../../models/hero/Hero";
 import { HeroActivityType } from "../../../../models/hero/HeroActivity";
 import Quest from "../../../../models/Quest";
@@ -70,7 +69,6 @@ const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest }: GuildDisplayPro
 
   return (
     <div className="guild-display">
-      <div className="guild-display__name">{toDisplay(BuildingType.QUEST_BOARD)}</div>
       <QuestScrollList quests={quests} />
       <HeroList heroes={heroesOnPage} quests={quests} heroesAssignedToQuest={heroesAssignedToQuest} />
       <button className="guild-display__btn--show-unabled" onClick={switchShowUnabled}>

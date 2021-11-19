@@ -4,7 +4,7 @@ import { bindActionCreators, compose, Dispatch } from "redux";
 import { buildingClicked, showConfirmDialog } from "../../../actions/Actions";
 import { onCompleteBuildingUpgrade, onStartBuildingUpgrade } from "../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService";
-import Building, { BuildingType } from "../../../models/Building";
+import Building, { BuildingType, toDisplay } from "../../../models/Building";
 import GameStats from "../../../models/GameStats";
 import { convertDuration } from "../../../utils/Utils";
 import AlchemistDisplay from "./alchemist-display/AlchemistDisplay";
@@ -141,7 +141,8 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
       <div className="building-display" onClick={this.props.hideBuildingDisplay}>
         <div className="building-display__container" onClick={(e) => e.stopPropagation()}>
           <button className="building-display__btn-close" onClick={this.props.hideBuildingDisplay}></button>
-          {displayByType(chosenBuilding.type)}
+          <div className="building-display__title">{toDisplay(chosenBuilding.type)}</div>
+          <div className="building-display__discrete-holder">{displayByType(chosenBuilding.type)}</div>
           {upgradeMsg}
           {upgradeBtn}
         </div>

@@ -21,10 +21,30 @@
   font-family: inherit;
   font-size: 34px;
   color: lightblue;
-  margin-top: 18px;
+  margin-top: 24px;
+  height: 60px;
   text-align: center;
   grid-row: 1;
   grid-column: 1 / -1;
   @include strokeText;
   cursor: default;
+}
+
+@mixin closeOverlayBtn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 52px;
+  height: 38px;
+  background-image: url(../../img/building-display/__btn-close.png);
+  background-size: contain;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  z-index: 2000;
+  cursor: pointer;
+
+  &:hover {
+    top: 18px;
+  }
 }

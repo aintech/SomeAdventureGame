@@ -2,18 +2,7 @@
 
 .tavern-display {
   display: flex;
-  width: 80%;
-  margin: 0 auto;
-  flex-direction: column;
-
-  &__name {
-    @include buildingDisplayName;
-  }
-
-  &__patrons-holder {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 52px;
-    margin-top: 40px;
-  }
+  flex-wrap: wrap;
+  gap: 52px;
+  margin-top: 40px;
 }

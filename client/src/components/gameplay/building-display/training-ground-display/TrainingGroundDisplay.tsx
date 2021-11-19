@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsChoosed } from "../../../../actions/Actions";
-import { BuildingType, toDisplay } from "../../../../models/Building";
 import Hero from "../../../../models/hero/Hero";
 import { HeroActivityType } from "../../../../models/hero/HeroActivity";
 import Loader from "../../../loader/Loader";
@@ -22,17 +21,9 @@ const TrainingGroundDisplay = ({ trainies, traineeClicked }: TrainingGroundDispl
 
   return (
     <div className="training-ground-display">
-      <div className="training-ground-display__name">{toDisplay(BuildingType.TRAINING_GROUND)}</div>
-      <div className="training-ground-display__trainies-holder">
-        {trainies.map((trainee) => (
-          <HeroItem
-            key={trainee.id}
-            hero={trainee}
-            enabled={true}
-            itemClickHandler={(event) => traineeClickHandler(trainee, event)}
-          />
-        ))}
-      </div>
+      {trainies.map((trainee) => (
+        <HeroItem key={trainee.id} hero={trainee} enabled={true} itemClickHandler={(event) => traineeClickHandler(trainee, event)} />
+      ))}
     </div>
   );
 };

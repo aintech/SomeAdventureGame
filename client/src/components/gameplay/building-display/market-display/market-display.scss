@@ -1,16 +1,8 @@
 @import "../../../../utils/css/index.scss";
 
 .market-display {
-  display: grid;
-  width: 90%;
-  margin: 0 auto;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 65px 1fr;
+  display: flex;
   gap: 30px;
-
-  &__name {
-    @include buildingDisplayName;
-  }
 
   &__visitors-holder {
     grid-row: 2;

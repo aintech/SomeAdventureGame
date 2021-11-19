@@ -1,10 +1,6 @@
 @import "../../../../utils/css/index.scss";
 
 .guild-display {
-  &__name {
-    @include buildingDisplayName;
-  }
-
   &__btn--show-unabled {
     font-family: inherit;
     font-size: 16px;

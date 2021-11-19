@@ -1,16 +1,10 @@
 @import "../../../../utils/css/index.scss";
 
 .dwellings-display {
-  display: flex;
-  width: 90%;
-  margin: 0 auto;
-  flex-direction: column;
+  width: 355px;
 
-  &__name {
-    @include buildingDisplayName;
-  }
-
-  &__habitants {
-    display: flex;
-  }
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
 }

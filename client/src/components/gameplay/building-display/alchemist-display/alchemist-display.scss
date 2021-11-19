@@ -1,23 +1,13 @@
 @import "../../../../utils/css/index.scss";
 
 .alchemist-display {
-  display: grid;
-  width: 90%;
-  margin: 0 auto;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 65px 1fr;
+  display: flex;
   gap: 30px;
 
-  &__name {
-    @include buildingDisplayName;
-  }
-
   &__visitors-holder {
-    grid-row: 2;
-    grid-column: 2;
     display: grid;
     grid-template-columns: repeat(2, min-content);
-    gap: 15px; // to-gameplay-scale(20px);
+    gap: 15px;
   }
 
   &__assortment__list {
@@ -26,8 +16,6 @@
 
   &__assortment-holder {
     height: 400px;
-    grid-row: 2;
-    grid-column: 1;
     display: flex;
     font-family: inherit;
     font-size: 20px;

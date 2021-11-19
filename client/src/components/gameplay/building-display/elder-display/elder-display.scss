@@ -2,23 +2,12 @@
 
 .elder-display {
   display: flex;
-  width: 90%;
-  margin: 0 auto;
-  flex-direction: column;
-
-  &__name {
-    @include buildingDisplayName;
-  }
-
-  &__stats {
-    display: flex;
-    flex-flow: column;
-    gap: 10px;
-    font-family: inherit;
-    font-size: 24px;
-    color: white;
-    @include strokeText;
-    margin-left: 50px;
-    margin-top: 50px;
-  }
+  flex-flow: column;
+  gap: 10px;
+  font-family: inherit;
+  font-size: 24px;
+  color: white;
+  @include strokeText;
+  margin-left: 50px;
+  margin-top: 50px;
 }

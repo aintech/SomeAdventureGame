@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { BuildingType, toDisplay } from "../../../../models/Building";
 import GameStats from "../../../../models/GameStats";
 import { GUILD_SHARE } from "../../../../utils/Variables";
 import Loader from "../../../loader/Loader";
@@ -13,11 +12,8 @@ type ElderDisplayProps = {
 const ElderDisplay = ({ stats }: ElderDisplayProps) => {
   return (
     <div className="elder-display">
-      <div className="elder-display__name">{toDisplay(BuildingType.ELDER)}</div>
-      <div className="elder-display__stats">
-        <div>Известность городка {stats.fame}</div>
-        <div>Доля городка в квестах {GUILD_SHARE * 100}%</div>
-      </div>
+      <div>Известность городка {stats.fame}</div>
+      <div>Доля городка в квестах {GUILD_SHARE * 100}%</div>
     </div>
   );
 };

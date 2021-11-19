@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { heroStatsChoosed } from "../../../../actions/Actions";
-import { BuildingType, toDisplay } from "../../../../models/Building";
 import Hero from "../../../../models/hero/Hero";
 import { HeroActivityType } from "../../../../models/hero/HeroActivity";
 import Loader from "../../../loader/Loader";
@@ -22,12 +21,9 @@ const HealerDisplay = ({ visitors, visitorClicked }: HealerDisplayProps) => {
 
   return (
     <div className="healer-display">
-      <div className="healer-display__name">{toDisplay(BuildingType.HEALER)}</div>
-      <div className="healer-display__visitors-holder">
-        {visitors.map((visitor) => (
-          <HeroItem key={visitor.id} hero={visitor} enabled={true} itemClickHandler={(event) => visitorClickHandler(visitor, event)} />
-        ))}
-      </div>
+      {visitors.map((visitor) => (
+        <HeroItem key={visitor.id} hero={visitor} enabled={true} itemClickHandler={(event) => visitorClickHandler(visitor, event)} />
+      ))}
     </div>
   );
 };

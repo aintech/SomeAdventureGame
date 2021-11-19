@@ -14,7 +14,7 @@
     width: $overlay_display_width;
     height: $overlay_display_height;
     display: flex;
-    background-image: url(../../../img/quest-perform/quest-perform__container.png);
+    background-image: url(../../../img/quest-perform/__container.png);
     background-size: contain;
     z-index: 1010;
   }
@@ -33,21 +33,7 @@
   }
 
   &__btn-close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 70px;
-    height: 40px;
-    background-image: url(../../../img/building-display/building-display__btn-close.png);
-    border: none;
-    outline: none;
-    background-color: transparent;
-    z-index: 2000;
-    cursor: pointer;
-
-    &:hover {
-      background-image: url(../../../img/building-display/building-display__btn-close_hover.png);
-    }
+    @include closeOverlayBtn;
   }
 
   &__heroes-holder {

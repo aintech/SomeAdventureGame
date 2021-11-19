@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { BuildingType, toDisplay } from "../../../../models/Building";
 import Quest from "../../../../models/Quest";
 import { MAX_EMBARKED_QUESTS } from "../../../../utils/Variables";
 import Loader from "../../../loader/Loader";
@@ -13,19 +12,16 @@ type StablesDisplayProps = {
 const StablesDisplay = ({ embarked }: StablesDisplayProps) => {
   return (
     <div className="stables-display">
-      <div className="stables-display__name">{toDisplay(BuildingType.NESTS)}</div>
-      <div className="stables-display__stats">
-        <div>
-          Свободных шатлов {MAX_EMBARKED_QUESTS - embarked.length}/{MAX_EMBARKED_QUESTS}
-        </div>
-        <li>
-          {embarked.map((q, idx) => (
-            <ul key={q.id}>
-              {idx + 1} - на выполнении квеста '{q.title}'
-            </ul>
-          ))}
-        </li>
+      <div>
+        Свободных птиц {MAX_EMBARKED_QUESTS - embarked.length}/{MAX_EMBARKED_QUESTS}
       </div>
+      <li>
+        {embarked.map((q, idx) => (
+          <ul key={q.id}>
+            {idx + 1} - на выполнении квеста '{q.title}'
+          </ul>
+        ))}
+      </li>
     </div>
   );
 };

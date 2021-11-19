@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { BuildingType, toDisplay } from "../../../../models/Building";
 import GameStats from "../../../../models/GameStats";
 import Loader from "../../../loader/Loader";
 import "./treasury-display.scss";
@@ -12,10 +11,7 @@ type TreasuryDisplayProps = {
 const TreasuryDisplay = ({ stats }: TreasuryDisplayProps) => {
   return (
     <div className="treasury-display">
-      <div className="treasury-display__name">{toDisplay(BuildingType.DUST_STORAGE)}</div>
-      <div className="treasury-display__stats">
-        <div>Волшебной пыльцы в хранилище {stats.gold}</div>
-      </div>
+      <div>Волшебной пыльцы в хранилище {stats.gold}</div>
     </div>
   );
 };

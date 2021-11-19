@@ -13,9 +13,20 @@
     @include absoluteCenter;
     width: $overlay_display_width;
     height: $overlay_display_height;
-    z-index: 1010;
-    background-image: url(../../../img/building-display/building-display__container.png);
+    display: flex;
+    flex-direction: column;
+    background-image: url(../../../img/building-display/__container.png);
     background-size: contain;
+    z-index: 1010;
+  }
+
+  &__title {
+    @include buildingDisplayName;
+  }
+
+  &__discrete-holder {
+    width: 90%;
+    margin: 0 auto;
   }
 
   &__msg-upgrade {
@@ -62,21 +73,7 @@
   }
 
   &__btn-close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 70px;
-    height: 40px;
-    background-image: url(../../../img/building-display/building-display__btn-close.png);
-    border: none;
-    outline: none;
-    background-color: transparent;
-    z-index: 2000;
-    cursor: pointer;
-
-    &:hover {
-      background-image: url(../../../img/building-display/building-display__btn-close_hover.png);
-    }
+    @include closeOverlayBtn;
   }
 }
 

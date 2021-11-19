@@ -23,7 +23,7 @@ export const toDisplay = (type: BuildingType) => {
     case BuildingType.TAVERN:
       return "Таверна 'Пьяный жук'";
     case BuildingType.DWELLINGS:
-      return "Домики героев";
+      return "Домики жителей";
     case BuildingType.NESTS:
       return "Гнездовье канареек";
     case BuildingType.HEALER:
