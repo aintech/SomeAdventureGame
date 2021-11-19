@@ -17,19 +17,6 @@
   }
 }
 
-@mixin buildingDisplayName {
-  font-family: inherit;
-  font-size: 34px;
-  color: lightblue;
-  margin-top: 24px;
-  height: 60px;
-  text-align: center;
-  grid-row: 1;
-  grid-column: 1 / -1;
-  @include strokeText;
-  cursor: default;
-}
-
 @mixin closeOverlayBtn {
   position: absolute;
   top: 20px;
