@@ -1,8 +1,8 @@
 export enum BuildingType {
-  QUEST_BOARD, // GUILD,
+  GUILD,
   TAVERN, // MERCENARY_HUB,
   DWELLINGS, // CABINS,
-  NESTS, // HANGAR, STABLES
+  STABLES, // HANGAR,
   HEALER, // MEDBAY,
   ELDER, // COMMAND_CENTER,
   TRAINING_GROUND,
@@ -18,24 +18,24 @@ export default class Building {
 
 export const toDisplay = (type: BuildingType) => {
   switch (type) {
-    case BuildingType.QUEST_BOARD:
-      return "Доска заданий";
+    case BuildingType.GUILD:
+      return "Гильдия приключений";
     case BuildingType.TAVERN:
       return "Таверна 'Пьяный жук'";
     case BuildingType.DWELLINGS:
       return "Домики жителей";
-    case BuildingType.NESTS:
+    case BuildingType.STABLES:
       return "Гнездовье канареек";
     case BuildingType.HEALER:
-      return "Палатка целителя";
+      return "Домик целителя";
     case BuildingType.ELDER:
-      return "Домик старейшины";
+      return "Хижина старейшины";
     case BuildingType.TRAINING_GROUND:
       return "Тренировочная площадка";
     case BuildingType.ALCHEMIST:
       return "Лаборатория алхимика";
     case BuildingType.BLACKSMITH:
-      return "Кузница Горков";
+      return "Каменная кузня";
     case BuildingType.MARKET:
       return "Кибитка торговца";
     case BuildingType.DUST_STORAGE:

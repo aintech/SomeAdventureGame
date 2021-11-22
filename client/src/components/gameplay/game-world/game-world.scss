@@ -3,8 +3,8 @@
 .game-world {
   @include absoluteCenter;
   display: block;
-  width: 637px;
-  height: 620px;
-  background-image: url(../../../img/planet.png);
+  width: 614px;
+  height: 597px;
+  background-image: url(../../../img/town.png);
   z-index: 10;
 }

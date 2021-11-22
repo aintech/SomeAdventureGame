@@ -43,18 +43,17 @@
 
   &__btn--start {
     margin: 0 5px 0 0;
-    width: max-content;
-    height: fit-content;
     font-family: inherit;
     font-size: 16px;
     grid-row: 3;
     grid-column: 2;
-    padding: 8px;
+    padding: 3px;
     justify-self: end;
     align-self: center;
     cursor: pointer;
     background-color: chartreuse;
-    border-color: black;
+    border: none;
+    outline: none;
     animation: springing 1s linear infinite;
   }
 
@@ -62,10 +61,10 @@
     grid-row: 1;
     grid-column: 2;
     justify-self: end;
-    margin: 3px 3px 0 0;
-    width: 27px;
-    height: 19px;
-    background-image: url(../../../../img/quest-travel/quest-travel_btn-cancel.png);
+    margin: 4px 4px 0 0;
+    width: 21px;
+    height: 16px;
+    background-image: url(../../../../img/building-display/__btn-close.png);
     background-size: cover;
     border: none;
     outline: none;
@@ -73,7 +72,7 @@
     cursor: pointer;
 
     &:hover {
-      background-image: url(../../../../img/quest-travel/quest-travel_btn-cancel_hover.png);
+      margin-top: 3px;
     }
 
     &__hidden {

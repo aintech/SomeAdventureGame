@@ -34,8 +34,7 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
     super(props);
     this.canvasRef = createRef();
     this.dynamicCanvasRef = createRef();
-    const rand = Math.random();
-    this.background = rand < 0.34 ? "moon" : rand < 0.67 ? "rocky" : "asteroid";
+    this.background = "dungeon";
   }
 
   onUnmount() {

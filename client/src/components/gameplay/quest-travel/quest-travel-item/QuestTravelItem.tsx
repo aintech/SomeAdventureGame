@@ -5,8 +5,8 @@ import { beginQuestPerform, showConfirmDialog } from "../../../../actions/Action
 import { onCancelQuest, onCheckpointPassed } from "../../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../../hoc/WithApiService";
 import backgroundImgSrc from "../../../../img/quest-travel/quest-travel_background.png";
-import spaceshipImgSrc from "../../../../img/quest-travel/quest-travel_spaceship.png";
-import spaceshipAnimImgSrc from "../../../../img/quest-travel/quest-travel_spaceship_moving.gif";
+import birdImgSrc from "../../../../img/quest-travel/quest-travel_bird.png";
+import birdAnimImgSrc from "../../../../img/quest-travel/quest-travel_moving.gif";
 import Hero from "../../../../models/hero/Hero";
 import Quest from "../../../../models/Quest";
 import QuestCheckpoint from "../../../../models/QuestCheckpoint";
@@ -60,8 +60,8 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     this.canvasCtx = this.canvas.getContext("2d")!;
 
     this.loadImage("background", backgroundImgSrc);
-    this.loadImage("spaceship", spaceshipImgSrc);
-    this.loadGif("spaceshipAnim", spaceshipAnimImgSrc);
+    this.loadImage("bird", birdImgSrc);
+    this.loadGif("birdAnim", birdAnimImgSrc);
 
     const { quest } = this.props;
 
@@ -161,16 +161,16 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
       }
     }
 
-    /* Draw spaceship travel to quest location */
-    const spaceshipAnim = this.state.gifs.get("spaceshipAnim");
-    if (spaceshipAnim && this.state.seconds < 0) {
-      this.canvasCtx.drawImage(spaceshipAnim.image, 10, 46, 78, 20);
+    /* Draw bird travel to quest location */
+    const birdAnim = this.state.gifs.get("birdAnim");
+    if (birdAnim && this.state.seconds < 0) {
+      this.canvasCtx.drawImage(birdAnim.image, 40, 46, 55, 20);
     }
 
-    /* Draw spaceship arrived */
-    const spaceshipImg = this.state.images.get("spaceship");
-    if (spaceshipImg && this.state.seconds >= 0) {
-      this.canvasCtx.drawImage(spaceshipImg, 20, 46, 84, 29);
+    /* Draw bird arrived */
+    const birdImg = this.state.images.get("bird");
+    if (birdImg && this.state.seconds >= 0) {
+      this.canvasCtx.drawImage(birdImg, 20, 46, 60, 32);
     }
   }
 
@@ -201,11 +201,11 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     let description;
 
     if (this.state.seconds < 0) {
-      description = "На пути к цели";
+      description = "В пути к квесту";
     } else if (this.props.activeQuestPerform) {
       description = "В процессе";
     } else {
-      description = "Готовы к высадке";
+      description = "Готовы начать";
     }
 
     const cancelBtnClass = "quest-travel-item__btn--cancel" + (this.props.activeQuestPerform ? "__hidden" : "");

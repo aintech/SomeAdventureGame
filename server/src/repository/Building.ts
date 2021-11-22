@@ -1,10 +1,10 @@
 import query, { single } from "./Db";
 
 export enum BuildingType {
-  QUEST_BOARD /** Send heroes to quest */,
+  GUILD /** Send heroes to quest */,
   TAVERN /** Hiring heroes */,
   DWELLINGS /** Limit number of hired heroes */,
-  NESTS /** Limit number of simultaneous embarked quests */,
+  STABLES /** Limit number of simultaneous embarked quests */,
   HEALER /** Healing heroes */,
   DUST_STORAGE /** Limit Dust amount */,
   TRAINING_GROUND /** Level up heroes */,

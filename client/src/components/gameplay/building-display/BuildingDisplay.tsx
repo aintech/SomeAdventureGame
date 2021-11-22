@@ -165,13 +165,13 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
 
 const displayByType = (type: BuildingType) => {
   switch (type) {
-    case BuildingType.QUEST_BOARD:
+    case BuildingType.GUILD:
       return <GuildDisplay />;
     case BuildingType.TAVERN:
       return <TavernDisplay />;
     case BuildingType.DWELLINGS:
       return <DwellingsDisplay />;
-    case BuildingType.NESTS:
+    case BuildingType.STABLES:
       return <StablesDisplay />;
     case BuildingType.HEALER:
       return <HealerDisplay />;
