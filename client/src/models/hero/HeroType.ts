@@ -1,23 +1,23 @@
 export enum HeroType {
-  WARRIOR,
-  MAGE,
-  THIEF,
-  HEALER,
-  PALADIN,
+  WARRIOR, // GNOME, TROOPER
+  MAGE, // FAIRY, TECHNOMANCER
+  THIEF, // ELF, AGENT
+  HEALER, // PIXIE, MEDIC
+  PALADIN, // SYLPH
 }
 
 export const display = (type: HeroType) => {
   switch (type) {
     case HeroType.WARRIOR:
-      return "Штурмовик";
+      return "Гном";
     case HeroType.MAGE:
-      return "Маг"; 
+      return "Фея";
     case HeroType.THIEF:
-      return "Вор";
+      return "Эльф";
     case HeroType.HEALER:
-      return "Лекарь";
+      return "Пикси";
     case HeroType.PALADIN:
-      return "Паладин";
+      return "Сильф";
     default:
       throw new Error(`Unknown hero type ${HeroType[type]}`);
   }
