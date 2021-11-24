@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import HealIconImg from "../../../../../../img/quest-perform/battle-process/heal-icon.png";
 import Hero, { calcHealthFraction } from "../../../../../../models/hero/Hero";
 import { display, HeroType } from "../../../../../../models/hero/HeroType";
 import Quest from "../../../../../../models/Quest";
@@ -11,13 +10,10 @@ type HeroItemProps = {
   chosenQuest?: Quest;
   itemClickHandler?: (event: React.MouseEvent<HTMLDivElement>) => void;
   enabled: boolean;
-  reward?: { gold: number; experience: number };
   embarkedLimit?: boolean;
-  hitted?: boolean;
-  healed?: boolean;
 };
 
-const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, hitted, healed, reward, embarkedLimit }: HeroItemProps) => {
+const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, embarkedLimit }: HeroItemProps) => {
   const healthRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const expRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const canvasW = toGameplayScale(80);
@@ -47,23 +43,10 @@ const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, hitted, healed
     opacity: enabled ? 1 : 0.5,
   };
 
-  const rewardStyle = {
-    display: reward ? "block" : "none",
-  };
-
-  // Приходится делать две анимации, т.к. когда надо проиграть анимацию
-  // которая уже была последней код не понимает что её надо переигрывать
-  // из-за этого приходится делать вторую идентичную анимацию чтобы переключится на неё
-  const className = `hero-item${reward ? "" : " hero-item--hoverable"}${
-    hitted === undefined ? "" : hitted ? " hero-item--hitted" : " hero-item--hitted2"
-  }`;
-
-  const healClass = `hero-item__heal-icon${healed === undefined ? "" : healed ? " heal-icon_playing" : " heal-icon_playing2"}`;
-
   const power = hero.stats.power + hero.equipStats.power;
 
   return (
-    <div className={className} style={style} onClick={itemClickHandler}>
+    <div className="hero-item" style={style} onClick={itemClickHandler}>
       <button id="hero_assigned_btn" className="hero-item__btn--assign" style={assignBtnStyle}>
         Назначить
       </button>
@@ -77,13 +60,6 @@ const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, hitted, healed
       <div className="hero-item__power">{power}</div>
       <div className="hero-item__health">{hero.health}</div>
       <div className="hero-item__gold">{hero.gold}</div>
-      <div className="hero-item__reward--gold" style={rewardStyle}>
-        {reward?.gold}
-      </div>
-      <div className="hero-item__reward--experience" style={rewardStyle}>
-        {reward?.experience}
-      </div>
-      <img src={HealIconImg} alt="heal" className={healClass}></img>
     </div>
   );
 };

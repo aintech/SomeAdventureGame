@@ -9,6 +9,12 @@
   text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
 }
 
+@mixin strokedInOut($size) {
+  $plus: $size;
+  $minus: -$size;
+  box-shadow: inset $plus $plus black, inset $minus $minus black, $plus $plus black, $minus $plus black, $size $minus black, $minus $minus black;
+}
+
 @mixin clearfix {
   &::after {
     content: "";
@@ -18,20 +24,28 @@
 }
 
 @mixin closeOverlayBtn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 52px;
-  height: 38px;
-  background-image: url(../../img/building-display/__btn-close.png);
-  background-size: contain;
-  border: none;
+  margin: 10px;
+  width: 42px;
+  height: 42px;
+  font-size: 36px;
+  font-family: sans-serif;
+  font-weight: bold;
+  color: $border-color;
+  border: 2px solid $border-color;
+  @include strokedInOut(1px);
   outline: none;
-  background-color: transparent;
+  background-color: rgba($color: black, $alpha: 0.2);
   z-index: 2000;
   cursor: pointer;
 
+  &::before {
+    content: "X";
+    @include strokeText();
+  }
+
   &:hover {
-    top: 18px;
+    color: $border-color_hover;
+    border-color: $border-color_hover;
+    background-color: rgba($color: black, $alpha: 0.15);
   }
 }

@@ -10,8 +10,8 @@ import QuestCheckpoint, { CheckpointType } from "../../../models/QuestCheckpoint
 import { CheckpointPassedBody } from "../../../services/QuestService";
 import { shallowCopy } from "../../../utils/Utils";
 import Loader from "../../loader/Loader";
-import HeroItem from "../building-display/guild-display/heroes/hero-item/HeroItem";
 import QuestComplete from "./quest-complete/QuestComplete";
+import QuestHeroItem from "./quest-hero-item/QuestHeroItem";
 import QuestMap from "./quest-map/QuestMap";
 import "./quest-perform.scss";
 import BattleProcess, { HeroEvent } from "./quest-processes/battle-process/BattleProcess";
@@ -187,10 +187,9 @@ const QuestPerform = ({ quest, heroes, heroClicked, onCheckpointPassed, onComple
         <div className="quest-perform__name">{quest.title}</div>
         <div className="quest-perform__heroes-holder">
           {heroActors.map((hero) => (
-            <HeroItem
+            <QuestHeroItem
               key={hero.id}
               hero={hero}
-              enabled={true}
               hitted={!reacted.get(HeroReactionType.HITTED)!.includes(hero.id) ? undefined : heroHittedMemo.includes(hero.id)}
               healed={!reacted.get(HeroReactionType.HEALED)!.includes(hero.id) ? undefined : heroHealedMemo.includes(hero.id)}
               itemClickHandler={(event) => heroClickHandler(hero, event)}

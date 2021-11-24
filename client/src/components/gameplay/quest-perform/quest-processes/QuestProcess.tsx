@@ -206,11 +206,11 @@ class QuestProcess<P extends QuestProcessProps, S extends QuestProcessState> ext
     return (
       <>
         <div className={`quest-process__canvas quest-process__back_${this.background}`}>
-          <canvas className="quest-process__canvas-static" width={650} height={500} ref={this.canvasRef}></canvas>
+          <canvas className="quest-process__canvas-static" width={698} height={558} ref={this.canvasRef}></canvas>
           <canvas
             className="quest-process__canvas-dynamic"
-            width={650}
-            height={500}
+            width={698}
+            height={558}
             ref={this.dynamicCanvasRef}
             onClick={(e) => this.canvasClickHandler(e)}
             onMouseMove={(e) => this.canvasMouseMoveHandler(e)}

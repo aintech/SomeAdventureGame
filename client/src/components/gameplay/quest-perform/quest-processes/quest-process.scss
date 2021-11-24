@@ -1,8 +1,11 @@
 .quest-process {
   &__canvas {
-    align-self: center;
-    width: 650px;
-    height: 500px;
+    position: absolute;
+    // align-self: center;
+    top: 21px;
+    left: 260px;
+    width: 698px;
+    height: 558px;
     display: flex;
     background-size: cover;
 

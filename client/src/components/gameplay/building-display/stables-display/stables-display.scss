@@ -8,8 +8,10 @@
   font-size: 24px;
   color: white;
   @include strokeText;
-  margin-left: 50px;
-  margin-top: 50px;
+
+  &__title {
+    text-align: center;
+  }
 
   & li {
     margin-top: 15px;

@@ -19,7 +19,7 @@ const DwellingsDisplay = ({ habitants, habitantClicked }: DwellingsDisplayProps)
   };
 
   return (
-    <div className="blacksmith-display">
+    <div className="dwellings-display">
       {habitants.map((habitant) => (
         <HeroItem key={habitant.id} hero={habitant} enabled={true} itemClickHandler={(event) => habitantClickHandler(habitant, event)} />
       ))}

@@ -70,19 +70,23 @@ const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest }: GuildDisplayPro
   return (
     <div className="guild-display">
       <QuestScrollList quests={quests} />
-      <HeroList heroes={heroesOnPage} quests={quests} heroesAssignedToQuest={heroesAssignedToQuest} />
-      <button className="guild-display__btn--show-unabled" onClick={switchShowUnabled}>
-        <i className="material-icons guild-display__btn--show-unabled-icon">{!showUnabledHeroes ? "check_box" : "check_box_outline_blank"}</i>
-        <span>Только свободные</span>
-      </button>
-      <button className="guild-display__btn--previous" style={prevPageBtnStyle} onClick={() => switchPage(-1)}></button>
-      <button
-        className="guild-display__btn--next"
-        style={nextPageBtnStyle}
-        onClick={() => {
-          switchPage(1);
-        }}
-      ></button>
+      <div className="guild-display__hero-list">
+        <HeroList heroes={heroesOnPage} quests={quests} heroesAssignedToQuest={heroesAssignedToQuest} />
+        <div className="guild-display__btn-holder">
+          <button className="btn--show-unabled" onClick={switchShowUnabled}>
+            <i className="material-icons btn--show-unabled-icon">{!showUnabledHeroes ? "check_box" : "check_box_outline_blank"}</i>
+            <span>Только свободные</span>
+          </button>
+          <button className="btn--previous" style={prevPageBtnStyle} onClick={() => switchPage(-1)}></button>
+          <button
+            className="btn--next"
+            style={nextPageBtnStyle}
+            onClick={() => {
+              switchPage(1);
+            }}
+          ></button>
+        </div>
+      </div>
     </div>
   );
 };

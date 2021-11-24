@@ -183,7 +183,7 @@ export const drawOpponent = (actor: CheckpointActor) => {
   dynamicCanvasCtx.drawImage(
     img.image(),
     dynamicCanvasCtx.canvas.width * 0.5 - img.width() * 0.5 + actor.xOffset,
-    (hitted ? img.height() * 0.01 : 0) - 12,
+    (hitted ? img.height() * 0.01 : 0) - 12 + 58, // пока хардкодим разницу высоты полотна и картинки
     img.width(),
     hitted ? img.height() * 0.99 : img.height()
   );

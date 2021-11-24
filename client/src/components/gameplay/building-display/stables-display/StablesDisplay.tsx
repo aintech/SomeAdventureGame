@@ -12,8 +12,8 @@ type StablesDisplayProps = {
 const StablesDisplay = ({ embarked }: StablesDisplayProps) => {
   return (
     <div className="stables-display">
-      <div>
-        Свободных птиц {MAX_EMBARKED_QUESTS - embarked.length}/{MAX_EMBARKED_QUESTS}
+      <div className="stables-display__title">
+        Свободных экипажей {MAX_EMBARKED_QUESTS - embarked.length}/{MAX_EMBARKED_QUESTS}
       </div>
       <li>
         {embarked.map((q, idx) => (

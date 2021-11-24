@@ -1,10 +1,7 @@
 @import "../../../../utils/css/index.scss";
 
 .blacksmith-display {
-  width: 355px;
-
-  display: grid;
-  grid-template-rows: repeat(2, 1fr);
-  grid-template-columns: repeat(5, 1fr);
-  gap: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
 }

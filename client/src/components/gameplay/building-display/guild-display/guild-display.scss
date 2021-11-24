@@ -1,13 +1,37 @@
 @import "../../../../utils/css/index.scss";
 
+@mixin pageBtn {
+  width: 80px;
+  height: 30px;
+  background-image: url(../../../../img/building-display/guild-display/guild-scroll_hero.png);
+  background-size: cover;
+  background-position-x: -15px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
 .guild-display {
-  &__btn--show-unabled {
+  display: flex;
+  gap: 10px;
+
+  &__hero-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__btn-holder {
+    display: flex;
+    padding-top: 10px;
+  }
+}
+
+.btn {
+  &--show-unabled {
+    margin-right: 10px;
     font-family: inherit;
     font-size: 16px;
     display: flex;
-    position: absolute;
-    top: 28px;
-    right: 90px;
     background-color: transparent;
     border: 1px solid yellowgreen;
     color: yellowgreen;
@@ -30,31 +54,16 @@
     }
   }
 
-  @mixin pageBtn {
-    position: absolute;
-    top: 540px;
-    width: 150px;
-    height: 30px;
-    background-image: url(../../../../img/building-display/guild-display/guild-scroll_hero.png);
-    background-size: cover;
-    background-position-x: -20px;
-    border: none;
-    outline: none;
-    background-color: transparent;
-  }
-
-  &__btn--previous {
+  &--previous {
     @include pageBtn;
-    left: 670px;
 
     &:hover {
       background-image: url(../../../../img/building-display/guild-display/guild-btn_scroll_hero_hover.png);
     }
   }
 
-  &__btn--next {
+  &--next {
     @include pageBtn;
-    left: 840px;
     transform: scale(-1);
 
     &:hover {

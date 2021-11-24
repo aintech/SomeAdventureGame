@@ -129,8 +129,7 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
           onClick={this.showUpgradeConfirm.bind(this)}
           disabled={upgradeDisabled}
         >
-          &uarr; lvl <span className="building-display__btn-upgrade__span">{chosenBuilding.level + 1}</span> |
-          <span className="building-display__btn-upgrade__span"> {chosenBuilding.upgrade.cost}</span> ec
+          &uarr; lvl <span className="building-display__btn-upgrade__span">{chosenBuilding.level + 1}</span>
         </button>
       ) : null;
 
@@ -145,18 +144,21 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
     return (
       <div className="building-display" onClick={this.props.hideBuildingDisplay}>
         <div className="building-display__container" onClick={(e) => e.stopPropagation()}>
-          <button className="building-display__btn-close" onClick={this.props.hideBuildingDisplay}></button>
-          <div className="title">
-            <img src={titleLeftImg} alt="" className="title__left" />
-            <img src={titleRightImg} alt="" className="title__right" />
-            <div className="title__name">{toDisplay(chosenBuilding.type)}</div>
-            <img src={titleBottomLeftImg} alt="" className="title__bottom_left" />
-            <img src={titleBottomCenterImg} alt="" className="title__bottom_center" />
-            <img src={titleBottomRightImg} alt="" className="title__bottom_right" />
+          <div className="building-display__title">
+            {upgradeBtn}
+            <div className="title">
+              <img src={titleLeftImg} alt="" className="title__left" />
+              <img src={titleRightImg} alt="" className="title__right" />
+              <div className="title__name">{toDisplay(chosenBuilding.type)}</div>
+              <img src={titleBottomLeftImg} alt="" className="title__bottom_left" />
+              <img src={titleBottomCenterImg} alt="" className="title__bottom_center" />
+              <img src={titleBottomRightImg} alt="" className="title__bottom_right" />
+            </div>
+            <button className="building-display__btn-close" onClick={this.props.hideBuildingDisplay}></button>
           </div>
-          <div className="building-display__discrete-holder">{displayByType(chosenBuilding.type)}</div>
+          <hr className="title__underscore" />
+          <div className="building-display__content">{displayByType(chosenBuilding.type)}</div>
           {upgradeMsg}
-          {upgradeBtn}
         </div>
       </div>
     );

@@ -37,11 +37,12 @@
   }
 
   &__heroes-holder {
-    margin: 20px;
-    justify-self: center;
+    position: absolute;
+    top: 61px;
+    left: 28px;
     display: grid;
     grid-template-rows: repeat(4, min-content);
     grid-template-columns: min-content;
-    gap: 15px;
+    gap: 5px;
   }
 }

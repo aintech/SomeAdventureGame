@@ -9,7 +9,7 @@
     grid-column: 2;
     display: grid;
     grid-template-columns: repeat(2, min-content);
-    gap: 15px;
+    gap: 5px;
   }
 
   &__assortment__list {
@@ -27,7 +27,6 @@
     color: whitesmoke;
     overflow-y: scroll;
     background-color: #908070;
-    border-radius: 5px;
 
     & ul {
       list-style: none;
