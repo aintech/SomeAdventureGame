@@ -18,14 +18,7 @@ type QuestDetailsProps = {
   closeDetails: () => void;
 };
 
-const QuestDetails = ({
-  quest,
-  heroesAssignedToQuest,
-  quests,
-  acceptQuest,
-  heroDismissedFromQuest,
-  closeDetails,
-}: QuestDetailsProps) => {
+const QuestDetails = ({ quest, heroesAssignedToQuest, quests, acceptQuest, heroDismissedFromQuest, closeDetails }: QuestDetailsProps) => {
   const displayMessage = useDisplayMessage();
 
   const dismissHero = (hero: Hero) => {
@@ -39,17 +32,17 @@ const QuestDetails = ({
 
   const questsInProgress = quests.filter((q) => q.progress !== undefined).length;
 
-  const canAcceptQuest = heroesAssignedToQuest.length > 0 && questsInProgress < MAX_EMBARKED_QUESTS;
+  // const canAcceptQuest = heroesAssignedToQuest.length > 0 && questsInProgress < MAX_EMBARKED_QUESTS;
 
-  const acceptBtnStyle = canAcceptQuest
-    ? {
-        opacity: 1,
-        cursor: "pointer",
-      }
-    : {
-        opacity: 0.5,
-        cursor: "default",
-      };
+  // const acceptBtnStyle = canAcceptQuest
+  //   ? {
+  //       opacity: 1,
+  //       cursor: "pointer",
+  //     }
+  //   : {
+  //       opacity: 0.5,
+  //       cursor: "default",
+  //     };
 
   const assignedRender = heroesAssignedToQuest.map((hero) => {
     const shortName = hero.name.length > 10 ? `${hero.name.substring(0, 7)}...` : hero.name;
@@ -73,23 +66,18 @@ const QuestDetails = ({
       <button className="quest-details__btn--close" onClick={closeDetails}></button>
       <div className="quest-details__title">{quest.title}</div>
       <div className="quest-details__level">Ур. {quest.level}</div>
-      <div className="quest-details__description">
-        {quest.description.replace(":tribute", quest.tribute.toString())}
-      </div>
+      <div className="quest-details__description">{quest.description.replace(":tribute", quest.tribute.toString())}</div>
       <div className="quest-details__tribute">
         Доля гильдии {Math.floor(quest.tribute * GUILD_SHARE)} монет ({GUILD_SHARE * 100}%)
       </div>
       <div className="quest-details__experience">Опыт героям {quest.experience} очков</div>
       <div className="quest-details__assigned-heroes">{assignedRender}</div>
       {questsInProgress < MAX_EMBARKED_QUESTS ? (
-        <button
-          className="quest-details__btn--accept"
-          onClick={onAcceptQuest}
-          style={acceptBtnStyle}
-          disabled={!canAcceptQuest}
-        ></button>
+        // <button className="quest-details__btn--accept" onClick={onAcceptQuest} style={acceptBtnStyle} disabled={!canAcceptQuest}></button>
+        // <button className="quest-details__btn-assign" onClick={assignHeroes}></button>
+        <div></div>
       ) : (
-        <div className="quest-details__max-quest-msg">Выполняется максимальное количество квестов</div>
+        <div className="quest-details__max-quest-msg">Достигнут максимум выполняемых квестов</div>
       )}
     </div>
   );

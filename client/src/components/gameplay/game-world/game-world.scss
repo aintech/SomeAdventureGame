@@ -1,10 +1,9 @@
 @import "../../../utils/css/index.scss";
 
 .game-world {
-  @include absoluteCenter;
-  display: block;
-  width: 614px;
-  height: 597px;
+  margin: 20px auto;
+  width: 307px;
+  height: 298px;
   background-image: url(../../../img/town.png);
-  z-index: 10;
+  background-size: contain;
 }

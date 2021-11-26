@@ -10,7 +10,6 @@
 
   &__container {
     @include absoluteCenter;
-    width: 400px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: 1fr, min-content;
@@ -19,13 +18,13 @@
   }
 
   &__message {
-    font-size: 24px;
+    font-size: 32px;
     margin: 10px;
     grid-column: 1/ -1;
   }
 
   &__accept-btn {
-    font-size: 24px;
+    font-size: 32px;
     cursor: pointer;
     height: min-content;
     grid-row: 2;
@@ -42,7 +41,7 @@
   }
 
   &__cancel-btn {
-    font-size: 24px;
+    font-size: 32px;
     cursor: pointer;
     height: min-content;
     grid-row: 2;

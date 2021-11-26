@@ -6,12 +6,12 @@ export enum BuildingType {
   DWELLINGS /** Limit number of hired heroes */,
   STABLES /** Limit number of simultaneous embarked quests */,
   HEALER /** Healing heroes */,
-  DUST_STORAGE /** Limit Dust amount */,
+  ELDER /**  Management town accounts */,
   TRAINING_GROUND /** Level up heroes */,
   ALCHEMIST /** Selling potions to heroes */,
   BLACKSMITH /** Upgrade heroes equipment to better tier*/,
   MARKET /** Heroes buy new equipment */,
-  ELDER /**  Management town accounts */,
+  ENERGY_HUB /** Limit buildings upgrade limit */,
 }
 
 export type Building = {

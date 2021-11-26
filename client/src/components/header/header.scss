@@ -19,9 +19,10 @@
   }
 
   &__btn-logout {
-    font-family: inherit;
     height: $header_height;
-    width: 80px;
+    width: 60px;
+    font-family: inherit;
+    font-size: 18px;
     display: inline-block;
     cursor: pointer;
     color: white;
@@ -44,8 +45,8 @@
 
     &-fame {
       &--img {
-        width: 30px;
-        height: 30px;
+        width: 24px;
+        height: 24px;
         background-image: url(../../img/header/header-fame.png);
         background-size: cover;
       }
@@ -54,9 +55,9 @@
     &-gold {
       &--img {
         margin-left: 20px;
-        width: 30px;
-        height: 30px;
-        background-image: url(../../img/header/header-gold.png);
+        width: 24px;
+        height: 24px;
+        background-image: url(../../img/quest-perform/dust-drop.png);
         background-size: cover;
       }
     }

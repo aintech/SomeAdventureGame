@@ -24,17 +24,25 @@
 }
 
 @mixin closeOverlayBtn {
-  margin: 10px;
-  width: 42px;
-  height: 42px;
-  font-size: 36px;
-  font-family: sans-serif;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  height: 32px;
+  width: 32px;
+  // min-width: 42px;
+  // min-height: 42px;
+  font-size: 24px;
+  // font-family: sans-serif;
   font-weight: bold;
   color: $border-color;
   border: 2px solid $border-color;
-  @include strokedInOut(1px);
+  border-radius: 20%;
+  // @include strokedInOut(1px);
   outline: none;
-  background-color: rgba($color: black, $alpha: 0.2);
+  // background-image: url(../../img/building-display/__btn-close.png);
+  // background-size: cover;
+  // background-color: transparent;
+  background-color: rgba($color: white, $alpha: 0.2);
   z-index: 2000;
   cursor: pointer;
 
@@ -43,9 +51,9 @@
     @include strokeText();
   }
 
-  &:hover {
-    color: $border-color_hover;
-    border-color: $border-color_hover;
-    background-color: rgba($color: black, $alpha: 0.15);
-  }
+  // &:hover {
+  //   color: $border-color_hover;
+  //   border-color: $border-color_hover;
+  //   background-color: rgba($color: black, $alpha: 0.15);
+  // }
 }

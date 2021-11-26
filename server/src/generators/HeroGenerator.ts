@@ -38,7 +38,7 @@ export type GeneratedHero = {
 
 const generateHeroes = () => {
   const heroes: GeneratedHero[] = [];
-  const poolSize = Math.floor(Math.random() * 4) + 3;
+  const poolSize = Math.floor(Math.random() * 4) + 10;
   for (let i = 0; i < poolSize; i++) {
     const power = Math.floor(Math.random() * 6) + 5;
     const vit = Math.floor(Math.random() * 5) + 10;

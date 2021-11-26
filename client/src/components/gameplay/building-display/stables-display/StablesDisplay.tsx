@@ -13,12 +13,12 @@ const StablesDisplay = ({ embarked }: StablesDisplayProps) => {
   return (
     <div className="stables-display">
       <div className="stables-display__title">
-        Свободных экипажей {MAX_EMBARKED_QUESTS - embarked.length}/{MAX_EMBARKED_QUESTS}
+        Челноков в ангаре {MAX_EMBARKED_QUESTS - embarked.length}/{MAX_EMBARKED_QUESTS}
       </div>
       <li>
         {embarked.map((q, idx) => (
           <ul key={q.id}>
-            {idx + 1} - на выполнении квеста '{q.title}'
+            {idx + 1} - на задании '{q.title}'
           </ul>
         ))}
       </li>

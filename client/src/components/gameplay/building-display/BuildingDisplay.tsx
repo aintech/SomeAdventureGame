@@ -4,11 +4,6 @@ import { bindActionCreators, compose, Dispatch } from "redux";
 import { buildingClicked, showConfirmDialog } from "../../../actions/Actions";
 import { onCompleteBuildingUpgrade, onStartBuildingUpgrade } from "../../../actions/ApiActions";
 import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService";
-import titleBottomCenterImg from "../../../img/building-display/__title/__bottom_center.png";
-import titleBottomLeftImg from "../../../img/building-display/__title/__bottom_left.png";
-import titleBottomRightImg from "../../../img/building-display/__title/__bottom_right.png";
-import titleLeftImg from "../../../img/building-display/__title/__left.png";
-import titleRightImg from "../../../img/building-display/__title/__right.png";
 import Building, { BuildingType, toDisplay } from "../../../models/Building";
 import GameStats from "../../../models/GameStats";
 import { convertDuration } from "../../../utils/Utils";
@@ -129,7 +124,7 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
           onClick={this.showUpgradeConfirm.bind(this)}
           disabled={upgradeDisabled}
         >
-          &uarr; lvl <span className="building-display__btn-upgrade__span">{chosenBuilding.level + 1}</span>
+          &uarr;
         </button>
       ) : null;
 
@@ -146,18 +141,11 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
         <div className="building-display__container" onClick={(e) => e.stopPropagation()}>
           <div className="building-display__title">
             {upgradeBtn}
-            <div className="title">
-              <img src={titleLeftImg} alt="" className="title__left" />
-              <img src={titleRightImg} alt="" className="title__right" />
-              <div className="title__name">{toDisplay(chosenBuilding.type)}</div>
-              <img src={titleBottomLeftImg} alt="" className="title__bottom_left" />
-              <img src={titleBottomCenterImg} alt="" className="title__bottom_center" />
-              <img src={titleBottomRightImg} alt="" className="title__bottom_right" />
-            </div>
+            <div className="building-display__title_name">{toDisplay(chosenBuilding.type)}</div>
             <button className="building-display__btn-close" onClick={this.props.hideBuildingDisplay}></button>
           </div>
           <hr className="title__underscore" />
-          <div className="building-display__content">{displayByType(chosenBuilding.type)}</div>
+          <div className="building-display__display-content">{displayByType(chosenBuilding.type)}</div>
           {upgradeMsg}
         </div>
       </div>
@@ -177,7 +165,7 @@ const displayByType = (type: BuildingType) => {
       return <StablesDisplay />;
     case BuildingType.HEALER:
       return <HealerDisplay />;
-    case BuildingType.DUST_STORAGE:
+    case BuildingType.ENERGY_HUB:
       return <TreasuryDisplay />;
     case BuildingType.TRAINING_GROUND:
       return <TrainingGroundDisplay />;

@@ -16,17 +16,37 @@ const TavernPatron = ({ patron, hirePatron }: TavernPatronProps) => {
 
   return (
     <div className="tavern-patron">
-      <div className="tavern-patron__portrait">
-        <div className={`tavern-patron__portrait--${HeroType[patron.type].toLowerCase()}`}></div>
+      <div className="tavern-patron__container">
+        <p className="tavern-patron__name">{patron.name}</p>
+        <hr className="tavern-patron__divider" />
+        <div className="tavern-patron__level-info">
+          <p>{`${display(patron.type)}`}</p>
+          <p>Ур. {patron.level.lvl}</p>
+        </div>
+
+        <div className="tavern-patron__info">
+          <div className="tavern-patron__portrait">
+            <div className={`tavern-patron__portrait--${HeroType[patron.type].toLowerCase()}`}></div>
+          </div>
+
+          <div className="tavern-patron__stats">
+            <div>
+              ATK &gt; <span className="patron-stat">{patron.stats.power}</span>
+            </div>
+            <div>
+              DEF &gt; <span className="patron-stat">{patron.stats.defence}</span>
+            </div>
+            <div>
+              VIT &gt; <span className="patron-stat">{patron.stats.vitality}</span>
+            </div>
+            <div>
+              AGI &gt; <span className="patron-stat">{patron.stats.initiative}</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="tavern-patron__name">{patron.name}</div>
-      <div className="tavern-patron__type-level">{`${display(patron.type)} lvl. ${patron.level.lvl}`}</div>
-      <div className="tavern-patron__power">{patron.stats.power}</div>
-      <div className="tavern-patron__defence">{patron.stats.defence}</div>
-      <div className="tavern-patron__vitality">{patron.stats.vitality}</div>
-      <div className="tavern-patron__initiative">{patron.stats.initiative}</div>
       <button className="tavern-patron__btn--hire" onClick={(e) => onHirePatron(e)}>
-        <span className="tavern-patron__btn--hire__price">{patron.gold} g</span>
+        <span className="tavern-patron__btn--hire__price">{patron.gold} c</span>
       </button>
     </div>
   );

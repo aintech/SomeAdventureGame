@@ -1,28 +1,22 @@
-@import "../../../../../utils/css/mixins.scss";
+@import "../../../../../utils/css/index.scss";
 
 .tavern-patron {
-  display: grid;
+  &__container {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  min-width: 145px;
+  display: flex;
+  flex-direction: column;
   font-family: inherit;
   font-size: 20px;
-  width: calc(513px / 2);
-  height: calc(257px / 2);
-  background-image: url(../../../../../img/building-display/tavern-display/tarvern-display_hero-bg.png);
-  background-repeat: no-repeat;
-  background-size: cover;
+  background-color: cadetblue;
+  border-radius: 10px;
   cursor: default;
   z-index: 2000;
-  grid-template-columns:
-    35px
-    55px
-    55px
-    55px
-    1fr;
-  grid-template-rows:
-    40px
-    40px
-    7px
-    20px
-    40px;
+  overflow: hidden;
 
   & > * {
     color: white;
@@ -30,13 +24,29 @@
     @include strokeText;
   }
 
+  &__name {
+    font-size: larger;
+    color: lightskyblue;
+    align-self: center;
+  }
+
+  &__level-info {
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__divider {
+    margin: 3px 0;
+    width: 90%;
+    align-self: center;
+    border-color: rgba($color: white, $alpha: 0.5);
+  }
+
   &__portrait {
-    grid-row: 1 / 3;
-    grid-column: 1 / 3;
-    width: calc(96px / 1.5);
-    height: calc(93px / 1.5);
-    margin: 15px;
-    margin-bottom: 8px;
+    padding: 0 5px 5px 0;
+    width: 64px;
+    height: 64px;
 
     & > * {
       height: 100%;
@@ -51,67 +61,45 @@
     }
   }
 
-  &__name {
-    grid-row: 1;
-    grid-column: 3/-1;
-    align-self: flex-end;
+  &__info {
+    display: flex;
   }
 
-  &__type-level {
-    grid-row: 2;
-    grid-column: 3/-1;
-    align-self: center;
-  }
-
-  &__power {
-    grid-row: 4;
-    grid-column: 2;
-  }
-
-  &__defence {
-    grid-row: 4;
-    grid-column: 3;
-  }
-
-  &__vitality {
-    grid-row: 4;
-    grid-column: 4;
-  }
-
-  &__initiative {
-    grid-row: 4;
-    grid-column: 5;
+  &__stats {
+    display: flex;
+    flex-direction: column;
   }
 
   &__btn--hire {
     font-family: inherit;
-    font-size: 20px;
-    width: calc(301px / 2);
-    height: calc(81px / 2);
-    background-image: url(../../../../../img/building-display/tavern-display/tavern-display_hire-btn.png);
-    background-size: contain;
-    background-repeat: no-repeat;
+    font-size: 30px;
+    padding: 5px;
+    // width: 20px;
+    // width: calc(301px / 2);
+    // height: calc(81px / 2);
+    // background-image: url(../../../../../img/building-display/tavern-display/tavern-display_hire-btn.png);
+    // background-size: contain;
+    // background-repeat: no-repeat;
     border: none;
     outline: none;
-    background-color: transparent;
+    // background-color: transparent;
     cursor: pointer;
-    grid-row: 5;
-    grid-column: 1 / -1;
-    justify-self: center;
-    transition: all 0.3s;
-    margin-left: 4px;
-    margin-top: 6px;
+    // justify-self: center;
+    // transition: all 0.3s;
 
     &__price {
-      color: lawngreen;
-      &::before {
-        color: white;
-        content: "Нанять ";
-      }
+      font-weight: bold;
+      color: black;
+      text-shadow: none;
     }
 
     &:hover {
       transform: translateY(-3px) scale(1.1);
     }
   }
+}
+
+.patron-stat {
+  font-size: larger;
+  color: yellow;
 }

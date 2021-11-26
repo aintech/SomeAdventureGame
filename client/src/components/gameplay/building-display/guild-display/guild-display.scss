@@ -13,10 +13,10 @@
 
 .guild-display {
   display: flex;
-  gap: 10px;
 
   &__hero-list {
-    display: flex;
+    display: none;
+    // display: flex;
     flex-direction: column;
   }
 

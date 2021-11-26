@@ -10,49 +10,44 @@ import "./guild-display.scss";
 import HeroList from "./heroes/hero-list/HeroList";
 import QuestScrollList from "./quest-board/quest-scroll-list/QuestScrollList";
 
+const heroesPerPage = 6;
+
 type GuildDisplayProps = {
   quests: Quest[];
   heroes: Hero[];
   heroesAssignedToQuest: Hero[];
 };
 
-/**
- * TODO: Переключалка setShowUnabledHeroes сбрасывается если переоткрыть гильдию -
- * лучше сделать через редюсер чтобы запоминалась
- */
 const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest }: GuildDisplayProps) => {
   const [page, setPage] = useState<number>(0);
   const [lastPage, setLastPage] = useState<number>(0);
-  const [heroesOnPage, setHeroesOnPage] = useState<Hero[]>([]);
-  const [showUnabledHeroes, setShowUnabledHeroes] = useState<boolean>(false);
+  const [heroesList, setHeroesList] = useState<Hero[]>([]);
 
   useEffect(() => {
-    const idleHeroes = heroes
-      .filter((h) => showUnabledHeroes || (h.activity!.type === HeroActivityType.IDLE && h.isAlive()))
-      .sort((a, b) => a.id - b.id);
+    const idleHeroes = heroes.filter((h) => h.activity!.type === HeroActivityType.IDLE && h.isAlive()).sort((a, b) => a.id - b.id);
 
-    const lPage = Math.max(0, Math.ceil(idleHeroes.length / 4) - 1);
+    const lPage = Math.max(0, Math.ceil(idleHeroes.length / heroesPerPage) - 1);
 
     if (page > lPage) {
       setPage(lPage);
     }
 
-    const start = page * 4;
-    const end = start + (page === 0 ? Math.min(4, idleHeroes.length) : lPage === page && idleHeroes.length % 4 !== 0 ? idleHeroes.length % 4 : 4);
+    const start = page * heroesPerPage;
+    const end =
+      start +
+      (page === 0
+        ? Math.min(heroesPerPage, idleHeroes.length)
+        : lPage === page && idleHeroes.length % heroesPerPage !== 0
+        ? idleHeroes.length % heroesPerPage
+        : heroesPerPage);
 
     setLastPage(lPage);
-    setHeroesOnPage(idleHeroes.slice(start, end));
-  }, [page, heroes, heroesAssignedToQuest, showUnabledHeroes]);
+    setHeroesList(idleHeroes.slice(start, end));
+  }, [page, heroes, heroesAssignedToQuest]);
 
   const switchPage = (add: number) => {
     const nPage = page + add;
     setPage(nPage);
-  };
-
-  const switchShowUnabled = () => {
-    switchPage(-page);
-    const show = !showUnabledHeroes;
-    setShowUnabledHeroes(show);
   };
 
   const prevPageBtnStyle: CSSProperties = {
@@ -71,12 +66,8 @@ const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest }: GuildDisplayPro
     <div className="guild-display">
       <QuestScrollList quests={quests} />
       <div className="guild-display__hero-list">
-        <HeroList heroes={heroesOnPage} quests={quests} heroesAssignedToQuest={heroesAssignedToQuest} />
+        <HeroList heroes={heroesList} quests={quests} heroesAssignedToQuest={heroesAssignedToQuest} />
         <div className="guild-display__btn-holder">
-          <button className="btn--show-unabled" onClick={switchShowUnabled}>
-            <i className="material-icons btn--show-unabled-icon">{!showUnabledHeroes ? "check_box" : "check_box_outline_blank"}</i>
-            <span>Только свободные</span>
-          </button>
           <button className="btn--previous" style={prevPageBtnStyle} onClick={() => switchPage(-1)}></button>
           <button
             className="btn--next"

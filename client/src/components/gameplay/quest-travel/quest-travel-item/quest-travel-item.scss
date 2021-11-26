@@ -11,6 +11,8 @@
   grid-template-rows: 23px 22px 1fr;
   grid-template-columns: 65px 1fr;
 
+  z-index: 20;
+
   &__title {
     grid-row: 1;
     grid-column: 1 / 3;

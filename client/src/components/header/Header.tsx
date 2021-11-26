@@ -47,7 +47,7 @@ const Header = ({ stats, fetchGameStats, isAuthenticated, logout }: HeaderProps)
 
   return (
     <header className="header">
-      <div className="header__title">Some Adventure Game</div>
+      <div className="header__title">Space SAG</div>
       {isAuthenticated ? headerBar : null}
     </header>
   );

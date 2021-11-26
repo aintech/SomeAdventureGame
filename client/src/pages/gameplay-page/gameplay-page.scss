@@ -3,4 +3,5 @@
 .gameplay-page {
   position: relative;
   height: calc(100vh - #{$header_height});
+  background-image: url(../../img/spacebox.jpg);
 }
