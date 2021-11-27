@@ -4,6 +4,8 @@
   "description": "Some Adventure Game",
   "type": "module",
   "scripts": {
+    "client:install": "npm install --prefix client",
+    "client:build": "npm run build --prefix client",
     "client": "npm run start --prefix client",
     "client_fox": "npm run fox --prefix client",
     "server": "npm run start --prefix server",

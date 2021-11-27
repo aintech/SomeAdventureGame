@@ -37,6 +37,9 @@ const TavernPatron = ({ patron, hirePatron }: TavernPatronProps) => {
               DEF &gt; <span className="patron-stat">{patron.stats.defence}</span>
             </div>
             <div>
+              PSY &gt; <span className="patron-stat">{patron.stats.power}</span>
+            </div>
+            <div>
               VIT &gt; <span className="patron-stat">{patron.stats.vitality}</span>
             </div>
             <div>
