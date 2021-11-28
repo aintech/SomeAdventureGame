@@ -22,5 +22,5 @@ server.use("/api/stats", statsRouter);
 server.use("/api/quest", questRouter);
 server.use("/api/shop", shopRouter);
 
-const port = config.get("serverPort") || 8081;
+const port = config.get("serverPort");
 server.listen(port, () => console.log(`Server has been running on port ${port}...`));

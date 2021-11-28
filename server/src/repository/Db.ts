@@ -1,11 +1,12 @@
 import pg from "pg";
+import config from "config";
 
 const pool = new pg.Pool({
-  user: "yaremchuken",
-  host: "localhost",
-  database: "adventure",
-  password: "admin",
-  port: 5432,
+  user: config.get("dbUser"),
+  host: config.get("dbHost"),
+  database: config.get("dbName"),
+  password: config.get("dbPass"),
+  port: config.get("dbPort"),
 });
 
 export const single = <T>(val: T[]) => {

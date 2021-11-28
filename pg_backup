@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.18 (Ubuntu 10.18-1.pgdg18.04+1)
--- Dumped by pg_dump version 14.0 (Ubuntu 14.0-1.pgdg18.04+1)
+-- Dumped from database version 10.19 (Ubuntu 10.19-1.pgdg18.04+1)
+-- Dumped by pg_dump version 14.1 (Ubuntu 14.1-1.pgdg18.04+1)
 
--- Started on 2021-10-27 23:51:39 MSK
+-- Started on 2021-11-28 17:05:03 MSK
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -707,13 +707,12 @@ ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_
 --
 
 COPY public.building (user_id, type, level, upgrade_started) FROM stdin;
-1	11	1	\N
 1	0	1	\N
-1	10	1	\N
 1	7	1	\N
 1	4	1	\N
 1	3	1	\N
 1	8	1	\N
+1	10	1	\N
 1	1	1	\N
 1	2	1	\N
 1	5	2	\N
@@ -740,6 +739,10 @@ COPY public.building_upgrade (type, level, cost, duration) FROM stdin;
 8	1	0	0
 9	1	0	0
 10	1	0	0
+10	2	1000	180
+10	3	3000	360
+10	4	7000	600
+10	5	12000	900
 0	2	1000	180
 1	2	1000	180
 2	2	1000	180
@@ -750,7 +753,6 @@ COPY public.building_upgrade (type, level, cost, duration) FROM stdin;
 7	2	1000	180
 8	2	1000	180
 9	2	1000	180
-10	2	1000	180
 0	3	3000	360
 1	3	3000	360
 2	3	3000	360
@@ -761,7 +763,6 @@ COPY public.building_upgrade (type, level, cost, duration) FROM stdin;
 7	3	3000	360
 8	3	3000	360
 9	3	3000	360
-10	3	3000	360
 0	4	7000	600
 1	4	7000	600
 2	4	7000	600
@@ -772,7 +773,6 @@ COPY public.building_upgrade (type, level, cost, duration) FROM stdin;
 7	4	7000	600
 8	4	7000	600
 9	4	7000	600
-10	4	7000	600
 0	5	12000	900
 1	5	12000	900
 2	5	12000	900
@@ -783,12 +783,6 @@ COPY public.building_upgrade (type, level, cost, duration) FROM stdin;
 7	5	12000	900
 8	5	12000	900
 9	5	12000	900
-10	5	12000	900
-11	1	0	0
-11	2	1000	180
-11	3	3000	360
-11	4	7000	600
-11	5	12000	900
 \.
 
 
@@ -864,17 +858,28 @@ COPY public.equipment_tier (equipment_id, tier, power, defence, vitality, initia
 --
 
 COPY public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type) FROM stdin;
+842	1	Троя	8	0	100	0	0	10	2	t	2021-11-25 18:02:01.280163	1	1
+861	1	Белянка	10	0	130	0	230	13	2	f	2021-11-28 12:38:36.33364	1	2
+862	1	Клевер	7	0	100	0	170	10	2	f	2021-11-28 12:38:35.33364	1	4
+863	1	Аркада	10	0	140	0	240	14	2	f	2021-11-28 12:38:37.33364	1	0
+864	1	Луна	7	0	120	0	190	12	2	f	2021-11-28 12:38:39.33364	1	4
+865	1	Саргона	9	0	100	0	190	10	2	f	2021-11-28 12:38:40.33364	1	2
+866	1	Аркада	7	0	110	0	180	11	2	f	2021-11-28 12:38:33.33364	1	3
+867	1	Патока	7	0	130	0	200	13	2	f	2021-11-28 12:38:31.33364	1	1
+868	1	Каппи	6	0	130	0	190	13	2	f	2021-11-28 12:38:30.33364	1	3
+869	1	Троя	9	0	140	0	230	14	2	f	2021-11-28 12:38:34.33364	1	0
+870	1	Клевер	9	0	120	0	210	12	2	f	2021-11-28 12:38:32.33364	1	3
+871	1	Мира	6	0	120	0	180	12	2	f	2021-11-28 12:38:29.33364	1	3
+837	1	Клевер	8	0	100	0	0	10	2	t	2021-11-24 17:38:09.338954	1	3
+872	1	Сола	10	0	100	0	200	10	2	f	2021-11-28 12:38:38.33364	1	1
 746	1	Серпок	7	0	140	0	12	14	2	t	2021-10-11 12:21:14.968445	1	3
-603	1	Мосток	7	0	110	205	15	11	2	t	2021-08-07 10:23:48.924464	1	2
-601	1	Карион	12	0	160	510	14	16	2	t	2021-08-07 10:23:47.924464	2	4
-758	1	Потер	7	0	130	0	200	13	2	f	2021-10-27 22:31:02.317229	1	4
-759	1	Белозер	9	0	110	0	200	11	2	f	2021-10-27 22:31:05.317229	1	3
-760	1	Клайн	10	0	100	0	200	10	2	f	2021-10-27 22:31:04.317229	1	0
-761	1	Потер	8	0	100	0	180	10	2	f	2021-10-27 22:31:03.317229	1	4
-762	1	Калопус	7	0	100	0	170	10	2	f	2021-10-27 22:31:01.317229	1	4
-763	1	Потер	7	0	130	0	200	13	2	f	2021-10-27 22:31:00.317229	1	1
-604	1	Ровер	7	0	120	163	19	12	2	t	2021-08-07 10:23:51.924464	1	1
-606	1	Карион	8	0	120	163	12	12	2	t	2021-08-07 10:23:50.924464	1	3
+839	1	Сарина	8	0	130	0	0	13	2	t	2021-11-24 17:38:07.338954	1	4
+835	1	Мира	9	0	120	0	2	12	2	t	2021-11-24 17:38:08.338954	1	1
+838	1	Луна	10	0	120	0	12	12	2	t	2021-11-24 17:38:05.338954	1	0
+603	1	Мосток	7	0	110	205	60	11	2	t	2021-08-07 10:23:48.924464	1	2
+604	1	Ровер	7	0	120	163	120	12	2	t	2021-08-07 10:23:51.924464	1	1
+606	1	Карион	8	0	120	163	120	12	2	t	2021-08-07 10:23:50.924464	1	3
+601	1	Карион	12	0	160	565	30	16	2	t	2021-08-07 10:23:47.924464	2	4
 \.
 
 
@@ -885,11 +890,16 @@ COPY public.hero (id, user_id, name, power, defence, health, experience, gold, v
 --
 
 COPY public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) FROM stdin;
-604	\N	2021-10-08 17:59:14.137921+03	\N	0	Не при делах
-606	\N	2021-10-08 17:59:39.154351+03	\N	0	Не при делах
-603	\N	2021-10-08 18:38:16.128507+03	\N	0	Не при делах
-601	\N	2021-10-08 18:42:18.853245+03	\N	0	Не при делах
-746	\N	2021-10-27 09:57:51.353997+03	\N	0	Не при делах
+606	\N	2021-11-19 19:21:10.509452+03	\N	0	Не при делах
+601	\N	2021-11-22 12:37:33.990453+03	\N	0	Не при делах
+604	\N	2021-11-22 18:47:27.550195+03	\N	0	Не при делах
+603	3	2021-11-22 18:47:32.515033+03	\N	1	Выполняет задание Бить и пить
+837	\N	2021-11-24 20:44:11.01868+03	\N	0	Не при делах
+839	\N	2021-11-24 20:46:11.855399+03	\N	0	Не при делах
+835	\N	2021-11-24 20:48:14.864312+03	\N	0	Не при делах
+838	\N	2021-11-24 21:43:11.921993+03	\N	0	Не при делах
+746	\N	2021-10-29 00:06:48.067495+03	\N	0	Не при делах
+842	\N	2021-11-25 22:30:29.163857+03	\N	0	Не при делах
 \.
 
 
@@ -900,20 +910,18 @@ COPY public.hero_activity (hero_id, activity_id, started_at, duration, activity_
 --
 
 COPY public.hero_equipment (hero_id, equipment_id, tier) FROM stdin;
+837	3	0
+839	3	0
+837	7	1
+835	7	1
+839	4	2
 601	4	3
+835	3	2
 746	7	3
-758	3	0
-759	3	0
-760	3	0
-761	3	0
-762	3	0
-763	3	0
-758	1	0
-759	1	0
-760	1	0
-761	1	0
-762	1	0
-763	2	0
+838	4	1
+838	3	2
+842	3	0
+842	7	1
 603	9	3
 603	1	3
 606	7	3
@@ -922,6 +930,30 @@ COPY public.hero_equipment (hero_id, equipment_id, tier) FROM stdin;
 604	7	3
 601	9	3
 746	3	0
+861	3	0
+862	3	0
+863	3	0
+864	3	0
+865	3	0
+866	3	0
+867	3	0
+868	3	0
+869	3	0
+870	3	0
+871	3	0
+872	3	0
+861	1	0
+862	1	0
+863	1	0
+864	1	0
+865	1	0
+866	1	0
+867	2	0
+868	1	0
+869	1	0
+870	1	0
+871	1	0
+872	2	0
 \.
 
 
@@ -932,25 +964,50 @@ COPY public.hero_equipment (hero_id, equipment_id, tier) FROM stdin;
 --
 
 COPY public.hero_item (hero_id, item_id, amount) FROM stdin;
+861	1	3
+862	1	3
+863	1	3
+864	1	3
+865	1	3
+866	1	3
+867	1	3
+603	2	3
+868	1	3
+604	1	3
+606	1	3
+601	1	3
+869	1	3
+870	1	3
 603	1	3
-604	1	2
-606	1	2
-603	2	2
-601	1	2
+871	1	3
+872	1	3
+861	2	3
+604	3	3
+606	3	3
 746	1	3
+862	2	3
+601	2	3
+863	2	3
 746	3	3
-758	1	3
-759	1	3
-760	1	3
-761	1	3
-762	1	3
-763	1	3
-758	2	3
-759	3	3
-760	2	3
-761	2	3
-762	2	3
-763	3	3
+864	2	3
+865	2	3
+866	3	3
+867	3	3
+868	3	3
+869	2	3
+870	3	3
+871	3	3
+872	3	3
+835	1	3
+837	1	3
+838	1	3
+839	1	3
+835	3	3
+837	3	3
+838	2	3
+839	2	3
+842	1	3
+842	3	3
 \.
 
 
@@ -968,21 +1025,36 @@ COPY public.hero_perk (hero_id, perk_id) FROM stdin;
 603	4
 603	10
 603	9
+835	6
+835	2
 604	3
+837	11
+838	10
+838	9
+839	1
+839	5
+839	2
 746	6
-758	8
-758	3
-759	7
-759	11
-760	5
-760	8
-761	3
-761	7
-761	9
-762	9
-762	8
-763	1
-763	2
+842	9
+842	1
+861	6
+862	7
+863	7
+864	6
+864	4
+865	9
+865	1
+866	11
+866	1
+866	8
+867	2
+868	9
+869	4
+869	7
+870	6
+871	1
+871	8
+872	10
 \.
 
 
@@ -1036,9 +1108,9 @@ COPY public.level_exp (level, experience, cost, duration, definition) FROM stdin
 --
 
 COPY public.monster (id, level, name, power, health, initiative, defence, experience, loot) FROM stdin;
-2	1	snake	10	500	2	2	20	{"gold": 4}
-1	1	goblin	12	600	4	3	40	{"gold": 5}
-6	1	moth	9	300	3	1	15	{"gold": 2}
+2	1	snake	10	500	2	2	20	{"gold": 40}
+1	1	goblin	12	600	4	3	40	{"gold": 50}
+6	1	moth	9	300	3	1	15	{"gold": 30}
 \.
 
 
@@ -1093,6 +1165,9 @@ COPY public.quest (id, level, title, description, fame, tribute, experience, tra
 --
 
 COPY public.quest_checkpoint (id, quest_progress_id, type, occured_at, enemies, passed, tribute) FROM stdin;
+4101	831	treasure	15	\N	f	29
+4102	831	battle	25	[{"id":2,"level":1,"name":"snake","power":10,"health":500,"initiative":2,"defence":2,"experience":20,"actorId":0,"drop":[{"fraction":258,"gold":1},{"fraction":447,"gold":1},{"fraction":386,"gold":1},{"fraction":111,"gold":1},{"fraction":114,"gold":1},{"fraction":115,"gold":1},{"fraction":78,"gold":1},{"fraction":336,"gold":1},{"fraction":187,"gold":1},{"fraction":278,"gold":1},{"fraction":124,"gold":1},{"fraction":129,"gold":1},{"fraction":439,"gold":1},{"fraction":186,"gold":1},{"fraction":149,"gold":1},{"fraction":190,"gold":1},{"fraction":250,"gold":1},{"fraction":345,"gold":1},{"fraction":104,"gold":1},{"fraction":154,"gold":1},{"fraction":191,"gold":1},{"fraction":304,"gold":1},{"fraction":175,"gold":1},{"fraction":133,"gold":1},{"fraction":293,"gold":1},{"fraction":325,"gold":1},{"fraction":401,"gold":1},{"fraction":148,"gold":1},{"fraction":170,"gold":1},{"fraction":141,"gold":1},{"fraction":108,"gold":1},{"fraction":340,"gold":1},{"fraction":328,"gold":1},{"fraction":144,"gold":1},{"fraction":98,"gold":1},{"fraction":139,"gold":1},{"fraction":145,"gold":1},{"fraction":368,"gold":1},{"fraction":329,"gold":1},{"fraction":53,"gold":1},{"fraction":183,"gold":1},{"fraction":318,"gold":1}]},{"id":2,"level":1,"name":"snake","power":10,"health":500,"initiative":2,"defence":2,"experience":20,"actorId":1,"drop":[{"fraction":427,"gold":1},{"fraction":189,"gold":1},{"fraction":282,"gold":1},{"fraction":438,"gold":1},{"fraction":59,"gold":1},{"fraction":104,"gold":1},{"fraction":198,"gold":1},{"fraction":371,"gold":1},{"fraction":359,"gold":1},{"fraction":338,"gold":1},{"fraction":338,"gold":1},{"fraction":81,"gold":1},{"fraction":246,"gold":1},{"fraction":213,"gold":1},{"fraction":121,"gold":1},{"fraction":175,"gold":1},{"fraction":361,"gold":1},{"fraction":432,"gold":1},{"fraction":135,"gold":1},{"fraction":131,"gold":1},{"fraction":180,"gold":1},{"fraction":277,"gold":1},{"fraction":340,"gold":1},{"fraction":315,"gold":1},{"fraction":214,"gold":1},{"fraction":272,"gold":1},{"fraction":150,"gold":1},{"fraction":158,"gold":1},{"fraction":399,"gold":1},{"fraction":190,"gold":1},{"fraction":127,"gold":1},{"fraction":302,"gold":1},{"fraction":281,"gold":1},{"fraction":432,"gold":1},{"fraction":222,"gold":1},{"fraction":372,"gold":1},{"fraction":347,"gold":1},{"fraction":99,"gold":1},{"fraction":413,"gold":1},{"fraction":199,"gold":1},{"fraction":92,"gold":1},{"fraction":86,"gold":1},{"fraction":110,"gold":1},{"fraction":72,"gold":1},{"fraction":81,"gold":1},{"fraction":198,"gold":1},{"fraction":364,"gold":1},{"fraction":62,"gold":1}]},{"id":2,"level":1,"name":"snake","power":10,"health":500,"initiative":2,"defence":2,"experience":20,"actorId":2,"drop":[{"fraction":272,"gold":1},{"fraction":67,"gold":1},{"fraction":82,"gold":1},{"fraction":170,"gold":1},{"fraction":356,"gold":1},{"fraction":332,"gold":1},{"fraction":186,"gold":1},{"fraction":429,"gold":1},{"fraction":418,"gold":1},{"fraction":190,"gold":1},{"fraction":387,"gold":1},{"fraction":154,"gold":1},{"fraction":107,"gold":1},{"fraction":208,"gold":1},{"fraction":184,"gold":1},{"fraction":226,"gold":1},{"fraction":372,"gold":1},{"fraction":102,"gold":1},{"fraction":165,"gold":1},{"fraction":92,"gold":1},{"fraction":214,"gold":1},{"fraction":54,"gold":1},{"fraction":179,"gold":1},{"fraction":229,"gold":1},{"fraction":58,"gold":1},{"fraction":136,"gold":1},{"fraction":97,"gold":1},{"fraction":173,"gold":1},{"fraction":87,"gold":1},{"fraction":395,"gold":1},{"fraction":399,"gold":1},{"fraction":83,"gold":1}]}]	f	53
+4103	831	battle	5	[{"id":2,"level":1,"name":"snake","power":10,"health":500,"initiative":2,"defence":2,"experience":20,"actorId":0,"drop":[{"fraction":303,"gold":1},{"fraction":179,"gold":1},{"fraction":188,"gold":1},{"fraction":334,"gold":1},{"fraction":323,"gold":1},{"fraction":123,"gold":1},{"fraction":305,"gold":1},{"fraction":346,"gold":1},{"fraction":329,"gold":1},{"fraction":437,"gold":1},{"fraction":52,"gold":1},{"fraction":191,"gold":1},{"fraction":76,"gold":1},{"fraction":257,"gold":1},{"fraction":209,"gold":1},{"fraction":208,"gold":1},{"fraction":281,"gold":1},{"fraction":238,"gold":1},{"fraction":239,"gold":1},{"fraction":89,"gold":1},{"fraction":428,"gold":1},{"fraction":279,"gold":1},{"fraction":379,"gold":1},{"fraction":58,"gold":1},{"fraction":373,"gold":1},{"fraction":103,"gold":1},{"fraction":335,"gold":1},{"fraction":200,"gold":1},{"fraction":413,"gold":1},{"fraction":160,"gold":1},{"fraction":288,"gold":1},{"fraction":316,"gold":1},{"fraction":76,"gold":1},{"fraction":245,"gold":1},{"fraction":220,"gold":1},{"fraction":75,"gold":1},{"fraction":417,"gold":1}]},{"id":2,"level":1,"name":"snake","power":10,"health":500,"initiative":2,"defence":2,"experience":20,"actorId":1,"drop":[{"fraction":215,"gold":1},{"fraction":394,"gold":1},{"fraction":163,"gold":1},{"fraction":247,"gold":1},{"fraction":277,"gold":1},{"fraction":212,"gold":1},{"fraction":84,"gold":1},{"fraction":322,"gold":1},{"fraction":389,"gold":1},{"fraction":204,"gold":1},{"fraction":202,"gold":1},{"fraction":333,"gold":1},{"fraction":143,"gold":1},{"fraction":301,"gold":1},{"fraction":425,"gold":1},{"fraction":241,"gold":1},{"fraction":177,"gold":1},{"fraction":363,"gold":1},{"fraction":171,"gold":1},{"fraction":439,"gold":1},{"fraction":52,"gold":1},{"fraction":329,"gold":1},{"fraction":270,"gold":1},{"fraction":337,"gold":1},{"fraction":96,"gold":1},{"fraction":163,"gold":1},{"fraction":303,"gold":1},{"fraction":201,"gold":1},{"fraction":56,"gold":1},{"fraction":236,"gold":1},{"fraction":389,"gold":1},{"fraction":338,"gold":1},{"fraction":70,"gold":1},{"fraction":180,"gold":1},{"fraction":400,"gold":1},{"fraction":115,"gold":1},{"fraction":400,"gold":1},{"fraction":180,"gold":1},{"fraction":157,"gold":1},{"fraction":327,"gold":1},{"fraction":212,"gold":1},{"fraction":291,"gold":1},{"fraction":429,"gold":1},{"fraction":216,"gold":1},{"fraction":354,"gold":1}]},{"id":1,"level":1,"name":"goblin","power":12,"health":600,"initiative":4,"defence":3,"experience":40,"actorId":2,"drop":[{"fraction":175,"gold":1},{"fraction":212,"gold":1},{"fraction":469,"gold":1},{"fraction":409,"gold":1},{"fraction":286,"gold":1},{"fraction":289,"gold":1},{"fraction":160,"gold":1},{"fraction":491,"gold":1},{"fraction":299,"gold":1},{"fraction":97,"gold":1},{"fraction":484,"gold":1},{"fraction":272,"gold":1},{"fraction":423,"gold":1},{"fraction":386,"gold":1},{"fraction":324,"gold":1},{"fraction":426,"gold":1},{"fraction":400,"gold":1},{"fraction":489,"gold":1},{"fraction":228,"gold":1},{"fraction":396,"gold":1},{"fraction":465,"gold":1},{"fraction":155,"gold":1},{"fraction":476,"gold":1},{"fraction":82,"gold":1},{"fraction":266,"gold":1},{"fraction":539,"gold":1},{"fraction":489,"gold":1},{"fraction":322,"gold":1},{"fraction":389,"gold":1},{"fraction":435,"gold":1},{"fraction":399,"gold":1},{"fraction":321,"gold":1},{"fraction":200,"gold":1},{"fraction":291,"gold":1},{"fraction":288,"gold":1},{"fraction":460,"gold":1},{"fraction":537,"gold":1},{"fraction":304,"gold":1},{"fraction":337,"gold":1},{"fraction":472,"gold":1}]}]	f	50
 \.
 
 
@@ -1103,6 +1178,7 @@ COPY public.quest_checkpoint (id, quest_progress_id, type, occured_at, enemies, 
 --
 
 COPY public.quest_progress (id, user_id, quest_id, embarked_time, completed) FROM stdin;
+831	1	3	2021-11-22 18:47:35.501946+03	f
 \.
 
 
@@ -1143,7 +1219,7 @@ COPY public.stats (user_id, gold, fame) FROM stdin;
 4	1000	0
 5	1000	0
 6	1000	0
-1	19582	780
+1	20185	780
 \.
 
 
@@ -1214,7 +1290,7 @@ SELECT pg_catalog.setval('public.equipment_id_seq', 9, true);
 -- Name: hero_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
-SELECT pg_catalog.setval('public.hero_id_seq', 763, true);
+SELECT pg_catalog.setval('public.hero_id_seq', 872, true);
 
 
 --
@@ -1232,7 +1308,7 @@ SELECT pg_catalog.setval('public.item_id_seq', 3, true);
 -- Name: monster_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
-SELECT pg_catalog.setval('public.monster_id_seq', 6, true);
+SELECT pg_catalog.setval('public.monster_id_seq', 7, true);
 
 
 --
@@ -1250,7 +1326,7 @@ SELECT pg_catalog.setval('public.perk_id_seq', 11, true);
 -- Name: quest_checkpoints_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
-SELECT pg_catalog.setval('public.quest_checkpoints_id_seq', 4049, true);
+SELECT pg_catalog.setval('public.quest_checkpoints_id_seq', 4103, true);
 
 
 --
@@ -1268,7 +1344,7 @@ SELECT pg_catalog.setval('public.quest_id_seq', 13, true);
 -- Name: quest_progress_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
-SELECT pg_catalog.setval('public.quest_progress_id_seq', 813, true);
+SELECT pg_catalog.setval('public.quest_progress_id_seq', 831, true);
 
 
 --
@@ -1487,7 +1563,7 @@ ALTER TABLE ONLY public."user"
     ADD CONSTRAINT user_pkey PRIMARY KEY (id);
 
 
--- Completed on 2021-10-27 23:51:39 MSK
+-- Completed on 2021-11-28 17:05:03 MSK
 
 --
 -- PostgreSQL database dump complete
