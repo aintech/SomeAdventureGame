@@ -1,3 +1,66 @@
+-----------------------webpack-------------------------------------
+
+------------ содержимое .babelrc
+
+{
+  "presets": ["@babel/preset-env", "@babel/preset-typescript"],
+  "plugins": ["@babel/proposal-class-properties", "@babel/proposal-object-rest-spread"]
+}
+
+------------ содержимое webpack.config.js
+
+import { fileURLToPath } from "url";
+import path, { dirname } from "path";
+import wbpk from "webpack";
+
+const filename = fileURLToPath(import.meta.url);
+
+const { IgnorePlugin } = wbpk;
+
+export default {
+  entry: "./src/Server.ts",
+  target: "node",
+  output: {
+    filename: "server.js",
+    path: path.resolve(dirname(filename), "build"),
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx|tsx|ts)$/,
+        exclude: /node_modules/,
+        loader: "babel-loader",
+      },
+    ],
+  },
+  resolve: {
+    extensions: ["*", ".js", ".jsx", ".tsx", ".ts"],
+  },
+  plugins: [
+    new IgnorePlugin({
+      resourceRegExp: /^pg-native$/,
+    }),
+  ],
+};
+
+------------ скрипт билда
+
+"scripts": {
+    "build": "webpack --config webpack.config.js --mode production",
+}
+
+------------ зависимости
+
+"@babel/plugin-proposal-class-properties": "^7.16.0",
+"@babel/plugin-proposal-object-rest-spread": "^7.16.0",
+"@babel/preset-env": "^7.16.4",
+"@babel/preset-typescript": "^7.16.0",
+"babel": "^6.23.0",
+"babel-loader": "^8.2.3",
+"webpack": "^5.64.4",
+"webpack-cli": "^4.9.1"
+
+
 -----------------------map rounds-------------------------------------
 
 const mapRounds = (rounds: string | null) => {
