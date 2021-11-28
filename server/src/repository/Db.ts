@@ -1,7 +1,7 @@
-import pg from "pg";
+import { Pool } from "pg";
 import config from "config";
 
-const pool = new pg.Pool({
+const pool = new Pool({
   user: config.get("dbUser"),
   host: config.get("dbHost"),
   database: config.get("dbName"),
