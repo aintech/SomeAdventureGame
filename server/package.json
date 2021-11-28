@@ -1,11 +1,10 @@
 {
   "name": "some_adventure_game-server",
   "version": "0.1.0",
-  "type": "module",
   "private": true,
   "scripts": {
     "build": "webpack --config webpack.config.js --mode production",
-    "start": "cross-env NODE_ENV=production node ./src/Server.ts",
+    "start": "cross-env NODE_ENV=production ts-node ./src/Server.ts",
     "start_dev": "cross-env NODE_ENV=development ts-node-dev ./src/Server.ts"
   },
   "author": "Aintech",
