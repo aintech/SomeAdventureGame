@@ -1,6 +1,7 @@
 {
   "name": "some_adventure_game-server",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "start": "cross-env NODE_ENV=production node ./src/Server.ts",

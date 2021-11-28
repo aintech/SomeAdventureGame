@@ -1,7 +1,6 @@
 {
   "serverPort": 8081,
   "jwtSecret": "veryVerySecretlySecret",
-  "baseUrl": "http://localhost:8081",
 
   "dbUser": "yaremchuken",
   "dbHost": "localhost",

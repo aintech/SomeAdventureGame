@@ -3,8 +3,8 @@
 .game-world__building {
   &-ENERGY_HUB {
     position: absolute;
-    top: 28px;
-    left: 46px;
+    top: 8px;
+    left: 18px;
     width: 75px;
     height: 70px;
     cursor: pointer;
@@ -16,8 +16,8 @@
 
   &-GUILD {
     position: absolute;
-    top: 17px;
-    left: 220px;
+    top: 0px;
+    left: 190px;
     width: 100px;
     height: 110px;
     cursor: pointer;
@@ -29,8 +29,8 @@
 
   &-TAVERN {
     position: absolute;
-    top: 100px;
-    left: 110px;
+    top: 80px;
+    left: 82px;
     width: 90px;
     height: 55px;
     cursor: pointer;
@@ -42,8 +42,8 @@
 
   &-DWELLINGS {
     position: absolute;
-    top: 100px;
-    left: 40px;
+    top: 82px;
+    left: 10px;
     width: 65px;
     height: 55px;
     cursor: pointer;
@@ -55,8 +55,8 @@
 
   &-STABLES {
     position: absolute;
-    top: 195px;
-    left: 230px;
+    top: 175px;
+    left: 200px;
     width: 95px;
     height: 75px;
     cursor: pointer;
@@ -68,8 +68,8 @@
 
   &-HEALER {
     position: absolute;
-    top: 160px;
-    left: 125px;
+    top: 140px;
+    left: 95px;
     width: 80px;
     height: 80px;
     cursor: pointer;
@@ -81,8 +81,8 @@
 
   &-ALCHEMIST {
     position: absolute;
-    top: 220px;
-    left: 30px;
+    top: 200px;
+    left: 0px;
     width: 85px;
     height: 55px;
     cursor: pointer;
@@ -94,8 +94,8 @@
 
   &-BLACKSMITH {
     position: absolute;
-    top: 160px;
-    left: 30px;
+    top: 140px;
+    left: 0px;
     width: 85px;
     height: 55px;
     cursor: pointer;
@@ -107,8 +107,8 @@
 
   &-ELDER {
     position: absolute;
-    top: 25px;
-    left: 125px;
+    top: 5px;
+    left: 95px;
     width: 90px;
     height: 65px;
     cursor: pointer;
@@ -120,9 +120,9 @@
 
   &-TRAINING_GROUND {
     position: absolute;
-    top: 245px;
-    left: 125px;
-    width: 100px;
+    top: 225px;
+    left: 95px;
+    width: 103px;
     height: 60px;
     cursor: pointer;
 
@@ -133,8 +133,8 @@
 
   &-MARKET {
     position: absolute;
-    top: 135px;
-    left: 220px;
+    top: 115px;
+    left: 190px;
     width: 100px;
     height: 55px;
     cursor: pointer;
