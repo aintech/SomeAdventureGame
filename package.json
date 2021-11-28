@@ -8,7 +8,7 @@
     "client:build": "npm run build --prefix client",
     "client": "npm run start --prefix client",
     "client_fox": "npm run fox --prefix client",
-    "server": "npm run start --prefix server",
+    "server": "npm run start_dev --prefix server",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "dev_fox": "concurrently \"npm run server\" \"npm run client_fox\""
   },
