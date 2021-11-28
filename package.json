@@ -16,5 +16,8 @@
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^6.0.2"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3"
   }
 }
