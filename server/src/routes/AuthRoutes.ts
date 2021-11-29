@@ -31,7 +31,7 @@ authRouter.post(
 
       const { login, password } = req.body as LoginUser;
 
-      const candidate = await getUser(login);
+      const candidate = await getUser(login.toLowerCase());
 
       if (candidate) {
         return res.status(400).json({ message: "User with such credentials already exists" });
@@ -70,7 +70,7 @@ authRouter.post(
 
       const { login, password } = req.body as LoginUser;
 
-      const user = await getUser(login);
+      const user = await getUser(login.toLowerCase());
 
       if (!user) {
         return res.status(400).json({ message: "Such user is not exists" });

@@ -14,33 +14,22 @@
   &__container {
     margin: auto;
     height: 96%;
+    height: calc(var(--vh, 1vh) * 92);
     width: 95%;
     display: flex;
     flex-direction: column;
-    // align-items: center;
     border: 1px solid $border-color;
     border-radius: 8px;
-    // @include strokedInOut(2px);
-    // background-color: #695139;
   }
 
   &__title {
     position: relative;
     min-height: 40px;
-    // width: 100%;
     display: flex;
-    // gap: 10px;
-    // justify-content: center;
 
     &_name {
       margin: auto;
       margin-bottom: 0px;
-      // margin-top: 10px;
-      // display: grid;
-      // grid-template-rows: repeat(2, min-content);
-      // grid-template-columns: repeat(3, max-content);
-      // grid-template-columns: min-content repeat(3, max-content) min-content;
-      // column-gap: 8px;
 
       justify-self: center;
       align-self: center;
@@ -48,8 +37,6 @@
       font-family: inherit;
       font-size: 30px;
       color: darkkhaki;
-      // text-align: center;
-      // @include strokeText;
       cursor: default;
     }
   }
@@ -94,15 +81,6 @@
     color: yellow;
     z-index: 2000;
     cursor: pointer;
-
-    // &__span {
-    //   font-size: larger;
-    //   color: white;
-    // }
-
-    // &:hover {
-    //   background-color: darkgreen;
-    // }
   }
 
   &__btn-close {
@@ -124,46 +102,3 @@
   align-self: center;
   border-color: rgba($color: white, $alpha: 0.2);
 }
-
-// .title {
-//   margin-top: 10px;
-//   display: grid;
-//   grid-template-rows: repeat(2, min-content);
-//   grid-template-columns: repeat(3, max-content);
-//   // grid-template-columns: min-content repeat(3, max-content) min-content;
-//   // column-gap: 8px;
-
-//   font-family: inherit;
-//   font-size: 24px;
-//   color: darkkhaki;
-//   text-align: center;
-//   @include strokeText;
-//   cursor: default;
-
-//   &__name {
-//     grid-row: 1;
-//     grid-column: 2 / span 3;
-//   }
-
-//   &__bottom {
-//     &_left {
-//       width: 83px;
-//       grid-row: 2;
-//       grid-column: 2;
-//     }
-
-//     &_center {
-//       width: 30px;
-//       grid-row: 2;
-//       grid-column: 3;
-//       justify-self: center;
-//     }
-
-//     &_right {
-//       width: 83px;
-//       grid-row: 2;
-//       grid-column: 4;
-//       justify-self: end;
-//     }
-//   }
-// }
