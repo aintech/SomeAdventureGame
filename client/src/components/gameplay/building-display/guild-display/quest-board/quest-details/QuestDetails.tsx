@@ -21,6 +21,10 @@ type QuestDetailsProps = {
 const QuestDetails = ({ quest, heroesAssignedToQuest, quests, acceptQuest, heroDismissedFromQuest, closeDetails }: QuestDetailsProps) => {
   const displayMessage = useDisplayMessage();
 
+  const chooseHero = () => {
+    console.log("Выбираем героя из оверлей списка");
+  };
+
   const dismissHero = (hero: Hero) => {
     heroDismissedFromQuest(hero);
   };
@@ -32,17 +36,17 @@ const QuestDetails = ({ quest, heroesAssignedToQuest, quests, acceptQuest, heroD
 
   const questsInProgress = quests.filter((q) => q.progress !== undefined).length;
 
-  // const canAcceptQuest = heroesAssignedToQuest.length > 0 && questsInProgress < MAX_EMBARKED_QUESTS;
+  const canAcceptQuest = heroesAssignedToQuest.length > 0 && questsInProgress < MAX_EMBARKED_QUESTS;
 
-  // const acceptBtnStyle = canAcceptQuest
-  //   ? {
-  //       opacity: 1,
-  //       cursor: "pointer",
-  //     }
-  //   : {
-  //       opacity: 0.5,
-  //       cursor: "default",
-  //     };
+  const acceptBtnStyle = canAcceptQuest
+    ? {
+        opacity: 1,
+        cursor: "pointer",
+      }
+    : {
+        opacity: 0.5,
+        cursor: "default",
+      };
 
   const assignedRender = heroesAssignedToQuest.map((hero) => {
     const shortName = hero.name.length > 10 ? `${hero.name.substring(0, 7)}...` : hero.name;
@@ -73,9 +77,14 @@ const QuestDetails = ({ quest, heroesAssignedToQuest, quests, acceptQuest, heroD
       <div className="quest-details__experience">Опыт героям {quest.experience} очков</div>
       <div className="quest-details__assigned-heroes">{assignedRender}</div>
       {questsInProgress < MAX_EMBARKED_QUESTS ? (
-        // <button className="quest-details__btn--accept" onClick={onAcceptQuest} style={acceptBtnStyle} disabled={!canAcceptQuest}></button>
-        // <button className="quest-details__btn-assign" onClick={assignHeroes}></button>
-        <div></div>
+        <>
+          <div className="quest-details__assign-btns">
+            {[0, 1, 2, 3].map((_) => (
+              <button className="quest-details__btn_assign-hero" onClick={chooseHero}></button>
+            ))}
+          </div>
+          <button className="quest-details__btn-accept" onClick={onAcceptQuest} style={acceptBtnStyle} disabled={!canAcceptQuest}></button>
+        </>
       ) : (
         <div className="quest-details__max-quest-msg">Достигнут максимум выполняемых квестов</div>
       )}
