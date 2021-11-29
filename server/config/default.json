@@ -1,5 +1,5 @@
 {
-  "serverPort": 8081,
+  "serverPort": 5000,
   "jwtSecret": "veryVerySecretlySecret",
 
   "dbUser": "yaremchuken",
