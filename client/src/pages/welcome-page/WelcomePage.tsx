@@ -7,6 +7,7 @@ import { login, register } from "../../services/AuthService";
 import "./welcome-page.scss";
 
 /**
+ * TODO: Добавить resize на window, а то сейчас если завести логин то экран обрезается
  * TODO: При успешной регистрации сразу логиниться
  * TODO: После нажатия кнопок регистрации или логина дизейблить их
  * TODO: Выводить сообщения об удачной регистрации и логине
@@ -80,6 +81,9 @@ const WelcomePage = () => {
       </form>
     </div>
   );
+
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh-welcome", `${vh}px`);
 
   return (
     <div className="welcome">

@@ -15,21 +15,53 @@ import Hero from "../../models/hero/Hero";
 import Quest from "../../models/Quest";
 import "./gameplay-page.scss";
 
-const GameplayPage = () => {
-  return (
-    <section className="gameplay-page">
-      {/** Пока делаем мобилку выключаем тултип */
-      /* <GameplayTooltip /> */}
-      <GameWorld />
-      <GameTimer />
-      <BuildingDisplay />
-      <HeroStatsDisplay />
-      <QuestProgressList />
-      <QuestPerform />
-      <ConfirmDialog />
-    </section>
-  );
+type GameplayProps = {};
+
+type GameplayState = {
+  resized: boolean;
 };
+
+class GameplayPage extends Component<GameplayProps, GameplayState> {
+  constructor(props: GameplayProps) {
+    super(props);
+    this.handleResize = this.handleResize.bind(this);
+  }
+
+  componentDidMount() {
+    window.addEventListener("resize", this.handleResize);
+    this.handleResize();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.handleResize);
+  }
+
+  /**
+   * Дабы учитывать высоту поисковой панельки в мобиле https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
+   * При ресайзе просто передергиваем проперти в стейте чтобы обновился рендер
+   */
+  handleResize() {
+    this.setState({ resized: true });
+  }
+
+  render() {
+    document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
+
+    return (
+      <section className="gameplay-page">
+        {/** Пока делаем мобилку выключаем тултип */
+        /* <GameplayTooltip /> */}
+        <GameWorld />
+        <GameTimer />
+        <BuildingDisplay />
+        <HeroStatsDisplay />
+        <QuestProgressList />
+        <QuestPerform />
+        <ConfirmDialog />
+      </section>
+    );
+  }
+}
 
 type GameplayPageContainerProps = {
   fetchInitials: () => void;

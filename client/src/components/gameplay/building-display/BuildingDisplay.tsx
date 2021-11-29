@@ -31,7 +31,6 @@ type BuildingDisplayProps = {
 
 type BuildingDisplayState = {
   upgradeSecs?: number;
-  vh?: number;
 };
 
 class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplayState> {
@@ -41,7 +40,6 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
     super(props);
     this.startTimers = this.startTimers.bind(this);
     this.countSeconds = this.countSeconds.bind(this);
-    this.handleResize = this.handleResize.bind(this);
   }
 
   componentDidMount() {
@@ -57,20 +55,12 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
     if (upgradeSecs) {
       this.startTimers();
     }
-    window.addEventListener("resize", this.handleResize);
-    this.handleResize();
   }
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this.handleResize);
     if (this.secondsTimer) {
       clearInterval(this.secondsTimer);
     }
-  }
-
-  /** Дабы учитывать высоту поисковой панельки в мобиле https://css-tricks.com/the-trick-to-viewport-units-on-mobile/  */
-  handleResize() {
-    this.setState({ vh: window.innerHeight * 0.01 });
   }
 
   startTimers() {
@@ -145,8 +135,6 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
           <span className="building-display__msg-upgrade__span"> {convertDuration(this.state.upgradeSecs)}</span>
         </div>
       ) : null;
-
-    document.documentElement.style.setProperty("--vh", `${this.state?.vh ?? window.innerHeight * 0.01}px`);
 
     return (
       <div className="building-display" onClick={this.props.hideBuildingDisplay}>
