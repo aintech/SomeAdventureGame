@@ -10,7 +10,6 @@ import statsRouter from "./routes/StatsRoutes";
 const server = express();
 
 server.use(express.json());
-server.use(express.urlencoded());
 
 server.use("/api/ping", async (_, res) => {
   res.json({ message: "ok" });
