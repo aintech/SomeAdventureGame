@@ -1,28 +1,20 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
-import { heroStatsChoosed } from "../../../../actions/Actions";
 import Hero from "../../../../models/hero/Hero";
 import { HeroActivityType } from "../../../../models/hero/HeroActivity";
 import Loader from "../../../loader/Loader";
-import HeroItem from "../guild-display/heroes/hero-item/HeroItem";
+import HeroContainer from "../../../shared/hero-container/HeroContainer";
 import "./healer-display.scss";
 
 type HealerDisplayProps = {
   visitors: Hero[];
-  visitorClicked: (visitor: Hero) => void;
 };
 
-const HealerDisplay = ({ visitors, visitorClicked }: HealerDisplayProps) => {
-  const visitorClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    visitorClicked(hero);
-  };
-
+const HealerDisplay = ({ visitors }: HealerDisplayProps) => {
   return (
     <div className="healer-display">
       {visitors.map((visitor) => (
-        <HeroItem key={visitor.id} hero={visitor} enabled={true} itemClickHandler={(event) => visitorClickHandler(visitor, event)} />
+        <HeroContainer key={visitor.id} hero={visitor} />
       ))}
     </div>
   );
@@ -30,12 +22,11 @@ const HealerDisplay = ({ visitors, visitorClicked }: HealerDisplayProps) => {
 
 type HealerDisplayContainerProps = {
   heroes: Hero[];
-  heroClicked: (hero: Hero) => void;
 };
 
 class HealerDisplayContainer extends Component<HealerDisplayContainerProps> {
   render() {
-    const { heroes, heroClicked } = this.props;
+    const { heroes } = this.props;
 
     if (!heroes) {
       return <Loader message={`Wating for heroes`} />;
@@ -43,7 +34,7 @@ class HealerDisplayContainer extends Component<HealerDisplayContainerProps> {
 
     const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.HEALING);
 
-    return <HealerDisplay visitors={visitors} visitorClicked={heroClicked} />;
+    return <HealerDisplay visitors={visitors} />;
   }
 }
 
@@ -55,13 +46,4 @@ const mapStateToProps = ({ heroes }: HealerDisplayContainerState) => {
   return { heroes };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators(
-    {
-      heroClicked: heroStatsChoosed,
-    },
-    dispatch
-  );
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(HealerDisplayContainer);
+export default connect(mapStateToProps)(HealerDisplayContainer);
