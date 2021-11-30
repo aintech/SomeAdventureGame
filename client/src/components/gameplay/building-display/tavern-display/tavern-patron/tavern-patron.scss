@@ -1,7 +1,9 @@
 @import "../../../../../utils/css/index.scss";
 
 .tavern-patron {
-  width: 45%;
+  width: 46%;
+  max-width: 200px;
+
   &__btn--hire {
     margin-top: -8px;
     padding: 5px;
