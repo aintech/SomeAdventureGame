@@ -1,28 +1,20 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
-import { heroStatsChoosed } from "../../../../actions/Actions";
 import Hero from "../../../../models/hero/Hero";
 import { HeroActivityType } from "../../../../models/hero/HeroActivity";
 import Loader from "../../../loader/Loader";
-import HeroItem from "../guild-display/heroes/hero-item/HeroItem";
+import HeroContainer from "../../../shared/hero-container/HeroContainer";
 import "./training-ground-display.scss";
 
 type TrainingGroundDisplayProps = {
   trainies: Hero[];
-  traineeClicked: (visitor: Hero) => void;
 };
 
-const TrainingGroundDisplay = ({ trainies, traineeClicked }: TrainingGroundDisplayProps) => {
-  const traineeClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    traineeClicked(hero);
-  };
-
+const TrainingGroundDisplay = ({ trainies }: TrainingGroundDisplayProps) => {
   return (
     <div className="training-ground-display">
       {trainies.map((trainee) => (
-        <HeroItem key={trainee.id} hero={trainee} enabled={true} itemClickHandler={(event) => traineeClickHandler(trainee, event)} />
+        <HeroContainer key={trainee.id} hero={trainee} />
       ))}
     </div>
   );
@@ -30,12 +22,11 @@ const TrainingGroundDisplay = ({ trainies, traineeClicked }: TrainingGroundDispl
 
 type TrainingGroundDisplayContainerProps = {
   heroes: Hero[];
-  heroClicked: (hero: Hero) => void;
 };
 
 class TrainingGroundDisplayContainer extends Component<TrainingGroundDisplayContainerProps> {
   render() {
-    const { heroes, heroClicked } = this.props;
+    const { heroes } = this.props;
 
     if (!heroes) {
       return <Loader message={`Wating for heroes`} />;
@@ -43,7 +34,7 @@ class TrainingGroundDisplayContainer extends Component<TrainingGroundDisplayCont
 
     const trainies = heroes.filter((h) => h.activity!.type === HeroActivityType.TRAINING);
 
-    return <TrainingGroundDisplay trainies={trainies} traineeClicked={heroClicked} />;
+    return <TrainingGroundDisplay trainies={trainies} />;
   }
 }
 
@@ -55,13 +46,4 @@ const mapStateToProps = ({ heroes }: TrainingGroundDisplayContainerState) => {
   return { heroes };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators(
-    {
-      heroClicked: heroStatsChoosed,
-    },
-    dispatch
-  );
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(TrainingGroundDisplayContainer);
+export default connect(mapStateToProps)(TrainingGroundDisplayContainer);
