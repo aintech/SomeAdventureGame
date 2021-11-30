@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import Hero from "../../../../models/hero/Hero";
 import Loader from "../../../loader/Loader";
-import HeroItem from "../../../shared/HeroItem";
+import DwellingHabitant from "./dwelling-habitant/DwellingHabitanat";
 import "./dwellings-display.scss";
 
 type DwellingsDisplayProps = {
@@ -13,7 +13,7 @@ const DwellingsDisplay = ({ habitants }: DwellingsDisplayProps) => {
   return (
     <div className="dwellings-display">
       {habitants.map((habitant) => (
-        <HeroItem key={habitant.id} hero={habitant} />
+        <DwellingHabitant key={habitant.id} habitant={habitant} />
       ))}
     </div>
   );

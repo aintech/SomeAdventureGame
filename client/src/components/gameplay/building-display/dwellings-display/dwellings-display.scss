@@ -3,6 +3,7 @@
 .dwellings-display {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
-  overflow-y: scroll;
+  gap: 5%;
+  grid-row-gap: 15px;
+  justify-content: center;
 }
