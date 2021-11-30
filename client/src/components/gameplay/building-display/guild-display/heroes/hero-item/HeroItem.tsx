@@ -46,20 +46,20 @@ const HeroItem = ({ hero, chosenQuest, itemClickHandler, enabled, embarkedLimit 
   const power = hero.stats.power + hero.equipStats.power;
 
   return (
-    <div className="hero-item" style={style} onClick={itemClickHandler}>
-      <button id="hero_assigned_btn" className="hero-item__btn--assign" style={assignBtnStyle}>
+    <div className="hero-item-2" style={style} onClick={itemClickHandler}>
+      <button id="hero_assigned_btn" className="hero-item-2__btn--assign" style={assignBtnStyle}>
         Назначить
       </button>
-      <div className={`hero-item__portrait--${HeroType[hero.type].toLowerCase()}`}></div>
-      <div className="hero-item__type-level">
+      <div className={`hero-item-2__portrait--${HeroType[hero.type].toLowerCase()}`}></div>
+      <div className="hero-item-2__type-level">
         {display(hero.type)} <br></br> {hero.level.definition}
       </div>
-      <canvas className="hero-item__health-bar" ref={healthRef} width={canvasW} height={canvasH} />
-      <canvas className="hero-item__exp-bar" ref={expRef} width={canvasW} height={canvasH} />
-      <div className="hero-item__name">{hero.name}</div>
-      <div className="hero-item__power">{power}</div>
-      <div className="hero-item__health">{hero.health}</div>
-      <div className="hero-item__gold">{hero.gold}</div>
+      <canvas className="hero-item-2__health-bar" ref={healthRef} width={canvasW} height={canvasH} />
+      <canvas className="hero-item-2__exp-bar" ref={expRef} width={canvasW} height={canvasH} />
+      <div className="hero-item-2__name">{hero.name}</div>
+      <div className="hero-item-2__power">{power}</div>
+      <div className="hero-item-2__health">{hero.health}</div>
+      <div className="hero-item-2__gold">{hero.gold}</div>
     </div>
   );
 };

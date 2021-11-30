@@ -1,0 +1,104 @@
+@import "../../utils/css/index.scss";
+
+.hero-item {
+  padding: 5px;
+  min-width: 145px;
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  font-family: inherit;
+  font-size: 20px;
+  background-image: linear-gradient(145deg, #00ddeb, cadetblue 50%, #00ddeb);
+  border: solid 1px white;
+  border-radius: 10px;
+  cursor: default;
+  z-index: 2000;
+  overflow: hidden;
+
+  & > * {
+    color: white;
+    z-index: inherit;
+    @include strokeText;
+  }
+
+  &__name {
+    font-size: larger;
+    color: lightskyblue;
+    align-self: center;
+  }
+
+  &__level-info {
+    margin: 5px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__divider {
+    margin: 3px 0;
+    width: 90%;
+    align-self: center;
+    border-color: black;
+  }
+
+  &__portrait {
+    padding: 0 5px 5px 0;
+    width: 64px;
+    height: 64px;
+
+    & > * {
+      height: 100%;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    @each $type in "warrior" "paladin" "thief" "mage" "healer" {
+      &--#{$type} {
+        background-image: url(../../img/portraits/portrait-#{$type}.png);
+      }
+    }
+  }
+
+  &__bar {
+    margin-top: 2px;
+    height: 12px;
+    width: 90%;
+    border: 1px solid white;
+    background-color: rgb(73, 124, 126);
+
+    &_health {
+      height: 100%;
+      background-color: red;
+    }
+
+    &_psy {
+      height: 100%;
+      background-color: blueviolet;
+    }
+
+    &_lvl-progress {
+      height: 100%;
+      background-color: yellow;
+    }
+  }
+
+  &__info {
+    display: flex;
+  }
+
+  &__stats {
+    margin-left: 10%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__bits {
+    margin-left: 5%;
+    font-size: larger;
+    color: lightskyblue;
+  }
+}
+
+.hero-stat {
+  font-size: larger;
+  color: yellow;
+}

@@ -109,6 +109,12 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
     ],
   ];
 
+  const dismissBtnStyle = hero.activity
+    ? hero.activity.type === HeroActivityType.QUEST
+      ? "hero-stats__dismiss-btn__hidden"
+      : ""
+    : "hero-stats__dismiss-btn__hidden";
+
   return (
     <div className="hero-stats" onClick={heroStatsDisplayClosed}>
       <div className="hero-stats__container">
@@ -117,7 +123,7 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
           <div className={`hero-stats__portrait--${HeroType[hero.type].toLowerCase()}`}></div>
         </div>
         <button
-          className={`hero-stats__dismiss-btn ${hero.activity!.type === HeroActivityType.QUEST ? "hero-stats__dismiss-btn__hidden" : ""}`}
+          className={`hero-stats__dismiss-btn ${dismissBtnStyle}`}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -130,7 +136,7 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
           </span>
         </button>
         <div className="hero-stats__activity">
-          {hero.activity!.description} {activityTime}
+          {hero.activity ? hero.activity.description : null} {activityTime ?? null}
         </div>
         <div className="hero-stats__gold">{hero.gold}</div>
         <div className="hero-stats__name">{hero.name}</div>
