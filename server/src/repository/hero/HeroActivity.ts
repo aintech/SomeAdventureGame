@@ -160,7 +160,7 @@ const idleToHealing = async (userId: number, hero: HeroWithPerks, heroActivity: 
 
   return {
     ...heroActivity,
-    duration: hpLoss * 5,
+    duration: hpLoss * 500,
     description: "Отдыхает в палатке целителя",
   };
 };

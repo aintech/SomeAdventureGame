@@ -1,6 +1,6 @@
 import { MouseEvent } from "react";
 import Hero from "../../../../../models/hero/Hero";
-import HeroItem from "../../../../shared/HeroItem";
+import HeroItem from "../../../../shared/hero-item/HeroItem";
 import "./tavern-patron.scss";
 
 type TavernPatronProps = {

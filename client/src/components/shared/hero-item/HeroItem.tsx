@@ -1,8 +1,8 @@
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
-import { heroStatsChoosed } from "../../actions/Actions";
-import Hero, { calcHealthFraction } from "../../models/hero/Hero";
-import { display, HeroType } from "../../models/hero/HeroType";
+import { heroStatsChoosed } from "../../../actions/Actions";
+import Hero, { calcHealthFraction } from "../../../models/hero/Hero";
+import { display, HeroType } from "../../../models/hero/HeroType";
 import "./hero-item.scss";
 
 type HeroItemProps = {

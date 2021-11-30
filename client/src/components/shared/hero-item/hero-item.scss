@@ -1,4 +1,4 @@
-@import "../../utils/css/index.scss";
+@import "../../../utils/css/index.scss";
 
 .hero-item {
   padding: 5px;
@@ -52,7 +52,7 @@
 
     @each $type in "warrior" "paladin" "thief" "mage" "healer" {
       &--#{$type} {
-        background-image: url(../../img/portraits/portrait-#{$type}.png);
+        background-image: url(../../../img/portraits/portrait-#{$type}.png);
       }
     }
   }

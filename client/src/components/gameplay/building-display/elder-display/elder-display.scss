@@ -1,11 +1,5 @@
 @import "../../../../utils/css/index.scss";
 
 .elder-display {
-  display: flex;
-  flex-flow: column;
-  gap: 10px;
-  font-family: inherit;
-  font-size: 24px;
-  color: white;
-  @include strokeText;
+  @include defaultDisplayText;
 }

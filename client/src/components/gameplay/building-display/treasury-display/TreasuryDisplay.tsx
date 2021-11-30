@@ -11,7 +11,7 @@ type TreasuryDisplayProps = {
 const TreasuryDisplay = ({ stats }: TreasuryDisplayProps) => {
   return (
     <div className="treasury-display">
-      <div>Волшебной пыльцы в хранилище {stats.gold}</div>
+      <div>Потребление энергии 50/60 Mv</div>
     </div>
   );
 };
