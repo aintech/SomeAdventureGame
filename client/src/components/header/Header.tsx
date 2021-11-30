@@ -39,14 +39,14 @@ const Header = ({ stats, fetchGameStats, isAuthenticated, logout }: HeaderProps)
         <div className="header__resources-gold--img"></div>
         <div className="header__resources-gold">{stats.gold}</div>
       </div>
-      <button className="header__btn-logout" onClick={onLogout}>
-        LOGOUT
-      </button>
     </>
   );
 
   return (
     <header className="header">
+      <button className="header__btn-logout" onClick={onLogout}>
+        &lt;-
+      </button>
       <div className="header__title">Space SAG</div>
       {isAuthenticated ? headerBar : null}
     </header>

@@ -137,17 +137,15 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
       ) : null;
 
     return (
-      <div className="building-display" onClick={this.props.hideBuildingDisplay}>
-        <div className="building-display__container" onClick={(e) => e.stopPropagation()}>
-          <div className="building-display__title">
-            {upgradeBtn}
-            <div className="building-display__title_name">{toDisplay(chosenBuilding.type)}</div>
-            <button className="building-display__btn-close" onClick={this.props.hideBuildingDisplay}></button>
-          </div>
-          <hr className="title__underscore" />
-          <div className="building-display__display-content">{displayByType(chosenBuilding.type)}</div>
-          {upgradeMsg}
+      <div className="building-display" onClick={(e) => e.stopPropagation()}>
+        <div className="building-display__title">
+          {upgradeBtn}
+          <div className="building-display__title_name">{toDisplay(chosenBuilding.type)}</div>
+          <button className="building-display__btn-close" onClick={this.props.hideBuildingDisplay}></button>
         </div>
+        <hr className="title__underscore" />
+        <div className="building-display__display-content">{displayByType(chosenBuilding.type)}</div>
+        {upgradeMsg}
       </div>
     );
   }
