@@ -13,7 +13,10 @@ const StablesDisplay = ({ embarked }: StablesDisplayProps) => {
   return (
     <div className="stables-display">
       <div className="stables-display__title">
-        Челноков в ангаре {MAX_EMBARKED_QUESTS - embarked.length}/{MAX_EMBARKED_QUESTS}
+        Свободных экипажей{" "}
+        <span className="stables-display__count">
+          {MAX_EMBARKED_QUESTS - embarked.length}/{MAX_EMBARKED_QUESTS}
+        </span>
       </div>
       <li>
         {embarked.map((q, idx) => (

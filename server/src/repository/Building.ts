@@ -11,7 +11,7 @@ export enum BuildingType {
   ALCHEMIST /** Selling potions to heroes */,
   BLACKSMITH /** Upgrade heroes equipment to better tier*/,
   MARKET /** Heroes buy new equipment */,
-  ENERGY_HUB /** Limit buildings upgrade limit */,
+  STORAGE /** Limit amount of dust */,
 }
 
 export type Building = {

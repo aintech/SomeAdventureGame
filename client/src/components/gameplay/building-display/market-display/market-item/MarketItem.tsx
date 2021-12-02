@@ -10,15 +10,32 @@ type MarketItemProps = {
 };
 
 export const MarketItem = ({ item }: MarketItemProps) => {
+  let stats = "";
+  if (item.stats.power > 0) {
+    stats += `ATK +${item.stats.power}, `;
+  }
+  if (item.stats.defence > 0) {
+    stats += `DEF +${item.stats.defence}, `;
+  }
+  //TODO: добавить wizdom в статы
+  if (item.stats.vitality > 0) {
+    stats += `WIZ +${item.stats.vitality}, `;
+  }
+  if (item.stats.vitality > 0) {
+    stats += `VIT +${item.stats.vitality}, `;
+  }
+  if (item.stats.initiative > 0) {
+    stats += `AGI +${item.stats.initiative}, `;
+  }
+
+  stats = stats.substring(0, stats.length - 2);
+
   return (
     <li className="market-item">
-      <img src={getImage(item.subtype)} alt={item.name} className="market-item__img"></img>
+      <img className="market-item__img" src={getImage(item.subtype)} alt={item.name}></img>
       <div className="market-item__name">{item.name}</div>
-      <div className="market-item__power">с. {item.stats.power}</div>
-      <div className="market-item__defence">з. {item.stats.defence}</div>
-      <div className="market-item__vitality">в. {item.stats.vitality}</div>
-      <div className="market-item__initiative">и. {item.stats.initiative}</div>
-      <div className="market-item__price">{item.price} g</div>
+      <div className="market-item__stats">{stats}</div>
+      <div className="market-item__price">{item.price}</div>
     </li>
   );
 };

@@ -12,8 +12,12 @@ type ElderDisplayProps = {
 const ElderDisplay = ({ stats }: ElderDisplayProps) => {
   return (
     <div className="elder-display">
-      <div>Известность городка {stats.fame}</div>
-      <div>Доля городка в квестах {GUILD_SHARE * 100}%</div>
+      <div>
+        Известность городка <span className="elder-display__count">{stats.fame}</span>
+      </div>
+      <div>
+        Доля городка в квестах <span className="elder-display__count">{GUILD_SHARE * 100}%</span>
+      </div>
     </div>
   );
 };

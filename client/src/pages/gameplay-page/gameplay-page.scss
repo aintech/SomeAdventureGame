@@ -4,5 +4,5 @@
   position: relative;
   height: calc(100vh - #{$header_height});
   height: calc(var(--vh, 1vh) * 100 - #{$header_height});
-  background-image: url(../../img/spacebox.jpg);
+  background-image: url(../../img/skybox.jpg);
 }

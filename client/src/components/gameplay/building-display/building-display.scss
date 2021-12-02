@@ -22,20 +22,19 @@
       @include strokeText;
 
       margin: auto;
-      margin-bottom: 0px;
 
       justify-self: center;
       align-self: center;
 
       font-family: inherit;
-      font-size: 30px;
+      font-size: 26px;
       color: darkkhaki;
       cursor: default;
     }
   }
 
   &__display-content {
-    padding: 10px 0;
+    padding: 0;
     overflow-y: scroll;
   }
 

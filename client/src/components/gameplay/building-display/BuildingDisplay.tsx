@@ -163,7 +163,7 @@ const displayByType = (type: BuildingType) => {
       return <StablesDisplay />;
     case BuildingType.HEALER:
       return <HealerDisplay />;
-    case BuildingType.ENERGY_HUB:
+    case BuildingType.STORAGE:
       return <TreasuryDisplay />;
     case BuildingType.TRAINING_GROUND:
       return <TrainingGroundDisplay />;

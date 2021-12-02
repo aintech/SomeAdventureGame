@@ -2,4 +2,9 @@
 
 .treasury-display {
   @include defaultDisplayText;
+
+  &__count {
+    color: yellowgreen;
+    font-size: larger;
+  }
 }

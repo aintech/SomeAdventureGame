@@ -38,6 +38,10 @@ const MarketDisplay = ({ visitors, marketAssortment, visitorClicked }: MarketDis
           <HeroItem key={visitor.id} hero={visitor} enabled={true} itemClickHandler={(event) => visitorClickHandler(visitor, event)} />
         ))}
       </div>
+      <div className="market-display__controls">
+        <button className="market-display__assortment">товары</button>
+        <button className="market-display__visitors">посетители</button>
+      </div>
     </div>
   );
 };

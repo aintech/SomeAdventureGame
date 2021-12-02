@@ -44,26 +44,32 @@ const HeroItem = ({ hero, heroClickHandler }: HeroItemProps) => {
         </div>
 
         <div className="hero-item__stats">
-          <div>
-            ATK &gt; <span className="hero-stat">{hero.stats.power + hero.equipStats.power}</span>
-          </div>
-          <div>
-            DEF &gt; <span className="hero-stat">{hero.stats.defence + hero.equipStats.defence}</span>
-          </div>
-          <div>
-            PSY &gt; <span className="hero-stat">{hero.stats.power + hero.equipStats.power}</span>
-          </div>
-          <div>
-            VIT &gt; <span className="hero-stat">{hero.stats.vitality + hero.equipStats.vitality}</span>
-          </div>
-          <div>
-            AGI &gt; <span className="hero-stat">{hero.stats.initiative + hero.equipStats.initiative}</span>
+          <div className="hero-stat">
+            <span className="hero-stat__name">ATK</span>
+            <span className="hero-stat__delim">▸</span>
+            <span className="hero-stat__value">{hero.stats.power + hero.equipStats.power}</span>
+
+            <span className="hero-stat__name">DEF</span>
+            <span className="hero-stat__delim">▸</span>
+            <span className="hero-stat__value">{hero.stats.defence + hero.equipStats.defence}</span>
+
+            <span className="hero-stat__name">PSY</span>
+            <span className="hero-stat__delim">▸</span>
+            <span className="hero-stat__value">{hero.stats.power + hero.equipStats.power}</span>
+
+            <span className="hero-stat__name">VIT</span>
+            <span className="hero-stat__delim">▸</span>
+            <span className="hero-stat__value">{hero.stats.vitality + hero.equipStats.vitality}</span>
+
+            <span className="hero-stat__name">AGI</span>
+            <span className="hero-stat__delim">▸</span>
+            <span className="hero-stat__value">{hero.stats.initiative + hero.equipStats.initiative}</span>
           </div>
         </div>
       </div>
       {hero.activity ? (
         <div>
-          bits account: <span className="hero-item__bits">{hero.gold}</span>
+          dust account: <span className="hero-item__dust">{hero.gold}</span>
         </div>
       ) : null}
     </div>

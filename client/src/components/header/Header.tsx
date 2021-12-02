@@ -47,7 +47,7 @@ const Header = ({ stats, fetchGameStats, isAuthenticated, logout }: HeaderProps)
       <button className="header__btn-logout" onClick={onLogout}>
         &lt;-
       </button>
-      <div className="header__title">Space SAG</div>
+      <div className="header__title">SAG</div>
       {isAuthenticated ? headerBar : null}
     </header>
   );
