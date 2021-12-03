@@ -8,7 +8,9 @@
   right: 0;
   display: flex;
   flex-direction: column;
-  background-color: rgba($color: black, $alpha: 0.8);
+  background-image: url(../../../img/building-display/background_3.jpg);
+  background-position: center;
+  background-size: cover;
   cursor: default;
   z-index: 1000;
 
@@ -16,7 +18,7 @@
     position: relative;
     min-height: 40px;
     display: flex;
-    background-color: rgba($color: blueviolet, $alpha: 0.4);
+    background-color: rgba($color: black, $alpha: 0.6);
 
     &_name {
       @include strokeText;
@@ -86,10 +88,4 @@
   &:hover {
     background-color: green;
   }
-}
-
-.title__underscore {
-  width: 90%;
-  align-self: center;
-  border-color: rgba($color: white, $alpha: 0.2);
 }

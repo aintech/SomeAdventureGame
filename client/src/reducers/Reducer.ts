@@ -88,7 +88,11 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
     case ActionType.FETCH_HEROES_SUCCESS:
       return {
         ...state,
-        heroes: action.payload.map((h: HeroResponse) => convertHero(h)),
+        heroes: action.payload
+          .map((h: HeroResponse) => convertHero(h))
+          .sort((a: Hero, b: Hero) => {
+            return a.id - b.id;
+          }),
       };
 
     case ActionType.FETCH_BUILDINGS_REQUEST:
@@ -112,7 +116,11 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
     case ActionType.FETCH_TAVERN_PATRONS_SUCCESS:
       return {
         ...state,
-        tavernPatrons: action.payload.map((h: HeroResponse) => convertHero(h)),
+        tavernPatrons: action.payload
+          .map((h: HeroResponse) => convertHero(h))
+          .sort((a: Hero, b: Hero) => {
+            return a.id - b.id;
+          }),
       };
 
     case ActionType.FETCH_MARKET_ASSORTMENT_REQUEST:
@@ -231,7 +239,14 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         quests: [...state.quests.slice(0, qIdx), convertQuest(embQuest), ...state.quests.slice(qIdx + 1)],
         heroes: uHeroes,
         chosenHero,
-        activeQuestPerform: { quest: convertQuest(embQuest), heroes: embHeroes.map((h) => convertHero(h)) },
+        activeQuestPerform: {
+          quest: convertQuest(embQuest),
+          heroes: embHeroes
+            .map((h) => convertHero(h))
+            .sort((a: Hero, b: Hero) => {
+              return a.id - b.id;
+            }),
+        },
       };
 
     case ActionType.COMPLETE_QUEST:

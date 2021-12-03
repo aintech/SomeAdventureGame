@@ -143,7 +143,6 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
           <div className="building-display__title_name">{toDisplay(chosenBuilding.type)}</div>
           <button className="building-display__btn-close" onClick={this.props.hideBuildingDisplay}></button>
         </div>
-        <hr className="title__underscore" />
         <div className="building-display__display-content">{displayByType(chosenBuilding.type)}</div>
         {upgradeMsg}
       </div>

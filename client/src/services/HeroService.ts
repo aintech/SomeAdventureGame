@@ -13,6 +13,7 @@ export interface StatsHolderResponse {
   power: number;
   defence: number;
   vitality: number;
+  wizdom: number;
   initiative: number;
 }
 
@@ -114,9 +115,6 @@ export const dismissHero = async (auth: AuthProps, hero: Hero) => {
   return await sendHttp<{ heroId: number }>(`${baseUrl}/dismiss`, auth, [`hero_id=${hero.id}`], "PUT");
 };
 
-export const updateHeroActivities = async (
-  auth: AuthProps,
-  activities: { heroId: number; type: HeroActivityType }[]
-) => {
+export const updateHeroActivities = async (auth: AuthProps, activities: { heroId: number; type: HeroActivityType }[]) => {
   return await sendHttp<HeroResponse[]>(`${baseUrl}/activity`, auth, [], "PUT", activities);
 };

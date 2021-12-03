@@ -26,6 +26,7 @@ export type EquipmentStats = {
   power: number;
   defence: number;
   vitality: number;
+  wizdom: number;
   initiative: number;
 };
 
@@ -59,16 +60,18 @@ export const getEquipmentStats = (equipment: Equipment[]): EquipmentStats => {
   let power = 0;
   let defence = 0;
   let initiative = 0;
+  let wizdom = 0;
   let vitality = 0;
 
   equipment.forEach((e) => {
     power += e.power;
     defence += e.defence;
     vitality += e.vitality;
-    initiative -= e.initiative;
+    wizdom += e.wizdom;
+    initiative += e.initiative;
   });
 
-  return { power, defence, vitality, initiative };
+  return { power, defence, vitality, wizdom, initiative };
 };
 
 export const fetchEquipment = (tier: number = 0) => {
@@ -134,11 +137,11 @@ export const replaceHeroEquipment = async (heroId: number, prevEquipment: Equipm
 };
 
 export const changeHeroEquipmentTier = async (heroId: number, equipmentId: number, tier: number) => {
-  return query<void>(
-    "changeHeroEquipmentTier",
-    `update public.hero_equipment set tier = $3 where hero_id = $1 and equipment_id = $2`,
-    [heroId, equipmentId, tier]
-  );
+  return query<void>("changeHeroEquipmentTier", `update public.hero_equipment set tier = $3 where hero_id = $1 and equipment_id = $2`, [
+    heroId,
+    equipmentId,
+    tier,
+  ]);
 };
 
 export type EquipmentRow = {
@@ -159,6 +162,7 @@ export type EquipmentRow = {
   power: string;
   defence: string;
   vitality: string;
+  wizdom: string;
   initiative: string;
 };
 
@@ -184,6 +188,7 @@ const mapEquipment = (row: EquipmentRow): Equipment => {
     power: +row.power,
     defence: +row.defence,
     vitality: +row.vitality,
+    wizdom: +row.wizdom,
     initiative: +row.initiative,
   };
 };

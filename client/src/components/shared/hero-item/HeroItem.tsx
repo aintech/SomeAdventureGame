@@ -24,7 +24,7 @@ const HeroItem = ({ hero, heroClickHandler }: HeroItemProps) => {
       <hr className="hero-item__divider" />
       <div className="hero-item__level-info">
         <p>{`${display(hero.type)}`}</p>
-        <p>{hero.level.definition}</p>
+        <p>lvl. {hero.level.lvl}</p>
       </div>
 
       <div className="hero-item__info">
@@ -69,7 +69,7 @@ const HeroItem = ({ hero, heroClickHandler }: HeroItemProps) => {
       </div>
       {hero.activity ? (
         <div>
-          dust account: <span className="hero-item__dust">{hero.gold}</span>
+          swag: <span className="hero-item__dust">{hero.gold}</span>
         </div>
       ) : null}
     </div>

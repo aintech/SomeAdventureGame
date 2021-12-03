@@ -161,7 +161,7 @@ const idleToHealing = async (userId: number, hero: HeroWithPerks, heroActivity: 
   return {
     ...heroActivity,
     duration: hpLoss * 5,
-    description: "Отдыхает в палатке целителя",
+    description: "Отлёживается в госпитале",
   };
 };
 
@@ -287,7 +287,7 @@ const idleToPurchasingPotions = async (userId: number, hero: HeroWithPerks, hero
     ...heroActivity,
     duration: potion.buyingTime,
     activityId: potion.id,
-    description: `Покупает ${potion.name} у алхимика`,
+    description: `Покупает ${potion.name} в лаборатории`,
   };
 };
 
@@ -314,7 +314,7 @@ const idleToUpgradingEquipment = async (userId: number, hero: HeroWithPerks, her
     ...heroActivity,
     duration: equipment.buyingTime,
     activityId: equipment.id,
-    description: `Улучшает ${equipment.name} в кузнице`,
+    description: `Улучшает ${equipment.name} на рембазе`,
   };
 };
 

@@ -19,27 +19,46 @@ export default class Building {
 export const toDisplay = (type: BuildingType) => {
   switch (type) {
     case BuildingType.GUILD:
-      return "Гильдия приключений"; // "Космогильдия";
+      // return "Гильдия приключений";
+      // return "Космогильдия";
+      return "Гильдия";
     case BuildingType.TAVERN:
-      return "Таверна 'Пьяный жук'"; // "Хаб 'Край галактики'";
+      // return "Таверна 'Пьяный жук'";
+      // return "Хаб 'Гиперкуб'";
+      return "Бар";
     case BuildingType.DWELLINGS:
-      return "Домики жителей"; // "Жилые каюты";
+      // return "Домики жителей";
+      // return "Жилые каюты";
+      return "Жилища";
     case BuildingType.STABLES:
-      return "Гнездовье птиц"; // "Ангар";
+      // return "Гнездовье птиц";
+      // return "Ангар";
+      return "Гараж";
     case BuildingType.HEALER:
-      return "Домик целителя"; // "Медцентр";
+      // return "Домик целителя";
+      // return "Медцентр";
+      return "Госпиталь";
     case BuildingType.ELDER:
-      return "Хижина старейшины"; // "Администрация";
+      // return "Хижина старейшины";
+      // return "Администрация";
+      return "Глава лагеря";
     case BuildingType.TRAINING_GROUND:
       return "Тренировочная база";
     case BuildingType.ALCHEMIST:
-      return "Лаборатория алхимика"; // "Лаборатория";
+      // return "Лаборатория алхимика";
+      return "Лаборатория";
     case BuildingType.BLACKSMITH:
-      return "Каменная кузня"; // "Промзона";
+      // return "Каменная кузня";
+      // return "Промзона";
+      return "Рембаза";
     case BuildingType.MARKET:
-      return "Кибитка торговца"; // "Маркет";
+      // return "Кибитка торговца";
+      // return "Маркетплейс";
+      return "Рынок";
     case BuildingType.STORAGE:
-      return "Хранилище пыльцы"; // "Энергогенератор";
+      // return "Хранилище пыльцы";
+      // return "Энергогенератор";
+      return "Схрон";
     default:
       throw new Error(`Unknown building type ${BuildingType[type]}`);
   }

@@ -19,14 +19,14 @@
   }
 
   &__btn-logout {
-    height: $header_height;
-    width: 40px;
+    width: 30px;
     font-family: inherit;
-    font-size: 28px;
-    display: inline-block;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
     cursor: pointer;
     color: white;
-    background-color: yellowgreen;
+    background-color: brown;
     border: none;
     outline: none;
 

@@ -6,21 +6,29 @@
 
   &__btn--hire {
     padding: 5px;
+    margin-top: -5px;
     font-family: inherit;
     font-size: 26px;
     width: 100%;
-    background-color: bisque;
+    background-color: lightcoral;
+
+    box-shadow: 0px 10px 15px black;
+
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+
     border: none;
     outline: none;
     cursor: pointer;
+
+    @include strokeText;
 
     &__price {
       font-weight: bold;
       color: grey;
     }
 
-    &__bits {
-      @include strokeText;
+    &__dust {
       font-weight: bold;
       color: yellow;
     }

@@ -61,7 +61,7 @@ const convertEnemy = (res: CheckpointEnemyResponse): CheckpointEnemy => {
     res.name,
     res.health,
     res.experience,
-    { power: res.power, defence: res.defence, initiative: res.initiative, vitality: 0 },
+    { power: res.power, defence: res.defence, initiative: res.initiative, wizdom: 0, vitality: 0 },
     res.drop
   );
 };

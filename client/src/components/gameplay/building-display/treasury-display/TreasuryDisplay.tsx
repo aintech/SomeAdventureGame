@@ -12,7 +12,7 @@ const TreasuryDisplay = ({ stats }: TreasuryDisplayProps) => {
   return (
     <div className="treasury-display">
       <div>
-        Волшебной пыльцы в хранилище <span className="treasury-display__count">{stats.gold}</span>
+        Хабара в хранилище <span className="treasury-display__count">{stats.gold}</span>
       </div>
     </div>
   );

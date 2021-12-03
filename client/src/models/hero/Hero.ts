@@ -47,7 +47,7 @@ export const convert = (response: HeroResponse): Hero => {
     response.name,
     response.type,
     convertLevel(response.level),
-    new PersonageStats(response.power, response.defence, response.vitality, response.initiative),
+    new PersonageStats(response.power, response.defence, response.vitality, response.wizdom, response.initiative),
     equipStats,
     response.health,
     response.gold,

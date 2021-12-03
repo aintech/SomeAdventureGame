@@ -19,7 +19,7 @@ const TavernPatron = ({ patron, hirePatron }: TavernPatronProps) => {
       <HeroItem hero={patron} />
       <button className="tavern-patron__btn--hire" onClick={(e) => onHirePatron(e)}>
         <span className="tavern-patron__btn--hire__price">
-          Нанять <span className="tavern-patron__btn--hire__bits">{patron.gold}</span>
+          Нанять <span className="tavern-patron__btn--hire__dust">{patron.gold}</span>
         </span>
       </button>
     </div>

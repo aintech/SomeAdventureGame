@@ -43,16 +43,18 @@ export const getEquipmentStats = (equipment: Equipment[]): PersonageStats => {
   let power = 0;
   let defence = 0;
   let initiative = 0;
+  let wizdom = 0;
   let vitality = 0;
 
   equipment.forEach((e) => {
     power += e.stats.power;
     defence += e.stats.defence;
     vitality += e.stats.vitality;
+    wizdom += e.stats.wizdom;
     initiative -= e.stats.initiative;
   });
 
-  return { power, defence, vitality, initiative };
+  return { power, defence, vitality, wizdom, initiative };
 };
 
 const collectAvailableHeroTypes = (response: EquipmentResponse): HeroType[] => {
@@ -84,7 +86,7 @@ export const convert = (response: EquipmentResponse): Equipment => {
     response.id,
     response.level,
     response.price,
-    new PersonageStats(+response.power, +response.defence, +response.vitality, +response.initiative),
+    new PersonageStats(+response.power, +response.defence, +response.vitality, +response.wizdom, +response.initiative),
     collectAvailableHeroTypes(response),
     response.avatar,
     response.tier ?? 0

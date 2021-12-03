@@ -25,6 +25,7 @@ export type Hero = {
   health: number;
   power: number;
   defence: number;
+  wizdom: number;
   vitality: number;
   initiative: number;
   gold: number;
@@ -52,33 +53,15 @@ const prepareHeroes = async (heroes: Hero[]) => {
 };
 
 export const getHeroes = async (userId: number) => {
-  return query<HeroWithSkills[]>(
-    "getHeroes",
-    `${selectQuery} where user_id = $1 and hired = true`,
-    [userId],
-    mapHero,
-    prepareHeroes
-  );
+  return query<HeroWithSkills[]>("getHeroes", `${selectQuery} where user_id = $1 and hired = true`, [userId], mapHero, prepareHeroes);
 };
 
 export const getHeroesByIds = async (heroIds: number[]) => {
-  return query<HeroWithSkills[]>(
-    "getHeroesByIds",
-    `${selectQuery} where id in (${heroIds.join(",")})`,
-    [],
-    mapHero,
-    prepareHeroes
-  );
+  return query<HeroWithSkills[]>("getHeroesByIds", `${selectQuery} where id in (${heroIds.join(",")})`, [], mapHero, prepareHeroes);
 };
 
 export const getNotHiredHeroes = async (userId: number) => {
-  return query<HeroWithSkills[]>(
-    "getNotHiredHeroes",
-    `${selectQuery} where user_id = $1 and hired = false`,
-    [userId],
-    mapHero,
-    prepareHeroes
-  );
+  return query<HeroWithSkills[]>("getNotHiredHeroes", `${selectQuery} where user_id = $1 and hired = false`, [userId], mapHero, prepareHeroes);
 };
 
 export const hireHero = async (userId: number, heroId: number) => {
@@ -146,11 +129,11 @@ export const adjustGold = (heroId: number, amount: number) => {
 };
 
 export const adjustGoldExperience = (heroId: number, gold: number, experience: number) => {
-  return query<void>(
-    "adjustExperience",
-    `update public.hero set gold = (gold + $2), experience = (experience + $3) where id = $1`,
-    [heroId, gold, experience]
-  );
+  return query<void>("adjustExperience", `update public.hero set gold = (gold + $2), experience = (experience + $3) where id = $1`, [
+    heroId,
+    gold,
+    experience,
+  ]);
 };
 
 export const getHeroesOnQuest = (userId: number, questId: number) => {
@@ -164,19 +147,15 @@ export const getHeroesOnQuest = (userId: number, questId: number) => {
 };
 
 export const updateHeroLevel = (heroId: number, level: number, addPower: number, addVitality: number) => {
-  return query<void>(
-    "updateHeroLevel",
-    "update public.hero set level = $2, power = power + $3, vitality = vitality + $4 where id = $1",
-    [heroId, level, addPower, addVitality]
-  );
+  return query<void>("updateHeroLevel", "update public.hero set level = $2, power = power + $3, vitality = vitality + $4 where id = $1", [
+    heroId,
+    level,
+    addPower,
+    addVitality,
+  ]);
 };
 
-export const rewardHeroesForQuest = async (
-  userId: number,
-  heroIds: number[],
-  heroesTribute: number,
-  experience: number
-) => {
+export const rewardHeroesForQuest = async (userId: number, heroIds: number[], heroesTribute: number, experience: number) => {
   const tributePerHero = Math.ceil(heroesTribute / heroIds.length);
   const experiencePerHero = Math.ceil(experience / heroIds.length);
 
@@ -201,6 +180,7 @@ type HeroRow = {
   experience: string;
   gold: string;
   vitality: string;
+  wizdom: string;
   initiative: string;
   hired: boolean;
   appear_at: Date;
@@ -223,6 +203,7 @@ const mapHero = (row: HeroRow): Hero => {
     health: +row.health,
     gold: +row.gold,
     vitality: +row.vitality,
+    wizdom: +row.wizdom,
     initiative: +row.initiative,
     hired: row.hired,
     appearAt: row.appear_at,
