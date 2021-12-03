@@ -1,30 +1,24 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
-import { heroStatsChoosed } from "../../../../actions/Actions";
 import Hero from "../../../../models/hero/Hero";
 import { HeroActivityType } from "../../../../models/hero/HeroActivity";
 import Item from "../../../../models/Item";
 import Loader from "../../../loader/Loader";
-import HeroItem from "../guild-display/heroes/hero-item/HeroItem";
+import HeroContainer from "../../../shared/hero-container/HeroContainer";
 import "./alchemist-display.scss";
 import { AlchemistItem } from "./alchemist-item/AlchemistItem";
 
 type AlchemistDisplayProps = {
   visitors: Hero[];
   alchemistAssortment: Item[];
-  visitorClicked: (visitor: Hero) => void;
 };
 
-const AlchemistDisplay = ({ visitors, alchemistAssortment, visitorClicked }: AlchemistDisplayProps) => {
-  const visitorClickHandler = (hero: Hero, event: React.MouseEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    visitorClicked(hero);
-  };
+const AlchemistDisplay = ({ visitors, alchemistAssortment }: AlchemistDisplayProps) => {
+  const [showVisitors, setShowVisitors] = useState(false);
 
   return (
     <div className="alchemist-display">
-      <div className="alchemist-display__assortment-holder">
+      <div className={`alchemist-display__assortment-holder ${showVisitors ? "" : "alchemist-display_active"}`}>
         <div className="alchemist-display__assortment__list">
           <ul>
             {alchemistAssortment.map((assortment) => (
@@ -33,10 +27,28 @@ const AlchemistDisplay = ({ visitors, alchemistAssortment, visitorClicked }: Alc
           </ul>
         </div>
       </div>
-      <div className="alchemist-display__visitors-holder">
+      <div className={`alchemist-display__visitors-holder  ${!showVisitors ? "" : "alchemist-display_active"}`}>
         {visitors.map((visitor) => (
-          <HeroItem key={visitor.id} hero={visitor} enabled={true} itemClickHandler={(event) => visitorClickHandler(visitor, event)} />
+          <HeroContainer key={visitor.id} hero={visitor} />
         ))}
+      </div>
+      <div className="alchemist-display__controls">
+        <button
+          className={`alchemist-display__controls_btn ${showVisitors ? "" : "alchemist-display__controls--inactive"}`}
+          onClick={() => setShowVisitors(false)}
+        >
+          товары
+        </button>
+        <button
+          className={`alchemist-display__controls_btn ${!showVisitors && visitors.length > 0 ? "" : "alchemist-display__controls--inactive"}`}
+          onClick={() => {
+            if (visitors.length > 0) {
+              setShowVisitors(true);
+            }
+          }}
+        >
+          посетители
+        </button>
       </div>
     </div>
   );
@@ -45,12 +57,11 @@ const AlchemistDisplay = ({ visitors, alchemistAssortment, visitorClicked }: Alc
 type AlchemistDisplayContainerProps = {
   heroes: Hero[];
   alchemistAssortment: Item[];
-  heroClicked: (hero: Hero) => void;
 };
 
 class AlchemistDisplayContainer extends Component<AlchemistDisplayContainerProps> {
   render() {
-    const { heroes, alchemistAssortment, heroClicked } = this.props;
+    const { heroes, alchemistAssortment } = this.props;
 
     if (!heroes) {
       return <Loader message={`Wating for heroes`} />;
@@ -58,7 +69,7 @@ class AlchemistDisplayContainer extends Component<AlchemistDisplayContainerProps
 
     const visitors = heroes.filter((h) => h.activity!.type === HeroActivityType.PURCHASING_POTIONS);
 
-    return <AlchemistDisplay visitors={visitors} alchemistAssortment={alchemistAssortment} visitorClicked={heroClicked} />;
+    return <AlchemistDisplay visitors={visitors} alchemistAssortment={alchemistAssortment} />;
   }
 }
 
@@ -71,13 +82,4 @@ const mapStateToProps = ({ heroes, alchemistAssortment }: AlchemistDisplayContai
   return { heroes, alchemistAssortment };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators(
-    {
-      heroClicked: heroStatsChoosed,
-    },
-    dispatch
-  );
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AlchemistDisplayContainer);
+export default connect(mapStateToProps)(AlchemistDisplayContainer);

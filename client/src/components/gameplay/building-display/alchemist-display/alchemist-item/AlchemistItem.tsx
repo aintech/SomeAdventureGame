@@ -12,7 +12,7 @@ export const AlchemistItem = ({ item }: AlchemistItemProps) => {
       <img src={getImage(item.subtype)} alt={item.name} className="alchemist-item__img"></img>
       <div className="alchemist-item__name">{item.name}</div>
       <div className="alchemist-item__description">{item.description}</div>
-      <div className="alchemist-item__price">{item.price} g</div>
+      <div className="alchemist-item__price">{item.price}</div>
     </li>
   );
 };

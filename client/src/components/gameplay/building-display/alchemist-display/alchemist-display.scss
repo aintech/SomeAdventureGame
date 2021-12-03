@@ -2,12 +2,12 @@
 
 .alchemist-display {
   display: flex;
-  gap: 30px;
+  flex-direction: column;
 
   &__visitors-holder {
-    display: grid;
-    grid-template-columns: repeat(2, min-content);
-    gap: 15px;
+    @include defaultDisplayHeroes;
+    padding-bottom: 55px;
+    display: none;
   }
 
   &__assortment__list {
@@ -15,15 +15,14 @@
   }
 
   &__assortment-holder {
-    height: 400px;
-    display: flex;
+    padding-bottom: 30px;
+    display: none;
+    justify-content: center;
     font-family: inherit;
     font-size: 20px;
     @include strokeText;
     color: whitesmoke;
     overflow-y: scroll;
-    background-color: #908070;
-    border-radius: 5px;
 
     & ul {
       list-style: none;
@@ -35,6 +34,35 @@
           border-color: bisque;
         }
       }
+    }
+  }
+
+  &_active {
+    display: flex;
+  }
+
+  &__controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+
+    &_btn {
+      font-family: inherit;
+      font-size: 26px;
+      height: 40px;
+      width: 50%;
+      color: #add8e6;
+      background-color: #5e5950;
+      border: 2px solid #add8e6;
+      outline: none;
+    }
+
+    &--inactive {
+      color: #6d8992;
+      background-color: #5e5950;
+      border: 2px solid #6d8992;
     }
   }
 }
