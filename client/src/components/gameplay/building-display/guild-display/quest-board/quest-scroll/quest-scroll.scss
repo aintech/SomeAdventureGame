@@ -1,6 +1,6 @@
 @import "../../../../../../utils/css/functions.scss";
 
-.quest-scroll-item {
+.quest-scroll {
   display: grid;
   grid-template-rows: 30px 1fr;
   grid-template-columns: 1fr 38px;
@@ -22,6 +22,7 @@
     grid-column: 1/3;
     color: black;
     margin: 5px;
+    margin-left: 10px;
   }
 
   &__level {

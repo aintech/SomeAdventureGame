@@ -1,6 +1,7 @@
 import { LoginUser } from "../routes/AuthRoutes";
 import { initiateBuildings } from "./Building";
 import query, { single } from "./Db";
+import { initShopsAssortment } from "./ShopsAssortment";
 import { initiateStats } from "./Stats";
 
 type User = {
@@ -9,7 +10,6 @@ type User = {
   password: string;
 };
 
-//FIXME: Добавить первоначальный ассортимент на рынок и алхимику
 export const createUser = async (user: LoginUser) => {
   await persistUser(user);
 
@@ -17,6 +17,7 @@ export const createUser = async (user: LoginUser) => {
 
   await initiateStats(persisted.id);
   await initiateBuildings(persisted.id);
+  await initShopsAssortment(persisted.id);
 
   return Promise.resolve(persisted);
 };

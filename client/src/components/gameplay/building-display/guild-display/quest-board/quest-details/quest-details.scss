@@ -1,23 +1,18 @@
-@import "../../../../../../utils/css/functions.scss";
+@import "../../../../../../utils/css/index.scss";
 
 .quest-details {
-  position: relative;
-  // width: 470px;
-  background-image: url(../../../../../../img/building-display/guild-display/guild-quest_scroll_maxed.png);
-  background-position-x: 35%;
-  background-repeat: no-repeat;
-  background-size: cover;
-  cursor: default;
+  padding: 0;
+  margin: 10px 0 0;
+  height: calc(100vh - #{$header_height} - 40px - 68px - 45px - 30px); // эти циферки - размеры контролов снизу экрана
 
   display: grid;
-  grid-template-rows:
-    70px
-    15px
-    max-content
-    max-content
-    80px;
+  grid-template-rows: repeat(5, max-content) 10px;
   grid-template-columns: repeat(2, 1fr);
   row-gap: 8px;
+  color: white;
+  @include strokeText;
+
+  cursor: default;
 
   & > * {
     grid-column: 1/ -1;
@@ -61,7 +56,7 @@
   }
 
   &__title {
-    font-size: 26px;
+    font-size: 24px;
     text-transform: uppercase;
     grid-row: 2;
     align-self: center;
@@ -72,17 +67,15 @@
     font-size: 20px;
     line-height: 1.4;
     grid-row: 3;
-    padding: 0 15px;
-    // margin-left: 46px;
-    // margin-right: 46px;
+    padding: 10px 15px;
   }
 
   &__level {
-    margin-top: 20px;
-    margin-left: 40px;
+    padding: 5px;
+    margin-left: 15px;
     grid-row: 1;
     grid-column: 1;
-    font-size: 38px;
+    font-size: 26px;
 
     align-self: center;
   }

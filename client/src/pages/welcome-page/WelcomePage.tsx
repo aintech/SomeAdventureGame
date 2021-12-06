@@ -8,9 +8,7 @@ import "./welcome-page.scss";
 
 /**
  * TODO: Добавить resize на window, а то сейчас если завести логин то экран обрезается
- * TODO: При успешной регистрации сразу логиниться
  * TODO: После нажатия кнопок регистрации или логина дизейблить их
- * TODO: Выводить сообщения об удачной регистрации и логине
  */
 
 const WelcomePage = () => {
@@ -26,8 +24,7 @@ const WelcomePage = () => {
 
   const registerHandler = async () => {
     try {
-      await register({ ...form });
-      performLogin();
+      await register({ ...form }).then(() => performLogin());
     } catch (e) {}
   };
 
@@ -47,7 +44,7 @@ const WelcomePage = () => {
       auth.login(data.token!, data.userId!);
       displayMessage(`Добро пожаловать!`);
     } catch (e) {
-      displayMessage(`Ой, залогиниться не получилось :( Проверь пожалуйста что логин и пароль указаны верно!`);
+      displayMessage(`Ой, залогиниться не получилось :( Проверь пожалуйста что логин и пароль указаны верно! ${e}`);
     }
   };
 

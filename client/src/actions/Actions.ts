@@ -117,19 +117,6 @@ export const buildingClicked = (building?: Building): PayloadedAction => {
   };
 };
 
-export const questScrollChoosed = (quest: Quest): PayloadedAction => {
-  return {
-    type: ActionType.QUEST_SCROLL_CHOOSED,
-    payload: quest,
-  };
-};
-
-export const questScrollClosed = (): PayloadedAction => {
-  return {
-    type: ActionType.QUEST_SCROLL_CLOSED,
-  };
-};
-
 export const heroStatsChoosed = (hero: Hero): PayloadedAction => {
   return {
     type: ActionType.HERO_STATS_CHOOSED,
@@ -140,20 +127,6 @@ export const heroStatsChoosed = (hero: Hero): PayloadedAction => {
 export const heroStatsDisplayClosed = (): PayloadedAction => {
   return {
     type: ActionType.HERO_STATS_DISPLAY_CLOSED,
-  };
-};
-
-export const heroAssignedToQuest = (hero: Hero): PayloadedAction => {
-  return {
-    type: ActionType.HERO_ASSIGNED_TO_QUEST,
-    payload: hero,
-  };
-};
-
-export const heroDismissedFromQuest = (hero: Hero): PayloadedAction => {
-  return {
-    type: ActionType.HERO_DISMISSED_FROM_QUEST,
-    payload: hero,
   };
 };
 

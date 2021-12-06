@@ -1,82 +1,153 @@
-import React, { Component, CSSProperties, useEffect, useState } from "react";
+import React, { Component, useState } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
-import { questScrollClosed } from "../../../../actions/Actions";
+import { bindActionCreators, compose, Dispatch } from "redux";
+import { embarkHeroesOnQuest } from "../../../../actions/ApiActions";
+import withApiService, { WithApiServiceProps } from "../../../../hoc/WithApiService";
 import Hero from "../../../../models/hero/Hero";
 import { HeroActivityType } from "../../../../models/hero/HeroActivity";
 import Quest from "../../../../models/Quest";
+import { remove } from "../../../../utils/arrays";
 import Loader from "../../../loader/Loader";
 import "./guild-display.scss";
-import HeroList from "./heroes/hero-list/HeroList";
-import QuestScrollList from "./quest-board/quest-scroll-list/QuestScrollList";
+import QuestDetails from "./quest-board/quest-details/QuestDetails";
+import QuestHero from "./quest-board/quest-hero/QuestHero";
+import QuestScroll from "./quest-board/quest-scroll/QuestScroll";
 
-const heroesPerPage = 6;
+// TODO: Объявления "встряхиваются" при скролле
 
 type GuildDisplayProps = {
   quests: Quest[];
   heroes: Hero[];
-  heroesAssignedToQuest: Hero[];
+  embarkHeroesOnQuest: (quest: Quest, heroesAssignedToQuest: Hero[]) => void;
 };
 
-const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest }: GuildDisplayProps) => {
-  const [page, setPage] = useState<number>(0);
-  const [lastPage, setLastPage] = useState<number>(0);
-  const [heroesList, setHeroesList] = useState<Hero[]>([]);
+const GuildDisplay = ({ quests, heroes, embarkHeroesOnQuest }: GuildDisplayProps) => {
+  const [assignedHeroes, setAssignedHeroes] = useState<Hero[]>([]);
+  const [chosenQuest, setChosenQuest] = useState<Quest>();
+  const [heroesOverlay, setHeroesOverlay] = useState(false);
 
-  useEffect(() => {
-    const idleHeroes = heroes.filter((h) => h.activity!.type === HeroActivityType.IDLE && h.isAlive()).sort((a, b) => a.id - b.id);
+  const assignHero = (hero: Hero) => {
+    const assignees = assignedHeroes.length + 1;
+    setAssignedHeroes([...assignedHeroes, hero]);
 
-    const lPage = Math.max(0, Math.ceil(idleHeroes.length / heroesPerPage) - 1);
+    if (assignees === 4) {
+      setHeroesOverlay(false);
+    }
+  };
 
-    if (page > lPage) {
-      setPage(lPage);
+  const dismissHero = (hero: Hero) => {
+    setAssignedHeroes(remove(assignedHeroes, hero));
+  };
+
+  const closeQuestScroll = () => {
+    setAssignedHeroes([]);
+    setChosenQuest(undefined);
+    setHeroesOverlay(false);
+  };
+
+  const handleAccept = () => {
+    if (heroesOverlay) {
+      setHeroesOverlay(false);
+    } else {
+      if (assignedHeroes.length > 0) {
+        embarkHeroesOnQuest(chosenQuest!, assignedHeroes);
+        closeQuestScroll();
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    if (heroesOverlay) {
+      setAssignedHeroes([]);
+      setHeroesOverlay(false);
+    } else {
+      closeQuestScroll();
+    }
+  };
+
+  if (chosenQuest) {
+    let assignees = [];
+
+    for (let i = 0; i < 4; i++) {
+      if (assignedHeroes[i]) {
+        assignees[i] = assignedHeroes[i];
+      } else {
+        assignees[i] = undefined;
+      }
     }
 
-    const start = page * heroesPerPage;
-    const end =
-      start +
-      (page === 0
-        ? Math.min(heroesPerPage, idleHeroes.length)
-        : lPage === page && idleHeroes.length % heroesPerPage !== 0
-        ? idleHeroes.length % heroesPerPage
-        : heroesPerPage);
+    const acceptBtnClass = `guild-display__btn guild-display__btn-assign ${assignedHeroes.length === 0 ? "guild-display__btn_disabled" : ""}`;
 
-    setLastPage(lPage);
-    setHeroesList(idleHeroes.slice(start, end));
-  }, [page, heroes, heroesAssignedToQuest]);
+    const controlsBlock = (
+      <div className="guild-display__controls">
+        <button className="guild-display__btn guild-display__btn-assign" onClick={handleCancel}>
+          отмена
+        </button>
+        <button className={acceptBtnClass} onClick={handleAccept}>
+          готово
+        </button>
+      </div>
+    );
 
-  const switchPage = (add: number) => {
-    const nPage = page + add;
-    setPage(nPage);
-  };
+    if (heroesOverlay) {
+      return (
+        <>
+          <div className="guild-display__heroes-list">
+            {heroes
+              .filter((hero) => hero.activity!.type === HeroActivityType.IDLE && hero.isAlive())
+              .filter((hero) => !assignedHeroes.includes(hero))
+              .map((hero) => (
+                <QuestHero key={hero.id} hero={hero} assignHero={assignHero} />
+              ))}
+          </div>
+          {controlsBlock}
+        </>
+      );
+    }
 
-  const prevPageBtnStyle: CSSProperties = {
-    opacity: page === 0 ? 0.5 : 1,
-    cursor: page === 0 ? "default" : "pointer",
-    pointerEvents: page === 0 ? "none" : "inherit",
-  };
+    return (
+      <>
+        <QuestDetails quest={chosenQuest} />
+        {chosenQuest ? (
+          <>
+            <div className="guild-display__assignees">
+              {assignees.map((hero, idx) => {
+                if (hero) {
+                  return (
+                    <div key={idx} className="guild-display__assignees_hero">
+                      {hero.name}
+                      <button className="guild-display__assignees_dismiss" onClick={() => dismissHero(hero)}>
+                        X
+                      </button>
+                    </div>
+                  );
+                }
+                return (
+                  <div key={idx} className="guild-display__btn  guild-display__btn-assignee" onClick={() => setHeroesOverlay(true)}>
+                    +
+                  </div>
+                );
+              })}
+            </div>
+            {controlsBlock}
+          </>
+        ) : null}
+      </>
+    );
+  }
 
-  const nextPageBtnStyle: CSSProperties = {
-    opacity: page === lastPage ? 0.5 : 1,
-    cursor: page === lastPage ? "default" : "pointer",
-    pointerEvents: page === lastPage ? "none" : "inherit",
-  };
+  const freshQuests = quests.filter((q) => !q.progress).sort((a, b) => a.id - b.id);
 
   return (
     <div className="guild-display">
-      <QuestScrollList quests={quests} />
-      <div className="guild-display__hero-list">
-        <HeroList heroes={heroesList} quests={quests} heroesAssignedToQuest={heroesAssignedToQuest} />
-        <div className="guild-display__btn-holder">
-          <button className="btn--previous" style={prevPageBtnStyle} onClick={() => switchPage(-1)}></button>
-          <button
-            className="btn--next"
-            style={nextPageBtnStyle}
-            onClick={() => {
-              switchPage(1);
-            }}
-          ></button>
-        </div>
+      <div className="guild-display__quest-list">
+        {freshQuests.slice(0, Math.min(20, freshQuests.length)).map((quest, idx) => {
+          return (
+            <div key={quest.id} onClick={() => setChosenQuest(quest)}>
+              <QuestScroll quest={quest} index={idx} />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -85,38 +156,42 @@ const GuildDisplay = ({ quests, heroes, heroesAssignedToQuest }: GuildDisplayPro
 type GuildDisplayContainerProps = {
   quests: Quest[];
   heroes: Hero[];
-  heroesAssignedToQuest: Hero[];
-  closeQuestScroll: () => void;
+  embarkHeroesOnQuest: (quest: Quest, heroesAssignedToQuest: Hero[]) => void;
 };
 
 class GuildDisplayContainer extends Component<GuildDisplayContainerProps> {
-  componentWillUnmount() {
-    this.props.closeQuestScroll();
-  }
-
   render() {
-    const { quests, heroes, heroesAssignedToQuest } = this.props;
+    const { quests, heroes, embarkHeroesOnQuest } = this.props;
 
     if (!quests) {
       return <Loader message={"Fetching quests for guild..."} />;
     }
 
-    return <GuildDisplay quests={quests} heroes={heroes} heroesAssignedToQuest={heroesAssignedToQuest} />;
+    if (!heroes) {
+      return <Loader message={"Fetching mercenaries..."} />;
+    }
+
+    return <GuildDisplay quests={quests} heroes={heroes} embarkHeroesOnQuest={embarkHeroesOnQuest} />;
   }
 }
 
 type GUildDisplayState = {
   quests: Quest[];
   heroes: Hero[];
-  heroesAssignedToQuest: Hero[];
 };
 
-const mapStateToProps = ({ quests, heroes, heroesAssignedToQuest }: GUildDisplayState) => {
-  return { quests, heroes, heroesAssignedToQuest };
+const mapStateToProps = ({ quests, heroes }: GUildDisplayState) => {
+  return { quests, heroes };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return bindActionCreators({ closeQuestScroll: questScrollClosed }, dispatch);
+const mapDispatchToProps = (dispatch: Dispatch, customProps: WithApiServiceProps) => {
+  const { apiService, auth } = customProps;
+  return bindActionCreators(
+    {
+      embarkHeroesOnQuest: embarkHeroesOnQuest(apiService, auth),
+    },
+    dispatch
+  );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(GuildDisplayContainer);
+export default compose(withApiService(), connect(mapStateToProps, mapDispatchToProps))(GuildDisplayContainer);

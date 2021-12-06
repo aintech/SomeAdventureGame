@@ -18,13 +18,13 @@
   }
 
   &__message {
-    font-size: 32px;
+    font-size: 24px;
     margin: 10px;
     grid-column: 1/ -1;
   }
 
   &__accept-btn {
-    font-size: 32px;
+    font-size: 26px;
     cursor: pointer;
     height: min-content;
     grid-row: 2;
@@ -41,7 +41,7 @@
   }
 
   &__cancel-btn {
-    font-size: 32px;
+    font-size: 26px;
     cursor: pointer;
     height: min-content;
     grid-row: 2;

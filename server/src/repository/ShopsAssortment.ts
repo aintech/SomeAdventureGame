@@ -37,3 +37,10 @@ export const getAlchemistAssortment = async (userId: number) => {
 
   return alchemistAssortment;
 };
+
+export const initShopsAssortment = async (userId: number) => {
+  return Promise.all([
+    query<void>("InitMarketAssortment", `insert into public.user_market_assortment select ${userId}, id from public.equipment`),
+    query<void>("InitAlchemistAssortment", `insert into public.user_alchemist_assortment select ${userId}, id from public.item`),
+  ]);
+};

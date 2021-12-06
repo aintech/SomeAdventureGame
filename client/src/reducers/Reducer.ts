@@ -23,9 +23,7 @@ export type State = {
   marketAssortment: Equipment[];
   alchemistAssortment: Item[];
   chosenBuilding?: Building;
-  chosenQuest?: Quest;
   chosenHero?: Hero;
-  heroesAssignedToQuest: Hero[];
   messages: Message[];
   tooltip: Tooltip;
   confirmDialog?: ConfirmDialogType;
@@ -40,7 +38,6 @@ const intialState = {
   tavernPatrons: [],
   marketAssortment: [],
   alchemistAssortment: [],
-  heroesAssignedToQuest: [],
   messages: [],
   tooltip: { message: "", appear: false },
 };
@@ -153,19 +150,6 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
         chosenBuilding: action.payload,
       };
 
-    case ActionType.QUEST_SCROLL_CHOOSED:
-      return {
-        ...state,
-        chosenQuest: action.payload,
-      };
-
-    case ActionType.QUEST_SCROLL_CLOSED:
-      return {
-        ...state,
-        chosenQuest: undefined,
-        heroesAssignedToQuest: [],
-      };
-
     case ActionType.HERO_STATS_CHOOSED:
       return {
         ...state,
@@ -176,19 +160,6 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
       return {
         ...state,
         chosenHero: undefined,
-      };
-
-    case ActionType.HERO_ASSIGNED_TO_QUEST:
-      return {
-        ...state,
-        heroesAssignedToQuest: [...state.heroesAssignedToQuest, action.payload],
-      };
-
-    case ActionType.HERO_DISMISSED_FROM_QUEST:
-      const idx = state.heroesAssignedToQuest.findIndex((hero) => hero.id === action.payload.id);
-      return {
-        ...state,
-        heroesAssignedToQuest: [...state.heroesAssignedToQuest.slice(0, idx), ...state.heroesAssignedToQuest.slice(idx + 1)],
       };
 
     case ActionType.HEROES_EMBARKED_ON_QUEST:

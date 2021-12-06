@@ -1,6 +1,6 @@
 import React from "react";
 import Quest from "../../../../../../models/Quest";
-import "./quest-scroll-item.scss";
+import "./quest-scroll.scss";
 
 const random = (range: number) => {
   return Math.random() * range * (Math.random() > 0.5 ? -1 : 1);
@@ -29,7 +29,7 @@ const getStoredRotation = (index: number, questId: number) => {
   return { rotation };
 };
 
-type QuestScrollItemProps = {
+type QuestScrollProps = {
   quest: Quest;
   index: number;
 };
@@ -38,16 +38,16 @@ type QuestScrollItemProps = {
  * TODO: Уровень переместить налево, справа будет награда
  */
 
-const QuestScrollItem = ({ quest, index }: QuestScrollItemProps) => {
+const QuestScroll = ({ quest, index }: QuestScrollProps) => {
   const { rotation } = getStoredRotation(index, quest.id);
   const style = { transform: `rotate(${rotation}deg)` };
 
   return (
-    <div className="quest-scroll-item" style={style}>
-      <span className="quest-scroll-item__title">{quest.title}</span>
-      <span className="quest-scroll-item__level">{quest.level}</span>
+    <div className="quest-scroll" style={style}>
+      <span className="quest-scroll__title">{quest.title}</span>
+      <span className="quest-scroll__level">{quest.level}</span>
     </div>
   );
 };
 
-export default QuestScrollItem;
+export default QuestScroll;
