@@ -185,6 +185,7 @@ const QuestPerform = ({ quest, heroes, heroClicked, onCheckpointPassed, onComple
       <div className="quest-perform__container">
         <button className="quest-perform__btn-close" onClick={closeDisplay}></button>
         <div className="quest-perform__name">{quest.title}</div>
+        {process}
         <div className="quest-perform__heroes-holder">
           {heroActors.map((hero) => (
             <QuestHeroItem
@@ -197,7 +198,6 @@ const QuestPerform = ({ quest, heroes, heroClicked, onCheckpointPassed, onComple
             />
           ))}
         </div>
-        {process}
       </div>
     </div>
   );

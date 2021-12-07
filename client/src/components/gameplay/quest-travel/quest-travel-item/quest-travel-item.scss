@@ -1,57 +1,57 @@
-@import "../../../../utils/css/index.scss";
+@import '../../../../utils/css/index.scss';
 
 .quest-travel-item {
-  width: 226px;
-  height: 91px;
-  background-image: url(../../../../img/quest-travel/quest-travel_holder.png);
-  background-size: cover;
-  cursor: default;
+  width: 160px;
+  height: 60px;
 
-  display: grid;
-  grid-template-rows: 23px 22px 1fr;
-  grid-template-columns: 65px 1fr;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  color: white;
+
+  border: 2px solid brown;
+  cursor: default;
 
   z-index: 20;
 
-  &__title {
-    grid-row: 1;
-    grid-column: 1 / 3;
-    @include strokeText;
-    font-size: 18px;
-    color: white;
-    margin-left: 8px;
-    align-self: flex-end;
+  &__canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
   }
 
-  &__description {
-    margin: 3px 8px 0 0;
-    grid-row: 2;
-    grid-column: 2;
-    font-size: 17px;
-    color: white;
+  &__title {
     @include strokeText;
-    justify-self: end;
+    width: 80%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 18px;
+    margin-left: 8px;
   }
 
   &__travel-time {
-    margin: 3px 8px 0 0;
-    grid-row: 3;
-    grid-column: 2;
+    @include strokeText;
+
+    margin: auto 5px auto 0;
     font-size: 36px;
     color: white;
-    @include strokeText;
     justify-self: end;
+    align-self: flex-end;
   }
 
-  &__btn--start {
-    margin: 0 5px 0 0;
+  &__btn-start {
+    margin: auto 0;
+    display: none;
     font-family: inherit;
     font-size: 16px;
-    grid-row: 3;
-    grid-column: 2;
     padding: 3px;
-    justify-self: end;
-    align-self: center;
+    align-self: flex-end;
     cursor: pointer;
     background-color: chartreuse;
     border: none;
@@ -59,11 +59,10 @@
     animation: springing 1s linear infinite;
   }
 
-  &__btn--cancel {
-    grid-row: 1;
-    grid-column: 2;
-    justify-self: end;
-    margin: 4px 4px 0 0;
+  &__btn-cancel {
+    position: absolute;
+    top: 3px;
+    right: 3px;
     width: 21px;
     height: 16px;
     background-image: url(../../../../img/building-display/__btn-close.png);
@@ -81,4 +80,8 @@
       display: none;
     }
   }
+}
+
+.btn-start__visible {
+  display: flex;
 }

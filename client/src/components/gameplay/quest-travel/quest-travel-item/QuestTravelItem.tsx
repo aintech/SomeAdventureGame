@@ -1,21 +1,21 @@
-import React, { Component, createRef, MouseEvent } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators, compose, Dispatch } from "redux";
-import { beginQuestPerform, showConfirmDialog } from "../../../../actions/Actions";
-import { onCancelQuest, onCheckpointPassed } from "../../../../actions/ApiActions";
-import withApiService, { WithApiServiceProps } from "../../../../hoc/WithApiService";
-import backgroundImgSrc from "../../../../img/quest-travel/quest-travel_background.png";
-import birdImgSrc from "../../../../img/quest-travel/quest-travel_bird.png";
-import birdAnimImgSrc from "../../../../img/quest-travel/quest-travel_moving.gif";
-import Hero from "../../../../models/hero/Hero";
-import Quest from "../../../../models/Quest";
-import QuestCheckpoint from "../../../../models/QuestCheckpoint";
-import store from "../../../../Store";
-import Gif from "../../../../utils/Gif";
-import GifLoader from "../../../../utils/gif-loader";
-import { convertDuration, millisToSecs } from "../../../../utils/Utils";
-import { QuestPerformData } from "../../quest-perform/QuestPerform";
-import "./quest-travel-item.scss";
+import React, { Component, createRef, MouseEvent } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators, compose, Dispatch } from 'redux';
+import { beginQuestPerform, showConfirmDialog } from '../../../../actions/Actions';
+import { onCancelQuest, onCheckpointPassed } from '../../../../actions/ApiActions';
+import withApiService, { WithApiServiceProps } from '../../../../hoc/WithApiService';
+import backgroundImgSrc from '../../../../img/quest-travel/quest-travel_background.png';
+import birdImgSrc from '../../../../img/quest-travel/quest-travel_bird.png';
+import birdAnimImgSrc from '../../../../img/quest-travel/quest-travel_moving.gif';
+import Hero from '../../../../models/hero/Hero';
+import Quest from '../../../../models/Quest';
+import QuestCheckpoint from '../../../../models/QuestCheckpoint';
+import store from '../../../../Store';
+import Gif from '../../../../utils/Gif';
+import GifLoader from '../../../../utils/gif-loader';
+import { convertDuration, millisToSecs } from '../../../../utils/Utils';
+import { QuestPerformData } from '../../quest-perform/QuestPerform';
+import './quest-travel-item.scss';
 
 type QuestProgressItemProps = {
   quest: Quest;
@@ -57,11 +57,11 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
 
   componentDidMount() {
     this.canvas = this.canvasRef.current!;
-    this.canvasCtx = this.canvas.getContext("2d")!;
+    this.canvasCtx = this.canvas.getContext('2d')!;
 
-    this.loadImage("background", backgroundImgSrc);
-    this.loadImage("bird", birdImgSrc);
-    this.loadGif("birdAnim", birdAnimImgSrc);
+    this.loadImage('background', backgroundImgSrc);
+    this.loadImage('bird', birdImgSrc);
+    this.loadGif('birdAnim', birdAnimImgSrc);
 
     const { quest } = this.props;
 
@@ -85,7 +85,7 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     const image = new Image();
     image.src = src;
     image.addEventListener(
-      "load",
+      'load',
       (ev) => {
         const images = new Map(this.state.images);
         images.set(name, ev.currentTarget as HTMLImageElement);
@@ -151,7 +151,7 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     this.canvasCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     /* Draw background */
-    const backImg = this.state.images.get("background");
+    const backImg = this.state.images.get('background');
     if (backImg) {
       if (this.state.seconds < 0) {
         this.canvasCtx.drawImage(backImg, this.state.bgOffset, 0, this.canvas.width, this.canvas.height);
@@ -162,27 +162,27 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
     }
 
     /* Draw bird travel to quest location */
-    const birdAnim = this.state.gifs.get("birdAnim");
+    const birdAnim = this.state.gifs.get('birdAnim');
     if (birdAnim && this.state.seconds < 0) {
-      this.canvasCtx.drawImage(birdAnim.image, 40, 46, 55, 20);
+      this.canvasCtx.drawImage(birdAnim.image, 14, 24, 55, 20);
     }
 
     /* Draw bird arrived */
-    const birdImg = this.state.images.get("bird");
+    const birdImg = this.state.images.get('bird');
     if (birdImg && this.state.seconds >= 0) {
-      this.canvasCtx.drawImage(birdImg, 20, 46, 60, 32);
+      this.canvasCtx.drawImage(birdImg, 20, 24, 60, 32);
     }
   }
 
   drawStroked(ctx: CanvasRenderingContext2D, msg: string, x: number, y: number, color: string) {
-    ctx.font = "16px Pattaya";
-    ctx.strokeStyle = "black";
+    ctx.font = '16px Pattaya';
+    ctx.strokeStyle = 'black';
     ctx.lineWidth = 2;
     ctx.strokeText(msg, x, y);
     ctx.fillStyle = color;
     // ctx.miterLimit = 2;
     ctx.fillText(msg, x, y);
-    ctx.lineCap = "round";
+    ctx.lineCap = 'round';
   }
 
   beginQuest() {
@@ -198,45 +198,24 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
   render() {
     const { quest } = this.props;
 
-    let description;
-
-    if (this.state.seconds < 0) {
-      description = "В пути к квесту";
-    } else if (this.props.activeQuestPerform) {
-      description = "В процессе";
-    } else {
-      description = "Готовы начать";
-    }
-
-    const cancelBtnClass = "quest-travel-item__btn--cancel" + (this.props.activeQuestPerform ? "__hidden" : "");
+    const cancelBtnClass = 'quest-travel-item__btn-cancel' + (this.props.activeQuestPerform ? '__hidden' : '');
 
     return (
       <div className="quest-travel-item">
         <div className="quest-travel-item__title">{quest.title}</div>
-        <div className="quest-travel-item__description">{description}</div>
 
-        <canvas
-          width={223}
-          height={88}
-          style={{
-            zIndex: -1,
-            gridRow: `1 / -1`,
-            gridColumn: `1 / -1`,
-          }}
-          ref={this.canvasRef}
-        ></canvas>
+        <canvas width={160} height={60} className="quest-travel-item__canvas" ref={this.canvasRef}></canvas>
 
         <button
-          className="quest-travel-item__btn--start"
-          style={{ display: this.state.seconds >= 0 && !this.props.activeQuestPerform ? "block" : "none" }}
+          className={`quest-travel-item__btn-start ${this.state.seconds >= 0 && !this.props.activeQuestPerform ? 'btn-start__visible' : ''}`}
           onClick={this.beginQuest.bind(this)}
         >
-          {quest.progress!.checkpoints.find((c) => !c.passed) ? "Вперед ->" : "Забрать ->"}
+          {quest.progress!.checkpoints.find((c) => !c.passed) ? 'Вперед ->' : 'Забрать ->'}
         </button>
 
         <div
           className="quest-travel-item__travel-time"
-          style={{ display: this.state.seconds < 0 && !this.props.activeQuestPerform ? "block" : "none" }}
+          style={{ display: this.state.seconds < 0 && !this.props.activeQuestPerform ? 'block' : 'none' }}
         >
           {convertDuration(-this.state.seconds)}
         </div>

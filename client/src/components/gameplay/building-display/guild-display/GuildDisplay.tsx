@@ -9,8 +9,8 @@ import Quest from "../../../../models/Quest";
 import { remove } from "../../../../utils/arrays";
 import Loader from "../../../loader/Loader";
 import "./guild-display.scss";
+import GuildAssignee from "./quest-board/guild-assignee/GuildAssignee";
 import QuestDetails from "./quest-board/quest-details/QuestDetails";
-import QuestHero from "./quest-board/quest-hero/QuestHero";
 import QuestScroll from "./quest-board/quest-scroll/QuestScroll";
 
 // TODO: Объявления "встряхиваются" при скролле
@@ -97,7 +97,7 @@ const GuildDisplay = ({ quests, heroes, embarkHeroesOnQuest }: GuildDisplayProps
               .filter((hero) => hero.activity!.type === HeroActivityType.IDLE && hero.isAlive())
               .filter((hero) => !assignedHeroes.includes(hero))
               .map((hero) => (
-                <QuestHero key={hero.id} hero={hero} assignHero={assignHero} />
+                <GuildAssignee key={hero.id} hero={hero} assignHero={assignHero} />
               ))}
           </div>
           {controlsBlock}

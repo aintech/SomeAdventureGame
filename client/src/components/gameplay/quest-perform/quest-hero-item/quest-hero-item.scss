@@ -74,31 +74,20 @@
 
 .quest-hero-item {
   position: relative;
-  height: 127px;
-  width: 222px;
-  background-image: url(../../../../img/quest-perform/hero-item/__background.png);
-  background-size: cover;
-  background-repeat: no-repeat;
+  display: flex;
+  height: 80px;
+  width: 22%;
+  border: 1px solid brown;
+  // background-image: url(../../../../img/quest-perform/hero-item/__background.png);
+  // background-size: contain;
+  // background-repeat: no-repeat;
   cursor: default;
-
-  display: grid;
-  grid-template-columns: 30px 1fr;
-  grid-template-rows: 30px min-content min-content 1fr;
-
-  // &--hoverable {
-  //   &:hover {
-  //     transform: scale(1.01);
-  //   }
-  // }
 
   &__portrait {
     @each $type in "warrior" "mage" "thief" "healer" "paladin" {
       &--#{$type} {
-        height: 80px;
-        width: 77px;
-        grid-column: 1;
-        grid-row: 2 / -1;
-        margin-left: 10px;
+        height: 60px;
+        width: 30px;
         background-image: url(../../../../img/portraits/portrait-#{$type}.png);
         background-size: cover;
         background-repeat: no-repeat;
@@ -107,23 +96,23 @@
   }
 
   &__health-bar {
-    grid-row: 2;
-    grid-column: 2;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 18px;
     border: 1px solid white;
     justify-self: center;
     align-self: flex-end;
-    margin-left: 3px;
-    margin-bottom: 12px;
   }
 
-  &__exp-bar {
-    grid-row: 3;
-    grid-column: 2;
+  &__psy-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
     border: 1px solid white;
     justify-self: center;
     align-self: flex-end;
-    margin-left: 3px;
-    margin-bottom: 3px;
   }
 
   &__name {

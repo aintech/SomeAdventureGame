@@ -1,27 +1,27 @@
 import { MouseEvent } from "react";
 import Hero from "../../../../../../models/hero/Hero";
 import HeroItem from "../../../../../shared/hero-item/HeroItem";
-import "./quest-hero.scss";
+import "./guild-assignee.scss";
 
-type QuestHeroProps = {
+type GuildAssigneeProps = {
   hero: Hero;
   assignHero: (hero: Hero) => void;
 };
 
-const QuestHero = ({ hero, assignHero }: QuestHeroProps) => {
+const GuildAssignee = ({ hero, assignHero }: GuildAssigneeProps) => {
   const onAssignedHero = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     assignHero(hero);
   };
 
   return (
-    <div className="quest-hero">
+    <div className="guild-assignee">
       <HeroItem hero={hero} />
-      <button className="quest-hero__btn--assign" onClick={(e) => onAssignedHero(e)}>
-        <span className="quest-hero__btn--assign__title">назначить</span>
+      <button className="guild-assignee__btn--assign" onClick={(e) => onAssignedHero(e)}>
+        <span className="guild-assignee__btn--assign__title">назначить</span>
       </button>
     </div>
   );
 };
 
-export default QuestHero;
+export default GuildAssignee;

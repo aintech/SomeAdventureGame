@@ -1,14 +1,16 @@
 .quest-map {
   &__container {
+    padding-bottom: 10vh;
+    margin-top: 20px;
     display: flex;
-    width: 750px;
-    height: 500px;
+    flex-direction: column-reverse;
+    width: 90%;
+    height: 50vh;
     align-self: center;
-    justify-self: center;
     background-image: url(../../../../img/quest-perform/quest-map/quest-map.png);
-    background-size: cover;
-    grid-row: 1 / -1;
-    padding-left: 100px;
+    background-size: contain;
+    background-position-x: center;
+    background-repeat: no-repeat;
     gap: 50px;
   }
 
