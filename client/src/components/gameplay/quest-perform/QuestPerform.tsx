@@ -1,21 +1,21 @@
-import React, { Component, useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators, compose, Dispatch } from "redux";
-import { closeQuestPerform, heroStatsChoosed } from "../../../actions/Actions";
-import { onCheckpointPassed, onCompleteQuest } from "../../../actions/ApiActions";
-import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService";
-import Hero, { maxHealth } from "../../../models/hero/Hero";
-import Quest from "../../../models/Quest";
-import QuestCheckpoint, { CheckpointType } from "../../../models/QuestCheckpoint";
-import { CheckpointPassedBody } from "../../../services/QuestService";
-import { shallowCopy } from "../../../utils/Utils";
-import Loader from "../../loader/Loader";
-import QuestComplete from "./quest-complete/QuestComplete";
-import QuestHeroItem from "./quest-hero-item/QuestHeroItem";
-import QuestMap from "./quest-map/QuestMap";
-import "./quest-perform.scss";
-import BattleProcess, { HeroEvent } from "./quest-processes/battle-process/BattleProcess";
-import TreasureProcess from "./quest-processes/treasure-process/TreasureProcess";
+import React, { Component, useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators, compose, Dispatch } from 'redux';
+import { closeQuestPerform, heroStatsChoosed } from '../../../actions/Actions';
+import { onCheckpointPassed, onCompleteQuest } from '../../../actions/ApiActions';
+import withApiService, { WithApiServiceProps } from '../../../hoc/WithApiService';
+import Hero, { maxHealth } from '../../../models/hero/Hero';
+import Quest from '../../../models/Quest';
+import QuestCheckpoint, { CheckpointType } from '../../../models/QuestCheckpoint';
+import { CheckpointPassedBody } from '../../../services/QuestService';
+import { shallowCopy } from '../../../utils/Utils';
+import Loader from '../../loader/Loader';
+import QuestComplete from './quest-complete/QuestComplete';
+import QuestHeroItem from './quest-hero-item/QuestHeroItem';
+import QuestMap from './quest-map/QuestMap';
+import './quest-perform.scss';
+import ClickerProcess, { HeroEvent } from './quest-processes/clicker-process/ClickerProcess';
+import TreasureProcess from './quest-processes/treasure-process/TreasureProcess';
 
 export enum HeroReactionType {
   HITTED,
@@ -140,7 +140,7 @@ const QuestPerform = ({ quest, heroes, heroClicked, onCheckpointPassed, onComple
     switch (activeCheckpoint.type) {
       case CheckpointType.BATTLE:
         process = (
-          <BattleProcess
+          <ClickerProcess
             checkpoint={activeCheckpoint}
             heroes={heroActors}
             heroesReactions={heroesReactions}

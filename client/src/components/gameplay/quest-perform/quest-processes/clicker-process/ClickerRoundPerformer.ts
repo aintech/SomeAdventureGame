@@ -1,10 +1,10 @@
-import Hero, { maxHealth } from "../../../../../models/hero/Hero";
-import { ItemSubtype } from "../../../../../models/Item";
-import { HeroReactionType } from "../../QuestPerform";
-import CheckpointActor from "../process-helpers/CheckpointActor";
-import { HeroEvent } from "./BattleProcess";
+import Hero, { maxHealth } from '../../../../../models/hero/Hero';
+import { ItemSubtype } from '../../../../../models/Item';
+import { HeroReactionType } from '../../QuestPerform';
+import CheckpointActor from '../process-helpers/CheckpointActor';
+import { HeroEvent } from './ClickerProcess';
 
-export const battleRound = (seconds: number, heroes: Hero[], enemies: CheckpointActor[], battleEvents: Map<number, HeroEvent[]>) => {
+export const processRound = (seconds: number, heroes: Hero[], enemies: CheckpointActor[], battleEvents: Map<number, HeroEvent[]>) => {
   const events: Map<number, HeroEvent[]> = new Map(battleEvents);
   const reactions: Map<number, Map<HeroReactionType, number>> = new Map();
 

@@ -1,4 +1,4 @@
-@import "../../../utils/css/index.scss";
+@import '../../../utils/css/index.scss';
 
 .quest-perform {
   position: absolute;
@@ -39,9 +39,8 @@
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 80px;
+    bottom: 10px;
     display: flex;
-    justify-content: center;
-    gap: 10px;
+    justify-content: space-evenly;
   }
 }

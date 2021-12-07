@@ -1,7 +1,7 @@
-import { MouseEvent } from "react";
-import Loader from "../../../../loader/Loader";
-import CheckpointActor, { convertToActor } from "../../quest-processes/process-helpers/CheckpointActor";
-import { rgba } from "../../quest-processes/process-helpers/Color";
+import { MouseEvent } from 'react';
+import Loader from '../../../../loader/Loader';
+import CheckpointActor, { convertToActor } from '../../quest-processes/process-helpers/CheckpointActor';
+import { rgba } from '../../quest-processes/process-helpers/Color';
 import {
   addToHitsDrawQueue,
   clearCtx as clearDrawCtx,
@@ -11,14 +11,14 @@ import {
   drawOpponent,
   getPixel,
   prepare,
-} from "../../quest-processes/process-helpers/DrawManager";
-import { defineDrop } from "../../quest-processes/process-helpers/Drop";
-import { Direction, Effect, EventMessage } from "../../quest-processes/process-helpers/EventMessage";
-import { getTypesByName, getUrlByName, ImageType } from "../../quest-processes/process-helpers/ImageLoader";
-import { HeroReactionType } from "../../QuestPerform";
-import QuestProcess, { QuestProcessProps, QuestProcessState } from "../QuestProcess";
-import "./battle-process.scss";
-import { battleRound } from "./BattleRoundPerformer";
+} from '../../quest-processes/process-helpers/DrawManager';
+import { defineDrop } from '../../quest-processes/process-helpers/Drop';
+import { Direction, Effect, EventMessage } from '../../quest-processes/process-helpers/EventMessage';
+import { getTypesByName, getUrlByName, ImageType } from '../../quest-processes/process-helpers/ImageLoader';
+import { HeroReactionType } from '../../QuestPerform';
+import QuestProcess, { QuestProcessProps, QuestProcessState } from '../QuestProcess';
+import './clicker-process.scss';
+import { processRound } from './ClickerRoundPerformer';
 
 enum ProcessState {
   LOADING,
@@ -36,7 +36,7 @@ const mandatoryGifs = () => {
   return [ImageType.ATTACK];
 };
 
-type BattleProcessProps = QuestProcessProps & {
+type ClickerProcessProps = QuestProcessProps & {
   heroesReactions: (reactions: Map<number, Map<HeroReactionType, number>>) => void;
   resetAnim: () => void;
   moveOnwards: (
@@ -52,7 +52,7 @@ export type HeroEvent = {
   hpAlter?: number;
 };
 
-type BattleProcessState = QuestProcessState & {
+type ClickerProcessState = QuestProcessState & {
   processState: ProcessState;
   enemies: CheckpointActor[];
   currentEnemy?: CheckpointActor;
@@ -62,8 +62,8 @@ type BattleProcessState = QuestProcessState & {
 
 //TODO: Периодически герои дропают пикапы соответственно своим скилам, если на них кликнуть скилл сработает
 
-class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState> {
-  constructor(props: BattleProcessProps) {
+class ClickerProcess extends QuestProcess<ClickerProcessProps, ClickerProcessState> {
+  constructor(props: ClickerProcessProps) {
     super(props);
     this.state = {
       seconds: 0,
@@ -98,15 +98,15 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
     const enemyImgTypes = enemies.map((e) => getTypesByName(e.type)).reduce((x, y) => x.concat(y));
 
     prepare(
-      this.canvasRef.current!.getContext("2d")!,
-      this.dynamicCanvasRef.current!.getContext("2d")!,
+      this.canvasRef.current!.getContext('2d')!,
+      this.dynamicCanvasRef.current!.getContext('2d')!,
       [...mandatoryImages(), ...enemyImgTypes],
       [...mandatoryGifs()]
     ).then((_) => {
       this.setState({
         processState: ProcessState.PREPARE,
         beginTime: new Date(),
-        eventMessages: [new EventMessage(2, { x: 0, y: 0 }, 72, "BEGIN", rgba(255, 255), Direction.CENTER, Effect.FADE_IN_OUT)],
+        eventMessages: [new EventMessage(2, { x: 0, y: 0 }, 72, 'BEGIN', rgba(255, 255), Direction.CENTER, Effect.FADE_IN_OUT)],
       });
 
       this.drawStatic();
@@ -159,7 +159,7 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
       case ProcessState.BATTLE:
         if (seconds > 0) {
           this.props.resetAnim();
-          const round = battleRound(seconds, this.props.heroes, this.state.enemies, this.state.battleEvents);
+          const round = processRound(seconds, this.props.heroes, this.state.enemies, this.state.battleEvents);
           if (round.reactions.size > 0) {
             this.props.heroesReactions(round.reactions);
           }
@@ -337,15 +337,15 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
             <div key={e.actorId}>
               <img
                 className={`battle-process__opponent-portrait${
-                  e.actorId === this.state.currentEnemy?.actorId ? "--current" : e.currentHealth <= 0 ? "--disabled" : ""
+                  e.actorId === this.state.currentEnemy?.actorId ? '--current' : e.currentHealth <= 0 ? '--disabled' : ''
                 }`}
                 src={getUrlByName(`${e.type}-prt`)}
                 alt="enemy"
                 onClick={() => this.switchCurrentEnemy(e)}
               />
-              <span style={{ fontFamily: "inherit", fontSize: "14px", color: "white" }}>
+              <span style={{ fontFamily: 'inherit', fontSize: '14px', color: 'white' }}>
                 {e.name}
-                {`${e.currentHealth > 0 ? " - " + e.currentHealth : ""}`}
+                {`${e.currentHealth > 0 ? ' - ' + e.currentHealth : ''}`}
               </span>
             </div>
           ))}
@@ -355,4 +355,4 @@ class BattleProcess extends QuestProcess<BattleProcessProps, BattleProcessState>
   }
 }
 
-export default BattleProcess;
+export default ClickerProcess;

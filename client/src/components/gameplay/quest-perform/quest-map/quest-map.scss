@@ -1,11 +1,10 @@
 .quest-map {
   &__container {
     padding-bottom: 10vh;
-    margin-top: 20px;
     display: flex;
     flex-direction: column-reverse;
     width: 90%;
-    height: 50vh;
+    height: 60vh;
     align-self: center;
     background-image: url(../../../../img/quest-perform/quest-map/quest-map.png);
     background-size: contain;

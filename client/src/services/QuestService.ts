@@ -1,12 +1,12 @@
-import { HeroEvent } from "../components/gameplay/quest-perform/quest-processes/battle-process/BattleProcess";
-import { AuthProps } from "../contexts/AuthContext";
-import GameStats from "../models/GameStats";
-import Quest from "../models/Quest";
-import { BattleRound, CheckpointType } from "../models/QuestCheckpoint";
-import { HeroResponse } from "./HeroService";
-import sendHttp from "./SendHttp";
+import { HeroEvent } from '../components/gameplay/quest-perform/quest-processes/clicker-process/ClickerProcess';
+import { AuthProps } from '../contexts/AuthContext';
+import GameStats from '../models/GameStats';
+import Quest from '../models/Quest';
+import { BattleRound, CheckpointType } from '../models/QuestCheckpoint';
+import { HeroResponse } from './HeroService';
+import sendHttp from './SendHttp';
 
-const baseUrl = "/api/quest";
+const baseUrl = '/api/quest';
 
 export interface EnemyDropResponse {
   fraction: number;
@@ -64,12 +64,7 @@ export interface EmbarkOnQuestResponse {
 }
 
 export const embarkOnQuest = async (auth: AuthProps, questId: number, heroIds: number[]) => {
-  return await sendHttp<EmbarkOnQuestResponse>(
-    `${baseUrl}/embark`,
-    auth,
-    [`quest_id=${questId}`, `hero_ids=${heroIds.join(",")}`],
-    "POST"
-  );
+  return await sendHttp<EmbarkOnQuestResponse>(`${baseUrl}/embark`, auth, [`quest_id=${questId}`, `hero_ids=${heroIds.join(',')}`], 'POST');
 };
 
 export interface CheckpointPassedBody {
@@ -88,7 +83,7 @@ export const checkpointPassed = async (auth: AuthProps, questId: number, result:
     `${baseUrl}/checkpoint-passed`,
     auth,
     [`quest_id=${questId}`, `checkpoint_id=${result.id}`],
-    "POST",
+    'POST',
     result
   );
 };
@@ -100,9 +95,9 @@ export interface CompleteCancelQuestResponse {
 }
 
 export const completeQuest = async (auth: AuthProps, questId: number) => {
-  return await sendHttp<CompleteCancelQuestResponse>(`${baseUrl}/complete`, auth, [`quest_id=${questId}`], "PUT");
+  return await sendHttp<CompleteCancelQuestResponse>(`${baseUrl}/complete`, auth, [`quest_id=${questId}`], 'PUT');
 };
 
 export const cancelQuest = async (auth: AuthProps, questId: number) => {
-  return await sendHttp<CompleteCancelQuestResponse>(`${baseUrl}/cancel`, auth, [`quest_id=${questId}`], "PUT");
+  return await sendHttp<CompleteCancelQuestResponse>(`${baseUrl}/cancel`, auth, [`quest_id=${questId}`], 'PUT');
 };
