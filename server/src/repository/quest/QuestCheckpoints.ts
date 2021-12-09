@@ -1,13 +1,14 @@
-import { CheckpointPassedBody } from "../../routes/QuestRoutes";
-import query, { single } from "../Db";
-import { adjustGoldExperience, adjustHealth, HeroWithSkills } from "../hero/Hero";
-import { adjustItems } from "../Item";
-import { Monster } from "../Monster";
-import { getQuestProgress } from "./QuestProgress";
+import { CheckpointPassedBody } from '../../routes/QuestRoutes';
+import query, { single } from '../Db';
+import { adjustGoldExperience, adjustHealth, HeroWithSkills } from '../hero/Hero';
+import { adjustItems } from '../Item';
+import { Monster } from '../Monster';
+import { getQuestProgress } from './QuestProgress';
 
 export enum CheckpointType {
-  TREASURE,
   BATTLE,
+  TREASURE,
+  CLICKER,
 }
 
 export type QuestCheckpoint = {
@@ -37,10 +38,10 @@ export const persistQuestCheckpoints = async (progressId: number, checkpoints: Q
           ${checkpoint.tribute},
           ${checkpoint.passed}`
     )
-    .join(" union ");
+    .join(' union ');
 
   await query<void>(
-    "persistQuestCheckpoints",
+    'persistQuestCheckpoints',
     `insert into public.quest_checkpoint 
      (quest_progress_id, type, occured_at, enemies, tribute, passed)
      select * from (${checkpointsData}) as vals`
@@ -51,7 +52,7 @@ export const persistQuestCheckpoints = async (progressId: number, checkpoints: Q
 
 export const getQuestCheckpoint = async (checkpointId: number) => {
   return query<QuestCheckpointWithProgress>(
-    "getQuestCheckpoint",
+    'getQuestCheckpoint',
     `select 
           checkpoint.*, 
           progress.quest_id,
@@ -70,14 +71,14 @@ export const getQuestCheckpoints = async (progressIds: number[]) => {
     return [];
   }
   const checkpoints = await query<QuestCheckpointWithProgress[]>(
-    "getQuestCheckpoints",
+    'getQuestCheckpoints',
     `select 
           checkpoint.*, 
           progress.quest_id,
           progress.embarked_time 
      from public.quest_checkpoint checkpoint
      left join quest_progress progress on progress.id = checkpoint.quest_progress_id
-     where quest_progress_id in (${progressIds.join(",")})`,
+     where quest_progress_id in (${progressIds.join(',')})`,
     [],
     mapQuestCheckpointWithProgress
   );
@@ -160,12 +161,12 @@ export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress, 
 };
 
 const markAsPassed = (checkpointId: number) => {
-  return query<void>("markAsPassed", `update public.quest_checkpoint set passed = true where id = $1`, [checkpointId]);
+  return query<void>('markAsPassed', `update public.quest_checkpoint set passed = true where id = $1`, [checkpointId]);
 };
 
 export const deleteCheckpoints = (progressId: number) => {
   return query<void>(
-    "deleteCheckpoint",
+    'deleteCheckpoint',
     `delete from public.quest_checkpoint 
      where quest_progress_id = $1`,
     [progressId]
@@ -200,9 +201,9 @@ const mapQuestCheckpointWithProgress = (row: CheckpointWithProgressRow): QuestCh
 
 const mapCheckpointType = (type: string) => {
   switch (type) {
-    case "treasure":
+    case 'treasure':
       return CheckpointType.TREASURE;
-    case "battle":
+    case 'battle':
       return CheckpointType.BATTLE;
     default:
       throw new Error(`Unknown checkpoint type ${type}`);

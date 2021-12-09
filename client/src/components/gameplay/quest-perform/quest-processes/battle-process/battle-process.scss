@@ -1,0 +1,52 @@
+@import '../../../../../utils/css/index.scss';
+
+.battle-process {
+  overflow: hidden;
+  height: calc(100vh - #{$header_height} - 40px);
+
+  &__opponents-holder {
+    margin: 0 auto;
+    width: 80%;
+    display: grid;
+    justify-content: center;
+
+    transform: translateY(30%);
+  }
+
+  &__opponent {
+    @each $type in 'goblin' 'moth' 'snake' {
+      &_#{$type} {
+        width: 240px;
+        height: 240px;
+        grid-row: 1;
+        display: flex;
+        justify-content: center;
+        justify-self: center;
+        background-image: url(../../../../../img/quest-perform/battle-process/actors/#{$type}.png);
+        background-size: cover;
+      }
+    }
+  }
+
+  &__opponent-portrait {
+    cursor: pointer;
+    width: 64px;
+    height: 64px;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &--current {
+      width: 64px;
+      height: 64px;
+      border: 1px solid yellow;
+    }
+
+    &--disabled {
+      width: 64px;
+      height: 64px;
+      opacity: 0.2;
+    }
+  }
+}

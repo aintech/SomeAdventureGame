@@ -1,9 +1,10 @@
-import { CheckpointEnemyResponse, CheckpointResponse } from "../services/QuestService";
-import PersonageStats from "./PersonageStats";
+import { CheckpointEnemyResponse, CheckpointResponse } from '../services/QuestService';
+import PersonageStats from './PersonageStats';
 
 export enum CheckpointType {
-  TREASURE,
   BATTLE,
+  TREASURE,
+  CLICKER,
 }
 
 export enum BattleActionType {

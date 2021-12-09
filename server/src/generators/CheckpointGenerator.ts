@@ -1,8 +1,8 @@
-import { HeroWithSkills } from "../repository/hero/Hero";
-import { Drop, getAllMonsters, Monster } from "../repository/Monster";
-import { Quest } from "../repository/quest/Quest";
-import { CheckpointType, QuestCheckpoint } from "../repository/quest/QuestCheckpoints";
-import { anyOf } from "../utils/Arrays";
+import { HeroWithSkills } from '../repository/hero/Hero';
+import { Drop, getAllMonsters, Monster } from '../repository/Monster';
+import { Quest } from '../repository/quest/Quest';
+import { CheckpointType, QuestCheckpoint } from '../repository/quest/QuestCheckpoints';
+import { anyOf } from '../utils/Arrays';
 
 export const generateCheckpoints = async (quest: Quest, embarkedHeroes: HeroWithSkills[]) => {
   const checkpoints: QuestCheckpoint[] = [];
@@ -12,7 +12,7 @@ export const generateCheckpoints = async (quest: Quest, embarkedHeroes: HeroWith
   let checkpointsDuration = 0;
 
   for (let i = 0; i < checkpointsCount; i++) {
-    const type = i % 2 == 0 ? CheckpointType.BATTLE : CheckpointType.TREASURE; //Math.random() > 1 ? "treasure" : "battle";
+    const type: number = CheckpointType.BATTLE; // i % 2 == 0 ? CheckpointType.BATTLE : CheckpointType.TREASURE; //Math.random() > 1 ? "treasure" : "battle";
 
     const checkpointTime = i * 10;
     //пока чекпоинты начинаются с первой десятой части квеста
@@ -26,10 +26,14 @@ export const generateCheckpoints = async (quest: Quest, embarkedHeroes: HeroWith
     let tribute: number;
     let enemies: Monster[] | undefined;
     switch (type) {
+      case CheckpointType.BATTLE:
+        enemies = await getMonsterParty(quest.level);
+        tribute = quest.level * Math.floor(Math.random() * 5 + 50);
+        break;
       case CheckpointType.TREASURE:
         tribute = quest.level * Math.floor(Math.random() * 20 + 10);
         break;
-      case CheckpointType.BATTLE:
+      case CheckpointType.CLICKER:
         enemies = await getMonsterParty(quest.level);
         tribute = quest.level * Math.floor(Math.random() * 5 + 50);
         break;

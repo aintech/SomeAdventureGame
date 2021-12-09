@@ -1,0 +1,21 @@
+.heroes-panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+
+  &__heroes {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  &__hero-actions {
+    display: flex;
+
+    &_hidden {
+      display: none;
+    }
+  }
+}

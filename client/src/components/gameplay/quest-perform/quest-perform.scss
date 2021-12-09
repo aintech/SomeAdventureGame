@@ -8,11 +8,18 @@
   right: 0;
   display: flex;
   flex-direction: column;
-  background-image: url(../../../img/quest-perform/camping.png);
   background-position: center;
   background-size: cover;
   cursor: default;
   z-index: 1000;
+
+  &__background_camping {
+    background-image: url(../../../img/quest-perform/camping.png);
+  }
+
+  &__background_battle {
+    background-image: url(../../../img/quest-perform/battle-process/background.jpg);
+  }
 
   &__container {
     display: flex;
@@ -33,14 +40,5 @@
 
   &__btn-close {
     @include closeOverlayBtn;
-  }
-
-  &__heroes-holder {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 10px;
-    display: flex;
-    justify-content: space-evenly;
   }
 }
