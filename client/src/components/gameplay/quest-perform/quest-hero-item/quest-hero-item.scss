@@ -9,7 +9,7 @@
   border-radius: 3px;
   border: 1px solid black;
   transform: translateY(-15px);
-  box-shadow: 0 10px 10px rgba($color: black, $alpha: 0.5);
+  box-shadow: 0 10px 10px rgba($color: brown, $alpha: 0.5);
 }
 
 @keyframes hitted {
@@ -151,19 +151,24 @@
     }
   }
 
-  &--hitted {
+  &__current {
+    border: 1px solid lightblue;
+    background-color: rgba($color: black, $alpha: 0.6);
+  }
+
+  &__hitted {
     animation: hitted 0.5s;
     animation-iteration-count: 1;
   }
 
-  &--hitted2 {
+  &__hitted2 {
     animation: hitted2 0.5s;
     animation-iteration-count: 1;
   }
-}
 
-.defeated {
-  opacity: 0.5;
+  &__defeated {
+    opacity: 0.5;
+  }
 }
 
 .heal-icon {

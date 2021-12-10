@@ -1,13 +1,13 @@
-import { HeroResponse } from "../../services/HeroService";
-import { HEALTH_PER_VITALITY } from "../../utils/Variables";
-import Equipment, { convert as convertEquipment, getEquipmentStats } from "../Equipment";
-import PersonageStats from "../PersonageStats";
-import HeroActivity, { convert as convertActivity } from "./HeroActivity";
-import { HeroItem, convertHeroItem } from "../Item";
-import HeroLevel, { convert as convertLevel } from "./HeroLevel";
-import HeroPerk, { convert as convertPerk } from "./HeroPerk";
-import HeroSkill, { convert as convertSkill } from "./HeroSkill";
-import { HeroType } from "./HeroType";
+import { HeroResponse } from '../../services/HeroService';
+import { HEALTH_PER_VITALITY } from '../../utils/Variables';
+import Equipment, { convert as convertEquipment, getEquipmentStats } from '../Equipment';
+import PersonageStats from '../PersonageStats';
+import HeroActivity, { convert as convertActivity } from './HeroActivity';
+import { HeroItem, convertHeroItem } from '../Item';
+import HeroLevel, { convert as convertLevel } from './HeroLevel';
+import HeroPerk, { convert as convertPerk } from './HeroPerk';
+import HeroSkill, { convert as convertSkill } from './HeroSkill';
+import { HeroType } from './HeroType';
 
 export default class Hero {
   constructor(
@@ -23,6 +23,7 @@ export default class Hero {
     public items: HeroItem[],
     public perks: HeroPerk[],
     public skills: HeroSkill[],
+    public isHero: boolean,
     public activity?: HeroActivity
   ) {}
 
@@ -55,6 +56,7 @@ export const convert = (response: HeroResponse): Hero => {
     response.items.map((i) => convertHeroItem(i)),
     response.perks.map((p) => convertPerk(p)),
     response.skills.map((s) => convertSkill(s)),
+    true,
     response.activity ? convertActivity(response.activity) : undefined
   );
 };

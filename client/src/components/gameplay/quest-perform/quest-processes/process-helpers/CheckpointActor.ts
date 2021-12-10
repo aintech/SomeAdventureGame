@@ -1,5 +1,5 @@
-import PersonageStats from "../../../../../models/PersonageStats";
-import { CheckpointEnemy, EnemyDrop } from "../../../../../models/QuestCheckpoint";
+import PersonageStats from '../../../../../models/PersonageStats';
+import { CheckpointEnemy, EnemyDrop } from '../../../../../models/QuestCheckpoint';
 
 type CheckpointActor = {
   actorId: number;
@@ -12,6 +12,8 @@ type CheckpointActor = {
 
   hitTime: number;
   xOffset: number;
+
+  isHero: boolean;
 };
 
 export const convertToActor = (actor: CheckpointEnemy): CheckpointActor => {
@@ -25,6 +27,7 @@ export const convertToActor = (actor: CheckpointEnemy): CheckpointActor => {
     drop: actor.drop,
     hitTime: 0,
     xOffset: 0,
+    isHero: false,
   };
 };
 

@@ -13,12 +13,13 @@ import './quest-hero-item.scss';
 type QuestHeroItemProps = {
   hero: Hero;
   heroClickHandler: (hero: Hero) => void;
+  current?: boolean;
   reward?: { gold: number; experience: number };
   hitted?: boolean;
   healed?: boolean;
 };
 
-const QuestHeroItem = ({ hero, heroClickHandler, hitted, healed, reward }: QuestHeroItemProps) => {
+const QuestHeroItem = ({ hero, current, heroClickHandler, hitted, healed, reward }: QuestHeroItemProps) => {
   const style = {
     opacity: hero.health > 0 ? 1 : 0.5,
   };
@@ -32,9 +33,9 @@ const QuestHeroItem = ({ hero, heroClickHandler, hitted, healed, reward }: Quest
   // из-за этого приходится делать вторую идентичную анимацию чтобы переключится на неё
   const classes = `
       quest-hero-item
-      ${reward ? '' : ' hero-item--hoverable'}
-      ${hitted === undefined ? '' : hitted ? ' hero-item--hitted' : ' hero-item--hitted2'} 
-      ${hero.health <= 0 ? 'defeated' : ''}`;
+      ${current ? ' quest-hero-item__current' : ''}
+      ${hitted === undefined ? '' : hitted ? ' quest-hero-item__hitted' : ' quest-hero-item__hitted2'} 
+      ${hero.health <= 0 ? ' quest-hero-item__defeated' : ''}`;
 
   const healIconClass = `
       heal-icon

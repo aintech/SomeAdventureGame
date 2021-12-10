@@ -19,8 +19,9 @@ const initialReactions = () => {
 
 enum ProcessState {
   LOADING,
-  PREPARE,
-  BATTLE,
+  SWITCH_ACTOR,
+  PLAYER_MOVE,
+  ENEMY_MOVE,
   BATTLE_WON,
   BATTLE_LOST,
 }
@@ -43,6 +44,10 @@ export type HeroEvent = {
 };
 
 type BattleProcessState = QuestProcessState & {
+  actorsQueue: (Hero | CheckpointActor)[];
+  currentActorIdx: number;
+  currentHero?: Hero;
+
   reacted: Map<HeroReactionType, number[]>;
 
   // Т.к. герой может реагировать каждый раунд пришлось придумать такую переключалку
@@ -61,6 +66,9 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     this.state = {
       seconds: 0,
 
+      actorsQueue: [],
+      currentActorIdx: 0,
+
       reacted: new Map(),
       heroHittedMemo: [],
       heroHealedMemo: [],
@@ -78,13 +86,17 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
     const enemies = [...checkpoint.enemies!.map((e) => convertToActor(e))];
 
-    this.setState({
-      reacted: initialReactions(),
-      enemies,
-      processState: ProcessState.PREPARE,
-      beginTime: new Date(),
-      eventMessages: [new EventMessage(2, { x: 0, y: 0 }, 72, 'BEGIN', rgba(255, 255), Direction.CENTER, Effect.FADE_IN_OUT)],
-    });
+    this.setState(
+      {
+        actorsQueue: [...this.props.heroes, ...enemies],
+        reacted: initialReactions(),
+        enemies,
+        processState: ProcessState.SWITCH_ACTOR,
+        beginTime: new Date(),
+        eventMessages: [new EventMessage(2, { x: 0, y: 0 }, 72, 'BEGIN', rgba(255, 255), Direction.CENTER, Effect.FADE_IN_OUT)],
+      },
+      () => this.processRound()
+    );
   }
 
   componentWillUnmount() {
@@ -100,15 +112,26 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
       case ProcessState.BATTLE_LOST:
         //do nothing
         break;
-      case ProcessState.PREPARE:
-        break;
-      case ProcessState.BATTLE:
+      case ProcessState.SWITCH_ACTOR:
+        const actor = this.state.actorsQueue[this.state.currentActorIdx];
+        if (actor.isHero) {
+          this.setState({
+            currentHero: actor as Hero,
+            processState: ProcessState.PLAYER_MOVE,
+          });
+        } else {
+        }
+
         break;
       default:
         throw new Error(`Process ${ProcessState[this.state.processState]} is not implemented yet!`);
     }
     this.checkBattleComplete();
   }
+
+  handlePlayerClickEnemy = (enemy: CheckpointActor) => {
+    console.log(enemy.name);
+  };
 
   heroesReactions = (reactions: Map<number, Map<HeroReactionType, number>>) => {
     const actors = [...this.props.heroes];
@@ -216,7 +239,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   }
 
   render() {
-    const { enemies, processState, reacted, heroHittedMemo, heroHealedMemo } = this.state;
+    const { enemies, currentHero, processState, reacted, heroHittedMemo, heroHealedMemo } = this.state;
     const { heroes } = this.props;
 
     const grid = `repeat(${enemies.length}, ${100 / enemies.length}%)`;
@@ -235,17 +258,27 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         ) : null}
         <div className="battle-process__opponents-holder" style={{ gridTemplateColumns: grid }}>
           {enemies.map((e, idx) => (
-            <div
-              key={e.actorId}
-              className={`battle-process__opponent_${e.name}`}
-              style={{ zIndex: idx % 2, paddingBottom: `${(idx % 2) * 15}px`, gridColumn: idx + 1 }}
-            >
-              {e.name}
+            <div key={e.actorId} className="battle-process__opponent-holder">
+              <div
+                className="battle-process__opponent"
+                style={{ zIndex: idx % 2, marginTop: `${(idx % 2) * 40}px`, gridColumn: idx + 1 }}
+                onClick={() => this.handlePlayerClickEnemy(e)}
+              >
+                {e.name}
+                <div className={`battle-process__opponent_${e.name}`} style={{ zIndex: idx % 2 }}></div>
+              </div>
             </div>
           ))}
         </div>
 
-        <HeroesPanel actors={heroes} reacted={reacted} heroHittedMemo={heroHittedMemo} heroHealedMemo={heroHealedMemo} />
+        <HeroesPanel
+          actors={heroes}
+          current={currentHero}
+          showActions={true}
+          reacted={reacted}
+          heroHittedMemo={heroHittedMemo}
+          heroHealedMemo={heroHealedMemo}
+        />
       </div>
     );
   }
