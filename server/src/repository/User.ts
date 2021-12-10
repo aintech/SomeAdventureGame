@@ -1,8 +1,8 @@
-import { LoginUser } from "../routes/AuthRoutes";
-import { initiateBuildings } from "./Building";
-import query, { single } from "./Db";
-import { initShopsAssortment } from "./ShopsAssortment";
-import { initiateStats } from "./Stats";
+import { LoginUser } from '../routes/AuthRoutes';
+import { initiateBuildings } from './Building';
+import query, { single } from './Db';
+import { initShopsAssortment } from './ShopsAssortment';
+import { initiateStats } from './Stats';
 
 type User = {
   id: number;
@@ -24,11 +24,11 @@ export const createUser = async (user: LoginUser) => {
 
 const persistUser = async (user: LoginUser) => {
   const { login, password } = user;
-  return query<void>("persistUser", "insert into public.user (login, password) values ($1, $2)", [login, password]);
+  return query<void>('persistUser', 'insert into public.user (login, password) values ($1, $2)', [login.toLowerCase(), password]);
 };
 
 export const getUser = (login: string) => {
-  return query<User>("getUser", "select * from public.user where login = $1", [login], mapUser, single);
+  return query<User>('getUser', 'select * from public.user where login = $1', [login.toLowerCase()], mapUser, single);
 };
 
 type UserRow = {

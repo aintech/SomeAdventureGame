@@ -1,9 +1,9 @@
-import bcrypt from "bcryptjs";
-import config from "config";
-import { Request, Response, Router } from "express";
-import { check, validationResult } from "express-validator";
-import jwt from "jsonwebtoken";
-import { createUser, getUser } from "../repository/User";
+import bcrypt from 'bcryptjs';
+import config from 'config';
+import { Request, Response, Router } from 'express';
+import { check, validationResult } from 'express-validator';
+import jwt from 'jsonwebtoken';
+import { createUser, getUser } from '../repository/User';
 
 const authRouter = Router();
 
@@ -13,9 +13,9 @@ export type LoginUser = {
 };
 
 authRouter.post(
-  "/register",
+  '/register',
   [
-    check("password", "Password must be 3 symbols minimum").isLength({
+    check('password', 'Password must be 3 symbols minimum').isLength({
       min: 3,
     }),
   ],
@@ -25,16 +25,16 @@ authRouter.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           errors: errors.array(),
-          message: "Invalid registration credentials",
+          message: 'Invalid registration credentials',
         });
       }
 
       const { login, password } = req.body as LoginUser;
 
-      const candidate = await getUser(login.toLowerCase());
+      const candidate = await getUser(login);
 
       if (candidate) {
-        return res.status(400).json({ message: "User with such credentials already exists" });
+        return res.status(400).json({ message: 'User with such credentials already exists' });
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
@@ -43,7 +43,7 @@ authRouter.post(
 
       await createUser(user);
 
-      res.status(201).json({ message: "user registered" });
+      res.status(201).json({ message: 'user registered' });
     } catch (e: any) {
       res.status(500).json({ message: e.message });
     }
@@ -51,9 +51,9 @@ authRouter.post(
 );
 
 authRouter.post(
-  "/login",
+  '/login',
   [
-    check("password", "Password must be 3 symbols minimum").isLength({
+    check('password', 'Password must be 3 symbols minimum').isLength({
       min: 3,
     }),
   ],
@@ -64,29 +64,29 @@ authRouter.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           errors: errors.array(),
-          message: "Invalid login credentials",
+          message: 'Invalid login credentials',
         });
       }
 
       const { login, password } = req.body as LoginUser;
 
-      const user = await getUser(login.toLowerCase());
+      const user = await getUser(login);
 
       if (!user) {
-        return res.status(400).json({ message: "Such user is not exists" });
+        return res.status(400).json({ message: 'Such user is not exists' });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
-        return res.status(400).json({ message: "Invalid password" });
+        return res.status(400).json({ message: 'Invalid password' });
       }
 
-      const token = jwt.sign({ userId: user.id }, config.get("jwtSecret"));
+      const token = jwt.sign({ userId: user.id }, config.get('jwtSecret'));
 
       res.json({ token, userId: user.id });
     } catch (e) {
-      res.status(500).json({ message: "Something goes very wrong, try again later" });
+      res.status(500).json({ message: 'Something goes very wrong, try again later' });
     }
   }
 );
