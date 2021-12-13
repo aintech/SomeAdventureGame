@@ -1,17 +1,17 @@
-import React, { Component, useState } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators, compose, Dispatch } from "redux";
-import { embarkHeroesOnQuest } from "../../../../actions/ApiActions";
-import withApiService, { WithApiServiceProps } from "../../../../hoc/WithApiService";
-import Hero from "../../../../models/hero/Hero";
-import { HeroActivityType } from "../../../../models/hero/HeroActivity";
-import Quest from "../../../../models/Quest";
-import { remove } from "../../../../utils/arrays";
-import Loader from "../../../loader/Loader";
-import "./guild-display.scss";
-import GuildAssignee from "./quest-board/guild-assignee/GuildAssignee";
-import QuestDetails from "./quest-board/quest-details/QuestDetails";
-import QuestScroll from "./quest-board/quest-scroll/QuestScroll";
+import React, { Component, useState } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators, compose, Dispatch } from 'redux';
+import { embarkHeroesOnQuest } from '../../../../actions/ApiActions';
+import withApiService, { WithApiServiceProps } from '../../../../hoc/WithApiService';
+import Hero, { isAlive } from '../../../../models/hero/Hero';
+import { HeroActivityType } from '../../../../models/hero/HeroActivity';
+import Quest from '../../../../models/Quest';
+import { remove } from '../../../../utils/arrays';
+import Loader from '../../../loader/Loader';
+import './guild-display.scss';
+import GuildAssignee from './quest-board/guild-assignee/GuildAssignee';
+import QuestDetails from './quest-board/quest-details/QuestDetails';
+import QuestScroll from './quest-board/quest-scroll/QuestScroll';
 
 // TODO: Объявления "встряхиваются" при скролле
 
@@ -76,7 +76,9 @@ const GuildDisplay = ({ quests, heroes, embarkHeroesOnQuest }: GuildDisplayProps
       }
     }
 
-    const acceptBtnClass = `guild-display__btn guild-display__btn-assign ${assignedHeroes.length === 0 ? "guild-display__btn_disabled" : ""}`;
+    const acceptBtnClass = `guild-display__btn guild-display__btn-assign ${
+      assignedHeroes.length === 0 ? 'guild-display__btn_disabled' : ''
+    }`;
 
     const controlsBlock = (
       <div className="guild-display__controls">
@@ -94,7 +96,7 @@ const GuildDisplay = ({ quests, heroes, embarkHeroesOnQuest }: GuildDisplayProps
         <>
           <div className="guild-display__heroes-list">
             {heroes
-              .filter((hero) => hero.activity!.type === HeroActivityType.IDLE && hero.isAlive())
+              .filter((hero) => hero.activity!.type === HeroActivityType.IDLE && isAlive(hero))
               .filter((hero) => !assignedHeroes.includes(hero))
               .map((hero) => (
                 <GuildAssignee key={hero.id} hero={hero} assignHero={assignHero} />
@@ -164,11 +166,11 @@ class GuildDisplayContainer extends Component<GuildDisplayContainerProps> {
     const { quests, heroes, embarkHeroesOnQuest } = this.props;
 
     if (!quests) {
-      return <Loader message={"Fetching quests for guild..."} />;
+      return <Loader message={'Fetching quests for guild...'} />;
     }
 
     if (!heroes) {
-      return <Loader message={"Fetching mercenaries..."} />;
+      return <Loader message={'Fetching mercenaries...'} />;
     }
 
     return <GuildDisplay quests={quests} heroes={heroes} embarkHeroesOnQuest={embarkHeroesOnQuest} />;

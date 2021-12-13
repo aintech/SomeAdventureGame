@@ -1,9 +1,9 @@
 import { HeroResponse } from '../../services/HeroService';
 import { HEALTH_PER_VITALITY } from '../../utils/Variables';
 import Equipment, { convert as convertEquipment, getEquipmentStats } from '../Equipment';
+import { convertHeroItem, HeroItem } from '../Item';
 import PersonageStats from '../PersonageStats';
 import HeroActivity, { convert as convertActivity } from './HeroActivity';
-import { HeroItem, convertHeroItem } from '../Item';
 import HeroLevel, { convert as convertLevel } from './HeroLevel';
 import HeroPerk, { convert as convertPerk } from './HeroPerk';
 import HeroSkill, { convert as convertSkill } from './HeroSkill';
@@ -26,11 +26,11 @@ export default class Hero {
     public isHero: boolean,
     public activity?: HeroActivity
   ) {}
-
-  public isAlive() {
-    return this.health > 0;
-  }
 }
+
+export const isAlive = (hero: Hero) => {
+  return hero.health > 0;
+};
 
 export const calcHealthFraction = (hero: Hero): number => {
   return hero.health / maxHealth(hero);

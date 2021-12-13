@@ -1,12 +1,14 @@
 import { Component, MouseEvent } from 'react';
-import Hero, { maxHealth } from '../../../../../models/hero/Hero';
+import { isAlive, maxHealth } from '../../../../../models/hero/Hero';
 import QuestCheckpoint from '../../../../../models/QuestCheckpoint';
 import Loader from '../../../../loader/Loader';
 import HeroesPanel from '../../heroes-panel/HeroesPanel';
+import MonsterItem from '../../monster-item/MonsterItem';
 import CheckpointActor, { convertToActor } from '../../quest-processes/process-helpers/CheckpointActor';
 import { rgba } from '../../quest-processes/process-helpers/Color';
 import { Direction, Effect, EventMessage } from '../../quest-processes/process-helpers/EventMessage';
 import { HeroReactionType } from '../../QuestPerform';
+import QuestHero, { BattleAction } from '../process-helpers/QuestHero';
 import { QuestProcessState } from '../QuestProcess';
 import './battle-process.scss';
 
@@ -21,18 +23,18 @@ enum ProcessState {
   LOADING,
   SWITCH_ACTOR,
   PLAYER_MOVE,
-  ENEMY_MOVE,
+  MONSTER_MOVE,
   BATTLE_WON,
   BATTLE_LOST,
 }
 
 type BattleProcessProps = {
   checkpoint: QuestCheckpoint;
-  heroes: Hero[];
-  updateHeroesState: (heroes: Hero[]) => void;
+  heroes: QuestHero[];
+  updateHeroesState: (heroes: QuestHero[]) => void;
   moveOnwards: (
     won: boolean,
-    collectedDrops: Map<number, number[]>, // actorId to enemy health amount refered to drop
+    collectedDrops: Map<number, number[]>, // actorId to monster health amount refered to drop
     battleEvents: Map<number, HeroEvent[]>
   ) => void;
 };
@@ -44,9 +46,9 @@ export type HeroEvent = {
 };
 
 type BattleProcessState = QuestProcessState & {
-  actorsQueue: (Hero | CheckpointActor)[];
+  actorsQueue: (QuestHero | CheckpointActor)[];
   currentActorIdx: number;
-  currentHero?: Hero;
+  currentActor?: QuestHero | CheckpointActor;
 
   reacted: Map<HeroReactionType, number[]>;
 
@@ -56,7 +58,7 @@ type BattleProcessState = QuestProcessState & {
   heroHealedMemo: number[];
 
   processState: ProcessState;
-  enemies: CheckpointActor[];
+  monsters: CheckpointActor[];
   battleEvents: Map<number, HeroEvent[]>; // heroId to events
 };
 
@@ -67,7 +69,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
       seconds: 0,
 
       actorsQueue: [],
-      currentActorIdx: 0,
+      currentActorIdx: -1,
 
       reacted: new Map(),
       heroHittedMemo: [],
@@ -75,7 +77,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
       eventMessages: [],
       processState: ProcessState.LOADING,
-      enemies: [],
+      monsters: [],
       drops: [],
       battleEvents: new Map(),
     };
@@ -84,13 +86,13 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   componentDidMount() {
     const { checkpoint } = this.props;
 
-    const enemies = [...checkpoint.enemies!.map((e) => convertToActor(e))];
+    const monsters = [...checkpoint.enemies!.map((e) => convertToActor(e))];
 
     this.setState(
       {
-        actorsQueue: [...this.props.heroes, ...enemies],
+        actorsQueue: [...this.props.heroes, ...monsters],
         reacted: initialReactions(),
-        enemies,
+        monsters,
         processState: ProcessState.SWITCH_ACTOR,
         beginTime: new Date(),
         eventMessages: [new EventMessage(2, { x: 0, y: 0 }, 72, 'BEGIN', rgba(255, 255), Direction.CENTER, Effect.FADE_IN_OUT)],
@@ -100,37 +102,73 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   }
 
   componentWillUnmount() {
-    this.state.enemies.forEach((e) => {
+    this.state.monsters.forEach((e) => {
       e.drop.forEach((d) => (d.dropped = undefined));
     });
   }
 
   processRound() {
+    if (this.checkBattleComplete()) {
+      return;
+    }
+
     switch (this.state.processState) {
       case ProcessState.LOADING:
       case ProcessState.BATTLE_WON:
       case ProcessState.BATTLE_LOST:
+      case ProcessState.PLAYER_MOVE:
         //do nothing
         break;
+
       case ProcessState.SWITCH_ACTOR:
-        const actor = this.state.actorsQueue[this.state.currentActorIdx];
-        if (actor.isHero) {
-          this.setState({
-            currentHero: actor as Hero,
-            processState: ProcessState.PLAYER_MOVE,
-          });
-        } else {
+        let queueIdx = this.state.currentActorIdx + 1;
+        if (queueIdx === this.state.actorsQueue.length) {
+          queueIdx = 0;
         }
 
+        const currentActor = this.state.actorsQueue[queueIdx];
+        const processState = currentActor.isHero ? ProcessState.PLAYER_MOVE : ProcessState.MONSTER_MOVE;
+
+        this.setState(
+          {
+            currentActor,
+            processState,
+            currentActorIdx: queueIdx,
+          },
+          () => this.processRound()
+        );
         break;
+
+      case ProcessState.MONSTER_MOVE:
+        const monster = this.state.currentActor as CheckpointActor;
+        const heroes = this.props.heroes.filter((h) => isAlive(h));
+        const victim = heroes[Math.floor(Math.random() * heroes.length)];
+        const damage = Math.max(1, monster.stats.power - victim.stats.defence - victim.equipStats.defence);
+        victim.health -= damage;
+
+        this.setState(
+          {
+            processState: ProcessState.SWITCH_ACTOR,
+          },
+          () => this.processRound()
+        );
+        break;
+
       default:
         throw new Error(`Process ${ProcessState[this.state.processState]} is not implemented yet!`);
     }
-    this.checkBattleComplete();
   }
 
-  handlePlayerClickEnemy = (enemy: CheckpointActor) => {
-    console.log(enemy.name);
+  handleClickMonster = (monster: CheckpointActor) => {
+    const { currentActor } = this.state;
+    if (currentActor && currentActor.isHero) {
+      const hero = currentActor as QuestHero;
+      if (hero.action === BattleAction.ATTACK) {
+        const damage = Math.max(1, hero.stats.power + hero.equipStats.power - monster.stats.defence);
+        monster.currentHealth -= damage;
+        this.setState({ processState: ProcessState.SWITCH_ACTOR }, () => this.processRound());
+      }
+    }
   };
 
   heroesReactions = (reactions: Map<number, Map<HeroReactionType, number>>) => {
@@ -191,7 +229,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   };
 
   checkBattleComplete() {
-    const won = this.state.enemies.every((e) => e.currentHealth <= 0);
+    const won = this.state.monsters.every((m) => m.currentHealth <= 0);
     const lost = this.props.heroes.every((h) => h.health <= 0);
     if (won || lost) {
       const { drops } = this.state;
@@ -239,10 +277,10 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   }
 
   render() {
-    const { enemies, currentHero, processState, reacted, heroHittedMemo, heroHealedMemo } = this.state;
+    const { monsters, currentActor, processState, reacted, heroHittedMemo, heroHealedMemo } = this.state;
     const { heroes } = this.props;
 
-    const grid = `repeat(${enemies.length}, ${100 / enemies.length}%)`;
+    const grid = `repeat(${monsters.length}, ${100 / monsters.length}%)`;
 
     return (
       <div className="battle-process">
@@ -256,24 +294,15 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
             Отступить
           </button>
         ) : null}
-        <div className="battle-process__opponents-holder" style={{ gridTemplateColumns: grid }}>
-          {enemies.map((e, idx) => (
-            <div key={e.actorId} className="battle-process__opponent-holder">
-              <div
-                className="battle-process__opponent"
-                style={{ zIndex: idx % 2, marginTop: `${(idx % 2) * 40}px`, gridColumn: idx + 1 }}
-                onClick={() => this.handlePlayerClickEnemy(e)}
-              >
-                {e.name}
-                <div className={`battle-process__opponent_${e.name}`} style={{ zIndex: idx % 2 }}></div>
-              </div>
-            </div>
+        <div className="battle-process__monsters-holder" style={{ gridTemplateColumns: grid }}>
+          {monsters.map((m, idx) => (
+            <MonsterItem key={m.actorId} monster={m} idx={idx} handleClickMonster={this.handleClickMonster} />
           ))}
         </div>
 
         <HeroesPanel
           actors={heroes}
-          current={currentHero}
+          current={currentActor?.isHero ? (currentActor as QuestHero) : undefined}
           showActions={true}
           reacted={reacted}
           heroHittedMemo={heroHittedMemo}

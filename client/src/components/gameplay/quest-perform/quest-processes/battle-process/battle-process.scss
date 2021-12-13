@@ -4,51 +4,12 @@
   overflow: hidden;
   height: calc(100vh - #{$header_height} - 40px);
 
-  &__opponents-holder {
+  &__monsters-holder {
     margin: 0 auto;
     width: 80%;
     display: grid;
     justify-content: center;
 
     transform: translateY(30%);
-  }
-
-  &__opponent {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-self: center;
-
-    @each $type in 'goblin' 'moth' 'snake' {
-      &_#{$type} {
-        width: 200px;
-        height: 200px;
-        background-image: url(../../../../../img/quest-perform/battle-process/actors/#{$type}.png);
-        background-size: cover;
-        pointer-events: none;
-      }
-    }
-  }
-
-  &__opponent-portrait {
-    cursor: pointer;
-    width: 64px;
-    height: 64px;
-
-    &:hover {
-      transform: scale(1.05);
-    }
-
-    &--current {
-      width: 64px;
-      height: 64px;
-      border: 1px solid yellow;
-    }
-
-    &--disabled {
-      width: 64px;
-      height: 64px;
-      opacity: 0.2;
-    }
   }
 }

@@ -1,11 +1,11 @@
-import Hero from '../../../../models/hero/Hero';
 import QuestHeroItem from '../quest-hero-item/QuestHeroItem';
+import QuestHero from '../quest-processes/process-helpers/QuestHero';
 import { HeroReactionType } from '../QuestPerform';
 import './heroes-panel.scss';
 
 type HeroesPanelProps = {
-  actors: Hero[];
-  current?: Hero;
+  actors: QuestHero[];
+  current?: QuestHero;
   showActions?: boolean;
   reacted?: Map<HeroReactionType, number[]>;
   heroRewards?: Map<number, { gold: number; experience: number }>;
@@ -42,9 +42,6 @@ const HeroesPanel = ({ actors, current, showActions, reacted, heroHittedMemo, he
         </div>
         <div className="heroes-panel__hero-action heroes-panel__hero-action_defence" onClick={() => handleActionClick('DEF')}>
           DEF
-        </div>
-        <div className="heroes-panel__hero-action heroes-panel__hero-action_retreat" onClick={() => handleActionClick('RUN')}>
-          RUN
         </div>
       </div>
     </div>

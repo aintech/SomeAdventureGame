@@ -16,6 +16,7 @@ import QuestMap from './quest-map/QuestMap';
 import './quest-perform.scss';
 import BattleProcess from './quest-processes/battle-process/BattleProcess';
 import { HeroEvent } from './quest-processes/clicker-process/ClickerProcess';
+import QuestHero, { BattleAction } from './quest-processes/process-helpers/QuestHero';
 
 export enum HeroReactionType {
   HITTED,
@@ -38,10 +39,10 @@ type QuestPerformProps = {
 const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, closeDisplay }: QuestPerformProps) => {
   const [activeCheckpoint, setActiveCheckpoint] = useState<QuestCheckpoint>();
   const [, setHeroRewards] = useState<Map<number, { gold: number; experience: number }>>(new Map()); // пока убрал heroRewards чтобы не отсвечивать
-  const [heroActors, setHeroActors] = useState<Hero[]>([]);
+  const [heroActors, setHeroActors] = useState<QuestHero[]>([]);
 
   useEffect(() => {
-    setHeroActors(heroes.map((h) => shallowCopy(h)));
+    setHeroActors(heroes.map((h) => shallowCopy({ ...h, action: BattleAction.ATTACK })));
   }, [heroes, setHeroActors]);
 
   const checkpointActivated = (checkpoint: QuestCheckpoint) => {
@@ -57,7 +58,7 @@ const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, clos
       onCheckpointPassed(quest, { id: activeCheckpoint.id, collected, events });
     }
     if (!won) {
-      setHeroActors(heroes.map((h) => shallowCopy(h)));
+      setHeroActors(heroes.map((h) => shallowCopy({ ...h, action: BattleAction.ATTACK })));
     }
   };
 
@@ -70,7 +71,7 @@ const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, clos
             checkpoint={activeCheckpoint}
             heroes={heroActors}
             moveOnwards={completeCheckpoint}
-            updateHeroesState={(heroes: Hero[]) => setHeroActors(heroes)}
+            updateHeroesState={(heroes: QuestHero[]) => setHeroActors(heroes)}
           />
         );
         break;

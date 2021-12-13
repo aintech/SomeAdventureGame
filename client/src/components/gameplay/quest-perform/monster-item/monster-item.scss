@@ -1,0 +1,41 @@
+@import '.././../../../utils/css/index.scss';
+
+.monster-item {
+  @include strokeText;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-self: center;
+
+  color: white;
+
+  @each $type in 'goblin' 'moth' 'snake' {
+    &__#{$type} {
+      width: 200px;
+      height: 200px;
+      background-image: url(../../../../img/quest-perform/battle-process/actors/#{$type}.png);
+      background-size: cover;
+      pointer-events: none;
+    }
+  }
+
+  &__bar-holder {
+    width: 65px;
+    border: 1px solid white;
+    background-color: rgba($color: black, $alpha: 0.7);
+  }
+
+  &__bar {
+    height: 12px;
+    &_health {
+      background-color: red;
+    }
+
+    &_overlay {
+      margin-left: 2px;
+      width: calc(100% - 4px);
+      height: 85%;
+      background: linear-gradient(to bottom, rgba($color: white, $alpha: 0.4), rgba($color: white, $alpha: 0.2));
+    }
+  }
+}

@@ -8,8 +8,9 @@
   flex-direction: column;
 
   &__heroes {
+    margin: 0 auto;
     display: flex;
-    justify-content: space-evenly;
+    gap: 10px;
   }
 
   &__hero-action {
