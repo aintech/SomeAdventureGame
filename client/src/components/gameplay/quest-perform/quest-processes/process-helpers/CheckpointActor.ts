@@ -13,7 +13,9 @@ type CheckpointActor = {
   hitTime: number;
   xOffset: number;
 
-  isHero: boolean;
+  isHero?: boolean;
+
+  hitted?: boolean;
 };
 
 export const convertToActor = (actor: CheckpointEnemy): CheckpointActor => {
@@ -27,7 +29,6 @@ export const convertToActor = (actor: CheckpointEnemy): CheckpointActor => {
     drop: actor.drop,
     hitTime: 0,
     xOffset: 0,
-    isHero: false,
   };
 };
 

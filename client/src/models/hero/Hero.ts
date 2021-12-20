@@ -23,8 +23,8 @@ export default class Hero {
     public items: HeroItem[],
     public perks: HeroPerk[],
     public skills: HeroSkill[],
-    public isHero: boolean,
-    public activity?: HeroActivity
+    public activity?: HeroActivity,
+    public isHero?: boolean
   ) {}
 }
 
@@ -56,7 +56,7 @@ export const convert = (response: HeroResponse): Hero => {
     response.items.map((i) => convertHeroItem(i)),
     response.perks.map((p) => convertPerk(p)),
     response.skills.map((s) => convertSkill(s)),
-    true,
-    response.activity ? convertActivity(response.activity) : undefined
+    response.activity ? convertActivity(response.activity) : undefined,
+    true
   );
 };

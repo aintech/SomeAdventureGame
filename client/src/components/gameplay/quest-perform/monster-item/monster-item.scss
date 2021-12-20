@@ -1,5 +1,20 @@
 @import '.././../../../utils/css/index.scss';
 
+@keyframes hitted {
+  0% {
+    transform: translate(-3px, -5px);
+  }
+  25% {
+    transform: translate(3px, -3px);
+  }
+  50% {
+    transform: translate(-3px, -1px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
 .monster-item {
   @include strokeText;
   display: flex;
@@ -9,13 +24,20 @@
 
   color: white;
 
-  @each $type in 'goblin' 'moth' 'snake' {
-    &__#{$type} {
-      width: 200px;
-      height: 200px;
-      background-image: url(../../../../img/quest-perform/battle-process/actors/#{$type}.png);
-      background-size: cover;
-      pointer-events: none;
+  &__display {
+    @each $type in 'goblin' 'moth' 'snake' {
+      &_#{$type} {
+        width: 200px;
+        height: 200px;
+        background-image: url(../../../../img/quest-perform/battle-process/actors/#{$type}.png);
+        background-size: cover;
+        pointer-events: none;
+      }
+    }
+
+    &_hitted {
+      animation: hitted 0.45s;
+      animation-iteration-count: 1;
     }
   }
 

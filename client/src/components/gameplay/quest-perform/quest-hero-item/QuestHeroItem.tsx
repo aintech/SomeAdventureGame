@@ -28,23 +28,16 @@ const QuestHeroItem = ({ hero, current, heroClickHandler, hitted, healed, reward
     display: reward ? 'block' : 'none',
   };
 
-  // Приходится делать две анимации, т.к. когда надо проиграть анимацию
-  // которая уже была последней код не понимает что её надо переигрывать
-  // из-за этого приходится делать вторую идентичную анимацию чтобы переключится на неё
-  const classes = `
-      quest-hero-item
-      ${current ? ' quest-hero-item__current' : ''}
-      ${hitted === undefined ? '' : hitted ? ' quest-hero-item__hitted' : ' quest-hero-item__hitted2'} 
-      ${hero.health <= 0 ? ' quest-hero-item__defeated' : ''}`;
+  const mainClass = `quest-hero-item${current ? ' quest-hero-item__current' : ''}${hero.health <= 0 ? ' quest-hero-item__defeated' : ''}`;
 
-  const healIconClass = `
-      heal-icon
-      ${healed === undefined ? '' : healed ? ' heal-icon_playing' : ' heal-icon_playing2'}`;
+  const displayClass = `quest-hero-item__display_${HeroType[hero.type].toLowerCase()}${hitted ? ' quest-hero-item__display_hitted' : ''}`;
+
+  const healIconClass = `heal-icon${healed ? ' heal-icon_playing' : ''}`;
 
   return (
-    <div className={classes} style={style} onClick={() => heroClickHandler(hero)}>
+    <div className={mainClass} style={style} onClick={() => heroClickHandler(hero)}>
       <div className="quest-hero-item__name">{hero.name}</div>
-      <div className={`quest-hero-item__portrait--${HeroType[hero.type].toLowerCase()}`}></div>
+      <div className={displayClass}></div>
 
       <div className="quest-hero-item__bars">
         <div className="quest-hero-item__bar-holder">
