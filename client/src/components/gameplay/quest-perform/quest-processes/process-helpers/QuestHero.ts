@@ -8,4 +8,5 @@ export enum BattleAction {
 export default class QuestHero extends Hero {
   public action: BattleAction = BattleAction.ATTACK;
   public hitted?: boolean;
+  public healed?: boolean;
 }

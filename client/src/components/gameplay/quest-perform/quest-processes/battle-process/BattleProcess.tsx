@@ -21,7 +21,7 @@ enum ProcessState {
 
 type BattleProcessProps = {
   checkpoint: QuestCheckpoint;
-  heroes: QuestHero[];
+  propHeroes: QuestHero[];
   updateHeroesState: (heroes: QuestHero[]) => void;
   moveOnwards: (
     won: boolean,
@@ -41,11 +41,14 @@ type BattleProcessState = QuestProcessState & {
   currentActorIdx: number;
   currentActor?: QuestHero | CheckpointActor;
   processState: ProcessState;
+  heroes: QuestHero[];
   monsters: CheckpointActor[];
   battleEvents: Map<number, HeroEvent[]>; // heroId to events
 };
 
 class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
+  private hittedMemo: number[] = [];
+
   constructor(props: BattleProcessProps) {
     super(props);
     this.state = {
@@ -56,6 +59,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
       eventMessages: [],
       processState: ProcessState.LOADING,
+      heroes: [],
       monsters: [],
       drops: [],
       battleEvents: new Map(),
@@ -71,7 +75,9 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
     this.setState(
       {
-        actorsQueue: [...this.props.heroes, ...monsters],
+        actorsQueue: [...this.props.propHeroes, ...monsters],
+        // закидываем героев из пропсов в стейт чтобы апдейтился рендер при изменении героев
+        heroes: this.props.propHeroes,
         monsters,
         processState: ProcessState.SWITCH_ACTOR,
       },
@@ -84,7 +90,9 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
       return;
     }
 
-    switch (this.state.processState) {
+    let { heroes, monsters, processState } = this.state;
+
+    switch (processState) {
       case ProcessState.LOADING:
       case ProcessState.BATTLE_WON:
       case ProcessState.BATTLE_LOST:
@@ -93,9 +101,8 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         break;
 
       case ProcessState.SWITCH_ACTOR:
-        let monsters = this.state.monsters;
         monsters.filter((m) => m.currentHealth > 0).forEach((m) => (m.hitted = undefined));
-        this.props.heroes.filter((h) => isAlive(h)).forEach((h) => (h.hitted = undefined));
+        heroes.filter((h) => isAlive(h)).forEach((h) => (h.hitted = undefined));
 
         let queueIdx = this.state.currentActorIdx + 1;
         if (queueIdx === this.state.actorsQueue.length) {
@@ -110,6 +117,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
             currentActor,
             processState,
             currentActorIdx: queueIdx,
+            heroes,
             monsters,
           },
           () => this.processRound()
@@ -118,19 +126,27 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
       case ProcessState.MONSTER_PERFORM:
         const monster = this.state.currentActor as CheckpointActor;
-        const heroes = this.props.heroes.filter((h) => isAlive(h));
-        const victim = heroes[Math.floor(Math.random() * heroes.length)];
+        const aliveHeroes = heroes.filter((h) => isAlive(h));
+        const victim = aliveHeroes[Math.floor(Math.random() * aliveHeroes.length)];
         const damage = Math.max(1, monster.stats.power - victim.stats.defence - victim.equipStats.defence);
         victim.health -= damage;
-        victim.hitted = true;
 
-        //CONTINUE: заставить иконку героя обновлять healthbar и играть удар сразу по получению
-        const updatedHeroes = replace(this.props.heroes, victim);
-        this.props.updateHeroesState(updatedHeroes);
+        // хитрость чтобы один герой мог отыгрывать анимацию несколько ходов подряд,
+        // какая анимация играет зависит от hitted = undefined, false или true
+        if (this.hittedMemo.includes(victim.id)) {
+          victim.hitted = true;
+          this.hittedMemo.splice(this.hittedMemo.indexOf(victim.id), 1);
+        } else {
+          victim.hitted = false;
+          this.hittedMemo.push(victim.id);
+        }
+
+        const updatedHeroes = replace(heroes, victim);
 
         this.setState(
           {
             processState: ProcessState.SWITCH_ACTOR,
+            heroes: updatedHeroes,
           },
           () => setTimeout(this.processRound, 500)
         );
@@ -152,6 +168,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         const damage = Math.max(1, hero.stats.power + hero.equipStats.power - monster.stats.defence);
         monster.currentHealth -= damage;
         monster.hitted = true;
+
         this.setState(
           (state) => {
             return {
@@ -167,7 +184,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
   checkBattleComplete() {
     const won = this.state.monsters.every((m) => m.currentHealth <= 0);
-    const lost = this.props.heroes.every((h) => h.health <= 0);
+    const lost = this.state.heroes.every((h) => h.health <= 0);
     if (won || lost) {
       this.setState({
         processState: won ? ProcessState.BATTLE_WON : ProcessState.BATTLE_LOST,
@@ -177,8 +194,11 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         // this.props.setHeroRewards(this.calcHeroRewards(true));
       }
 
+      this.props.updateHeroesState(this.state.heroes);
+
       return true;
     }
+
     return false;
   }
 
@@ -187,8 +207,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   }
 
   render() {
-    const { monsters, currentActor, processState } = this.state;
-    const { heroes } = this.props;
+    const { monsters, heroes, currentActor, processState } = this.state;
 
     const grid = `repeat(${monsters.length}, ${100 / monsters.length}%)`;
 

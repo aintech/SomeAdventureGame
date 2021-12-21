@@ -12,13 +12,16 @@ type HeroesPanelProps = {
 const HeroesPanel = ({ actors, current, showActions, heroRewards }: HeroesPanelProps) => {
   const handleActionClick = (type: string) => {};
 
+  // seed нужен чтобы насильно запустить ререндер иконок героев, чтобы реагировали на противников
+  const seed = new Date().getTime();
+
+  const heroItems = actors.map((hero) => (
+    <QuestHeroItem key={hero.id} hero={hero} current={current?.id === hero.id} reward={heroRewards?.get(hero.id)} seed={seed} />
+  ));
+
   return (
     <div className="heroes-panel">
-      <div className="heroes-panel__heroes">
-        {actors.map((hero) => (
-          <QuestHeroItem key={hero.id} hero={hero} current={current?.id === hero.id} reward={heroRewards?.get(hero.id)} />
-        ))}
-      </div>
+      <div className="heroes-panel__heroes">{heroItems}</div>
       <div className={`heroes-panel__hero-actions ${showActions ? '' : 'heroes-panel__hero-actions_hidden'}`}>
         <div
           className="heroes-panel__hero-action heroes-panel__hero-action_attack heroes-panel__hero-action_active"

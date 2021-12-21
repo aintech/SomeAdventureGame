@@ -8,12 +8,12 @@ const copy = (array) => {
   });
 };
 
-const remove = (array, value, id = "id") => {
+const remove = (array, value, id = 'id') => {
   const idx = array.findIndex((v) => v[id] === value[id]);
   return [...array.slice(0, idx), ...array.slice(idx + 1)];
 };
 
-const replace = (array, value, id = "id") => {
+const replace = (array, value, id = 'id') => {
   const idx = array.findIndex((v) => v[id] === value[id]);
   return [...array.slice(0, idx), value, ...array.slice(idx + 1)];
 };

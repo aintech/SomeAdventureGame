@@ -69,7 +69,7 @@ const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, clos
         process = (
           <BattleProcess
             checkpoint={activeCheckpoint}
-            heroes={heroActors}
+            propHeroes={heroActors}
             moveOnwards={completeCheckpoint}
             updateHeroesState={(heroes: QuestHero[]) => setHeroActors(heroes)}
           />
