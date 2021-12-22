@@ -36,6 +36,8 @@ export type HeroEvent = {
   hpAlter?: number;
 };
 
+//CONTINUE: если противник теряет всё здоровье, убирать healthbar и рисовать трупик, не давать кликать по нему.
+
 type BattleProcessState = QuestProcessState & {
   actorsQueue: (QuestHero | CheckpointActor)[];
   currentActorIdx: number;
@@ -158,9 +160,15 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   }
 
   handleClickMonster = (monster: CheckpointActor) => {
+    console.log(monster.name);
+
     if (this.state.processState !== ProcessState.PLAYER_PERFORM) {
       return;
     }
+    if (monster.currentHealth <= 0) {
+      return;
+    }
+
     const { currentActor } = this.state;
     if (currentActor && currentActor.isHero) {
       const hero = currentActor as QuestHero;

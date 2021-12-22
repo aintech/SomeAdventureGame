@@ -2,14 +2,14 @@
 
 .battle-process {
   overflow: hidden;
-  height: calc(100vh - #{$header_height} - 40px);
+  height: calc(var(--vh, 1vh) * 100 - #{$header_height} - 40px);
+  display: flex;
+  align-items: flex-end;
 
   &__monsters-holder {
     margin: 0 auto;
+    padding-bottom: 240px;
     width: 80%;
     display: grid;
-    justify-content: center;
-
-    transform: translateY(30%);
   }
 }

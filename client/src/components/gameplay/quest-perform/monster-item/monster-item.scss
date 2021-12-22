@@ -15,6 +15,10 @@
   }
 }
 
+$bar-height: 65px;
+$actor-height: 256px;
+$actor-width: 256px;
+
 .monster-item {
   @include strokeText;
   display: flex;
@@ -27,8 +31,8 @@
   &__display {
     @each $type in 'goblin' 'moth' 'snake' {
       &_#{$type} {
-        width: 200px;
-        height: 200px;
+        width: $actor-width;
+        height: $actor-height;
         background-image: url(../../../../img/quest-perform/battle-process/actors/#{$type}.png);
         background-size: cover;
         pointer-events: none;
@@ -59,5 +63,17 @@
       height: 85%;
       background: linear-gradient(to bottom, rgba($color: white, $alpha: 0.4), rgba($color: white, $alpha: 0.2));
     }
+  }
+
+  &__defeated {
+    // компенсируем отсутствие healthbar
+    margin-top: 30px;
+    width: $actor-width;
+    height: $actor-height;
+    display: flex;
+    background-image: url(../../../../img/quest-perform/battle-process/gravestone.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    pointer-events: none;
   }
 }
