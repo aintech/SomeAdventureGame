@@ -52,3 +52,35 @@
     transform: translateX(0);
   }
 }
+
+@keyframes hitted {
+  0% {
+    transform: translateX(-3px);
+  }
+  25% {
+    transform: translateX(3px);
+  }
+  50% {
+    transform: translateX(-3px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+// Несколько одинаковых анимаций приходится делать чтобы герой не "застрял" в одной, и успевал переключатся,
+// если надо отыграть ту же анимацию снова
+@keyframes hitted-alt {
+  0% {
+    transform: translateX(-3px);
+  }
+  25% {
+    transform: translateX(3px);
+  }
+  50% {
+    transform: translateX(-3px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}

@@ -1,12 +1,12 @@
-import QuestCheckpoint from "../../../../../models/QuestCheckpoint";
-import Gif from "../../../../../utils/Gif";
-import { CenteredPosition, Position } from "../../../../../utils/Utils";
-import CheckpointActor from "./CheckpointActor";
-import Color, { stringify } from "./Color";
-import DrawData from "./DrawData";
-import { Drop, DropType } from "./Drop";
-import { Direction, Effect, EventMessage } from "./EventMessage";
-import { getGifs, getImages, ImageType } from "./ImageLoader";
+import QuestCheckpoint from '../../../../../models/QuestCheckpoint';
+import Gif from '../../../../../utils/Gif';
+import { CenteredPosition, Position } from '../../../../../utils/Utils';
+import CheckpointActor from './CheckpointActor';
+import Color, { stringify } from './Color';
+import DrawData from './DrawData';
+import { Drop, DropType } from './Drop';
+import { Direction, Effect, EventMessage } from './EventMessage';
+import { getGifs, getImages, ImageType } from './ImageLoader';
 
 let canvasCtx: CanvasRenderingContext2D;
 let dynamicCanvasCtx: CanvasRenderingContext2D;
@@ -17,7 +17,12 @@ const hits: { idx: number; pos: Position; gif: Gif; frame: number }[] = [];
 
 /**-------------------------- COMMON -------------------------------*/
 
-export const prepare = async (ctx: CanvasRenderingContext2D, dynamicCtx: CanvasRenderingContext2D, images?: ImageType[], gifs?: ImageType[]) => {
+export const prepare = async (
+  ctx: CanvasRenderingContext2D,
+  dynamicCtx: CanvasRenderingContext2D,
+  images?: ImageType[],
+  gifs?: ImageType[]
+) => {
   canvasCtx = ctx;
   dynamicCanvasCtx = dynamicCtx;
   return Promise.all([
@@ -132,10 +137,10 @@ const drawText = (
   ctx.strokeStyle = stroke ? stringify(stroke) : `black`;
   ctx.lineWidth = 2;
   ctx.strokeText(text, x, pos.y);
-  ctx.fillStyle = color ? stringify(color) : "white";
+  ctx.fillStyle = color ? stringify(color) : 'white';
   // ctx.miterLimit = 2;
   ctx.fillText(text, x, pos.y);
-  ctx.lineCap = "round";
+  ctx.lineCap = 'round';
 };
 
 export const drawStaticText = (text: string, pos: CenteredPosition, fontSize?: number, color?: Color | string, stroke?: Color | string) => {
@@ -150,11 +155,11 @@ export const getPixel = (point: Position) => {
 
 const imageByActorType = (type: string, hitted: boolean) => {
   switch (type) {
-    case "snake":
+    case 'snake':
       return hitted ? ImageType.SNAKE_HIT : ImageType.SNAKE;
-    case "goblin":
+    case 'goblin':
       return hitted ? ImageType.GOBLIN_HIT : ImageType.GOBLIN;
-    case "moth":
+    case 'moth':
       return hitted ? ImageType.MOTH_HIT : ImageType.MOTH;
     default:
       throw new Error(`Unknown actor type ${type}`);
@@ -188,12 +193,12 @@ export const drawOpponent = (actor: CheckpointActor) => {
     hitted ? img.height() * 0.99 : img.height()
   );
 
-  const hpBarWidth = Math.floor((actor.currentHealth / actor.totalHealth) * 100) * 5;
-  dynamicCanvasCtx.fillStyle = "rgba(255, 0, 0, .7)";
+  const hpBarWidth = Math.floor((actor.health / actor.totalHealth) * 100) * 5;
+  dynamicCanvasCtx.fillStyle = 'rgba(255, 0, 0, .7)';
   dynamicCanvasCtx.fillRect(dynamicCanvasCtx.canvas.width * 0.5 - hpBarWidth * 0.5, 20, hpBarWidth, 20);
 
-  if (actor.currentHealth > 0) {
-    drawText(dynamicCanvasCtx, `${actor.currentHealth}/${actor.totalHealth}`, { centerX: true, x: 0, y: 38 }, 24);
+  if (actor.health > 0) {
+    drawText(dynamicCanvasCtx, `${actor.health}/${actor.totalHealth}`, { centerX: true, x: 0, y: 38 }, 24);
   }
 };
 
@@ -202,7 +207,13 @@ export const drawBattleCompleted = (checkpoint: QuestCheckpoint, won: boolean, d
   canvasCtx.fillRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
 
   let img = drawDatas.get(ImageType.RESULT_BACK)!;
-  canvasCtx.drawImage(img.image(), canvasCtx.canvas.width * 0.5 - img.width() * 0.25, -img.height() * 0.25, img.width() * 0.5, img.height() * 0.5);
+  canvasCtx.drawImage(
+    img.image(),
+    canvasCtx.canvas.width * 0.5 - img.width() * 0.25,
+    -img.height() * 0.25,
+    img.width() * 0.5,
+    img.height() * 0.5
+  );
 
   if (won) {
     img = drawDatas.get(ImageType.RESULT_GOLD)!;
@@ -211,7 +222,7 @@ export const drawBattleCompleted = (checkpoint: QuestCheckpoint, won: boolean, d
     drawText(canvasCtx, `Exp: ${checkpoint.enemies!.reduce((a, b) => a + b.experience, 0)}`, { x: 150, y: 275 }, 72);
 
     const collectedGold = drops.filter((d) => d.type === DropType.GOLD && d.collected).reduce((a, b) => a + b.amount, 0);
-    drawText(canvasCtx, `${checkpoint.tribute}${collectedGold > 0 ? " + " + collectedGold : ""}`, { x: 250, y: 375 }, 72);
+    drawText(canvasCtx, `${checkpoint.tribute}${collectedGold > 0 ? ' + ' + collectedGold : ''}`, { x: 250, y: 375 }, 72);
   }
 };
 
@@ -220,17 +231,24 @@ export const drawBattleCompleted = (checkpoint: QuestCheckpoint, won: boolean, d
 export const drawTarget = (pos: Position, radius: number) => {
   canvasCtx.beginPath();
   canvasCtx.arc(pos.x, pos.y, radius, 0, 2 * Math.PI, false);
-  canvasCtx.fillStyle = "rgba(0, 255, 0, .3)";
+  canvasCtx.fillStyle = 'rgba(0, 255, 0, .3)';
   canvasCtx.fill();
   canvasCtx.lineWidth = 2;
-  canvasCtx.strokeStyle = "white";
+  canvasCtx.strokeStyle = 'white';
   canvasCtx.stroke();
 };
 
 export const drawTreasureChest = (opened: boolean, offset: Position & { rotation: number }) => {
   let img = drawDatas.get(opened ? ImageType.CHEST_OPENED : ImageType.CHEST_CLOSED)!;
 
-  dynamicCanvasCtx.setTransform(1, 0, 0, 1, dynamicCanvasCtx.canvas.width * 0.5 + offset.x, dynamicCanvasCtx.canvas.height + offset.y - 100);
+  dynamicCanvasCtx.setTransform(
+    1,
+    0,
+    0,
+    1,
+    dynamicCanvasCtx.canvas.width * 0.5 + offset.x,
+    dynamicCanvasCtx.canvas.height + offset.y - 100
+  );
   dynamicCanvasCtx.rotate((offset.rotation * Math.PI) / 180);
   dynamicCanvasCtx.drawImage(img.image(), -img.width() * 0.5, -img.height() * 0.5, img.width(), img.height());
   dynamicCanvasCtx.rotate((-offset.rotation * Math.PI) / 180);
@@ -242,7 +260,13 @@ export const drawTreasureCompleted = (gold?: number) => {
   canvasCtx.fillRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
 
   let img = drawDatas.get(ImageType.RESULT_BACK)!;
-  canvasCtx.drawImage(img.image(), canvasCtx.canvas.width * 0.5 - img.width() * 0.25, -img.height() * 0.25, img.width() * 0.5, img.height() * 0.5);
+  canvasCtx.drawImage(
+    img.image(),
+    canvasCtx.canvas.width * 0.5 - img.width() * 0.25,
+    -img.height() * 0.25,
+    img.width() * 0.5,
+    img.height() * 0.5
+  );
 
   if (gold) {
     img = drawDatas.get(ImageType.RESULT_GOLD)!;

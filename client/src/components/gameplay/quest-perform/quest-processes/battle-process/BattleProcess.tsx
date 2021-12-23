@@ -25,7 +25,7 @@ type BattleProcessProps = {
   updateHeroesState: (heroes: QuestHero[]) => void;
   moveOnwards: (
     won: boolean,
-    collectedDrops: Map<number, number[]>, // actorId to monster health amount refered to drop
+    collectedDrops: Map<number, number[]>, // id to monster health amount refered to drop
     battleEvents: Map<number, HeroEvent[]>
   ) => void;
 };
@@ -35,8 +35,6 @@ export type HeroEvent = {
   itemId?: number;
   hpAlter?: number;
 };
-
-//CONTINUE: если противник теряет всё здоровье, убирать healthbar и рисовать трупик, не давать кликать по нему.
 
 type BattleProcessState = QuestProcessState & {
   actorsQueue: (QuestHero | CheckpointActor)[];
@@ -103,12 +101,18 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         break;
 
       case ProcessState.SWITCH_ACTOR:
-        monsters.filter((m) => m.currentHealth > 0).forEach((m) => (m.hitted = undefined));
+        monsters.filter((m) => m.health > 0).forEach((m) => (m.hitted = undefined));
         heroes.filter((h) => isAlive(h)).forEach((h) => (h.hitted = undefined));
 
-        let queueIdx = this.state.currentActorIdx + 1;
-        if (queueIdx === this.state.actorsQueue.length) {
-          queueIdx = 0;
+        let queueIdx = this.state.currentActorIdx;
+        while (true) {
+          queueIdx++;
+          if (queueIdx === this.state.actorsQueue.length) {
+            queueIdx = 0;
+          }
+          if (this.state.actorsQueue[queueIdx].health > 0) {
+            break;
+          }
         }
 
         const currentActor = this.state.actorsQueue[queueIdx];
@@ -129,7 +133,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
       case ProcessState.MONSTER_PERFORM:
         const monster = this.state.currentActor as CheckpointActor;
         const aliveHeroes = heroes.filter((h) => isAlive(h));
-        const victim = aliveHeroes[Math.floor(Math.random() * aliveHeroes.length)];
+        const victim = aliveHeroes[0]; // aliveHeroes[Math.floor(Math.random() * aliveHeroes.length)];
         const damage = Math.max(1, monster.stats.power - victim.stats.defence - victim.equipStats.defence);
         victim.health -= damage;
 
@@ -160,12 +164,10 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   }
 
   handleClickMonster = (monster: CheckpointActor) => {
-    console.log(monster.name);
-
     if (this.state.processState !== ProcessState.PLAYER_PERFORM) {
       return;
     }
-    if (monster.currentHealth <= 0) {
+    if (monster.health <= 0) {
       return;
     }
 
@@ -174,14 +176,14 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
       const hero = currentActor as QuestHero;
       if (hero.action === BattleAction.ATTACK) {
         const damage = Math.max(1, hero.stats.power + hero.equipStats.power - monster.stats.defence);
-        monster.currentHealth -= damage;
+        monster.health -= damage;
         monster.hitted = true;
 
         this.setState(
           (state) => {
             return {
               processState: ProcessState.SWITCH_ACTOR,
-              monsters: replace(state.monsters, monster, 'actorId'),
+              monsters: replace(state.monsters, monster),
             };
           },
           () => setTimeout(this.processRound, 500)
@@ -191,7 +193,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   };
 
   checkBattleComplete() {
-    const won = this.state.monsters.every((m) => m.currentHealth <= 0);
+    const won = this.state.monsters.every((m) => m.health <= 0);
     const lost = this.state.heroes.every((h) => h.health <= 0);
     if (won || lost) {
       this.setState({
@@ -233,7 +235,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         ) : null}
         <div className="battle-process__monsters-holder" style={{ gridTemplateColumns: grid }}>
           {monsters.map((m, idx) => (
-            <MonsterItem key={m.actorId} monster={m} idx={idx} handleClickMonster={this.handleClickMonster} />
+            <MonsterItem key={m.id} monster={m} idx={idx} handleClickMonster={this.handleClickMonster} />
           ))}
         </div>
 

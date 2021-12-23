@@ -2,10 +2,10 @@ import PersonageStats from '../../../../../models/PersonageStats';
 import { CheckpointEnemy, EnemyDrop } from '../../../../../models/QuestCheckpoint';
 
 type CheckpointActor = {
-  actorId: number;
+  id: number;
   name: string;
   type: string;
-  currentHealth: number;
+  health: number;
   totalHealth: number;
   stats: PersonageStats;
   drop: EnemyDrop[];
@@ -20,10 +20,13 @@ type CheckpointActor = {
 
 export const convertToActor = (actor: CheckpointEnemy): CheckpointActor => {
   return {
-    actorId: actor.actorId,
+    // Превращаем actorId в id чтобы не заморачиваться с разницей с QuestHero,
+    // изначальный id из CheckpointEnemy не использум, т.к. он одинаков для одниого типа противников
+    // минусы чтобы айдишники отличались от геройских
+    id: -actor.actorId - 1,
     name: actor.name,
     type: actor.name,
-    currentHealth: actor.health,
+    health: actor.health,
     totalHealth: actor.health,
     stats: actor.stats,
     drop: actor.drop,

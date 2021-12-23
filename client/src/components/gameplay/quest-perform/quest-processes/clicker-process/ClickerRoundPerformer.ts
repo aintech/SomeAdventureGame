@@ -9,7 +9,7 @@ export const processRound = (seconds: number, heroes: Hero[], enemies: Checkpoin
   const reactions: Map<number, Map<HeroReactionType, number>> = new Map();
 
   enemies
-    .filter((enemy) => enemy.currentHealth > 0)
+    .filter((enemy) => enemy.health > 0)
     .forEach((enemy) => {
       if (seconds % enemy.stats.initiative === 0) {
         const aliveHeroes = heroes.filter((h) => h.health > 0);

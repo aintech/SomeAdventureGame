@@ -228,19 +228,27 @@ class ClickerProcess extends QuestProcess<ClickerProcessProps, ClickerProcessSta
 
         currentEnemy.hitTime = new Date().getTime();
         currentEnemy.xOffset = Math.random() * 3 * (Math.random() < 0.5 ? 1 : -1);
-        currentEnemy.currentHealth -= damage;
+        currentEnemy.health -= damage;
 
-        const drop = currentEnemy.drop.find((d) => !d.dropped && d.fraction >= currentEnemy.currentHealth);
+        const drop = currentEnemy.drop.find((d) => !d.dropped && d.fraction >= currentEnemy.health);
         if (drop) {
           drop.dropped = true;
           const { drops } = this.state;
-          drops.push(defineDrop(drop, this.dynamicCanvasRef.current!, currentEnemy.actorId));
+          drops.push(defineDrop(drop, this.dynamicCanvasRef.current!, currentEnemy.id));
           this.setState({ drops });
         }
 
         const { eventMessages } = this.state;
         eventMessages.push(
-          new EventMessage(1, click, 24, `- ${damage} hp`, rgba(255, 255), Math.random() < 0.5 ? Direction.RIGHT : Direction.LEFT, Effect.FLY_AWAY)
+          new EventMessage(
+            1,
+            click,
+            24,
+            `- ${damage} hp`,
+            rgba(255, 255),
+            Math.random() < 0.5 ? Direction.RIGHT : Direction.LEFT,
+            Effect.FLY_AWAY
+          )
         );
 
         this.setState({ currentEnemy, eventMessages }, () => this.drawStatic());
@@ -251,23 +259,23 @@ class ClickerProcess extends QuestProcess<ClickerProcessProps, ClickerProcessSta
   }
 
   checkCurrentEnemy() {
-    if ((this.state.currentEnemy?.currentHealth ?? 1) <= 0) {
+    if ((this.state.currentEnemy?.health ?? 1) <= 0) {
       if (!this.checkBattleComplete()) {
-        const currentEnemy = this.state.enemies.find((e) => e.currentHealth > 0)!;
+        const currentEnemy = this.state.enemies.find((e) => e.health > 0)!;
         this.setState({ currentEnemy }, () => this.drawStatic());
       }
     }
   }
 
   switchCurrentEnemy(actor: CheckpointActor) {
-    if (this.state.processState === ProcessState.BATTLE && actor.currentHealth > 0) {
-      const currentEnemy = this.state.enemies.find((e) => e.actorId === actor.actorId);
+    if (this.state.processState === ProcessState.BATTLE && actor.health > 0) {
+      const currentEnemy = this.state.enemies.find((e) => e.id === actor.id);
       this.setState({ currentEnemy }, () => this.drawStatic());
     }
   }
 
   checkBattleComplete() {
-    const won = this.state.enemies.every((e) => e.currentHealth <= 0);
+    const won = this.state.enemies.every((e) => e.health <= 0);
     const lost = this.props.heroes.every((h) => h.health <= 0);
     if (won || lost) {
       const { drops } = this.state;
@@ -334,10 +342,10 @@ class ClickerProcess extends QuestProcess<ClickerProcessProps, ClickerProcessSta
         ) : null}
         <div className="battle-process__opponents-holder">
           {this.state.enemies.map((e) => (
-            <div key={e.actorId}>
+            <div key={e.id}>
               <img
                 className={`battle-process__opponent-portrait${
-                  e.actorId === this.state.currentEnemy?.actorId ? '--current' : e.currentHealth <= 0 ? '--disabled' : ''
+                  e.id === this.state.currentEnemy?.id ? '--current' : e.health <= 0 ? '--disabled' : ''
                 }`}
                 src={getUrlByName(`${e.type}-prt`)}
                 alt="enemy"
@@ -345,7 +353,7 @@ class ClickerProcess extends QuestProcess<ClickerProcessProps, ClickerProcessSta
               />
               <span style={{ fontFamily: 'inherit', fontSize: '14px', color: 'white' }}>
                 {e.name}
-                {`${e.currentHealth > 0 ? ' - ' + e.currentHealth : ''}`}
+                {`${e.health > 0 ? ' - ' + e.health : ''}`}
               </span>
             </div>
           ))}

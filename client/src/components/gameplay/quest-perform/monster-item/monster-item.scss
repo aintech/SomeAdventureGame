@@ -1,20 +1,5 @@
 @import '.././../../../utils/css/index.scss';
 
-@keyframes hitted {
-  0% {
-    transform: translate(-3px, -5px);
-  }
-  25% {
-    transform: translate(3px, -3px);
-  }
-  50% {
-    transform: translate(-3px, -1px);
-  }
-  100% {
-    transform: translate(0);
-  }
-}
-
 $bar-height: 65px;
 $actor-height: 256px;
 $actor-width: 256px;
@@ -29,7 +14,7 @@ $actor-width: 256px;
   color: white;
 
   &__display {
-    @each $type in 'goblin' 'moth' 'snake' {
+    @each $type in 'goblin' 'moth' 'snake' 'knight' {
       &_#{$type} {
         width: $actor-width;
         height: $actor-height;
