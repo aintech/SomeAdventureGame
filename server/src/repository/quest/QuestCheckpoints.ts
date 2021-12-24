@@ -8,7 +8,6 @@ import { getQuestProgress } from './QuestProgress';
 export enum CheckpointType {
   BATTLE,
   TREASURE,
-  CLICKER,
 }
 
 export type QuestCheckpoint = {
@@ -16,7 +15,7 @@ export type QuestCheckpoint = {
   type: CheckpointType;
   occuredAt: number;
   passed: boolean;
-  tribute: number;
+  treasure?: number;
   enemies?: Monster[];
 };
 
@@ -35,7 +34,7 @@ export const persistQuestCheckpoints = async (progressId: number, checkpoints: Q
           '${CheckpointType[checkpoint.type].toLowerCase()}', 
           ${checkpoint.occuredAt},
           ${checkpoint.enemies ? `'${JSON.stringify(checkpoint.enemies)}'` : null},
-          ${checkpoint.tribute},
+          ${checkpoint.treasure},
           ${checkpoint.passed}`
     )
     .join(' union ');
@@ -43,7 +42,7 @@ export const persistQuestCheckpoints = async (progressId: number, checkpoints: Q
   await query<void>(
     'persistQuestCheckpoints',
     `insert into public.quest_checkpoint 
-     (quest_progress_id, type, occured_at, enemies, tribute, passed)
+     (quest_progress_id, type, occured_at, enemies, treasure, passed)
      select * from (${checkpointsData}) as vals`
   );
 
@@ -98,28 +97,15 @@ export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress, 
 
   const adjustments: Promise<any>[] = [];
 
-  let totalGold = checkpoint.type === CheckpointType.BATTLE ? checkpoint.tribute : 0;
-
-  let collectedGold = 0;
+  let gold = checkpoint.treasure ?? 0;
   let experience = 0;
-  if (checkpoint.enemies) {
-    result.collected.forEach((drop) => {
-      const enemy = checkpoint.enemies!.find((e) => e.actorId === drop.actorId)!;
-      enemy.drop.forEach((d) => {
-        if (drop.drops.includes(d.fraction)) {
-          collectedGold += d.gold;
-        }
-      });
-    });
 
+  if (checkpoint.enemies) {
+    gold += checkpoint.enemies.reduce((g, e) => g + e.loot.gold, 0);
     experience = checkpoint.enemies.reduce((a, b) => a + b.experience, 0);
-  } else {
-    collectedGold = result.collected.map((c) => c.drops.reduce((a, b) => a + b, 0)).reduce((a, b) => a + b, 0);
   }
 
-  totalGold += collectedGold;
-
-  const goldPerHero = totalGold > 0 ? Math.ceil(totalGold / heroes.length) : 0;
+  const goldPerHero = gold > 0 ? Math.ceil(gold / heroes.length) : 0;
   const experiencePerHero = experience > 0 ? Math.ceil(experience / heroes.length) : 0;
 
   if (result.events) {
@@ -179,7 +165,7 @@ type CheckpointWithProgressRow = {
   occured_at: string;
   enemies: string | null;
   passed: boolean;
-  tribute: string;
+  treasure: string;
   quest_progress_id: string;
   quest_id: string;
   embarked_time: Date;
@@ -192,7 +178,7 @@ const mapQuestCheckpointWithProgress = (row: CheckpointWithProgressRow): QuestCh
     occuredAt: +row.occured_at,
     enemies: mapEnemies(row.enemies),
     passed: row.passed,
-    tribute: +row.tribute,
+    treasure: +row.treasure,
     progressId: +row.quest_progress_id,
     questId: +row.quest_id,
     embarkedTime: row.embarked_time,

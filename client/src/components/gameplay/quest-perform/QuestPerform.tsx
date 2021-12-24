@@ -15,7 +15,6 @@ import QuestComplete from './quest-complete/QuestComplete';
 import QuestMap from './quest-map/QuestMap';
 import './quest-perform.scss';
 import BattleProcess from './quest-processes/battle-process/BattleProcess';
-import { HeroEvent } from './quest-processes/clicker-process/ClickerProcess';
 import QuestHero, { BattleAction } from './quest-processes/process-helpers/QuestHero';
 
 export enum HeroReactionType {
@@ -49,18 +48,17 @@ const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, clos
     setActiveCheckpoint(checkpoint);
   };
 
-  const completeCheckpoint = (won: boolean, collectedDrops: Map<number, number[]>, battleEvents: Map<number, HeroEvent[]>) => {
-    setActiveCheckpoint(undefined);
-    // setHeroRewards(new Map());
-    if (activeCheckpoint && won) {
-      const collected = Array.from(collectedDrops, ([actorId, drops]) => ({ actorId, drops }));
-      const events = Array.from(battleEvents, ([heroId, events]) => ({ heroId, events }));
-      onCheckpointPassed(quest, { id: activeCheckpoint.id, collected, events });
-    }
-    if (!won) {
-      setHeroActors(heroes.map((h) => shallowCopy({ ...h, action: BattleAction.ATTACK })));
-    }
-  };
+  // const completeCheckpoint = (won: boolean, battleEvents: Map<number, HeroEvent[]>) => {
+  //   setActiveCheckpoint(undefined);
+  //   if (activeCheckpoint && won) {
+  //     const events = Array.from(battleEvents, ([heroId, events]) => ({ heroId, events }));
+  //     onCheckpointPassed(quest, { id: activeCheckpoint.id, events });
+  //   }
+  //   if (!won) {
+  //     setHeroActors(heroes.map((h) => shallowCopy({ ...h, action: BattleAction.ATTACK })));
+  //   }
+  // };
+  const closeProcess = () => {};
 
   let process;
   if (activeCheckpoint) {
@@ -70,41 +68,12 @@ const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, clos
           <BattleProcess
             checkpoint={activeCheckpoint}
             propHeroes={heroActors}
-            moveOnwards={completeCheckpoint}
+            closeProcess={closeProcess}
             updateHeroesState={(heroes: QuestHero[]) => setHeroActors(heroes)}
           />
         );
         break;
-      case CheckpointType.CLICKER:
-        // process = (
-        //   <ClickerProcess
-        //     checkpoint={activeCheckpoint}
-        //     heroes={heroActors}
-        //     heroesReactions={heroesReactions}
-        //     resetAnim={() => {
-        //       setReacted(initialReactions());
-        //     }}
-        //     moveOnwards={completeCheckpoint}
-        //     closeCheckpoint={() => setActiveCheckpoint(undefined)}
-        //     setHeroRewards={setHeroRewards}
-        //   />
-        // );
-        break;
       case CheckpointType.TREASURE:
-        // process = (
-        //   <TreasureProcess
-        //     checkpoint={activeCheckpoint}
-        //     heroes={heroActors}
-        //     // checkpointPassed={() => {}}
-        //     moveOnwards={(collected: { actorId: number; drops: number[] }[]) => {
-        //       setActiveCheckpoint(undefined);
-        //       setHeroRewards(new Map());
-        //       onCheckpointPassed(quest, { id: activeCheckpoint.id, collected });
-        //     }}
-        //     closeCheckpoint={() => setActiveCheckpoint(undefined)}
-        //     setHeroRewards={setHeroRewards}
-        //   />
-        // );
         break;
       default:
         throw new Error(`Unknown checkpoint type ${CheckpointType[activeCheckpoint.type]}`);

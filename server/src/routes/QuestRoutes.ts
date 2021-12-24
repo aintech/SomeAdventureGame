@@ -1,12 +1,12 @@
-import { Router } from "express";
-import AuthMiddleware from "../middleware/AuthMiddleware";
-import { getHeroesOnQuest } from "../repository/hero/Hero";
-import { completeQuest, embarkOnQuest, getQuestById, getQuests } from "../repository/quest/Quest";
-import { checkpointPassed, getQuestCheckpoint } from "../repository/quest/QuestCheckpoints";
+import { Router } from 'express';
+import AuthMiddleware from '../middleware/AuthMiddleware';
+import { getHeroesOnQuest } from '../repository/hero/Hero';
+import { completeQuest, embarkOnQuest, getQuestById, getQuests } from '../repository/quest/Quest';
+import { checkpointPassed, getQuestCheckpoint } from '../repository/quest/QuestCheckpoints';
 
 const questsRouter = Router();
 
-questsRouter.get("/", AuthMiddleware, async (req, res) => {
+questsRouter.get('/', AuthMiddleware, async (req, res) => {
   const user_id = Number(req.query.user_id as string);
   try {
     const quests = await getQuests(user_id);
@@ -16,10 +16,10 @@ questsRouter.get("/", AuthMiddleware, async (req, res) => {
   }
 });
 
-questsRouter.post("/embark", AuthMiddleware, async (req, res) => {
+questsRouter.post('/embark', AuthMiddleware, async (req, res) => {
   const user_id = Number(req.query.user_id as string);
   const quest_id = Number(req.query.quest_id as string);
-  const hero_ids = (req.query.hero_ids as string).split(",").map((id) => +id);
+  const hero_ids = (req.query.hero_ids as string).split(',').map((id) => +id);
   try {
     const embarked = await embarkOnQuest(user_id, quest_id, hero_ids);
     res.json(embarked);
@@ -36,11 +36,10 @@ export type HeroEvent = {
 
 export type CheckpointPassedBody = {
   id: number;
-  collected: { actorId: number; drops: number[] }[];
   events?: { heroId: number; events: HeroEvent[] }[];
 };
 
-questsRouter.post("/checkpoint-passed", AuthMiddleware, async (req, res) => {
+questsRouter.post('/checkpoint-passed', AuthMiddleware, async (req, res) => {
   const userId = Number(req.query.user_id as string);
   const questId = Number(req.query.quest_id as string);
   const checkpointId = Number(req.query.checkpoint_id as string);
@@ -58,7 +57,7 @@ questsRouter.post("/checkpoint-passed", AuthMiddleware, async (req, res) => {
   }
 });
 
-questsRouter.put("/complete", AuthMiddleware, async (req, res) => {
+questsRouter.put('/complete', AuthMiddleware, async (req, res) => {
   const user_id = Number(req.query.user_id as string);
   const quest_id = Number(req.query.quest_id as string);
   try {
@@ -69,7 +68,7 @@ questsRouter.put("/complete", AuthMiddleware, async (req, res) => {
   }
 });
 
-questsRouter.put("/cancel", AuthMiddleware, async (req, res) => {
+questsRouter.put('/cancel', AuthMiddleware, async (req, res) => {
   const user_id = Number(req.query.user_id as string);
   const quest_id = Number(req.query.quest_id as string);
   try {

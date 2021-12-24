@@ -4,33 +4,18 @@ import PersonageStats from './PersonageStats';
 export enum CheckpointType {
   BATTLE,
   TREASURE,
-  CLICKER,
 }
 
 export enum BattleActionType {
-  HERO_ATTACK,
-  ENEMY_ATTACK,
   USE_POTION,
 }
 
-export class EnemyDrop {
-  constructor(public fraction: number, public gold: number, public dropped?: boolean) {}
-}
-
 export class CheckpointEnemy {
-  constructor(
-    public id: number,
-    public actorId: number,
-    public name: string,
-    public health: number,
-    public experience: number,
-    public stats: PersonageStats,
-    public drop: EnemyDrop[]
-  ) {}
+  constructor(public id: number, public actorId: number, public name: string, public health: number, public stats: PersonageStats) {}
 }
 
 export class BattleRound {
-  constructor(public heroId: number, public action: BattleActionType, public enemyId?: number, public itemId?: number, public hpAdjust?: number) {}
+  constructor(public heroId: number, public action: BattleActionType, public itemId?: number, public hpAdjust?: number) {}
 }
 
 export default class QuestCheckpoint {
@@ -38,7 +23,6 @@ export default class QuestCheckpoint {
     public id: number,
     public occuredTime: number,
     public type: CheckpointType,
-    public tribute: number,
     public passed: boolean,
     public enemies?: CheckpointEnemy[]
   ) {}
@@ -49,20 +33,17 @@ export const convert = (response: CheckpointResponse): QuestCheckpoint => {
     response.id,
     response.occuredAt,
     response.type,
-    response.tribute,
     response.passed,
     response.enemies ? response.enemies.map((e) => convertEnemy(e)) : undefined
   );
 };
 
 const convertEnemy = (res: CheckpointEnemyResponse): CheckpointEnemy => {
-  return new CheckpointEnemy(
-    res.id,
-    res.actorId,
-    res.name,
-    res.health,
-    res.experience,
-    { power: res.power, defence: res.defence, initiative: res.initiative, wizdom: 0, vitality: 0 },
-    res.drop
-  );
+  return new CheckpointEnemy(res.id, res.actorId, res.name, res.health, {
+    power: res.power,
+    defence: res.defence,
+    initiative: res.initiative,
+    wizdom: 0,
+    vitality: 0,
+  });
 };

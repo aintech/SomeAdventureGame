@@ -1,17 +1,12 @@
-import { HeroEvent } from '../components/gameplay/quest-perform/quest-processes/clicker-process/ClickerProcess';
+import { HeroEvent } from '../components/gameplay/quest-perform/quest-processes/battle-process/BattleProcess';
 import { AuthProps } from '../contexts/AuthContext';
 import GameStats from '../models/GameStats';
 import Quest from '../models/Quest';
-import { BattleRound, CheckpointType } from '../models/QuestCheckpoint';
+import { CheckpointType } from '../models/QuestCheckpoint';
 import { HeroResponse } from './HeroService';
 import sendHttp from './SendHttp';
 
 const baseUrl = '/api/quest';
-
-export interface EnemyDropResponse {
-  fraction: number;
-  gold: number;
-}
 
 export interface CheckpointEnemyResponse {
   id: number;
@@ -22,19 +17,13 @@ export interface CheckpointEnemyResponse {
   power: number;
   defence: number;
   initiative: number;
-  experience: number;
-  drop: EnemyDropResponse[];
 }
 
 export interface CheckpointResponse {
   id: number;
   occuredAt: number;
   type: CheckpointType;
-  duration: number;
-  tribute: number;
   passed: boolean;
-  rounds?: Map<number, BattleRound[]>;
-  stringifiedRounds?: string;
   enemies?: CheckpointEnemyResponse[];
 }
 
@@ -69,7 +58,6 @@ export const embarkOnQuest = async (auth: AuthProps, questId: number, heroIds: n
 
 export interface CheckpointPassedBody {
   id: number;
-  collected?: { actorId: number; drops: number[] }[];
   events?: { heroId: number; events: HeroEvent[] }[];
 }
 

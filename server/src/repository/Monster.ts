@@ -1,11 +1,6 @@
-import query from "./Db";
+import query from './Db';
 
 export type Loot = {
-  gold: number;
-};
-
-export type Drop = {
-  fraction: number; //Health fraction on which loot dropped
   gold: number;
 };
 
@@ -19,14 +14,13 @@ export type Monster = {
   initiative: number;
   defence: number;
   experience: number;
-  loot?: Loot;
-  drop: Drop[];
+  loot: Loot;
 };
 
 let monsters: Monster[] = [];
 export const getAllMonsters = async () => {
   if (monsters.length === 0) {
-    monsters = await query<Monster[]>("fetchMonsters", "select * from public.monster", [], mapMonster);
+    monsters = await query<Monster[]>('fetchMonsters', 'select * from public.monster', [], mapMonster);
   }
   return monsters;
 };

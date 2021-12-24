@@ -7,7 +7,6 @@ import HeroesPanel from '../../heroes-panel/HeroesPanel';
 import MonsterItem from '../../monster-item/MonsterItem';
 import CheckpointActor, { convertToActor } from '../../quest-processes/process-helpers/CheckpointActor';
 import QuestHero, { BattleAction } from '../process-helpers/QuestHero';
-import { QuestProcessState } from '../QuestProcess';
 import './battle-process.scss';
 
 enum ProcessState {
@@ -23,11 +22,7 @@ type BattleProcessProps = {
   checkpoint: QuestCheckpoint;
   propHeroes: QuestHero[];
   updateHeroesState: (heroes: QuestHero[]) => void;
-  moveOnwards: (
-    won: boolean,
-    collectedDrops: Map<number, number[]>, // id to monster health amount refered to drop
-    battleEvents: Map<number, HeroEvent[]>
-  ) => void;
+  closeProcess: () => void;
 };
 
 export type HeroEvent = {
@@ -36,14 +31,15 @@ export type HeroEvent = {
   hpAlter?: number;
 };
 
-type BattleProcessState = QuestProcessState & {
+type BattleProcessState = {
   actorsQueue: (QuestHero | CheckpointActor)[];
   currentActorIdx: number;
   currentActor?: QuestHero | CheckpointActor;
+
   processState: ProcessState;
   heroes: QuestHero[];
   monsters: CheckpointActor[];
-  battleEvents: Map<number, HeroEvent[]>; // heroId to events
+  battleEvents: Map<number, HeroEvent[]>; // heroId to events, урон, лечение и использование предметов героем
 };
 
 class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
@@ -52,16 +48,12 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   constructor(props: BattleProcessProps) {
     super(props);
     this.state = {
-      seconds: 0,
-
       actorsQueue: [],
       currentActorIdx: -1,
 
-      eventMessages: [],
       processState: ProcessState.LOADING,
       heroes: [],
       monsters: [],
-      drops: [],
       battleEvents: new Map(),
     };
 
@@ -73,6 +65,10 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
     const monsters = [...checkpoint.enemies!.map((e) => convertToActor(e))];
 
+    const battleEvents: Map<number, HeroEvent[]> = new Map();
+
+    this.props.propHeroes.forEach((h) => battleEvents.set(h.id, []));
+
     this.setState(
       {
         actorsQueue: [...this.props.propHeroes, ...monsters],
@@ -80,6 +76,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         heroes: this.props.propHeroes,
         monsters,
         processState: ProcessState.SWITCH_ACTOR,
+        battleEvents,
       },
       () => this.processRound()
     );
@@ -133,7 +130,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
       case ProcessState.MONSTER_PERFORM:
         const monster = this.state.currentActor as CheckpointActor;
         const aliveHeroes = heroes.filter((h) => isAlive(h));
-        const victim = aliveHeroes[0]; // aliveHeroes[Math.floor(Math.random() * aliveHeroes.length)];
+        const victim = aliveHeroes[Math.floor(Math.random() * aliveHeroes.length)];
         const damage = Math.max(1, monster.stats.power - victim.stats.defence - victim.equipStats.defence);
         victim.health -= damage;
 
@@ -148,11 +145,14 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         }
 
         const updatedHeroes = replace(heroes, victim);
+        const battleEvents = new Map(this.state.battleEvents);
+        battleEvents.set(victim.id, [...battleEvents.get(victim.id)!, { time: new Date().getTime(), hpAlter: -damage }]);
 
         this.setState(
           {
             processState: ProcessState.SWITCH_ACTOR,
             heroes: updatedHeroes,
+            battleEvents,
           },
           () => setTimeout(this.processRound, 500)
         );
@@ -213,7 +213,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   }
 
   completeCheckpointClickHandler(e: MouseEvent) {
-    this.props.moveOnwards(this.state.processState === ProcessState.BATTLE_WON, new Map(), this.state.battleEvents);
+    this.props.closeProcess();
   }
 
   render() {
@@ -221,25 +221,38 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
     const grid = `repeat(${monsters.length}, ${100 / monsters.length}%)`;
 
+    const battleEnded = processState === ProcessState.BATTLE_WON || processState === ProcessState.BATTLE_LOST;
+
+    // trophy - добыча
     return (
       <div className="battle-process">
         {processState === ProcessState.LOADING ? <Loader message="Loading assets" /> : null}
-        {processState === ProcessState.BATTLE_WON ? (
-          <button className="quest-process__btn_onwards" onClick={(e) => this.completeCheckpointClickHandler(e)}>
-            На карту локации
-          </button>
-        ) : processState === ProcessState.BATTLE_LOST ? (
-          <button className="quest-process__btn_onwards" onClick={(e) => this.completeCheckpointClickHandler(e)}>
-            Отступить
-          </button>
-        ) : null}
-        <div className="battle-process__monsters-holder" style={{ gridTemplateColumns: grid }}>
-          {monsters.map((m, idx) => (
-            <MonsterItem key={m.id} monster={m} idx={idx} handleClickMonster={this.handleClickMonster} />
-          ))}
-        </div>
+        {battleEnded ? (
+          <div className="battle-process__complete">
+            <p className="battle-process__message">Победа</p>
 
-        <HeroesPanel actors={heroes} current={currentActor?.isHero ? (currentActor as QuestHero) : undefined} showActions={true} />
+            <div className="battle-process__reward">
+              {/* <p className="battle-process__reward-exp">Опыт {monsters.map((m) => m.experience).reduce((r, e) => r + e, 0)}</p> */}
+              {/* <p className="battle-process__reward-swag">
+                Добыто{' '}
+                {this.props.checkpoint.tribute + monsters.map((m) => m.drop.reduce((r, d) => r + d.gold, 0)).reduce((r, g) => r + g, 0)}{' '}
+                хлама
+              </p> */}
+            </div>
+
+            <button className="battle-process__btn-onwards" onClick={(e) => this.completeCheckpointClickHandler(e)}>
+              На карту локации
+            </button>
+          </div>
+        ) : (
+          <div className="battle-process__monsters-holder" style={{ gridTemplateColumns: grid }}>
+            {monsters.map((m, idx) => (
+              <MonsterItem key={m.id} monster={m} idx={idx} handleClickMonster={this.handleClickMonster} />
+            ))}
+          </div>
+        )}
+
+        <HeroesPanel actors={heroes} current={currentActor?.isHero ? (currentActor as QuestHero) : undefined} showActions={!battleEnded} />
       </div>
     );
   }
