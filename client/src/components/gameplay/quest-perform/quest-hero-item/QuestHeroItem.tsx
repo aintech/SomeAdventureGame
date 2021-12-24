@@ -5,7 +5,7 @@ import { heroStatsChoosed } from '../../../../actions/Actions';
 import HealIconImg from '../../../../img/quest-perform/battle-process/heal-icon.png';
 import Hero, { calcHealthFraction } from '../../../../models/hero/Hero';
 import { HeroType } from '../../../../models/hero/HeroType';
-import QuestHero from '../quest-processes/process-helpers/QuestHero';
+import QuestHero from '../battle-process/process-helpers/QuestHero';
 import './quest-hero-item.scss';
 
 // TODO: визуально дизейблить героев без здоровья

@@ -14,8 +14,8 @@ import HeroesPanel from './heroes-panel/HeroesPanel';
 import QuestComplete from './quest-complete/QuestComplete';
 import QuestMap from './quest-map/QuestMap';
 import './quest-perform.scss';
-import BattleProcess from './quest-processes/battle-process/BattleProcess';
-import QuestHero, { BattleAction } from './quest-processes/process-helpers/QuestHero';
+import BattleProcess from './battle-process/BattleProcess';
+import QuestHero, { BattleAction } from './battle-process/process-helpers/QuestHero';
 
 export enum HeroReactionType {
   HITTED,

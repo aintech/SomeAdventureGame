@@ -1,5 +1,5 @@
 import QuestHeroItem from '../quest-hero-item/QuestHeroItem';
-import QuestHero from '../quest-processes/process-helpers/QuestHero';
+import QuestHero from '../battle-process/process-helpers/QuestHero';
 import './heroes-panel.scss';
 
 type HeroesPanelProps = {

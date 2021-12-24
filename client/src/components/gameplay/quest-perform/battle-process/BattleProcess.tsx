@@ -1,12 +1,12 @@
 import { Component, MouseEvent } from 'react';
-import { isAlive } from '../../../../../models/hero/Hero';
-import QuestCheckpoint from '../../../../../models/QuestCheckpoint';
-import { replace } from '../../../../../utils/arrays';
-import Loader from '../../../../loader/Loader';
-import HeroesPanel from '../../heroes-panel/HeroesPanel';
-import MonsterItem from '../../monster-item/MonsterItem';
-import CheckpointActor, { convertToActor } from '../../quest-processes/process-helpers/CheckpointActor';
-import QuestHero, { BattleAction } from '../process-helpers/QuestHero';
+import { isAlive } from '../../../../models/hero/Hero';
+import QuestCheckpoint from '../../../../models/QuestCheckpoint';
+import { replace } from '../../../../utils/arrays';
+import Loader from '../../../loader/Loader';
+import HeroesPanel from '../heroes-panel/HeroesPanel';
+import MonsterItem from '../monster-item/MonsterItem';
+import CheckpointActor, { convertToActor } from './process-helpers/CheckpointActor';
+import QuestHero, { BattleAction } from './process-helpers/QuestHero';
 import './battle-process.scss';
 
 enum ProcessState {

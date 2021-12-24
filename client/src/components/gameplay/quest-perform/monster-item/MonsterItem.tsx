@@ -1,4 +1,4 @@
-import CheckpointActor from '../quest-processes/process-helpers/CheckpointActor';
+import CheckpointActor from '../battle-process/process-helpers/CheckpointActor';
 import './monster-item.scss';
 
 type MonsterItemProps = {
