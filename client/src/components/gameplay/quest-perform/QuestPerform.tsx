@@ -1,7 +1,7 @@
 import React, { Component, useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { bindActionCreators, compose, Dispatch } from 'redux';
-import { closeQuestPerform } from '../../../actions/Actions';
+import { clearCheckpointReward, closeQuestPerform } from '../../../actions/Actions';
 import { onCheckpointPassed, onCompleteQuest } from '../../../actions/ApiActions';
 import withApiService, { WithApiServiceProps } from '../../../hoc/WithApiService';
 import Hero from '../../../models/hero/Hero';
@@ -10,12 +10,12 @@ import QuestCheckpoint, { CheckpointType } from '../../../models/QuestCheckpoint
 import { CheckpointPassedBody } from '../../../services/QuestService';
 import { shallowCopy } from '../../../utils/Utils';
 import Loader from '../../loader/Loader';
+import BattleProcess from './battle-process/BattleProcess';
+import QuestHero, { BattleAction } from './battle-process/process-helpers/QuestHero';
 import HeroesPanel from './heroes-panel/HeroesPanel';
 import QuestComplete from './quest-complete/QuestComplete';
 import QuestMap from './quest-map/QuestMap';
 import './quest-perform.scss';
-import BattleProcess from './battle-process/BattleProcess';
-import QuestHero, { BattleAction } from './battle-process/process-helpers/QuestHero';
 
 export enum HeroReactionType {
   HITTED,
@@ -40,6 +40,8 @@ const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, clos
   const [, setHeroRewards] = useState<Map<number, { gold: number; experience: number }>>(new Map()); // пока убрал heroRewards чтобы не отсвечивать
   const [heroActors, setHeroActors] = useState<QuestHero[]>([]);
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     setHeroActors(heroes.map((h) => shallowCopy({ ...h, action: BattleAction.ATTACK })));
   }, [heroes, setHeroActors]);
@@ -48,17 +50,18 @@ const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, clos
     setActiveCheckpoint(checkpoint);
   };
 
-  // const completeCheckpoint = (won: boolean, battleEvents: Map<number, HeroEvent[]>) => {
-  //   setActiveCheckpoint(undefined);
-  //   if (activeCheckpoint && won) {
-  //     const events = Array.from(battleEvents, ([heroId, events]) => ({ heroId, events }));
-  //     onCheckpointPassed(quest, { id: activeCheckpoint.id, events });
-  //   }
-  //   if (!won) {
-  //     setHeroActors(heroes.map((h) => shallowCopy({ ...h, action: BattleAction.ATTACK })));
-  //   }
-  // };
-  const closeProcess = () => {};
+  const closeProcess = () => {
+    setActiveCheckpoint(undefined);
+    clearReward();
+  };
+
+  const clearReward = () => {
+    dispatch(clearCheckpointReward());
+  };
+
+  const checkpointPassed = (result: CheckpointPassedBody) => {
+    return onCheckpointPassed(quest, result);
+  };
 
   let process;
   if (activeCheckpoint) {
@@ -69,6 +72,7 @@ const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, clos
             checkpoint={activeCheckpoint}
             propHeroes={heroActors}
             closeProcess={closeProcess}
+            checkpointPassed={checkpointPassed}
             updateHeroesState={(heroes: QuestHero[]) => setHeroActors(heroes)}
           />
         );
@@ -97,7 +101,13 @@ const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, clos
   return (
     <div className={`quest-perform quest-perform__background_${background}`}>
       <div className="quest-perform__container">
-        <button className="quest-perform__btn-close" onClick={closeDisplay}></button>
+        <button
+          className="quest-perform__btn-close"
+          onClick={() => {
+            clearReward();
+            closeDisplay();
+          }}
+        ></button>
         <div className="quest-perform__name">{quest.title}</div>
         {process}
       </div>

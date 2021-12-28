@@ -2,7 +2,7 @@ import { HeroEvent } from '../components/gameplay/quest-perform/battle-process/B
 import { AuthProps } from '../contexts/AuthContext';
 import GameStats from '../models/GameStats';
 import Quest from '../models/Quest';
-import { CheckpointType } from '../models/QuestCheckpoint';
+import { CheckpointReward, CheckpointType } from '../models/QuestCheckpoint';
 import { HeroResponse } from './HeroService';
 import sendHttp from './SendHttp';
 
@@ -64,6 +64,7 @@ export interface CheckpointPassedBody {
 export interface CheckpointPassedResponse {
   embarkedQuest: Quest;
   embarkedHeroes: HeroResponse[];
+  reward: CheckpointReward;
 }
 
 export const checkpointPassed = async (auth: AuthProps, questId: number, result: CheckpointPassedBody) => {

@@ -46,12 +46,12 @@ questsRouter.post('/checkpoint-passed', AuthMiddleware, async (req, res) => {
   try {
     const heroesOnQuest = await getHeroesOnQuest(userId, questId);
     const checkpoint = await getQuestCheckpoint(checkpointId);
-    await checkpointPassed(checkpoint, heroesOnQuest, req.body);
 
+    const reward = await checkpointPassed(checkpoint, heroesOnQuest, req.body);
     const quest = await getQuestById(userId, questId);
     const heroes = await getHeroesOnQuest(userId, questId);
 
-    res.json({ quest, heroes });
+    res.json({ quest, heroes, reward });
   } catch (e: any) {
     res.status(500).json({ message: e.message });
   }

@@ -76,6 +76,12 @@
 
   &__bar {
     height: 12px;
+    transition: background-color ease-in-out 1s;
+
+    &_exp {
+      background-color: yellow;
+    }
+
     &_health {
       background-color: red;
     }
@@ -89,6 +95,10 @@
       width: calc(100% - 4px);
       height: 85%;
       background: linear-gradient(to bottom, rgba($color: white, $alpha: 0.4), rgba($color: white, $alpha: 0.2));
+    }
+
+    &_hidden {
+      display: none;
     }
   }
 

@@ -1,13 +1,15 @@
-import { Component, MouseEvent } from 'react';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { isAlive } from '../../../../models/hero/Hero';
-import QuestCheckpoint from '../../../../models/QuestCheckpoint';
+import QuestCheckpoint, { CheckpointReward } from '../../../../models/QuestCheckpoint';
+import { CheckpointPassedBody } from '../../../../services/QuestService';
 import { replace } from '../../../../utils/arrays';
 import Loader from '../../../loader/Loader';
 import HeroesPanel from '../heroes-panel/HeroesPanel';
 import MonsterItem from '../monster-item/MonsterItem';
+import './battle-process.scss';
 import CheckpointActor, { convertToActor } from './process-helpers/CheckpointActor';
 import QuestHero, { BattleAction } from './process-helpers/QuestHero';
-import './battle-process.scss';
 
 enum ProcessState {
   LOADING,
@@ -21,7 +23,9 @@ enum ProcessState {
 type BattleProcessProps = {
   checkpoint: QuestCheckpoint;
   propHeroes: QuestHero[];
+  checkpointReward?: CheckpointReward;
   updateHeroesState: (heroes: QuestHero[]) => void;
+  checkpointPassed: (result: CheckpointPassedBody) => void;
   closeProcess: () => void;
 };
 
@@ -198,13 +202,17 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     if (won || lost) {
       this.setState({
         processState: won ? ProcessState.BATTLE_WON : ProcessState.BATTLE_LOST,
+        currentActor: undefined,
       });
 
-      if (won) {
-        // this.props.setHeroRewards(this.calcHeroRewards(true));
-      }
-
       this.props.updateHeroesState(this.state.heroes);
+
+      if (won) {
+        const events = Array.from(this.state.battleEvents, ([heroId, events]) => ({ heroId, events }));
+        this.props.checkpointPassed({ id: this.props.checkpoint.id, events });
+      } else {
+        this.props.closeProcess();
+      }
 
       return true;
     }
@@ -212,16 +220,16 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     return false;
   }
 
-  completeCheckpointClickHandler(e: MouseEvent) {
-    this.props.closeProcess();
-  }
-
   render() {
     const { monsters, heroes, currentActor, processState } = this.state;
+
+    const { checkpoint, checkpointReward } = this.props;
 
     const grid = `repeat(${monsters.length}, ${100 / monsters.length}%)`;
 
     const battleEnded = processState === ProcessState.BATTLE_WON || processState === ProcessState.BATTLE_LOST;
+
+    // continue - показывать награду и опыт при чекпоинте
 
     // trophy - добыча
     return (
@@ -232,15 +240,21 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
             <p className="battle-process__message">Победа</p>
 
             <div className="battle-process__reward">
-              {/* <p className="battle-process__reward-exp">Опыт {monsters.map((m) => m.experience).reduce((r, e) => r + e, 0)}</p> */}
-              {/* <p className="battle-process__reward-swag">
-                Добыто{' '}
-                {this.props.checkpoint.tribute + monsters.map((m) => m.drop.reduce((r, d) => r + d.gold, 0)).reduce((r, g) => r + g, 0)}{' '}
-                хлама
-              </p> */}
+              {checkpointReward?.checkpointId === checkpoint.id ? (
+                <>
+                  <p className="battle-process__reward-exp">
+                    Опыт {checkpointReward.rewards.reduce((exp, rwd) => exp + rwd.experience, 0)}
+                  </p>
+                  <p className="battle-process__reward-swag">
+                    Добыто {checkpointReward.rewards.reduce((gld, rwd) => gld + rwd.gold, 0)} монет
+                  </p>
+                </>
+              ) : (
+                <Loader message="Checking rewards" />
+              )}
             </div>
 
-            <button className="battle-process__btn-onwards" onClick={(e) => this.completeCheckpointClickHandler(e)}>
+            <button className="battle-process__btn-onwards" onClick={() => this.props.closeProcess()}>
               На карту локации
             </button>
           </div>
@@ -258,4 +272,12 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   }
 }
 
-export default BattleProcess;
+type BattleProcessMapped = {
+  checkpointReward: CheckpointReward;
+};
+
+const mapStateToProps = ({ checkpointReward }: BattleProcessMapped) => {
+  return { checkpointReward };
+};
+
+export default connect(mapStateToProps)(BattleProcess);

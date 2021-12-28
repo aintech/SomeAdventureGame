@@ -8,9 +8,6 @@ import { HeroType } from '../../../../models/hero/HeroType';
 import QuestHero from '../battle-process/process-helpers/QuestHero';
 import './quest-hero-item.scss';
 
-// TODO: визуально дизейблить героев без здоровья
-// TODO: золото распределяется по героям после завершения задания
-
 type QuestHeroItemProps = {
   hero: QuestHero;
   heroClickHandler: (hero: Hero) => void;
@@ -43,6 +40,11 @@ const QuestHeroItem = ({ hero, current, heroClickHandler, reward, seed }: QuestH
       <div className={displayClass}></div>
 
       <div className="quest-hero-item__bars">
+        <div className={`quest-hero-item__bar-holder${reward ? '' : ' quest-hero-item__bar_hidden'}`}>
+          <div className="quest-hero-item__bar quest-hero-item__bar_exp" style={{ width: `${hero.level.progress * 100}%` }}>
+            <div className="quest-hero-item__bar_overlay"></div>
+          </div>
+        </div>
         <div className="quest-hero-item__bar-holder">
           <div className="quest-hero-item__bar quest-hero-item__bar_health" style={{ width: `${calcHealthFraction(hero) * 100}%` }}>
             <div className="quest-hero-item__bar_overlay"></div>

@@ -1,13 +1,13 @@
-import { MouseEvent } from "react";
-import { Action } from "redux";
-import { Message } from "../components/message-popup/MessagePopup";
-import Building from "../models/Building";
-import GameStats from "../models/GameStats";
-import Hero from "../models/hero/Hero";
-import Quest from "../models/Quest";
-import { EquipmentResponse, HeroResponse, HireHeroResponse, ItemResponse } from "../services/HeroService";
-import { CheckpointPassedResponse, CompleteCancelQuestResponse, EmbarkOnQuestResponse, QuestResponse } from "../services/QuestService";
-import { ActionType } from "./ActionType";
+import { MouseEvent } from 'react';
+import { Action } from 'redux';
+import { Message } from '../components/message-popup/MessagePopup';
+import Building from '../models/Building';
+import GameStats from '../models/GameStats';
+import Hero from '../models/hero/Hero';
+import Quest from '../models/Quest';
+import { EquipmentResponse, HeroResponse, HireHeroResponse, ItemResponse } from '../services/HeroService';
+import { CheckpointPassedResponse, CompleteCancelQuestResponse, EmbarkOnQuestResponse, QuestResponse } from '../services/QuestService';
+import { ActionType } from './ActionType';
 
 export interface PayloadedAction extends Action<ActionType> {
   payload?: any;
@@ -137,10 +137,16 @@ export const heroesEmbarkedOnQuest = (embarkedQuestAndHeroes: EmbarkOnQuestRespo
   };
 };
 
-export const checkpointPassed = (embarked: CheckpointPassedResponse) => {
+export const checkpointPassed = (embarked: CheckpointPassedResponse): PayloadedAction => {
   return {
     type: ActionType.CHECKPOINT_PASSED,
     payload: embarked,
+  };
+};
+
+export const clearCheckpointReward = (): PayloadedAction => {
+  return {
+    type: ActionType.CLEAR_CHECKPOINT_REWARD,
   };
 };
 
@@ -193,7 +199,7 @@ export const heroActivitiesUpdated = (heroes: HeroResponse[]): PayloadedAction =
   };
 };
 
-export const showTooltip = (appear: boolean = false, message: string = ""): PayloadedAction => {
+export const showTooltip = (appear: boolean = false, message: string = ''): PayloadedAction => {
   return {
     type: ActionType.SHOW_TOOLTIP,
     payload: { message, appear },

@@ -1,18 +1,19 @@
-import { PayloadedAction } from "../actions/Actions";
-import { ActionType } from "../actions/ActionType";
-import { ConfirmDialogType } from "../components/confirm-dialog/ConfirmDialog";
-import { Tooltip } from "../components/gameplay-tooltip/GameplayTooltip";
-import { QuestPerformData } from "../components/gameplay/quest-perform/QuestPerform";
-import { Message } from "../components/message-popup/MessagePopup";
-import Building from "../models/Building";
-import Equipment, { convert as convertEquipment } from "../models/Equipment";
-import GameStats from "../models/GameStats";
-import Hero, { convert as convertHero } from "../models/hero/Hero";
-import Item, { convertItem } from "../models/Item";
-import Quest, { convert as convertQuest } from "../models/Quest";
-import { EquipmentResponse, HeroResponse, HireHeroResponse, ItemResponse } from "../services/HeroService";
-import { QuestResponse } from "../services/QuestService";
-import { remove, replace } from "../utils/arrays";
+import { PayloadedAction } from '../actions/Actions';
+import { ActionType } from '../actions/ActionType';
+import { ConfirmDialogType } from '../components/confirm-dialog/ConfirmDialog';
+import { Tooltip } from '../components/gameplay-tooltip/GameplayTooltip';
+import { QuestPerformData } from '../components/gameplay/quest-perform/QuestPerform';
+import { Message } from '../components/message-popup/MessagePopup';
+import Building from '../models/Building';
+import Equipment, { convert as convertEquipment } from '../models/Equipment';
+import GameStats from '../models/GameStats';
+import Hero, { convert as convertHero } from '../models/hero/Hero';
+import Item, { convertItem } from '../models/Item';
+import Quest, { convert as convertQuest } from '../models/Quest';
+import { CheckpointReward } from '../models/QuestCheckpoint';
+import { EquipmentResponse, HeroResponse, HireHeroResponse, ItemResponse } from '../services/HeroService';
+import { QuestResponse } from '../services/QuestService';
+import { remove, replace } from '../utils/arrays';
 
 export type State = {
   stats: GameStats;
@@ -28,6 +29,7 @@ export type State = {
   tooltip: Tooltip;
   confirmDialog?: ConfirmDialogType;
   activeQuestPerform?: QuestPerformData;
+  checkpointReward?: CheckpointReward;
 };
 
 const intialState = {
@@ -39,7 +41,7 @@ const intialState = {
   marketAssortment: [],
   alchemistAssortment: [],
   messages: [],
-  tooltip: { message: "", appear: false },
+  tooltip: { message: '', appear: false },
 };
 
 const reducer = (state: State = intialState, action: PayloadedAction) => {
@@ -191,6 +193,7 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
     case ActionType.CHECKPOINT_PASSED:
       const embQuest = action.payload.quest as QuestResponse;
       const embHeroes = action.payload.heroes as HeroResponse[];
+      const checkpointReward = action.payload.reward as CheckpointReward;
 
       const qIdx = state.quests.findIndex((q) => q.id === +embQuest.id);
 
@@ -218,6 +221,13 @@ const reducer = (state: State = intialState, action: PayloadedAction) => {
               return a.id - b.id;
             }),
         },
+        checkpointReward,
+      };
+
+    case ActionType.CLEAR_CHECKPOINT_REWARD:
+      return {
+        ...state,
+        checkpointReward: undefined,
       };
 
     case ActionType.COMPLETE_QUEST:

@@ -6,17 +6,15 @@ export enum CheckpointType {
   TREASURE,
 }
 
-export enum BattleActionType {
-  USE_POTION,
-}
-
 export class CheckpointEnemy {
   constructor(public id: number, public actorId: number, public name: string, public health: number, public stats: PersonageStats) {}
 }
 
-export class BattleRound {
-  constructor(public heroId: number, public action: BattleActionType, public itemId?: number, public hpAdjust?: number) {}
-}
+// В будущем ещё можно добавить items, которые уходят игроку.
+export type CheckpointReward = {
+  checkpointId: number;
+  rewards: { heroId: number; gold: number; experience: number }[];
+};
 
 export default class QuestCheckpoint {
   constructor(

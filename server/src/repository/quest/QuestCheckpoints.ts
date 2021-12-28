@@ -19,6 +19,11 @@ export type QuestCheckpoint = {
   enemies?: Monster[];
 };
 
+export type CheckpointReward = {
+  checkpointId: number;
+  rewards: { heroId: number; gold: number; experience: number }[];
+};
+
 export type QuestCheckpointWithProgress = QuestCheckpoint & {
   progressId?: number /** empty when progress not persist yet */;
   questId: number;
@@ -144,6 +149,11 @@ export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress, 
   }
 
   await markAsPassed(checkpoint.id!);
+
+  const reward: CheckpointReward = { checkpointId: checkpoint.id!, rewards: [] };
+  heroes.forEach((h) => reward.rewards.push({ heroId: h.id, gold: goldPerHero, experience: experiencePerHero }));
+
+  return reward;
 };
 
 const markAsPassed = (checkpointId: number) => {
