@@ -229,9 +229,6 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
     const battleEnded = processState === ProcessState.BATTLE_WON || processState === ProcessState.BATTLE_LOST;
 
-    // continue - показывать награду и опыт при чекпоинте
-
-    // trophy - добыча
     return (
       <div className="battle-process">
         {processState === ProcessState.LOADING ? <Loader message="Loading assets" /> : null}
@@ -240,18 +237,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
             <p className="battle-process__message">Победа</p>
 
             <div className="battle-process__reward">
-              {checkpointReward?.checkpointId === checkpoint.id ? (
-                <>
-                  <p className="battle-process__reward-exp">
-                    Опыт {checkpointReward.rewards.reduce((exp, rwd) => exp + rwd.experience, 0)}
-                  </p>
-                  <p className="battle-process__reward-swag">
-                    Добыто {checkpointReward.rewards.reduce((gld, rwd) => gld + rwd.gold, 0)} монет
-                  </p>
-                </>
-              ) : (
-                <Loader message="Checking rewards" />
-              )}
+              {checkpointReward?.checkpointId !== checkpoint.id ? <Loader message="Checking rewards" /> : null}
             </div>
 
             <button className="battle-process__btn-onwards" onClick={() => this.props.closeProcess()}>
@@ -266,7 +252,12 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
           </div>
         )}
 
-        <HeroesPanel actors={heroes} current={currentActor?.isHero ? (currentActor as QuestHero) : undefined} showActions={!battleEnded} />
+        <HeroesPanel
+          actors={heroes}
+          current={currentActor?.isHero ? (currentActor as QuestHero) : undefined}
+          showActions={!battleEnded}
+          heroRewards={checkpointReward?.checkpointId === checkpoint.id ? checkpointReward : undefined}
+        />
       </div>
     );
   }

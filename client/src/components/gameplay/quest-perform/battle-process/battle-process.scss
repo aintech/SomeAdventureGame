@@ -2,7 +2,7 @@
 
 .battle-process {
   overflow: hidden;
-  height: calc(var(--vh, 1vh) * 100 - #{$header_height} - 40px);
+  // height: calc(var(--vh, 1vh) * 100 - #{$header_height} - 40px);
   display: flex;
   align-items: flex-end;
 
@@ -12,7 +12,6 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background-color: rgba($color: black, $alpha: 0.3);
     color: white;
   }
 
@@ -35,7 +34,7 @@
   &__btn-onwards {
     @include strokeText;
     padding: 20px;
-    margin: 0 auto 160px auto;
+    margin: 160px auto;
     height: fit-content;
     font-family: inherit;
     font-size: 24px;

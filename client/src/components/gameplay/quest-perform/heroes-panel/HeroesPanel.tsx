@@ -1,12 +1,13 @@
 import QuestHeroItem from '../quest-hero-item/QuestHeroItem';
 import QuestHero from '../battle-process/process-helpers/QuestHero';
 import './heroes-panel.scss';
+import { CheckpointReward } from '../../../../models/QuestCheckpoint';
 
 type HeroesPanelProps = {
   actors: QuestHero[];
   current?: QuestHero;
   showActions?: boolean;
-  heroRewards?: Map<number, { gold: number; experience: number }>;
+  heroRewards?: CheckpointReward;
 };
 
 const HeroesPanel = ({ actors, current, showActions, heroRewards }: HeroesPanelProps) => {
@@ -16,7 +17,13 @@ const HeroesPanel = ({ actors, current, showActions, heroRewards }: HeroesPanelP
   const seed = new Date().getTime();
 
   const heroItems = actors.map((hero) => (
-    <QuestHeroItem key={hero.id} hero={hero} current={current?.id === hero.id} reward={heroRewards?.get(hero.id)} seed={seed} />
+    <QuestHeroItem
+      key={hero.id}
+      hero={hero}
+      current={current?.id === hero.id}
+      reward={heroRewards ? heroRewards.rewards?.filter((r) => r.heroId === hero.id)[0] : undefined}
+      seed={seed}
+    />
   ));
 
   return (

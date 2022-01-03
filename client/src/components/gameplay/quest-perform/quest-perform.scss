@@ -24,16 +24,17 @@
   &__container {
     display: flex;
     flex-direction: column;
+    align-items: center;
   }
 
   &__name {
     @include strokeText;
     min-height: 40px;
     display: flex;
+    font-size: 32px;
     align-self: center;
     align-items: center;
     font-family: inherit;
-    font-size: 26px;
     color: darkkhaki;
     cursor: default;
   }

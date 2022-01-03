@@ -17,11 +17,6 @@ import QuestComplete from './quest-complete/QuestComplete';
 import QuestMap from './quest-map/QuestMap';
 import './quest-perform.scss';
 
-export enum HeroReactionType {
-  HITTED,
-  HEALED,
-}
-
 export type QuestPerformData = {
   quest: Quest;
   heroes: Hero[];

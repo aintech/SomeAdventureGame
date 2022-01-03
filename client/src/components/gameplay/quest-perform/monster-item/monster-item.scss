@@ -40,6 +40,7 @@ $actor-width: 256px;
     height: 12px;
     &_health {
       background-color: red;
+      transition: all 1s;
     }
 
     &_overlay {

@@ -12,7 +12,7 @@ type QuestHeroItemProps = {
   hero: QuestHero;
   heroClickHandler: (hero: Hero) => void;
   current?: boolean;
-  reward?: { gold: number; experience: number };
+  reward?: { heroId: number; gold: number; experience: number };
   seed: number;
 };
 
@@ -58,6 +58,9 @@ const QuestHeroItem = ({ hero, current, heroClickHandler, reward, seed }: QuestH
       </div>
       <div className="quest-hero-item__reward--experience" style={rewardStyle}>
         {reward?.experience}
+      </div>
+      <div className="quest-hero-item__reward--gold" style={rewardStyle}>
+        {reward?.gold}
       </div>
       <img src={HealIconImg} alt="heal" className={healIconClass}></img>
     </div>
