@@ -69,7 +69,7 @@ export const generateCheckpoints = async (quest: Quest, embarkedHeroes: HeroWith
   return checkpoints;
 };
 
-//FIXME: Периодически тут падем
+//FIXME: Периодически тут падаем
 export const linkCheckpoints = (checkpoints: QuestCheckpointWithProgress[]): CheckpointLink[] => {
   const links: CheckpointLink[] = [];
 

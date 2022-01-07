@@ -62,7 +62,8 @@ const QuestMap = ({ quest, checkpointActivated }: QuestMapProps) => {
         x2={link.x2}
         y2={link.y2}
         stroke="#151515"
-        strokeWidth="3"
+        strokeWidth="2"
+        strokeDasharray={link.full ? undefined : '2px, 4px'}
         fill="none"
       ></line>
     </svg>
@@ -83,96 +84,73 @@ type Link = {
   y1: number;
   x2: number;
   y2: number;
+  full: boolean;
 };
 
 // Опираемся на то что карта отцентрированна и занимает 70% высоты и 90% ширины экрана, а иконки 32x32.
 const prepareLinks = (checkpoints: QuestCheckpoint[]) => {
-  const bossStage = checkpoints.find((c) => c.type === CheckpointType.BOSS)!;
   const links: Link[] = [];
 
   const dimensions = { height: window.innerHeight * 0.7, width: window.innerWidth * 0.9 };
-
-  // Расстояние между стейждами (количество междустейджевых пространств соответствует ид последнего стейджа).
-  const stagesH = bossStage.stage * MARKER_SIZE;
-  const betweenStageHeight = (dimensions.height - stagesH) / bossStage.stage - 8;
+  const bossStage = checkpoints.find((c) => c.type === CheckpointType.BOSS)!;
 
   checkpoints.forEach((ch) => {
     if (ch.linked) {
       ch.linked.forEach((l) => {
         const c = checkpoints.find((a) => a.id === l)!;
+        const stage = checkpoints.filter((a) => a.stage === ch.stage).sort((a, b) => a.id - b.id);
+        const nextStage = checkpoints.filter((a) => a.stage === ch.stage + 1).sort((a, b) => a.id - b.id);
+
         links.push({
           from: ch.id,
           to: c.id,
-          x1: markerOffset(
-            ch,
-            checkpoints.filter((a) => a.stage === ch.stage).sort((a, b) => a.id - b.id),
-            dimensions
-          ),
-          y1: dimensions.height - MARKER_SIZE,
-          x2: dimensions.width * 0.5,
-          y2: 0,
+          x1: markerXPos(ch, stage, dimensions),
+          y1: markerYPos(ch, bossStage, dimensions),
+          x2: markerXPos(c, nextStage, dimensions),
+          y2: markerYPos(c, bossStage, dimensions, true),
+          full: (ch.status === CheckpointStatus.COMPLETED || ch.type === CheckpointType.START) && c.status === CheckpointStatus.COMPLETED,
         });
       });
     }
   });
 
-  // const startStage = checkpoints.find((ch) => ch.type === CheckpointType.START)!;
-  // links.push({
-  //   from: startStage.id,
-  //   to: bossStage.id,
-  //   x1: dimensions.width * 0.5,
-  //   y1: dimensions.height - MARKER_SIZE,
-  //   x2: dimensions.width * 0.5,
-  //   y2: dimensions.height - MARKER_SIZE - betweenStageHeight,
-  // });
-
   return links;
 };
 
-const markerOffset = (checkpoint: QuestCheckpoint, stage: QuestCheckpoint[], dimensions: { height: number; width: number }) => {
+const markerXPos = (checkpoint: QuestCheckpoint, stage: QuestCheckpoint[], dimensions: { height: number; width: number }) => {
   const idx = stage.indexOf(checkpoint);
 
   const stageCenter = dimensions.width * 0.5;
   let offset = stageCenter;
 
-  switch (stage.length) {
-    case 2:
-      if (idx === 0) {
-        return offset - MARKER_GAP;
-      }
-      return offset + MARKER_GAP;
-    case 3:
-      if (idx === 0) {
-        return offset - 2 * MARKER_GAP;
-      } else if (idx === 2) {
-        return offset + 2 * MARKER_GAP;
-      }
-      return offset;
-    case 4:
-      if (idx === 0) {
-        return offset - 3 * MARKER_GAP;
-      } else if (idx === 1) {
-        return offset - MARKER_GAP;
-      } else if (idx === 2) {
-        return offset + MARKER_GAP;
-      } else if (idx === 3) {
-        return offset + 3 * MARKER_GAP;
-      }
-      return offset;
-    case 5:
-      if (idx === 0) {
-        return offset - 4 * MARKER_GAP;
-      } else if (idx === 1) {
-        return offset - 2 * MARKER_GAP;
-      } else if (idx === 3) {
-        return offset + 2 * MARKER_GAP;
-      } else if (idx === 4) {
-        return offset + 4 * MARKER_GAP;
-      }
-      return offset;
-    default:
-      return offset;
+  // При нечетном количестве чекпоинтов позиция центрального.
+  if (stage.length % 2 === 1 && idx === Math.floor(stage.length * 0.5)) {
+    return offset;
   }
+
+  // Безхитростная логика, учитывающая не более 5 чекпоинтов на стейдже.
+  const signum = idx < stage.length * 0.5 ? -1 : 1;
+  let val = 1;
+  if (idx === 0 || idx === stage.length - 1) {
+    val = stage.length - 1;
+  } else if (idx === 1 || idx === stage.length - 2) {
+    val = stage.length % 2 === 0 ? stage.length * 0.5 - 1 : Math.floor(stage.length * 0.5);
+  }
+
+  return offset + signum * val * MARKER_GAP; // * (asTarget ? -1 : 1);
+};
+
+const markerYPos = (
+  checkpoint: QuestCheckpoint,
+  bossStage: QuestCheckpoint,
+  dimensions: { height: number; width: number },
+  asTarget: boolean = false
+) => {
+  // Расстояние между стейждами (количество междустейджевых пространств соответствует ид последнего стейджа).
+  const stagesH = bossStage.stage * MARKER_SIZE;
+  const betweenStageHeight = (dimensions.height - stagesH) / bossStage.stage - 6;
+
+  return dimensions.height - MARKER_SIZE * (checkpoint.stage + 1) - betweenStageHeight * checkpoint.stage + (asTarget ? MARKER_SIZE : 0);
 };
 
 export default QuestMap;

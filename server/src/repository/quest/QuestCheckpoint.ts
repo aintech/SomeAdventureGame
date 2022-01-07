@@ -114,10 +114,10 @@ export const getQuestCheckpoints = async (progressIds: number[]) => {
     mapQuestCheckpointWithProgress
   );
 
-  return calcChecpointStatuses(checkpoints);
+  return calcCheckpointStatuses(checkpoints);
 };
 
-const calcChecpointStatuses = (checkpoints: QuestCheckpointWithProgress[]) => {
+const calcCheckpointStatuses = (checkpoints: QuestCheckpointWithProgress[]) => {
   // Сразу помечаем пройденные чекпоинты.
   checkpoints.forEach((ch) => {
     if (ch.passed) {
@@ -125,35 +125,47 @@ const calcChecpointStatuses = (checkpoints: QuestCheckpointWithProgress[]) => {
     }
   });
 
-  // Если start слинкован с чекпоинтами (это те что stage = 1) которые ещё не пройдены, то они chooseable.
-  const startLinks = checkpoints.filter((ch) => ch.stage === 1);
-  if (startLinks.every((ch) => !ch.passed)) {
-    startLinks.forEach((ch) => (ch.status = CheckpointStatus.CHOOSEABLE));
-  } else {
-    // Если на чекпоинты линкуется пройденный чекпоинт с предыдущего стейджа, но при этом на текущем стейдже нет пройденных, то он доступен для выбора.
-    checkpoints
-      .filter((ch) => ch.passed && ch.type !== CheckpointType.START && ch.type !== CheckpointType.BOSS)
-      .forEach((ch) => {
-        const linked = checkpoints.filter((c) => ch.linked!.includes(c.id!));
-        if (!linked.some((ch) => ch.passed)) {
-          linked.forEach((c) => (c.status = CheckpointStatus.CHOOSEABLE));
-          return;
-        }
-      });
-  }
-
-  // Если на текущем стейдже уже есть пройденный чекпоинт, то остальные недоступны.
-  const bossStage = checkpoints.find((ch) => ch.type === CheckpointType.BOSS)!;
-  for (let i = 1; i < bossStage.stage; i++) {
-    const stage = checkpoints.filter((ch) => ch.stage === i);
-    if (stage.some((ch) => ch.passed)) {
-      stage.forEach((ch) => {
-        if (!ch.passed) {
-          ch.status = CheckpointStatus.DISABLED;
-        }
-      });
+  // Разделяем чекпоинты по квестам
+  const checkpointsInQuest: Map<number, QuestCheckpointWithProgress[]> = new Map();
+  checkpoints.forEach((ch) => {
+    if (!checkpointsInQuest.has(ch.questId)) {
+      checkpointsInQuest.set(ch.questId, [ch]);
+    } else {
+      checkpointsInQuest.set(ch.questId, [...checkpointsInQuest.get(ch.questId)!, ch]);
     }
-  }
+  });
+
+  checkpointsInQuest.forEach((checks, _) => {
+    // Если start слинкован с чекпоинтами (это те что stage = 1) которые ещё не пройдены, то они chooseable.
+    const startLinks = checks.filter((ch) => ch.stage === 1);
+    if (startLinks.every((ch) => !ch.passed)) {
+      startLinks.forEach((ch) => (ch.status = CheckpointStatus.CHOOSEABLE));
+    } else {
+      // Если на чекпоинты линкуется пройденный чекпоинт с предыдущего стейджа, но при этом на текущем стейдже нет пройденных, то он доступен для выбора.
+      checks
+        .filter((ch) => ch.passed && ch.type !== CheckpointType.START && ch.type !== CheckpointType.BOSS)
+        .forEach((ch) => {
+          const linked = checks.filter((c) => ch.linked!.includes(c.id!));
+          if (!linked.some((ch) => ch.passed)) {
+            linked.forEach((c) => (c.status = CheckpointStatus.CHOOSEABLE));
+            return;
+          }
+        });
+    }
+
+    // Если на текущем стейдже уже есть пройденный чекпоинт, то остальные недоступны.
+    const bossStage = checks.find((ch) => ch.type === CheckpointType.BOSS)!;
+    for (let i = 1; i < bossStage.stage; i++) {
+      const stage = checks.filter((ch) => ch.stage === i);
+      if (stage.some((ch) => ch.passed)) {
+        stage.forEach((ch) => {
+          if (!ch.passed) {
+            ch.status = CheckpointStatus.DISABLED;
+          }
+        });
+      }
+    }
+  });
 
   return checkpoints;
 };
