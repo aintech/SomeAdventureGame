@@ -6,22 +6,48 @@ import { Monster } from '../Monster';
 import { getQuestProgress } from './QuestProgress';
 
 export enum CheckpointType {
+  // Стартовый чекпоинт, всегда есть и всегда один.
+  START,
+  // Финальный чекпоинт, битва с боссом, всегда есть и всегда один.
+  BOSS,
+  // Чекпоинт с боем.
   BATTLE,
+  // Чекпоинт с сокровищами.
   TREASURE,
+  // Чекпоинт с лагерем в котором героои могут отдохунть и восполнить жизнь/ману.
+  CAMP,
+}
+
+export enum CheckpointStatus {
+  // Стандартный статус, чекпоинт расположен вверх по пути, и до него теоретически можно дойти.
+  AVAILABLE,
+  // Чекпоинт можно выбать и зайти на него, расположен сразу после последнего пройденного чекпоиинта.
+  CHOOSEABLE,
+  // До данного чекпоинта невозможно дойти, например на данном стейдже уже пройден другой чекпоинт.
+  DISABLED,
+  // Чекпоинит завершён.
+  COMPLETED,
 }
 
 export type QuestCheckpoint = {
   id?: number /** empty when checkpoint not persist yet */;
   type: CheckpointType;
-  occuredAt: number;
+  stage: number;
   passed: boolean;
+  status: CheckpointStatus;
   treasure?: number;
   enemies?: Monster[];
+  linked?: number[];
 };
 
 export type CheckpointReward = {
   checkpointId: number;
   rewards: { heroId: number; gold: number; experience: number }[];
+};
+
+export type CheckpointLink = {
+  checkpointId: number;
+  linked: number[] | undefined;
 };
 
 export type QuestCheckpointWithProgress = QuestCheckpoint & {
@@ -37,17 +63,18 @@ export const persistQuestCheckpoints = async (progressId: number, checkpoints: Q
         `select 
           ${progressId},
           '${CheckpointType[checkpoint.type].toLowerCase()}', 
-          ${checkpoint.occuredAt},
+          ${checkpoint.stage},
           ${checkpoint.enemies ? `'${JSON.stringify(checkpoint.enemies)}'` : null},
+          ${checkpoint.passed},
           ${checkpoint.treasure},
-          ${checkpoint.passed}`
+          ${null}`
     )
     .join(' union ');
 
   await query<void>(
     'persistQuestCheckpoints',
     `insert into public.quest_checkpoint 
-     (quest_progress_id, type, occured_at, enemies, treasure, passed)
+     (quest_progress_id, type, stage, enemies, passed, treasure, linked)
      select * from (${checkpointsData}) as vals`
   );
 
@@ -86,6 +113,47 @@ export const getQuestCheckpoints = async (progressIds: number[]) => {
     [],
     mapQuestCheckpointWithProgress
   );
+
+  return calcChecpointStatuses(checkpoints);
+};
+
+const calcChecpointStatuses = (checkpoints: QuestCheckpointWithProgress[]) => {
+  // Сразу помечаем пройденные чекпоинты.
+  checkpoints.forEach((ch) => {
+    if (ch.passed) {
+      ch.status = CheckpointStatus.COMPLETED;
+    }
+  });
+
+  // Если start слинкован с чекпоинтами (это те что stage = 1) которые ещё не пройдены, то они chooseable.
+  const startLinks = checkpoints.filter((ch) => ch.stage === 1);
+  if (startLinks.every((ch) => !ch.passed)) {
+    startLinks.forEach((ch) => (ch.status = CheckpointStatus.CHOOSEABLE));
+  } else {
+    // Если на чекпоинты линкуется пройденный чекпоинт с предыдущего стейджа, но при этом на текущем стейдже нет пройденных, то он доступен для выбора.
+    checkpoints
+      .filter((ch) => ch.passed && ch.type !== CheckpointType.START && ch.type !== CheckpointType.BOSS)
+      .forEach((ch) => {
+        const linked = checkpoints.filter((c) => ch.linked!.includes(c.id!));
+        if (!linked.some((ch) => ch.passed)) {
+          linked.forEach((c) => (c.status = CheckpointStatus.CHOOSEABLE));
+          return;
+        }
+      });
+  }
+
+  // Если на текущем стейдже уже есть пройденный чекпоинт, то остальные недоступны.
+  const bossStage = checkpoints.find((ch) => ch.type === CheckpointType.BOSS)!;
+  for (let i = 1; i < bossStage.stage; i++) {
+    const stage = checkpoints.filter((ch) => ch.stage === i);
+    if (stage.some((ch) => ch.passed)) {
+      stage.forEach((ch) => {
+        if (!ch.passed) {
+          ch.status = CheckpointStatus.DISABLED;
+        }
+      });
+    }
+  }
 
   return checkpoints;
 };
@@ -169,38 +237,70 @@ export const deleteCheckpoints = (progressId: number) => {
   );
 };
 
+export const persistLinks = async (links: CheckpointLink[]) => {
+  const values: string[] = [];
+
+  links.forEach((link) => {
+    values.push(`
+      (
+        ${link.checkpointId},
+        '${link.linked?.join(',')}'
+      )
+    `);
+  });
+
+  await query<void>(
+    'persistLinks',
+    `update public.quest_checkpoint ch set
+      linked = c.linked
+      from (values
+      ${values.join(',')}
+      ) as c(id, linked)
+      where ch.id = c.id`
+  );
+};
+
 type CheckpointWithProgressRow = {
   id: string;
   type: string;
-  occured_at: string;
+  stage: string;
   enemies: string | null;
   passed: boolean;
   treasure: string;
   quest_progress_id: string;
   quest_id: string;
   embarked_time: Date;
+  linked: string;
 };
 
 const mapQuestCheckpointWithProgress = (row: CheckpointWithProgressRow): QuestCheckpointWithProgress => {
   return {
     id: +row.id,
     type: mapCheckpointType(row.type),
-    occuredAt: +row.occured_at,
+    stage: +row.stage,
     enemies: mapEnemies(row.enemies),
     passed: row.passed,
+    status: CheckpointStatus.AVAILABLE,
     treasure: +row.treasure,
     progressId: +row.quest_progress_id,
     questId: +row.quest_id,
     embarkedTime: row.embarked_time,
+    linked: row.linked ? row.linked.split(',').map((v) => +v) : undefined,
   };
 };
 
 const mapCheckpointType = (type: string) => {
   switch (type) {
-    case 'treasure':
-      return CheckpointType.TREASURE;
+    case 'start':
+      return CheckpointType.START;
+    case 'boss':
+      return CheckpointType.BOSS;
     case 'battle':
       return CheckpointType.BATTLE;
+    case 'treasure':
+      return CheckpointType.TREASURE;
+    case 'camp':
+      return CheckpointType.CAMP;
     default:
       throw new Error(`Unknown checkpoint type ${type}`);
   }

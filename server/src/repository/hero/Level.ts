@@ -1,5 +1,5 @@
-import query, { single } from "../Db";
-import { Hero } from "./Hero";
+import query, { single } from '../Db';
+import { Hero } from './Hero';
 
 export type LevelExp = {
   level: number;
@@ -25,7 +25,7 @@ export type HeroLevel = {
 let maxLevel = 0;
 const levels: LevelExp[] = [];
 const fetchLevels = () => {
-  return query<LevelExp[]>("fetchLevels", "select * from public.level_exp", [], mapLevel);
+  return query<LevelExp[]>('fetchLevels', 'select * from public.level_exp', [], mapLevel);
 };
 
 const checkLevelsLoaded = async () => {
@@ -39,15 +39,15 @@ const checkLevelsLoaded = async () => {
 };
 
 export const getLevelExp = (level: number) => {
-  return levels.filter((l) => l.level === level)[0];
+  return levels.find((l) => l.level === level)!;
 };
 
 const calcLevelProgress = (hero: Hero): HeroLevel => {
   if (hero.level.lvl === maxLevel) {
     hero.level;
   }
-  const currentLevelExp = levels.filter((l) => l.level === hero.level.lvl)[0];
-  const nextLevelExp = levels.filter((l) => l.level === hero.level.lvl + 1)[0];
+  const currentLevelExp = levels.find((l) => l.level === hero.level.lvl)!;
+  const nextLevelExp = levels.find((l) => l.level === hero.level.lvl + 1)!;
   if (!currentLevelExp) {
     throw new Error(`No level info ${hero}`);
   }
@@ -81,7 +81,7 @@ export const withLevelInfo = async (heroes: Hero[]) => {
 };
 
 export const getHeroLevel = (heroId: number) => {
-  return query<number>("getHeroLevel", "select level from public.hero where id = $1", [heroId], single);
+  return query<number>('getHeroLevel', 'select level from public.hero where id = $1', [heroId], single);
 };
 
 type LevelRow = {

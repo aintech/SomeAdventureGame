@@ -1,6 +1,6 @@
-import Quest from "../../../../models/Quest";
-import QuestCheckpoint from "../../../../models/QuestCheckpoint";
-import "./quest-map.scss";
+import Quest from '../../../../models/Quest';
+import QuestCheckpoint, { CheckpointStatus, CheckpointType } from '../../../../models/QuestCheckpoint';
+import './quest-map.scss';
 
 type QuestMapProps = {
   quest: Quest;
@@ -8,34 +8,44 @@ type QuestMapProps = {
 };
 
 const QuestMap = ({ quest, checkpointActivated }: QuestMapProps) => {
-  const sorted = quest.progress!.checkpoints.sort((a, b) => a.occuredTime - b.occuredTime);
-  let currentCheckpoint = sorted[sorted.length - 1];
-  sorted.forEach((c) => {
-    if (!c.passed && c.occuredTime < currentCheckpoint.occuredTime) {
-      currentCheckpoint = c;
-    }
-  });
+  const { checkpoints } = quest.progress!;
+  const bossStage = checkpoints.find((c) => c.type === CheckpointType.BOSS)!;
 
   const chooseCheckpoint = (checkpoint: QuestCheckpoint) => {
-    if (checkpoint.id !== currentCheckpoint.id) {
-      return;
+    if (checkpoint.status === CheckpointStatus.CHOOSEABLE) {
+      checkpointActivated(checkpoint);
     }
-    checkpointActivated(checkpoint);
   };
 
-  const markerRenders = sorted.map((c) => {
+  const stageMap = [];
+
+  for (let i = 0; i <= bossStage.stage; i++) {
+    stageMap[i] = checkpoints.filter((c) => c.stage === i);
+  }
+
+  const markerRenders = stageMap.map((stage) => {
     return (
-      <div
-        key={c.id}
-        onClick={() => chooseCheckpoint(c)}
-        className={`quest-map__checkpoint-marker ${
-          c.passed
-            ? "quest-map__checkpoint-marker--passed"
-            : c.id === currentCheckpoint.id
-            ? "quest-map__checkpoint-marker--active"
-            : "quest-map__checkpoint-marker--inactive"
-        }`}
-      ></div>
+      <div key={stage[0].stage} className="quest-map__stage">
+        {stage
+          .sort((a, b) => a.id - b.id)
+          .map((ch) => {
+            return (
+              <div
+                key={ch.id}
+                onClick={() => chooseCheckpoint(ch)}
+                className={`quest-map__checkpoint-marker quest-map__checkpoint-marker_type_${CheckpointType[ch.type].toLowerCase()}${
+                  ch.status === CheckpointStatus.CHOOSEABLE
+                    ? ' quest-map__checkpoint-marker_chooseable'
+                    : ch.status === CheckpointStatus.DISABLED
+                    ? ' quest-map__checkpoint-marker_disabled'
+                    : ''
+                }`}
+              >
+                {ch.status === CheckpointStatus.COMPLETED ? <div className="quest-map__checkpoint-marker_completed"></div> : null}
+              </div>
+            );
+          })}
+      </div>
     );
   });
 

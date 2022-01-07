@@ -2,7 +2,7 @@ import { Router } from 'express';
 import AuthMiddleware from '../middleware/AuthMiddleware';
 import { getHeroesOnQuest } from '../repository/hero/Hero';
 import { completeQuest, embarkOnQuest, getQuestById, getQuests } from '../repository/quest/Quest';
-import { checkpointPassed, getQuestCheckpoint } from '../repository/quest/QuestCheckpoints';
+import { checkpointPassed, getQuestCheckpoint } from '../repository/quest/QuestCheckpoint';
 
 const questsRouter = Router();
 

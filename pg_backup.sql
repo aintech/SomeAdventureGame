@@ -5,7 +5,31 @@
 -- Dumped from database version 10.19 (Ubuntu 10.19-1.pgdg18.04+1)
 -- Dumped by pg_dump version 14.1 (Ubuntu 14.1-1.pgdg18.04+1)
 
--- Started on 2021-12-23 11:56:32 MSK
+-- Started on 2022-01-07 14:08:56 MSK
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+DROP DATABASE adventure;
+--
+-- TOC entry 3146 (class 1262 OID 16702)
+-- Name: adventure; Type: DATABASE; Schema: -; Owner: yaremchuken
+--
+
+CREATE DATABASE adventure WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE = 'en_US.UTF-8';
+
+
+ALTER DATABASE adventure OWNER TO yaremchuken;
+
+\connect adventure
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -66,7 +90,7 @@ CREATE SEQUENCE public.building_user_id_seq
 ALTER TABLE public.building_user_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3146 (class 0 OID 0)
+-- TOC entry 3147 (class 0 OID 0)
 -- Dependencies: 226
 -- Name: building_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
@@ -317,7 +341,7 @@ CREATE SEQUENCE public.monster_id_seq
 ALTER TABLE public.monster_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3147 (class 0 OID 0)
+-- TOC entry 3148 (class 0 OID 0)
 -- Dependencies: 212
 -- Name: monster_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
@@ -355,7 +379,7 @@ CREATE SEQUENCE public.perk_id_seq
 ALTER TABLE public.perk_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3148 (class 0 OID 0)
+-- TOC entry 3149 (class 0 OID 0)
 -- Dependencies: 216
 -- Name: perk_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
@@ -391,10 +415,11 @@ CREATE TABLE public.quest_checkpoint (
     id bigint NOT NULL,
     quest_progress_id bigint NOT NULL,
     type character varying NOT NULL,
-    occured_at bigint NOT NULL,
+    stage bigint NOT NULL,
     enemies character varying,
     passed boolean NOT NULL,
-    tribute bigint DEFAULT 0 NOT NULL
+    treasure bigint DEFAULT 0,
+    linked character varying
 );
 
 
@@ -416,7 +441,7 @@ CREATE SEQUENCE public.quest_checkpoints_id_seq
 ALTER TABLE public.quest_checkpoints_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3149 (class 0 OID 0)
+-- TOC entry 3150 (class 0 OID 0)
 -- Dependencies: 210
 -- Name: quest_checkpoints_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
@@ -440,7 +465,7 @@ CREATE SEQUENCE public.quest_id_seq
 ALTER TABLE public.quest_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3150 (class 0 OID 0)
+-- TOC entry 3151 (class 0 OID 0)
 -- Dependencies: 201
 -- Name: quest_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
@@ -480,7 +505,7 @@ CREATE SEQUENCE public.quest_progress_id_seq
 ALTER TABLE public.quest_progress_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3151 (class 0 OID 0)
+-- TOC entry 3152 (class 0 OID 0)
 -- Dependencies: 208
 -- Name: quest_progress_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
@@ -520,7 +545,7 @@ CREATE SEQUENCE public.skill_id_seq
 ALTER TABLE public.skill_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3152 (class 0 OID 0)
+-- TOC entry 3153 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: skill_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
@@ -558,7 +583,7 @@ CREATE SEQUENCE public.stats_user_id_seq
 ALTER TABLE public.stats_user_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3153 (class 0 OID 0)
+-- TOC entry 3154 (class 0 OID 0)
 -- Dependencies: 199
 -- Name: stats_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
@@ -609,7 +634,7 @@ CREATE SEQUENCE public.user_id_seq
 ALTER TABLE public.user_id_seq OWNER TO yaremchuken;
 
 --
--- TOC entry 3154 (class 0 OID 0)
+-- TOC entry 3155 (class 0 OID 0)
 -- Dependencies: 196
 -- Name: user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yaremchuken
 --
@@ -663,7 +688,7 @@ ALTER TABLE ONLY public.quest ALTER COLUMN id SET DEFAULT nextval('public.quest_
 
 
 --
--- TOC entry 2926 (class 2604 OID 16963)
+-- TOC entry 2925 (class 2604 OID 16963)
 -- Name: quest_checkpoint id; Type: DEFAULT; Schema: public; Owner: yaremchuken
 --
 
@@ -851,25 +876,24 @@ INSERT INTO public.equipment_tier (equipment_id, tier, power, defence, vitality,
 -- Data for Name: hero; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (746, 1, 'Серпок', 7, 0, 140, 0, 30, 14, 2, true, '2021-10-11 12:21:14.968445', 1, 3, 5);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (835, 1, 'Мира', 9, 0, 120, 0, 10, 12, 2, true, '2021-11-24 17:38:08.338954', 1, 1, 5);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (837, 1, 'Клевер', 8, 0, 100, 0, 12, 10, 2, true, '2021-11-24 17:38:09.338954', 1, 3, 5);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (835, 1, 'Мира', 9, 0, 120, 63, 52, 12, 2, true, '2021-11-24 17:38:08.338954', 1, 1, 5);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (837, 1, 'Клевер', 8, 0, 100, 63, 42, 10, 2, true, '2021-11-24 17:38:09.338954', 1, 3, 5);
 INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (890, 1, 'Плея', 9, 0, 100, 0, 2, 10, 2, true, '2021-11-30 14:10:35.119111', 1, 0, 5);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1072, 1, 'Луна', 7, 0, 140, 0, 210, 14, 2, false, '2021-12-21 16:40:16.467881', 1, 4, 0);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1073, 1, 'Олива', 5, 0, 130, 0, 180, 13, 2, false, '2021-12-21 16:40:08.467881', 1, 4, 0);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1074, 1, 'Мира', 10, 0, 130, 0, 230, 13, 2, false, '2021-12-21 16:40:07.467881', 1, 4, 0);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1075, 1, 'Полана', 8, 0, 120, 0, 200, 12, 2, false, '2021-12-21 16:40:11.467881', 1, 1, 0);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1076, 1, 'Тэрра', 10, 0, 130, 0, 230, 13, 2, false, '2021-12-21 16:40:13.467881', 1, 0, 0);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1077, 1, 'Март', 8, 0, 120, 0, 200, 12, 2, false, '2021-12-21 16:40:15.467881', 1, 2, 0);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (746, 1, 'Серпок', 7, 0, 140, 166, 249, 14, 2, true, '2021-10-11 12:21:14.968445', 1, 3, 5);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1163, 1, 'Саргона', 6, 0, 130, 0, 190, 13, 2, false, '2022-01-07 13:56:54.360101', 1, 3, 0);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1164, 1, 'Капля', 9, 0, 120, 0, 210, 12, 2, false, '2022-01-07 13:57:01.360101', 1, 4, 0);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1165, 1, 'Сола', 9, 0, 110, 0, 200, 11, 2, false, '2022-01-07 13:57:03.360101', 1, 4, 0);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1166, 1, 'Сарина', 6, 0, 100, 0, 160, 10, 2, false, '2022-01-07 13:56:59.360101', 1, 2, 0);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1167, 1, 'Полана', 8, 0, 130, 0, 210, 13, 2, false, '2022-01-07 13:56:58.360101', 1, 1, 0);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1168, 1, 'Сола', 6, 0, 100, 0, 160, 10, 2, false, '2022-01-07 13:57:02.360101', 1, 3, 0);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (604, 1, 'Ровер', 7, 0, 120, 266, 147, 12, 2, true, '2021-08-07 10:23:51.924464', 1, 1, 5);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (601, 1, 'Карион', 12, 0, 160, 668, 45, 16, 2, true, '2021-08-07 10:23:47.924464', 2, 4, 5);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (603, 1, 'Мосток', 12, 0, 140, 308, 19, 14, 2, true, '2021-08-07 10:23:48.924464', 2, 2, 5);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1169, 1, 'Плея', 5, 0, 120, 0, 170, 12, 2, false, '2022-01-07 13:57:00.360101', 1, 1, 0);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1170, 1, 'Полана', 5, 0, 140, 0, 190, 14, 2, false, '2022-01-07 13:56:57.360101', 1, 4, 0);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1171, 1, 'Сола', 9, 0, 100, 0, 190, 10, 2, false, '2022-01-07 13:56:55.360101', 1, 0, 0);
+INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1172, 1, 'Остера', 5, 0, 110, 0, 160, 11, 2, false, '2022-01-07 13:56:56.360101', 1, 0, 0);
 INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (839, 1, 'Сарина', 8, 0, 130, 0, 0, 13, 2, true, '2021-11-24 17:38:07.338954', 1, 4, 5);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1078, 1, 'Цветик', 7, 0, 120, 0, 190, 12, 2, false, '2021-12-21 16:40:12.467881', 1, 2, 0);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1079, 1, 'Саргона', 7, 0, 140, 0, 210, 14, 2, false, '2021-12-21 16:40:06.467881', 1, 0, 0);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1080, 1, 'Плея', 6, 0, 130, 0, 190, 13, 2, false, '2021-12-21 16:40:09.467881', 1, 0, 0);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1081, 1, 'Цветик', 5, 0, 100, 0, 150, 10, 2, false, '2021-12-21 16:40:14.467881', 1, 2, 0);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (1082, 1, 'Сарина', 5, 0, 110, 0, 160, 11, 2, false, '2021-12-21 16:40:10.467881', 1, 0, 0);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (604, 1, 'Ровер', 7, 0, 120, 163, 90, 12, 2, true, '2021-08-07 10:23:51.924464', 1, 1, 5);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (601, 1, 'Карион', 12, 0, 160, 565, 12, 16, 2, true, '2021-08-07 10:23:47.924464', 2, 4, 5);
-INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (603, 1, 'Мосток', 7, 0, 110, 205, 42, 11, 2, true, '2021-08-07 10:23:48.924464', 1, 2, 5);
 INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (842, 1, 'Троя', 8, 0, 100, 0, 8, 10, 2, true, '2021-11-25 18:02:01.280163', 1, 1, 5);
 INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (861, 1, 'Белянка', 10, 0, 130, 0, 18, 13, 2, true, '2021-11-28 12:38:36.33364', 1, 2, 5);
 INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, gold, vitality, initiative, hired, appear_at, level, type, wizdom) VALUES (838, 1, 'Луна', 10, 0, 120, 0, 0, 12, 2, true, '2021-11-24 17:38:05.338954', 1, 0, 5);
@@ -882,16 +906,16 @@ INSERT INTO public.hero (id, user_id, name, power, defence, health, experience, 
 --
 
 INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (838, NULL, '2021-12-13 19:33:01.16601+03', NULL, 0, 'Не при делах');
-INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (835, NULL, '2021-12-13 19:33:05.011055+03', NULL, 0, 'Не при делах');
-INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (837, NULL, '2021-12-13 19:33:05.013686+03', NULL, 0, 'Не при делах');
+INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (601, 3, '2022-01-06 21:27:04.288831+03', NULL, 1, 'Выполняет задание Бить и пить');
+INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (603, 3, '2022-01-06 21:27:04.290446+03', NULL, 1, 'Выполняет задание Бить и пить');
+INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (604, 3, '2022-01-06 21:27:04.29196+03', NULL, 1, 'Выполняет задание Бить и пить');
+INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (746, 3, '2022-01-06 21:27:04.293962+03', NULL, 1, 'Выполняет задание Бить и пить');
 INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (839, NULL, '2021-12-13 19:33:07.325479+03', NULL, 0, 'Не при делах');
 INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (842, NULL, '2021-12-13 19:33:07.327936+03', NULL, 0, 'Не при делах');
 INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (861, NULL, '2021-12-13 19:33:07.32955+03', NULL, 0, 'Не при делах');
 INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (890, NULL, '2021-12-03 20:37:54.888246+03', NULL, 0, 'Не при делах');
-INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (601, 3, '2021-12-14 12:46:40.455664+03', NULL, 1, 'Выполняет задание Бить и пить');
-INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (603, 3, '2021-12-14 12:46:40.457375+03', NULL, 1, 'Выполняет задание Бить и пить');
-INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (604, 3, '2021-12-14 12:46:40.458866+03', NULL, 1, 'Выполняет задание Бить и пить');
-INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (746, 3, '2021-12-14 12:46:40.460288+03', NULL, 1, 'Выполняет задание Бить и пить');
+INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (835, NULL, '2022-01-03 17:10:31.472602+03', NULL, 0, 'Не при делах');
+INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, activity_type, description) VALUES (837, NULL, '2022-01-03 17:11:53.479371+03', NULL, 0, 'Не при делах');
 
 
 --
@@ -900,50 +924,48 @@ INSERT INTO public.hero_activity (hero_id, activity_id, started_at, duration, ac
 -- Data for Name: hero_equipment; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1163, 3, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1164, 3, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1165, 3, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1166, 3, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1167, 3, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1168, 3, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1169, 3, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1170, 3, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1171, 3, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1172, 3, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1163, 1, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1164, 1, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1165, 1, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1166, 1, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1167, 2, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1168, 1, 0);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (746, 8, 3);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1169, 2, 0);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (835, 8, 3);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1170, 1, 0);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (746, 7, 3);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1072, 3, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1171, 1, 0);
+INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1172, 1, 0);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (837, 7, 3);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (838, 9, 0);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (839, 9, 0);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1073, 3, 0);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1074, 3, 0);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (842, 7, 1);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1075, 3, 0);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1076, 3, 0);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1077, 3, 0);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (603, 9, 3);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1078, 3, 0);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1079, 3, 0);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (603, 1, 3);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1080, 3, 0);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (835, 7, 3);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1081, 3, 0);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1082, 3, 0);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1072, 1, 0);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (838, 4, 1);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (839, 4, 1);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (604, 8, 3);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (601, 4, 3);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (604, 7, 3);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (837, 8, 3);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1073, 1, 0);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1074, 1, 0);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1075, 2, 0);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1076, 1, 0);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1077, 1, 0);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1078, 1, 0);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (890, 4, 3);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (601, 9, 3);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (842, 8, 3);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (861, 9, 3);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1079, 1, 0);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1080, 1, 0);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (890, 9, 2);
 INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (861, 1, 3);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1081, 1, 0);
-INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1082, 1, 0);
 
 
 --
@@ -952,39 +974,40 @@ INSERT INTO public.hero_equipment (hero_id, equipment_id, tier) VALUES (1082, 1,
 -- Data for Name: hero_item; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1072, 1, 3);
 INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (604, 1, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1073, 1, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1074, 1, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1075, 1, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (601, 1, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (601, 2, 1);
 INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (890, 1, 2);
 INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (604, 3, 3);
 INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (746, 1, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1076, 1, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1077, 1, 3);
 INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (603, 1, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1078, 1, 3);
 INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (835, 1, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1079, 1, 3);
 INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (746, 3, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (835, 3, 1);
 INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (837, 1, 3);
 INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (842, 1, 2);
 INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (861, 1, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1080, 1, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1081, 1, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1082, 1, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1072, 2, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1073, 2, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1074, 2, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1075, 3, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1076, 2, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1077, 2, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1078, 2, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1079, 2, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1080, 2, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1081, 2, 3);
-INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1082, 2, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (835, 3, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (837, 3, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1163, 1, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1164, 1, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1165, 1, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1166, 1, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1167, 1, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1168, 1, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1169, 1, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1170, 1, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1171, 1, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1172, 1, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1163, 3, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1164, 2, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1165, 2, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1166, 2, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1167, 3, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1168, 3, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1169, 3, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1170, 2, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1171, 2, 3);
+INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1172, 2, 3);
 
 
 --
@@ -996,39 +1019,37 @@ INSERT INTO public.hero_item (hero_id, item_id, amount) VALUES (1082, 2, 3);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (601, 11);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (601, 9);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (601, 3);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1072, 11);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (603, 4);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (603, 10);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (603, 9);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (835, 6);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (835, 2);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (604, 3);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1072, 3);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1073, 8);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1074, 4);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (837, 11);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (838, 10);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (838, 9);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (839, 1);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (839, 5);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (839, 2);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1074, 9);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1074, 7);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (746, 6);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1075, 9);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1076, 11);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1076, 1);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (842, 9);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (842, 1);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1077, 5);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1078, 4);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (890, 10);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1079, 4);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1079, 11);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1080, 3);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1081, 8);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1082, 8);
-INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1082, 9);
+INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1163, 9);
+INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1164, 6);
+INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1165, 7);
+INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1166, 11);
+INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1166, 8);
+INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1167, 7);
+INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1168, 10);
+INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1169, 9);
+INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1170, 9);
+INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1170, 1);
+INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1171, 4);
+INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1171, 11);
+INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1171, 6);
+INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1172, 8);
+INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (1172, 9);
 INSERT INTO public.hero_perk (hero_id, perk_id) VALUES (861, 6);
 
 
@@ -1130,9 +1151,21 @@ INSERT INTO public.quest (id, level, title, description, fame, tribute, experien
 -- Data for Name: quest_checkpoint; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
-INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, occured_at, enemies, passed, tribute) VALUES (4161, 851, 'battle', 25, '[{"id":1,"level":1,"name":"goblin","power":26,"health":120,"initiative":4,"defence":3,"experience":40,"actorId":0,"drop":[{"fraction":67,"gold":1},{"fraction":14,"gold":1},{"fraction":41,"gold":1},{"fraction":71,"gold":1},{"fraction":28,"gold":1},{"fraction":32,"gold":1},{"fraction":60,"gold":1},{"fraction":13,"gold":1},{"fraction":52,"gold":1},{"fraction":96,"gold":1},{"fraction":45,"gold":1},{"fraction":20,"gold":1},{"fraction":69,"gold":1},{"fraction":85,"gold":1},{"fraction":102,"gold":1},{"fraction":55,"gold":1},{"fraction":32,"gold":1},{"fraction":15,"gold":1},{"fraction":54,"gold":1},{"fraction":41,"gold":1},{"fraction":24,"gold":1},{"fraction":74,"gold":1},{"fraction":71,"gold":1},{"fraction":65,"gold":1},{"fraction":107,"gold":1},{"fraction":36,"gold":1},{"fraction":82,"gold":1},{"fraction":24,"gold":1},{"fraction":66,"gold":1},{"fraction":27,"gold":1},{"fraction":55,"gold":1},{"fraction":94,"gold":1},{"fraction":54,"gold":1},{"fraction":80,"gold":1},{"fraction":94,"gold":1},{"fraction":33,"gold":1},{"fraction":53,"gold":1},{"fraction":56,"gold":1},{"fraction":103,"gold":1},{"fraction":51,"gold":1},{"fraction":36,"gold":1},{"fraction":76,"gold":1},{"fraction":64,"gold":1},{"fraction":59,"gold":1},{"fraction":80,"gold":1},{"fraction":101,"gold":1},{"fraction":75,"gold":1},{"fraction":60,"gold":1},{"fraction":40,"gold":1},{"fraction":63,"gold":1},{"fraction":56,"gold":1},{"fraction":58,"gold":1}]},{"id":1,"level":1,"name":"goblin","power":26,"health":120,"initiative":4,"defence":3,"experience":40,"actorId":1,"drop":[{"fraction":25,"gold":1},{"fraction":21,"gold":1},{"fraction":49,"gold":1},{"fraction":83,"gold":1},{"fraction":99,"gold":1},{"fraction":90,"gold":1},{"fraction":72,"gold":1},{"fraction":50,"gold":1},{"fraction":81,"gold":1},{"fraction":12,"gold":1},{"fraction":67,"gold":1},{"fraction":19,"gold":1},{"fraction":104,"gold":1},{"fraction":90,"gold":1},{"fraction":68,"gold":1},{"fraction":39,"gold":1},{"fraction":26,"gold":1},{"fraction":38,"gold":1},{"fraction":69,"gold":1},{"fraction":29,"gold":1},{"fraction":53,"gold":1},{"fraction":59,"gold":1},{"fraction":61,"gold":1},{"fraction":102,"gold":1},{"fraction":73,"gold":1},{"fraction":32,"gold":1},{"fraction":103,"gold":1},{"fraction":41,"gold":1},{"fraction":61,"gold":1},{"fraction":105,"gold":1},{"fraction":62,"gold":1},{"fraction":81,"gold":1},{"fraction":43,"gold":1},{"fraction":38,"gold":1},{"fraction":17,"gold":1},{"fraction":91,"gold":1},{"fraction":58,"gold":1},{"fraction":55,"gold":1}]},{"id":1,"level":1,"name":"goblin","power":26,"health":120,"initiative":4,"defence":3,"experience":40,"actorId":2,"drop":[{"fraction":42,"gold":1},{"fraction":96,"gold":1},{"fraction":87,"gold":1},{"fraction":68,"gold":1},{"fraction":12,"gold":1},{"fraction":51,"gold":1},{"fraction":61,"gold":1},{"fraction":27,"gold":1},{"fraction":52,"gold":1},{"fraction":35,"gold":1},{"fraction":32,"gold":1},{"fraction":104,"gold":1},{"fraction":43,"gold":1},{"fraction":98,"gold":1},{"fraction":46,"gold":1},{"fraction":55,"gold":1},{"fraction":62,"gold":1},{"fraction":34,"gold":1},{"fraction":37,"gold":1},{"fraction":100,"gold":1},{"fraction":20,"gold":1},{"fraction":86,"gold":1},{"fraction":50,"gold":1},{"fraction":80,"gold":1},{"fraction":102,"gold":1},{"fraction":49,"gold":1},{"fraction":100,"gold":1},{"fraction":23,"gold":1},{"fraction":90,"gold":1},{"fraction":102,"gold":1},{"fraction":66,"gold":1},{"fraction":43,"gold":1},{"fraction":81,"gold":1},{"fraction":64,"gold":1},{"fraction":98,"gold":1},{"fraction":93,"gold":1},{"fraction":98,"gold":1},{"fraction":31,"gold":1},{"fraction":59,"gold":1},{"fraction":63,"gold":1},{"fraction":105,"gold":1},{"fraction":91,"gold":1},{"fraction":54,"gold":1},{"fraction":76,"gold":1},{"fraction":54,"gold":1},{"fraction":20,"gold":1},{"fraction":38,"gold":1},{"fraction":17,"gold":1},{"fraction":87,"gold":1},{"fraction":97,"gold":1},{"fraction":99,"gold":1},{"fraction":93,"gold":1},{"fraction":82,"gold":1},{"fraction":101,"gold":1},{"fraction":99,"gold":1},{"fraction":14,"gold":1},{"fraction":84,"gold":1},{"fraction":101,"gold":1},{"fraction":95,"gold":1},{"fraction":101,"gold":1}]},{"id":1,"level":1,"name":"goblin","power":26,"health":120,"initiative":4,"defence":3,"experience":40,"actorId":3,"drop":[{"fraction":99,"gold":1},{"fraction":71,"gold":1},{"fraction":16,"gold":1},{"fraction":17,"gold":1},{"fraction":80,"gold":1},{"fraction":39,"gold":1},{"fraction":86,"gold":1},{"fraction":86,"gold":1},{"fraction":98,"gold":1},{"fraction":70,"gold":1},{"fraction":88,"gold":1},{"fraction":63,"gold":1},{"fraction":77,"gold":1},{"fraction":34,"gold":1},{"fraction":91,"gold":1},{"fraction":39,"gold":1},{"fraction":57,"gold":1},{"fraction":24,"gold":1},{"fraction":78,"gold":1},{"fraction":67,"gold":1},{"fraction":49,"gold":1},{"fraction":17,"gold":1},{"fraction":47,"gold":1},{"fraction":23,"gold":1},{"fraction":91,"gold":1},{"fraction":106,"gold":1},{"fraction":38,"gold":1},{"fraction":96,"gold":1},{"fraction":31,"gold":1},{"fraction":96,"gold":1},{"fraction":60,"gold":1},{"fraction":63,"gold":1},{"fraction":13,"gold":1},{"fraction":76,"gold":1},{"fraction":46,"gold":1},{"fraction":56,"gold":1},{"fraction":14,"gold":1},{"fraction":104,"gold":1},{"fraction":96,"gold":1},{"fraction":31,"gold":1},{"fraction":33,"gold":1},{"fraction":44,"gold":1},{"fraction":36,"gold":1},{"fraction":50,"gold":1},{"fraction":80,"gold":1},{"fraction":46,"gold":1},{"fraction":75,"gold":1},{"fraction":98,"gold":1},{"fraction":44,"gold":1}]}]', false, 51);
-INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, occured_at, enemies, passed, tribute) VALUES (4162, 851, 'battle', 5, '[{"id":1,"level":1,"name":"goblin","power":26,"health":120,"initiative":4,"defence":3,"experience":40,"actorId":0,"drop":[{"fraction":58,"gold":1},{"fraction":18,"gold":1},{"fraction":74,"gold":1},{"fraction":83,"gold":1},{"fraction":37,"gold":1},{"fraction":106,"gold":1},{"fraction":50,"gold":1},{"fraction":34,"gold":1},{"fraction":42,"gold":1},{"fraction":28,"gold":1},{"fraction":33,"gold":1},{"fraction":14,"gold":1},{"fraction":16,"gold":1},{"fraction":79,"gold":1},{"fraction":56,"gold":1},{"fraction":15,"gold":1},{"fraction":85,"gold":1},{"fraction":35,"gold":1},{"fraction":21,"gold":1},{"fraction":30,"gold":1},{"fraction":92,"gold":1},{"fraction":75,"gold":1},{"fraction":55,"gold":1},{"fraction":36,"gold":1},{"fraction":18,"gold":1},{"fraction":71,"gold":1},{"fraction":84,"gold":1},{"fraction":43,"gold":1},{"fraction":18,"gold":1},{"fraction":13,"gold":1},{"fraction":77,"gold":1},{"fraction":103,"gold":1},{"fraction":38,"gold":1},{"fraction":43,"gold":1},{"fraction":26,"gold":1},{"fraction":39,"gold":1},{"fraction":105,"gold":1},{"fraction":18,"gold":1},{"fraction":58,"gold":1},{"fraction":99,"gold":1},{"fraction":37,"gold":1},{"fraction":66,"gold":1},{"fraction":30,"gold":1},{"fraction":34,"gold":1},{"fraction":77,"gold":1},{"fraction":89,"gold":1},{"fraction":88,"gold":1},{"fraction":40,"gold":1},{"fraction":104,"gold":1},{"fraction":67,"gold":1}]},{"id":2,"level":1,"name":"snake","power":20,"health":100,"initiative":2,"defence":2,"experience":20,"actorId":1,"drop":[{"fraction":83,"gold":1},{"fraction":64,"gold":1},{"fraction":16,"gold":1},{"fraction":36,"gold":1},{"fraction":83,"gold":1},{"fraction":18,"gold":1},{"fraction":20,"gold":1},{"fraction":63,"gold":1},{"fraction":36,"gold":1},{"fraction":35,"gold":1},{"fraction":62,"gold":1},{"fraction":67,"gold":1},{"fraction":79,"gold":1},{"fraction":15,"gold":1},{"fraction":59,"gold":1},{"fraction":50,"gold":1},{"fraction":33,"gold":1},{"fraction":80,"gold":1},{"fraction":78,"gold":1},{"fraction":76,"gold":1},{"fraction":40,"gold":1},{"fraction":16,"gold":1},{"fraction":88,"gold":1},{"fraction":52,"gold":1},{"fraction":17,"gold":1},{"fraction":61,"gold":1},{"fraction":69,"gold":1},{"fraction":54,"gold":1},{"fraction":56,"gold":1},{"fraction":78,"gold":1},{"fraction":83,"gold":1},{"fraction":75,"gold":1},{"fraction":16,"gold":1},{"fraction":53,"gold":1},{"fraction":14,"gold":1},{"fraction":88,"gold":1},{"fraction":27,"gold":1},{"fraction":49,"gold":1},{"fraction":87,"gold":1},{"fraction":49,"gold":1},{"fraction":81,"gold":1},{"fraction":89,"gold":1}]},{"id":2,"level":1,"name":"snake","power":20,"health":100,"initiative":2,"defence":2,"experience":20,"actorId":2,"drop":[{"fraction":55,"gold":1},{"fraction":55,"gold":1},{"fraction":24,"gold":1},{"fraction":61,"gold":1},{"fraction":82,"gold":1},{"fraction":27,"gold":1},{"fraction":42,"gold":1},{"fraction":82,"gold":1},{"fraction":52,"gold":1},{"fraction":83,"gold":1},{"fraction":89,"gold":1},{"fraction":73,"gold":1},{"fraction":44,"gold":1},{"fraction":35,"gold":1},{"fraction":15,"gold":1},{"fraction":81,"gold":1},{"fraction":37,"gold":1},{"fraction":76,"gold":1},{"fraction":27,"gold":1},{"fraction":42,"gold":1},{"fraction":88,"gold":1},{"fraction":18,"gold":1},{"fraction":73,"gold":1},{"fraction":66,"gold":1},{"fraction":10,"gold":1},{"fraction":33,"gold":1},{"fraction":67,"gold":1},{"fraction":73,"gold":1},{"fraction":43,"gold":1},{"fraction":74,"gold":1},{"fraction":48,"gold":1},{"fraction":78,"gold":1},{"fraction":67,"gold":1},{"fraction":66,"gold":1},{"fraction":74,"gold":1},{"fraction":32,"gold":1},{"fraction":66,"gold":1},{"fraction":28,"gold":1},{"fraction":12,"gold":1},{"fraction":65,"gold":1},{"fraction":40,"gold":1},{"fraction":17,"gold":1},{"fraction":50,"gold":1},{"fraction":36,"gold":1},{"fraction":74,"gold":1},{"fraction":47,"gold":1},{"fraction":67,"gold":1},{"fraction":42,"gold":1}]}]', false, 54);
-INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, occured_at, enemies, passed, tribute) VALUES (4163, 851, 'battle', 15, '[{"id":1,"level":1,"name":"goblin","power":26,"health":120,"initiative":4,"defence":3,"experience":40,"actorId":0,"drop":[{"fraction":105,"gold":1},{"fraction":58,"gold":1},{"fraction":64,"gold":1},{"fraction":74,"gold":1},{"fraction":71,"gold":1},{"fraction":23,"gold":1},{"fraction":81,"gold":1},{"fraction":40,"gold":1},{"fraction":66,"gold":1},{"fraction":14,"gold":1},{"fraction":50,"gold":1},{"fraction":64,"gold":1},{"fraction":107,"gold":1},{"fraction":39,"gold":1},{"fraction":102,"gold":1},{"fraction":62,"gold":1},{"fraction":100,"gold":1},{"fraction":43,"gold":1},{"fraction":102,"gold":1},{"fraction":21,"gold":1},{"fraction":88,"gold":1},{"fraction":20,"gold":1},{"fraction":67,"gold":1},{"fraction":24,"gold":1},{"fraction":106,"gold":1},{"fraction":15,"gold":1},{"fraction":98,"gold":1},{"fraction":66,"gold":1},{"fraction":84,"gold":1},{"fraction":69,"gold":1},{"fraction":104,"gold":1},{"fraction":42,"gold":1},{"fraction":21,"gold":1},{"fraction":87,"gold":1},{"fraction":42,"gold":1},{"fraction":39,"gold":1},{"fraction":71,"gold":1},{"fraction":77,"gold":1},{"fraction":53,"gold":1},{"fraction":81,"gold":1},{"fraction":100,"gold":1},{"fraction":57,"gold":1},{"fraction":102,"gold":1},{"fraction":16,"gold":1},{"fraction":12,"gold":1},{"fraction":41,"gold":1},{"fraction":91,"gold":1},{"fraction":100,"gold":1}]},{"id":2,"level":1,"name":"snake","power":20,"health":100,"initiative":2,"defence":2,"experience":20,"actorId":1,"drop":[{"fraction":21,"gold":1},{"fraction":37,"gold":1},{"fraction":40,"gold":1},{"fraction":66,"gold":1},{"fraction":31,"gold":1},{"fraction":10,"gold":1},{"fraction":28,"gold":1},{"fraction":52,"gold":1},{"fraction":76,"gold":1},{"fraction":73,"gold":1},{"fraction":65,"gold":1},{"fraction":15,"gold":1},{"fraction":68,"gold":1},{"fraction":59,"gold":1},{"fraction":49,"gold":1},{"fraction":71,"gold":1},{"fraction":79,"gold":1},{"fraction":29,"gold":1},{"fraction":61,"gold":1},{"fraction":20,"gold":1},{"fraction":41,"gold":1},{"fraction":30,"gold":1},{"fraction":29,"gold":1},{"fraction":29,"gold":1},{"fraction":53,"gold":1},{"fraction":48,"gold":1},{"fraction":86,"gold":1},{"fraction":59,"gold":1},{"fraction":37,"gold":1},{"fraction":43,"gold":1},{"fraction":25,"gold":1},{"fraction":54,"gold":1},{"fraction":73,"gold":1},{"fraction":64,"gold":1},{"fraction":58,"gold":1},{"fraction":41,"gold":1},{"fraction":70,"gold":1},{"fraction":63,"gold":1},{"fraction":74,"gold":1},{"fraction":69,"gold":1},{"fraction":38,"gold":1},{"fraction":82,"gold":1},{"fraction":37,"gold":1}]}]', false, 51);
+INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, stage, enemies, passed, treasure, linked) VALUES (4264, 865, 'boss', 6, NULL, false, 0, NULL);
+INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, stage, enemies, passed, treasure, linked) VALUES (4255, 865, 'start', 0, NULL, false, 0, '4254,4259');
+INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, stage, enemies, passed, treasure, linked) VALUES (4253, 865, 'battle', 5, '[{"id":1,"level":1,"name":"goblin","power":26,"health":120,"initiative":4,"defence":3,"experience":40,"loot":{"gold":50},"actorId":0}]', false, 0, '4264');
+INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, stage, enemies, passed, treasure, linked) VALUES (4256, 865, 'battle', 5, '[{"id":2,"level":1,"name":"snake","power":20,"health":100,"initiative":2,"defence":2,"experience":20,"loot":{"gold":40},"actorId":0}]', false, 0, '4264');
+INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, stage, enemies, passed, treasure, linked) VALUES (4265, 865, 'battle', 5, '[{"id":8,"level":1,"name":"knight","power":12,"health":90,"initiative":3,"defence":5,"experience":20,"loot":{"gold":50},"actorId":0}]', false, 0, '4264');
+INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, stage, enemies, passed, treasure, linked) VALUES (4254, 865, 'battle', 1, '[{"id":8,"level":1,"name":"knight","power":12,"health":90,"initiative":3,"defence":5,"experience":20,"loot":{"gold":50},"actorId":0}]', false, 0, '4258,4263');
+INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, stage, enemies, passed, treasure, linked) VALUES (4258, 865, 'battle', 2, '[{"id":2,"level":1,"name":"snake","power":20,"health":100,"initiative":2,"defence":2,"experience":20,"loot":{"gold":40},"actorId":0}]', false, 0, '4257');
+INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, stage, enemies, passed, treasure, linked) VALUES (4263, 865, 'battle', 2, '[{"id":6,"level":1,"name":"moth","power":16,"health":70,"initiative":3,"defence":1,"experience":15,"loot":{"gold":30},"actorId":0}]', false, 0, '4260');
+INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, stage, enemies, passed, treasure, linked) VALUES (4267, 865, 'battle', 2, '[{"id":1,"level":1,"name":"goblin","power":26,"health":120,"initiative":4,"defence":3,"experience":40,"loot":{"gold":50},"actorId":0}]', false, 0, '4261');
+INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, stage, enemies, passed, treasure, linked) VALUES (4257, 865, 'battle', 3, '[{"id":1,"level":1,"name":"goblin","power":26,"health":120,"initiative":4,"defence":3,"experience":40,"loot":{"gold":50},"actorId":0}]', false, 0, '4262');
+INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, stage, enemies, passed, treasure, linked) VALUES (4260, 865, 'battle', 3, '[{"id":6,"level":1,"name":"moth","power":16,"health":70,"initiative":3,"defence":1,"experience":15,"loot":{"gold":30},"actorId":0}]', false, 0, '4266');
+INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, stage, enemies, passed, treasure, linked) VALUES (4261, 865, 'battle', 3, '[{"id":2,"level":1,"name":"snake","power":20,"health":100,"initiative":2,"defence":2,"experience":20,"loot":{"gold":40},"actorId":0}]', false, 0, '4266');
+INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, stage, enemies, passed, treasure, linked) VALUES (4259, 865, 'battle', 1, '[{"id":6,"level":1,"name":"moth","power":16,"health":70,"initiative":3,"defence":1,"experience":15,"loot":{"gold":30},"actorId":0}]', true, 0, '4267');
+INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, stage, enemies, passed, treasure, linked) VALUES (4262, 865, 'battle', 4, '[{"id":1,"level":1,"name":"goblin","power":26,"health":120,"initiative":4,"defence":3,"experience":40,"loot":{"gold":50},"actorId":0}]', false, 0, '4253,4256');
+INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, stage, enemies, passed, treasure, linked) VALUES (4266, 865, 'battle', 4, '[{"id":2,"level":1,"name":"snake","power":20,"health":100,"initiative":2,"defence":2,"experience":20,"loot":{"gold":40},"actorId":0}]', false, 0, '4265');
 
 
 --
@@ -1141,7 +1174,7 @@ INSERT INTO public.quest_checkpoint (id, quest_progress_id, type, occured_at, en
 -- Data for Name: quest_progress; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
-INSERT INTO public.quest_progress (id, user_id, quest_id, embarked_time, completed) VALUES (851, 1, 3, '2021-12-14 12:46:45.443884+03', false);
+INSERT INTO public.quest_progress (id, user_id, quest_id, embarked_time, completed) VALUES (865, 1, 3, '2022-01-06 21:27:09.269088+03', false);
 
 
 --
@@ -1173,7 +1206,7 @@ INSERT INTO public.skill (id, name, description, hero_type, level) VALUES (15, '
 -- Data for Name: stats; Type: TABLE DATA; Schema: public; Owner: yaremchuken
 --
 
-INSERT INTO public.stats (user_id, gold, fame) VALUES (1, 23907, 780);
+INSERT INTO public.stats (user_id, gold, fame) VALUES (1, 24493, 800);
 
 
 --
@@ -1214,7 +1247,7 @@ INSERT INTO public.user_market_assortment (user_id, equipment_id) VALUES (1, 9);
 
 
 --
--- TOC entry 3155 (class 0 OID 0)
+-- TOC entry 3156 (class 0 OID 0)
 -- Dependencies: 226
 -- Name: building_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
@@ -1223,7 +1256,7 @@ SELECT pg_catalog.setval('public.building_user_id_seq', 1, false);
 
 
 --
--- TOC entry 3156 (class 0 OID 0)
+-- TOC entry 3157 (class 0 OID 0)
 -- Dependencies: 204
 -- Name: equipment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
@@ -1232,16 +1265,16 @@ SELECT pg_catalog.setval('public.equipment_id_seq', 9, true);
 
 
 --
--- TOC entry 3157 (class 0 OID 0)
+-- TOC entry 3158 (class 0 OID 0)
 -- Dependencies: 198
 -- Name: hero_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
-SELECT pg_catalog.setval('public.hero_id_seq', 1082, true);
+SELECT pg_catalog.setval('public.hero_id_seq', 1172, true);
 
 
 --
--- TOC entry 3158 (class 0 OID 0)
+-- TOC entry 3159 (class 0 OID 0)
 -- Dependencies: 224
 -- Name: item_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
@@ -1250,7 +1283,7 @@ SELECT pg_catalog.setval('public.item_id_seq', 3, true);
 
 
 --
--- TOC entry 3159 (class 0 OID 0)
+-- TOC entry 3160 (class 0 OID 0)
 -- Dependencies: 212
 -- Name: monster_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
@@ -1259,7 +1292,7 @@ SELECT pg_catalog.setval('public.monster_id_seq', 8, true);
 
 
 --
--- TOC entry 3160 (class 0 OID 0)
+-- TOC entry 3161 (class 0 OID 0)
 -- Dependencies: 216
 -- Name: perk_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
@@ -1268,16 +1301,16 @@ SELECT pg_catalog.setval('public.perk_id_seq', 11, true);
 
 
 --
--- TOC entry 3161 (class 0 OID 0)
+-- TOC entry 3162 (class 0 OID 0)
 -- Dependencies: 210
 -- Name: quest_checkpoints_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
-SELECT pg_catalog.setval('public.quest_checkpoints_id_seq', 4163, true);
+SELECT pg_catalog.setval('public.quest_checkpoints_id_seq', 4267, true);
 
 
 --
--- TOC entry 3162 (class 0 OID 0)
+-- TOC entry 3163 (class 0 OID 0)
 -- Dependencies: 201
 -- Name: quest_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
@@ -1286,16 +1319,16 @@ SELECT pg_catalog.setval('public.quest_id_seq', 14, true);
 
 
 --
--- TOC entry 3163 (class 0 OID 0)
+-- TOC entry 3164 (class 0 OID 0)
 -- Dependencies: 208
 -- Name: quest_progress_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
 
-SELECT pg_catalog.setval('public.quest_progress_id_seq', 851, true);
+SELECT pg_catalog.setval('public.quest_progress_id_seq', 865, true);
 
 
 --
--- TOC entry 3164 (class 0 OID 0)
+-- TOC entry 3165 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: skill_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
@@ -1304,7 +1337,7 @@ SELECT pg_catalog.setval('public.skill_id_seq', 15, true);
 
 
 --
--- TOC entry 3165 (class 0 OID 0)
+-- TOC entry 3166 (class 0 OID 0)
 -- Dependencies: 199
 -- Name: stats_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
@@ -1313,7 +1346,7 @@ SELECT pg_catalog.setval('public.stats_user_id_seq', 1, false);
 
 
 --
--- TOC entry 3166 (class 0 OID 0)
+-- TOC entry 3167 (class 0 OID 0)
 -- Dependencies: 196
 -- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: yaremchuken
 --
@@ -1510,7 +1543,7 @@ ALTER TABLE ONLY public."user"
     ADD CONSTRAINT user_pkey PRIMARY KEY (id);
 
 
--- Completed on 2021-12-23 11:56:32 MSK
+-- Completed on 2022-01-07 14:08:56 MSK
 
 --
 -- PostgreSQL database dump complete

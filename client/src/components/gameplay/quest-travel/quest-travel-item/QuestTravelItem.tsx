@@ -9,7 +9,7 @@ import birdImgSrc from '../../../../img/quest-travel/quest-travel_bird.png';
 import birdAnimImgSrc from '../../../../img/quest-travel/quest-travel_moving.gif';
 import Hero from '../../../../models/hero/Hero';
 import Quest from '../../../../models/Quest';
-import QuestCheckpoint from '../../../../models/QuestCheckpoint';
+import QuestCheckpoint, { CheckpointStatus, CheckpointType } from '../../../../models/QuestCheckpoint';
 import store from '../../../../Store';
 import Gif from '../../../../utils/Gif';
 import GifLoader from '../../../../utils/gif-loader';
@@ -207,10 +207,14 @@ class QuestProgressItem extends Component<QuestProgressItemProps, QuestProgressI
         <canvas width={160} height={60} className="quest-travel-item__canvas" ref={this.canvasRef}></canvas>
 
         <button
-          className={`quest-travel-item__btn-start ${this.state.seconds >= 0 && !this.props.activeQuestPerform ? 'btn-start__visible' : ''}`}
+          className={`quest-travel-item__btn-start ${
+            this.state.seconds >= 0 && !this.props.activeQuestPerform ? 'btn-start__visible' : ''
+          }`}
           onClick={this.beginQuest.bind(this)}
         >
-          {quest.progress!.checkpoints.find((c) => !c.passed) ? 'Вперед ->' : 'Забрать ->'}
+          {quest.progress!.checkpoints.find((c) => c.type === CheckpointType.BOSS && c.status === CheckpointStatus.COMPLETED)
+            ? 'Награда ->'
+            : 'Вперед ->'}
         </button>
 
         <div

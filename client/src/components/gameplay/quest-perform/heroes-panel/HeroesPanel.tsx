@@ -21,7 +21,7 @@ const HeroesPanel = ({ actors, current, showActions, heroRewards }: HeroesPanelP
       key={hero.id}
       hero={hero}
       current={current?.id === hero.id}
-      reward={heroRewards ? heroRewards.rewards?.filter((r) => r.heroId === hero.id)[0] : undefined}
+      reward={heroRewards ? heroRewards.rewards?.find((r) => r.heroId === hero.id) : undefined}
       seed={seed}
     />
   ));

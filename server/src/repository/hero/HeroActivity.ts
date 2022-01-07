@@ -4,14 +4,21 @@ import {
   EQUIPMENT_UPGRADE_COST_FRACTION,
   HEALTH_PER_VITALITY,
   MAX_HEROES_SAME_ACTIVITIES,
-} from "../../utils/Variables";
-import query from "../Db";
-import { changeHeroEquipmentTier, Equipment, EquipmentType, getEquipmentStats, getHeroEquipmentLink, replaceHeroEquipment } from "../Equipment";
-import { adjustGold, getHeroesByIds, HeroType, HeroWithPerks, setHeroHealth, updateHeroLevel } from "../hero/Hero";
-import { adjustItems, Item, ItemSubtype } from "../Item";
-import { getAlchemistAssortment, getMarketAssortment } from "../ShopsAssortment";
-import { addStats } from "../Stats";
-import { getLevelExp } from "./Level";
+} from '../../utils/Variables';
+import query from '../Db';
+import {
+  changeHeroEquipmentTier,
+  Equipment,
+  EquipmentType,
+  getEquipmentStats,
+  getHeroEquipmentLink,
+  replaceHeroEquipment,
+} from '../Equipment';
+import { adjustGold, getHeroesByIds, HeroType, HeroWithPerks, setHeroHealth, updateHeroLevel } from '../hero/Hero';
+import { adjustItems, Item, ItemSubtype } from '../Item';
+import { getAlchemistAssortment, getMarketAssortment } from '../ShopsAssortment';
+import { addStats } from '../Stats';
+import { getLevelExp } from './Level';
 
 export enum HeroActivityType {
   IDLE,
@@ -45,7 +52,7 @@ export const updateHeroActivities = async (userId: number, heroActivities: HeroA
   const heroes = await getHeroesByIds(heroIds);
 
   for (const heroActivity of heroActivities) {
-    const hero = heroes.filter((h) => +h.id === +heroActivity.heroId)[0];
+    const hero = heroes.find((h) => +h.id === +heroActivity.heroId)!;
     let enrichedActivity = heroActivity;
 
     if (heroActivity.type !== HeroActivityType.IDLE && heroActivity.type !== HeroActivityType.QUEST) {
@@ -102,7 +109,7 @@ const toIdle = async (userId: number, hero: HeroWithPerks, heroActivity: HeroAct
       throw new Error(`Activity not complete yet while switching to idle for hero ${hero.id}`);
     }
   } else {
-    console.log("ADD CHECK THAT QUEST COMPLETED!!!");
+    console.log('ADD CHECK THAT QUEST COMPLETED!!!');
   }
 
   let maxHealth = 0;
@@ -144,7 +151,7 @@ const toIdle = async (userId: number, hero: HeroWithPerks, heroActivity: HeroAct
 
   return {
     ...heroActivity,
-    description: "Не при делах",
+    description: 'Не при делах',
   };
 };
 
@@ -161,7 +168,7 @@ const idleToHealing = async (userId: number, hero: HeroWithPerks, heroActivity: 
   return {
     ...heroActivity,
     duration: hpLoss * 5,
-    description: "Отлёживается в госпитале",
+    description: 'Отлёживается в госпитале',
   };
 };
 
@@ -184,12 +191,16 @@ const idleToTraining = async (userId: number, hero: HeroWithPerks, heroActivity:
   };
 };
 
-const idleToPurchasingEquipment = async (userId: number, hero: HeroWithPerks, heroActivity: HeroActivityUpdate): Promise<HeroActivityUpdate> => {
+const idleToPurchasingEquipment = async (
+  userId: number,
+  hero: HeroWithPerks,
+  heroActivity: HeroActivityUpdate
+): Promise<HeroActivityUpdate> => {
   const assortment = await getMarketAssortment(userId);
 
   let purchase: Equipment | undefined;
 
-  const weapon = hero.equipment.filter((e) => e.type === EquipmentType.WEAPON)[0];
+  const weapon = hero.equipment.find((e) => e.type === EquipmentType.WEAPON)!;
   const newWeapon = assortment.filter((e) => appropriateEquipment(hero, EquipmentType.WEAPON, e) && e.level === weapon.level + 1);
   if (newWeapon.length > 0) {
     if (newWeapon[0].price <= hero.gold) {
@@ -198,7 +209,7 @@ const idleToPurchasingEquipment = async (userId: number, hero: HeroWithPerks, he
   }
 
   if (!purchase) {
-    const armor = hero.equipment.filter((e) => e.type === EquipmentType.ARMOR)[0];
+    const armor = hero.equipment.find((e) => e.type === EquipmentType.ARMOR)!;
     const newArmor = assortment.filter((e) => appropriateEquipment(hero, EquipmentType.ARMOR, e) && e.level === armor.level + 1);
     if (newArmor.length > 0) {
       if (newArmor[0].price <= hero.gold) {
@@ -232,7 +243,11 @@ const appropriateEquipment = (hero: HeroWithPerks, type: EquipmentType, equipmen
   );
 };
 
-const idleToPurchasingPotions = async (userId: number, hero: HeroWithPerks, heroActivity: HeroActivityUpdate): Promise<HeroActivityUpdate> => {
+const idleToPurchasingPotions = async (
+  userId: number,
+  hero: HeroWithPerks,
+  heroActivity: HeroActivityUpdate
+): Promise<HeroActivityUpdate> => {
   let potion: Item | undefined;
 
   const assortment = await getAlchemistAssortment(userId);
@@ -291,7 +306,11 @@ const idleToPurchasingPotions = async (userId: number, hero: HeroWithPerks, hero
   };
 };
 
-const idleToUpgradingEquipment = async (userId: number, hero: HeroWithPerks, heroActivity: HeroActivityUpdate): Promise<HeroActivityUpdate> => {
+const idleToUpgradingEquipment = async (
+  userId: number,
+  hero: HeroWithPerks,
+  heroActivity: HeroActivityUpdate
+): Promise<HeroActivityUpdate> => {
   let equipment: Equipment | undefined;
 
   hero.equipment.forEach((e) => {
@@ -320,7 +339,7 @@ const idleToUpgradingEquipment = async (userId: number, hero: HeroWithPerks, her
 
 const updateHeroActivity = async (heroId: number, activity: HeroActivityUpdate) => {
   await query<void>(
-    "updateHeroActivity",
+    'updateHeroActivity',
     `update public.hero_activity set 
      activity_type = ${activity.type}, 
      description = '${activity.description}',
@@ -334,7 +353,7 @@ const updateHeroActivity = async (heroId: number, activity: HeroActivityUpdate) 
 
 const countActivities = async (userId: number) => {
   return query<{ type: HeroActivityType; count: number }[]>(
-    "countHeroActivities",
+    'countHeroActivities',
     `select ha.activity_type, count(*) 
      from public.hero h left join public.hero_activity ha on ha.hero_id = h.id 
      where h.user_id = $1 and ha.activity_type > 0 group by ha.activity_type`,

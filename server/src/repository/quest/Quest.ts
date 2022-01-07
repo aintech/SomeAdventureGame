@@ -1,10 +1,10 @@
-import { GUILD_SHARE } from "../../utils/Variables";
-import query, { single } from "../Db";
-import { getHeroesByIds, getHeroesOnQuest, rewardHeroesForQuest } from "../hero/Hero";
-import { HeroActivityType, updateHeroActivities } from "../hero/HeroActivity";
-import { deleteCheckpoints, getQuestCheckpoints, QuestCheckpointWithProgress } from "./QuestCheckpoints";
-import { completeProgress, createQuestProgress, deleteProgress } from "./QuestProgress";
-import { addStats, getStats } from "../Stats";
+import { GUILD_SHARE } from '../../utils/Variables';
+import query, { single } from '../Db';
+import { getHeroesByIds, getHeroesOnQuest, rewardHeroesForQuest } from '../hero/Hero';
+import { HeroActivityType, updateHeroActivities } from '../hero/HeroActivity';
+import { deleteCheckpoints, getQuestCheckpoints, QuestCheckpointWithProgress } from './QuestCheckpoint';
+import { completeProgress, createQuestProgress, deleteProgress } from './QuestProgress';
+import { addStats, getStats } from '../Stats';
 
 export type Quest = {
   id: number;
@@ -30,7 +30,7 @@ export type QuestWithCheckpoints = QuestWithProgress & {
 
 export const getQuestById = async (userId: number, questId: number, withCheckpoints = true) => {
   const quest = await query<QuestWithCheckpoints>(
-    "getQuestsById",
+    'getQuestsById',
     `select 
           quest.*, 
           progress.id as progress_id,
@@ -58,7 +58,7 @@ const addCheckpoint = async (quest: QuestWithProgress) => {
 
 export const getQuests = async (userId: number) => {
   const quests = await query<QuestWithProgress[]>(
-    "getQuests",
+    'getQuests',
     `select 
             quest.*, 
             progress.id as progress_id, 
@@ -139,7 +139,7 @@ export const completeQuest = async (userId: number, questId: number, canceled = 
         return {
           heroId: id,
           type: HeroActivityType.IDLE,
-          description: "Не при делах",
+          description: 'Не при делах',
         };
       })
     )

@@ -2,8 +2,18 @@ import { CheckpointEnemyResponse, CheckpointResponse } from '../services/QuestSe
 import PersonageStats from './PersonageStats';
 
 export enum CheckpointType {
+  START,
+  BOSS,
   BATTLE,
   TREASURE,
+  CAMP,
+}
+
+export enum CheckpointStatus {
+  AVAILABLE,
+  CHOOSEABLE,
+  DISABLED,
+  COMPLETED,
 }
 
 export class CheckpointEnemy {
@@ -19,20 +29,22 @@ export type CheckpointReward = {
 export default class QuestCheckpoint {
   constructor(
     public id: number,
-    public occuredTime: number,
+    public stage: number,
     public type: CheckpointType,
-    public passed: boolean,
-    public enemies?: CheckpointEnemy[]
+    public status: CheckpointStatus,
+    public enemies?: CheckpointEnemy[],
+    public linked?: number[]
   ) {}
 }
 
 export const convert = (response: CheckpointResponse): QuestCheckpoint => {
   return new QuestCheckpoint(
     response.id,
-    response.occuredAt,
+    response.stage,
     response.type,
-    response.passed,
-    response.enemies ? response.enemies.map((e) => convertEnemy(e)) : undefined
+    response.status,
+    response.enemies ? response.enemies.map((e) => convertEnemy(e)) : undefined,
+    response.linked
   );
 };
 

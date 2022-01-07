@@ -1,8 +1,8 @@
-import { generateCheckpoints } from "../../generators/CheckpointGenerator";
-import query, { defaultMapper, single } from "../Db";
-import { HeroWithItems, HeroWithSkills } from "../hero/Hero";
-import { Quest } from "../quest/Quest";
-import { persistQuestCheckpoints, QuestCheckpoint } from "../quest/QuestCheckpoints";
+import { generateCheckpoints, linkCheckpoints } from '../../generators/CheckpointGenerator';
+import query, { defaultMapper, single } from '../Db';
+import { HeroWithItems, HeroWithSkills } from '../hero/Hero';
+import { Quest } from '../quest/Quest';
+import { getQuestCheckpoints, persistLinks, persistQuestCheckpoints, QuestCheckpoint } from './QuestCheckpoint';
 
 type QuestProgress = {
   id: number;
@@ -14,7 +14,7 @@ type QuestProgress = {
 
 const persistProgress = (userId: number, questId: number, checkpoints: QuestCheckpoint[]) => {
   return query<number>(
-    "persistProgress",
+    'persistProgress',
     `with quest_time as (select travel_time tt from public.quest where id = $2)
      insert into public.quest_progress 
      (user_id, quest_id, embarked_time) 
@@ -30,12 +30,16 @@ export const createQuestProgress = async (userId: number, quest: Quest, heroes: 
   const checkpoints = await generateCheckpoints(quest, heroes);
   const progressId = await persistProgress(userId, quest.id, checkpoints);
   await persistQuestCheckpoints(progressId, checkpoints);
+
+  const links = linkCheckpoints(await getQuestCheckpoints([progressId]));
+  await persistLinks(links);
+
   return progressId;
 };
 
 export const getQuestProgress = (userId: number, questId: number) => {
   return query<QuestProgress>(
-    "getQuestProgress",
+    'getQuestProgress',
     `select * from public.quest_progress where user_id = $1 and quest_id = $2`,
     [userId, questId],
     mapQuestProgress,
@@ -44,12 +48,12 @@ export const getQuestProgress = (userId: number, questId: number) => {
 };
 
 export const deleteProgress = (progressId: number) => {
-  return query<void>("deleteProgress", "delete from public.quest_progress where id = $1", [progressId]);
+  return query<void>('deleteProgress', 'delete from public.quest_progress where id = $1', [progressId]);
 };
 
 export const completeProgress = (progressId: number) => {
   return query<void>(
-    "completeProgress",
+    'completeProgress',
     `update public.quest_progress 
      set completed = true 
      where id = $1`,

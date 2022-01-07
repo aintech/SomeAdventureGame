@@ -6,7 +6,7 @@ import { onCheckpointPassed, onCompleteQuest } from '../../../actions/ApiActions
 import withApiService, { WithApiServiceProps } from '../../../hoc/WithApiService';
 import Hero from '../../../models/hero/Hero';
 import Quest from '../../../models/Quest';
-import QuestCheckpoint, { CheckpointType } from '../../../models/QuestCheckpoint';
+import QuestCheckpoint, { CheckpointStatus, CheckpointType } from '../../../models/QuestCheckpoint';
 import { CheckpointPassedBody } from '../../../services/QuestService';
 import { shallowCopy } from '../../../utils/Utils';
 import Loader from '../../loader/Loader';
@@ -78,14 +78,14 @@ const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, clos
         throw new Error(`Unknown checkpoint type ${CheckpointType[activeCheckpoint.type]}`);
     }
   } else {
-    process = quest.progress!.checkpoints.find((c) => !c.passed) ? (
+    process = quest.progress!.checkpoints.find((c) => c.type === CheckpointType.BOSS && c.status === CheckpointStatus.COMPLETED) ? (
       <>
-        <QuestMap quest={quest} checkpointActivated={checkpointActivated} />
+        <QuestComplete quest={quest} heroes={heroes} completeQuest={() => onCompleteQuest(quest)} setHeroRewards={setHeroRewards} />
         <HeroesPanel actors={heroActors} />
       </>
     ) : (
       <>
-        <QuestComplete quest={quest} heroes={heroes} completeQuest={() => onCompleteQuest(quest)} setHeroRewards={setHeroRewards} />
+        <QuestMap quest={quest} checkpointActivated={checkpointActivated} />
         <HeroesPanel actors={heroActors} />
       </>
     );
