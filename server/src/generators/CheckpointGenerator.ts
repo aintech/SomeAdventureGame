@@ -25,8 +25,11 @@ export const generateCheckpoints = async (quest: Quest, embarkedHeroes: HeroWith
 
   for (let i = 1; i <= stagesCount; i++) {
     const prevStage: QuestCheckpoint[] = checkpoints.filter((c) => c.stage === i - 1);
-    // на одном стейдже от 2 до 5 чекпоинтов, но не больше чем предыдущие * 2
-    let stagedPoints = Math.min(prevStage.length * 2, 2 + Math.floor(Math.random() * 4));
+    // на одном стейдже от 1 до 5 чекпоинтов, но не больше чем предыдущие * 2
+    let stagedPoints = Math.floor(Math.random() * 5) + 1;
+    if (stagedPoints > prevStage.length * 2) {
+      stagedPoints = prevStage.length * 2;
+    }
 
     for (let j = 0; j < stagedPoints; j++) {
       const type: number = CheckpointType.BATTLE; // i % 2 == 0 ? CheckpointType.BATTLE : CheckpointType.TREASURE; //Math.random() > 1 ? "treasure" : "battle";
@@ -66,14 +69,19 @@ export const generateCheckpoints = async (quest: Quest, embarkedHeroes: HeroWith
   return checkpoints;
 };
 
+//FIXME: Периодически тут падем
 export const linkCheckpoints = (checkpoints: QuestCheckpointWithProgress[]): CheckpointLink[] => {
   const links: CheckpointLink[] = [];
+
+  console.log('A');
 
   // Стартовая локация всегда линкуется на все первые локации.
   const start = checkpoints.find((c) => c.type === CheckpointType.START)!;
   links.push({ checkpointId: start.id!, linked: checkpoints.filter((c) => c.stage === 1).map((c) => c.id!) });
 
   const bossStage = checkpoints.find((c) => c.type === CheckpointType.BOSS)!;
+
+  console.log('B');
 
   // Сразу коннектим последние локации к босс-локации.
   checkpoints
@@ -85,11 +93,15 @@ export const linkCheckpoints = (checkpoints: QuestCheckpointWithProgress[]): Che
       })
     );
 
+  console.log('C');
+
   for (let i = 1; i < bossStage.stage - 1; i++) {
     const stage = checkpoints.filter((c) => c.stage === i).sort((a, b) => a.id! - b.id!);
     const nextStage = checkpoints.filter((c) => c.stage === i + 1).sort((a, b) => a.id! - b.id!);
     links.push(...connectStages(stage, nextStage));
   }
+
+  console.log('D');
 
   return links;
 };

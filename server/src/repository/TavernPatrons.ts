@@ -1,9 +1,9 @@
-import generateHeroes, { GeneratedHero } from "../generators/HeroGenerator";
-import { TAVERN_PATRONS_REPLENISH_PERIOD } from "../utils/Variables";
-import query from "./Db";
-import { getNotHiredHeroes, Hero, HeroType, HeroWithEquipment, HeroWithItems } from "./hero/Hero";
-import { fetchItems, ItemSubtype, ItemType } from "./Item";
-import { getPerks, Perk } from "./hero/Perk";
+import generateHeroes, { GeneratedHero } from '../generators/HeroGenerator';
+import { TAVERN_PATRONS_REPLENISH_PERIOD } from '../utils/Variables';
+import query from './Db';
+import { getNotHiredHeroes, Hero, HeroType, HeroWithEquipment, HeroWithItems } from './hero/Hero';
+import { fetchItems, ItemSubtype, ItemType } from './Item';
+import { getPerks, Perk } from './hero/Perk';
 
 export const getTavernPatrons = async (userId: number) => {
   let patrons = await getNotHiredHeroes(userId);
@@ -23,12 +23,12 @@ const isItTimeToReplenishPatrons = (heroes: Hero[]) => {
 };
 
 const seeingOffPatrons = async (heroIds: number[]) => {
-  const ids = heroIds.join(",");
+  const ids = heroIds.join(',');
   return Promise.all([
-    query<void>("seeingOffPatrons - equip", `delete from public.hero_equipment where hero_id in (${ids})`),
-    query<void>("seeingOffPatrons - items", `delete from public.hero_item where hero_id in (${ids})`),
-    query<void>("seeingOffPatrons - perks", `delete from public.hero_perk where hero_id in (${ids})`),
-    query<void>("seeingOffPatrons - heroes", `delete from public.hero where id in (${ids})`),
+    query<void>('seeingOffPatrons - equip', `delete from public.hero_equipment where hero_id in (${ids})`),
+    query<void>('seeingOffPatrons - items', `delete from public.hero_item where hero_id in (${ids})`),
+    query<void>('seeingOffPatrons - perks', `delete from public.hero_perk where hero_id in (${ids})`),
+    query<void>('seeingOffPatrons - heroes', `delete from public.hero where id in (${ids})`),
   ]);
 };
 
@@ -50,10 +50,10 @@ const persistPatrons = async (userId: number, heroes: GeneratedHero[]) => {
             ${hero.health}, ${hero.experience}, ${hero.gold}, 
             (now() + interval '${hero.index} seconds')`
     )
-    .join(" union ");
+    .join(' union all ');
 
   return query(
-    "persistPastrons",
+    'persistPastrons',
     `insert into public.hero 
      (user_id, name, type, power, defence, vitality, initiative, health, experience, gold, appear_at)
      select * from (${heroesData}) as vals`
@@ -61,11 +61,11 @@ const persistPatrons = async (userId: number, heroes: GeneratedHero[]) => {
 };
 
 const givePatronsEqipment = async (heroes: Hero[]) => {
-  const defaultArmor = heroes.map((hero) => `(${hero.id}, 3)`).join(",");
-  const defaultWeapon = heroes.map((hero) => `(${hero.id}, ${hero.type === HeroType.MAGE ? 2 : 1})`).join(",");
+  const defaultArmor = heroes.map((hero) => `(${hero.id}, 3)`).join(',');
+  const defaultWeapon = heroes.map((hero) => `(${hero.id}, ${hero.type === HeroType.MAGE ? 2 : 1})`).join(',');
 
   return query<void>(
-    "givePatronsEqipment",
+    'givePatronsEqipment',
     `insert into public.hero_equipment (hero_id, equipment_id) values ${defaultArmor}, ${defaultWeapon};`
   );
 };
@@ -76,19 +76,14 @@ const givePatronsItems = async (heroes: Hero[]) => {
   const healthElixir = items.find((i) => i.subtype === ItemSubtype.HEALTH_ELIXIR)!;
   const manaPotion = items.find((i) => i.subtype === ItemSubtype.MANA_POTION)!;
 
-  const defaultPotions = heroes.map((hero) => `(${hero.id}, ${healthPotion.id}, 3)`).join(",");
+  const defaultPotions = heroes.map((hero) => `(${hero.id}, ${healthPotion.id}, 3)`).join(',');
 
   const additionalPotions = heroes
-    .map(
-      (hero) =>
-        `(${hero.id}, ${
-          hero.type === HeroType.MAGE || hero.type === HeroType.HEALER ? manaPotion.id : healthElixir.id
-        }, 3)`
-    )
-    .join(",");
+    .map((hero) => `(${hero.id}, ${hero.type === HeroType.MAGE || hero.type === HeroType.HEALER ? manaPotion.id : healthElixir.id}, 3)`)
+    .join(',');
 
   return query<void>(
-    "givePatronsItems",
+    'givePatronsItems',
     `insert into public.hero_item (hero_id, item_id, amount) values ${defaultPotions}, ${additionalPotions}`
   );
 };
@@ -110,12 +105,12 @@ const givePatronsPerks = async (heroes: Hero[]) => {
       }
     }
 
-    insertPerks.push(perks.map((perk) => `(${hero.id}, ${perk.id})`).join(","));
+    insertPerks.push(perks.map((perk) => `(${hero.id}, ${perk.id})`).join(','));
   });
 
   if (insertPerks.length === 0) {
     return Promise.resolve();
   }
 
-  return query<void>("givePatronsPerks", `insert into public.hero_perk (hero_id, perk_id) values ${insertPerks}`);
+  return query<void>('givePatronsPerks', `insert into public.hero_perk (hero_id, perk_id) values ${insertPerks}`);
 };

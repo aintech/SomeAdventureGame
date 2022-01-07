@@ -27,11 +27,14 @@ const persistProgress = (userId: number, questId: number, checkpoints: QuestChec
 };
 
 export const createQuestProgress = async (userId: number, quest: Quest, heroes: HeroWithSkills[]) => {
-  const checkpoints = await generateCheckpoints(quest, heroes);
-  const progressId = await persistProgress(userId, quest.id, checkpoints);
-  await persistQuestCheckpoints(progressId, checkpoints);
+  const generated = await generateCheckpoints(quest, heroes);
 
-  const links = linkCheckpoints(await getQuestCheckpoints([progressId]));
+  const progressId = await persistProgress(userId, quest.id, generated);
+
+  const persisted = await persistQuestCheckpoints(progressId, generated);
+
+  const links = linkCheckpoints(persisted);
+
   await persistLinks(links);
 
   return progressId;

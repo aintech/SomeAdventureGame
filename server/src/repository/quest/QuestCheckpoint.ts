@@ -69,7 +69,7 @@ export const persistQuestCheckpoints = async (progressId: number, checkpoints: Q
           ${checkpoint.treasure},
           ${null}`
     )
-    .join(' union ');
+    .join(' union all ');
 
   await query<void>(
     'persistQuestCheckpoints',
