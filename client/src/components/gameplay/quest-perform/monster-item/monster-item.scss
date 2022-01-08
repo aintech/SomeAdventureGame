@@ -6,6 +6,7 @@ $actor-width: 256px;
 
 .monster-item {
   @include strokeText;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,13 +15,17 @@ $actor-width: 256px;
   color: white;
 
   &__display {
+    width: $actor-width;
+    height: $actor-height;
+    background-size: cover;
+    pointer-events: none;
+
     @each $type in 'goblin' 'moth' 'snake' 'knight' {
       &_#{$type} {
-        width: $actor-width;
-        height: $actor-height;
         background-image: url(../../../../img/quest-perform/battle-process/actors/#{$type}.png);
-        background-size: cover;
-        pointer-events: none;
+        &_hit {
+          background-image: url(../../../../img/quest-perform/battle-process/actors/#{$type}_hit.png);
+        }
       }
     }
 
@@ -28,10 +33,22 @@ $actor-width: 256px;
       animation: hitted 0.45s;
       animation-iteration-count: 1;
     }
+
+    &_hit-anim {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-image: url(../../../../img/quest-perform/battle-process/attack.gif);
+      background-position: center;
+      background-repeat: no-repeat;
+    }
   }
 
   &__bar-holder {
-    width: 65px;
+    position: absolute;
+    width: 70px;
     border: 1px solid white;
     background-color: rgba($color: black, $alpha: 0.7);
   }

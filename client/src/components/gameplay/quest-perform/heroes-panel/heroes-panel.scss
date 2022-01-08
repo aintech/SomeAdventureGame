@@ -14,14 +14,15 @@
   }
 
   &__hero-action {
-    width: 60px;
-    height: 60px;
-    border: 2px solid darkcyan;
-    background-color: rgba($color: brown, $alpha: 0.6);
+    width: 80px;
+    height: 80px;
+    border: 1px solid darkcyan;
+    background-color: rgba($color: brown, $alpha: 0.3);
     box-shadow: 0px 5px 5px black;
+    border-radius: 10px;
 
     &_active {
-      border: 2px solid blue;
+      border: 1px solid yellow;
     }
   }
 

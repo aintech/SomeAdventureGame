@@ -20,16 +20,17 @@ const MonsterItem = ({ monster, idx, handleClickMonster }: MonsterItemProps) => 
       >
         {monster.health > 0 ? (
           <>
-            {monster.name}
             <div className="monster-item__bar-holder">
               <div className="monster-item__bar monster-item__bar_health" style={{ width: `${healthPercent}%` }}>
                 <div className="monster-item__bar_overlay"></div>
               </div>
             </div>
             <div
-              className={`monster-item__display_${monster.name}${monster.hitted ? ' monster-item__display_hitted' : ''}`}
+              className={`monster-item__display monster-item__display_${monster.name}${monster.hitted ? '_hit' : ''}
+              ${monster.hitted ? ' monster-item__display_hitted' : ''}`}
               style={{ zIndex: idx % 2 }}
             ></div>
+            <div className="monster-item__display_hit-anim" style={{ display: `${monster.hitted ? 'flex' : 'none'}` }}></div>
           </>
         ) : (
           <div className="monster-item__defeated"></div>
