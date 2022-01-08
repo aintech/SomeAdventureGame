@@ -165,6 +165,20 @@ const calcCheckpointStatuses = (checkpoints: QuestCheckpointWithProgress[]) => {
         });
       }
     }
+
+    // Если на чекпоинт ссылаются только недоступные чекпоинты, то он тоже недоступен.
+    for (let i = 1; i < bossStage.stage; i++) {
+      const stage = checks.filter((ch) => ch.stage === i);
+      const prevStage = checks.filter((ch) => ch.stage === i - 1);
+
+      for (let j = 0; j < stage.length; j++) {
+        const ch = stage[j];
+        const linkedDisabled = prevStage.filter((c) => c.linked!.includes(ch.id!)).every((c) => c.status === CheckpointStatus.DISABLED);
+        if (linkedDisabled) {
+          ch.status = CheckpointStatus.DISABLED;
+        }
+      }
+    }
   });
 
   return checkpoints;
