@@ -1,8 +1,9 @@
-@import "../../../utils/css/index.scss";
+@import '../../../utils/css/index.scss';
 
 .hero-item {
   padding: 5px;
   min-width: 145px;
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -19,6 +20,23 @@
     color: white;
     z-index: inherit;
     @include strokeText;
+  }
+
+  &__activity {
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: flex;
+
+    @each $type in 'quest' 'healing' 'training' 'purchasing_equipment' 'purchasing_potions' 'upgrading_equipment' {
+      &_#{$type} {
+        margin: auto;
+        background-image: url(../../../img/hero-item/hero-item__activity_#{$type}.png);
+        background-size: contain;
+      }
+    }
   }
 
   &__name {
@@ -51,7 +69,7 @@
       background-size: cover;
     }
 
-    @each $type in "warrior" "paladin" "thief" "mage" "healer" {
+    @each $type in 'warrior' 'paladin' 'thief' 'mage' 'healer' {
       &--#{$type} {
         background-image: url(../../../img/portraits/portrait-#{$type}.png);
       }

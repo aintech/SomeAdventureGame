@@ -1,9 +1,10 @@
-import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
-import { heroStatsChoosed } from "../../../actions/Actions";
-import Hero, { calcHealthFraction } from "../../../models/hero/Hero";
-import { display, HeroType } from "../../../models/hero/HeroType";
-import "./hero-item.scss";
+import { connect } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
+import { heroStatsChoosed } from '../../../actions/Actions';
+import Hero, { calcHealthFraction } from '../../../models/hero/Hero';
+import { HeroActivityType } from '../../../models/hero/HeroActivity';
+import { display, HeroType } from '../../../models/hero/HeroType';
+import './hero-item.scss';
 
 type HeroItemProps = {
   hero: Hero;
@@ -20,6 +21,12 @@ const HeroItem = ({ hero, heroClickHandler }: HeroItemProps) => {
         heroClickHandler(hero);
       }}
     >
+      {hero.activity ? (
+        hero.activity.type !== HeroActivityType.IDLE ? (
+          <div className={`hero-item__activity hero-item__activity_${HeroActivityType[hero.activity.type].toLowerCase()}`}></div>
+        ) : null
+      ) : null}
+
       <p className="hero-item__name">{hero.name}</p>
       <hr className="hero-item__divider" />
       <div className="hero-item__level-info">
@@ -69,7 +76,7 @@ const HeroItem = ({ hero, heroClickHandler }: HeroItemProps) => {
       </div>
       {hero.activity ? (
         <div>
-          swag: <span className="hero-item__dust">{hero.gold}</span>
+          gold: <span className="hero-item__dust">{hero.gold}</span>
         </div>
       ) : null}
     </div>
