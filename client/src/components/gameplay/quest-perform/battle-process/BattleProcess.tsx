@@ -8,7 +8,7 @@ import Loader from '../../../loader/Loader';
 import HeroesPanel from '../heroes-panel/HeroesPanel';
 import MonsterItem from '../monster-item/MonsterItem';
 import './battle-process.scss';
-import CheckpointActor, { convertToActor, StatusEffectType } from './process-helpers/CheckpointActor';
+import CheckpointActor, { convertToActor, StatusEffect, StatusEffectType } from './process-helpers/CheckpointActor';
 import QuestHero, { HeroAction } from './process-helpers/QuestHero';
 
 enum ProcessState {
@@ -37,6 +37,7 @@ export type HeroEvent = {
 };
 
 type BattleProcessState = {
+  round: number;
   actorsQueue: (QuestHero | CheckpointActor)[];
   currentActorIdx: number;
   currentActor?: QuestHero | CheckpointActor;
@@ -53,6 +54,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   constructor(props: BattleProcessProps) {
     super(props);
     this.state = {
+      round: 0,
       actorsQueue: [],
       currentActorIdx: -1,
 
@@ -94,17 +96,15 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
     switch (this.state.processState) {
       case ProcessState.LOADING:
-      case ProcessState.BATTLE_WON:
-      case ProcessState.BATTLE_LOST:
         //do nothing
-        break;
-
-      case ProcessState.CHECKING_STATUS_EFFECTS:
-        this.checkStatusEffects();
         break;
 
       case ProcessState.SWITCH_ACTOR:
         this.switchActor();
+        break;
+
+      case ProcessState.CHECKING_STATUS_EFFECTS:
+        this.checkStatusEffects();
         break;
 
       case ProcessState.PLAYER_PERFORM:
@@ -113,6 +113,11 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
       case ProcessState.MONSTER_PERFORM:
         this.monsterPerform();
+        break;
+
+      case ProcessState.BATTLE_WON:
+      case ProcessState.BATTLE_LOST:
+        //do nothing
         break;
 
       default:
@@ -154,7 +159,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     if (hero) {
       switch (action) {
         case HeroAction.DEFENCE:
-          hero.statusEffects.push({ type: StatusEffectType.DEFENDED, amount: 0.5, duration: 1 });
+          hero.statusEffects.push({ id: Math.random(), type: StatusEffectType.DEFENDED, amount: 0.5, duration: 1 });
           break;
         default:
           throw new Error(`Unknown hero action type ${HeroAction[action]}`);
@@ -176,21 +181,71 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   };
 
   checkStatusEffects = () => {
-    const { currentActor } = this.state;
-    if (currentActor) {
+    const actor = this.state.currentActor;
+    if (actor) {
       let statusPlaytime = 0;
+      let effects = actor.statusEffects;
+      let statusEffect: StatusEffect | undefined = undefined;
 
-      this.setState(
-        {
-          processState: currentActor.isHero ? ProcessState.PLAYER_PERFORM : ProcessState.MONSTER_PERFORM,
-        },
-        () => setTimeout(this.processRound, statusPlaytime)
-      );
+      // Берем первый эффект который ещё не действовал в текущем раунде.
+      for (let i = 0; i < effects.length; i++) {
+        const effect = effects[i];
+        // Пропускаем если в текущем раунде эффект уже отыгран.
+        if (effect.round === this.state.round) {
+          continue;
+        }
+
+        statusEffect = effects[i];
+      }
+
+      if (statusEffect) {
+        statusEffect.duration--;
+        statusEffect.round = this.state.round;
+
+        statusPlaytime = statusEffect.type === StatusEffectType.DEFENDED ? 0 : 500;
+
+        this.playEffect(statusEffect);
+
+        if (statusEffect.duration === 0) {
+          const idx = effects.findIndex((s) => s.id === statusEffect!.id);
+          effects = [...actor.statusEffects.slice(0, idx), ...actor.statusEffects.slice(idx + 1)];
+          actor.statusEffects = effects;
+        }
+
+        let heroes = actor.isHero ? replace(this.state.heroes, actor) : this.state.heroes;
+        let monsters = !actor.isHero ? replace(this.state.monsters, actor) : this.state.monsters;
+        let actorsQueue = replace(this.state.actorsQueue, actor);
+
+        this.setState(
+          {
+            currentActor: actor,
+            heroes,
+            monsters,
+            actorsQueue,
+          },
+          // Эффект запустилии после того как он отыграет перейдём к следующему эффекту.
+          () => setTimeout(() => this.processRound(), statusPlaytime)
+        );
+      } else {
+        // Если эфффектов больше не осталось, продолжаем раунд.
+        this.setState(
+          {
+            processState: actor.isHero ? ProcessState.PLAYER_PERFORM : ProcessState.MONSTER_PERFORM,
+          },
+          () => this.processRound()
+        );
+      }
     }
+  };
+
+  // Тут мы отыгрываем эффект (всякие урон, лечение и т.д. у которых есть анимация).
+  playEffect = (effect: StatusEffect) => {
+    console.log(effect);
   };
 
   switchActor = () => {
     let { heroes, monsters } = this.state;
+    let round = this.state.round;
 
     monsters.filter((m) => m.health > 0).forEach((m) => (m.hitted = undefined));
     heroes.filter((h) => isAlive(h)).forEach((h) => (h.hitted = undefined));
@@ -200,6 +255,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
       queueIdx++;
       if (queueIdx === this.state.actorsQueue.length) {
         queueIdx = 0;
+        round++;
       }
       if (this.state.actorsQueue[queueIdx].health > 0) {
         break;
@@ -211,6 +267,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
     this.setState(
       {
+        round,
         currentActor,
         processState,
         currentActorIdx: queueIdx,
@@ -227,7 +284,12 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     const monster = this.state.currentActor as CheckpointActor;
     const aliveHeroes = heroes.filter((h) => isAlive(h));
     const victim = aliveHeroes[Math.floor(Math.random() * aliveHeroes.length)];
-    const damage = Math.max(1, monster.stats.power - victim.stats.defence - victim.equipStats.defence);
+
+    let power = monster.stats.power;
+
+    const defendedStatus = victim.statusEffects.find((s) => s.type === StatusEffectType.DEFENDED)?.amount ?? 1;
+
+    const damage = Math.max(1, power * defendedStatus - victim.stats.defence - victim.equipStats.defence);
     victim.health -= damage;
 
     // хитрость чтобы один герой мог отыгрывать анимацию несколько ходов подряд,
