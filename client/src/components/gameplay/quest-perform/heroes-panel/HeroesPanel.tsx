@@ -1,5 +1,5 @@
 import QuestHeroItem from '../quest-hero-item/QuestHeroItem';
-import QuestHero from '../battle-process/process-helpers/QuestHero';
+import QuestHero, { HeroAction } from '../battle-process/process-helpers/QuestHero';
 import './heroes-panel.scss';
 import { CheckpointReward } from '../../../../models/QuestCheckpoint';
 
@@ -8,13 +8,16 @@ type HeroesPanelProps = {
   current?: QuestHero;
   showActions?: boolean;
   heroRewards?: CheckpointReward;
+  performHeroAction?: (action: HeroAction) => void;
 };
 
-const HeroesPanel = ({ actors, current, showActions, heroRewards }: HeroesPanelProps) => {
-  const handleActionClick = (type: string) => {};
-
+const HeroesPanel = ({ actors, current, showActions, heroRewards, performHeroAction }: HeroesPanelProps) => {
   // seed нужен чтобы насильно запустить ререндер иконок героев, чтобы реагировали на противников
   const seed = new Date().getTime();
+
+  const showSkills = () => {};
+
+  const showItems = () => {};
 
   const heroItems = actors.map((hero) => (
     <QuestHeroItem
@@ -30,21 +33,12 @@ const HeroesPanel = ({ actors, current, showActions, heroRewards }: HeroesPanelP
     <div className="heroes-panel">
       <div className="heroes-panel__heroes">{heroItems}</div>
       <div className={`heroes-panel__hero-actions ${showActions ? '' : 'heroes-panel__hero-actions_hidden'}`}>
+        <div className="heroes-panel__hero-action heroes-panel__hero-action_skill" onClick={() => showSkills()}></div>
+        <div className="heroes-panel__hero-action heroes-panel__hero-action_item" onClick={() => showItems()}></div>
         <div
-          className="heroes-panel__hero-action heroes-panel__hero-action_attack heroes-panel__hero-action_active"
-          onClick={() => handleActionClick('ATK')}
-        >
-          ATK
-        </div>
-        <div className="heroes-panel__hero-action heroes-panel__hero-action_skill" onClick={() => handleActionClick('SKL')}>
-          SKL
-        </div>
-        <div className="heroes-panel__hero-action heroes-panel__hero-action_item" onClick={() => handleActionClick('ITM')}>
-          ITM
-        </div>
-        <div className="heroes-panel__hero-action heroes-panel__hero-action_defence" onClick={() => handleActionClick('DEF')}>
-          DEF
-        </div>
+          className="heroes-panel__hero-action heroes-panel__hero-action_defence"
+          onClick={() => performHeroAction!(HeroAction.DEFENCE)}
+        ></div>
       </div>
     </div>
   );

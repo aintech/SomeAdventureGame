@@ -8,12 +8,13 @@ import Loader from '../../../loader/Loader';
 import HeroesPanel from '../heroes-panel/HeroesPanel';
 import MonsterItem from '../monster-item/MonsterItem';
 import './battle-process.scss';
-import CheckpointActor, { convertToActor } from './process-helpers/CheckpointActor';
-import QuestHero, { BattleAction } from './process-helpers/QuestHero';
+import CheckpointActor, { convertToActor, StatusEffectType } from './process-helpers/CheckpointActor';
+import QuestHero, { HeroAction } from './process-helpers/QuestHero';
 
 enum ProcessState {
   LOADING,
   SWITCH_ACTOR,
+  CHECKING_STATUS_EFFECTS,
   PLAYER_PERFORM,
   MONSTER_PERFORM,
   BATTLE_WON,
@@ -91,75 +92,27 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
       return;
     }
 
-    let { heroes, monsters, processState } = this.state;
-
-    switch (processState) {
+    switch (this.state.processState) {
       case ProcessState.LOADING:
       case ProcessState.BATTLE_WON:
       case ProcessState.BATTLE_LOST:
+        //do nothing
+        break;
+
+      case ProcessState.CHECKING_STATUS_EFFECTS:
+        this.checkStatusEffects();
+        break;
+
+      case ProcessState.SWITCH_ACTOR:
+        this.switchActor();
+        break;
+
       case ProcessState.PLAYER_PERFORM:
         //do nothing
         break;
 
-      case ProcessState.SWITCH_ACTOR:
-        monsters.filter((m) => m.health > 0).forEach((m) => (m.hitted = undefined));
-        heroes.filter((h) => isAlive(h)).forEach((h) => (h.hitted = undefined));
-
-        let queueIdx = this.state.currentActorIdx;
-        while (true) {
-          queueIdx++;
-          if (queueIdx === this.state.actorsQueue.length) {
-            queueIdx = 0;
-          }
-          if (this.state.actorsQueue[queueIdx].health > 0) {
-            break;
-          }
-        }
-
-        const currentActor = this.state.actorsQueue[queueIdx];
-        const processState = currentActor.isHero ? ProcessState.PLAYER_PERFORM : ProcessState.MONSTER_PERFORM;
-
-        this.setState(
-          {
-            currentActor,
-            processState,
-            currentActorIdx: queueIdx,
-            heroes,
-            monsters,
-          },
-          () => this.processRound()
-        );
-        break;
-
       case ProcessState.MONSTER_PERFORM:
-        const monster = this.state.currentActor as CheckpointActor;
-        const aliveHeroes = heroes.filter((h) => isAlive(h));
-        const victim = aliveHeroes[Math.floor(Math.random() * aliveHeroes.length)];
-        const damage = Math.max(1, monster.stats.power - victim.stats.defence - victim.equipStats.defence);
-        victim.health -= damage;
-
-        // хитрость чтобы один герой мог отыгрывать анимацию несколько ходов подряд,
-        // какая анимация играет зависит от hitted = undefined, false или true
-        if (this.hittedMemo.includes(victim.id)) {
-          victim.hitted = true;
-          this.hittedMemo.splice(this.hittedMemo.indexOf(victim.id), 1);
-        } else {
-          victim.hitted = false;
-          this.hittedMemo.push(victim.id);
-        }
-
-        const updatedHeroes = replace(heroes, victim);
-        const battleEvents = new Map(this.state.battleEvents);
-        battleEvents.set(victim.id, [...battleEvents.get(victim.id)!, { time: new Date().getTime(), hpAlter: -damage }]);
-
-        this.setState(
-          {
-            processState: ProcessState.SWITCH_ACTOR,
-            heroes: updatedHeroes,
-            battleEvents,
-          },
-          () => setTimeout(this.processRound, 500)
-        );
+        this.monsterPerform();
         break;
 
       default:
@@ -178,7 +131,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     const { currentActor } = this.state;
     if (currentActor && currentActor.isHero) {
       const hero = currentActor as QuestHero;
-      if (hero.action === BattleAction.ATTACK) {
+      if (hero.action === HeroAction.ATTACK) {
         const damage = Math.max(1, hero.stats.power + hero.equipStats.power - monster.stats.defence);
         monster.health -= damage;
         monster.hitted = true;
@@ -194,6 +147,111 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         );
       }
     }
+  };
+
+  performHeroAction = (action: HeroAction) => {
+    const hero = this.state.currentActor as QuestHero;
+    if (hero) {
+      switch (action) {
+        case HeroAction.DEFENCE:
+          hero.statusEffects.push({ type: StatusEffectType.DEFENDED, amount: 0.5, duration: 1 });
+          break;
+        default:
+          throw new Error(`Unknown hero action type ${HeroAction[action]}`);
+      }
+
+      this.setState(
+        (state) => {
+          return {
+            ...state,
+            currentActor: hero,
+            heroes: replace(state.heroes, hero),
+            actorsQueue: replace(state.actorsQueue, hero),
+            processState: ProcessState.SWITCH_ACTOR,
+          };
+        },
+        () => this.processRound()
+      );
+    }
+  };
+
+  checkStatusEffects = () => {
+    const { currentActor } = this.state;
+    if (currentActor) {
+      let statusPlaytime = 0;
+
+      this.setState(
+        {
+          processState: currentActor.isHero ? ProcessState.PLAYER_PERFORM : ProcessState.MONSTER_PERFORM,
+        },
+        () => setTimeout(this.processRound, statusPlaytime)
+      );
+    }
+  };
+
+  switchActor = () => {
+    let { heroes, monsters } = this.state;
+
+    monsters.filter((m) => m.health > 0).forEach((m) => (m.hitted = undefined));
+    heroes.filter((h) => isAlive(h)).forEach((h) => (h.hitted = undefined));
+
+    let queueIdx = this.state.currentActorIdx;
+    while (true) {
+      queueIdx++;
+      if (queueIdx === this.state.actorsQueue.length) {
+        queueIdx = 0;
+      }
+      if (this.state.actorsQueue[queueIdx].health > 0) {
+        break;
+      }
+    }
+
+    const currentActor = this.state.actorsQueue[queueIdx];
+    const processState = ProcessState.CHECKING_STATUS_EFFECTS;
+
+    this.setState(
+      {
+        currentActor,
+        processState,
+        currentActorIdx: queueIdx,
+        heroes,
+        monsters,
+      },
+      () => this.processRound()
+    );
+  };
+
+  monsterPerform = () => {
+    let { heroes } = this.state;
+
+    const monster = this.state.currentActor as CheckpointActor;
+    const aliveHeroes = heroes.filter((h) => isAlive(h));
+    const victim = aliveHeroes[Math.floor(Math.random() * aliveHeroes.length)];
+    const damage = Math.max(1, monster.stats.power - victim.stats.defence - victim.equipStats.defence);
+    victim.health -= damage;
+
+    // хитрость чтобы один герой мог отыгрывать анимацию несколько ходов подряд,
+    // какая анимация играет зависит от hitted = undefined, false или true
+    if (this.hittedMemo.includes(victim.id)) {
+      victim.hitted = true;
+      this.hittedMemo.splice(this.hittedMemo.indexOf(victim.id), 1);
+    } else {
+      victim.hitted = false;
+      this.hittedMemo.push(victim.id);
+    }
+
+    const updatedHeroes = replace(heroes, victim);
+    const battleEvents = new Map(this.state.battleEvents);
+    battleEvents.set(victim.id, [...battleEvents.get(victim.id)!, { time: new Date().getTime(), hpAlter: -damage }]);
+
+    this.setState(
+      {
+        processState: ProcessState.SWITCH_ACTOR,
+        heroes: updatedHeroes,
+        battleEvents,
+      },
+      () => setTimeout(this.processRound, 500)
+    );
   };
 
   checkBattleComplete() {
@@ -257,6 +315,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
           current={currentActor?.isHero ? (currentActor as QuestHero) : undefined}
           showActions={!battleEnded}
           heroRewards={checkpointReward?.checkpointId === checkpoint.id ? checkpointReward : undefined}
+          performHeroAction={this.performHeroAction}
         />
       </div>
     );

@@ -11,7 +11,7 @@ import { CheckpointPassedBody } from '../../../services/QuestService';
 import { shallowCopy } from '../../../utils/Utils';
 import Loader from '../../loader/Loader';
 import BattleProcess from './battle-process/BattleProcess';
-import QuestHero, { BattleAction } from './battle-process/process-helpers/QuestHero';
+import QuestHero, { HeroAction } from './battle-process/process-helpers/QuestHero';
 import HeroesPanel from './heroes-panel/HeroesPanel';
 import QuestComplete from './quest-complete/QuestComplete';
 import QuestMap from './quest-map/QuestMap';
@@ -38,7 +38,7 @@ const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, clos
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setHeroActors(heroes.map((h) => shallowCopy({ ...h, action: BattleAction.ATTACK })));
+    setHeroActors(heroes.map((h) => shallowCopy({ ...h, action: HeroAction.ATTACK, statusEffects: [] })));
   }, [heroes, setHeroActors]);
 
   const checkpointActivated = (checkpoint: QuestCheckpoint) => {

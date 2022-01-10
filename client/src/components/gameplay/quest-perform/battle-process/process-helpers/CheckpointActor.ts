@@ -1,13 +1,25 @@
 import PersonageStats from '../../../../../models/PersonageStats';
 import { CheckpointEnemy } from '../../../../../models/QuestCheckpoint';
 
-type CheckpointActor = {
+export enum StatusEffectType {
+  DEFENDED,
+}
+
+export type StatusEffect = {
+  type: StatusEffectType;
+  // Количество "раундов" активности эффекта
+  duration: number;
+  amount: number;
+};
+
+export type CheckpointActor = {
   id: number;
   name: string;
   type: string;
   health: number;
   totalHealth: number;
   stats: PersonageStats;
+  statusEffects: StatusEffect[];
 
   isHero?: boolean;
   hitted?: boolean;
@@ -24,6 +36,7 @@ export const convertToActor = (actor: CheckpointEnemy): CheckpointActor => {
     health: actor.health,
     totalHealth: actor.health,
     stats: actor.stats,
+    statusEffects: [],
   };
 };
 

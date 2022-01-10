@@ -1,4 +1,4 @@
-@import "../../../../../../utils/css/index.scss";
+@import '../../../../../../utils/css/index.scss';
 
 .guild-assignee {
   width: 46%;
@@ -7,6 +7,7 @@
   &__btn--assign {
     padding: 5px;
     margin-top: -5px;
+    position: relative;
     font-family: inherit;
     font-size: 26px;
     width: 100%;
@@ -17,7 +18,7 @@
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 
-    border: none;
+    border: 1px solid white;
     outline: none;
     cursor: pointer;
 

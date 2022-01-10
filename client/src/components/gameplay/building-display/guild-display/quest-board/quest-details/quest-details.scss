@@ -1,4 +1,4 @@
-@import "../../../../../../utils/css/index.scss";
+@import '../../../../../../utils/css/index.scss';
 
 .quest-details {
   padding: 0;
@@ -16,36 +16,6 @@
 
   & > * {
     grid-column: 1/ -1;
-  }
-
-  &__btn--close {
-    position: absolute;
-    width: 55px;
-    height: 55px;
-    right: 0;
-    background-image: url(../../../../../../img/building-display/guild-display/guild-btn_dismiss_hero.png);
-    background-size: cover;
-    border: none;
-    outline: none;
-    background-color: transparent;
-    cursor: pointer;
-
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
-
-  &__btn--accept {
-    position: absolute;
-    right: 30px;
-    bottom: 0;
-    width: 80px;
-    height: 120px;
-    background-image: url(../../../../../../img/building-display/guild-display/guild-btn_accept_quest.png);
-    background-size: cover;
-    border: none;
-    outline: none;
-    background-color: transparent;
   }
 
   &__max-quest-msg {
@@ -110,46 +80,5 @@
     left: 30px;
     display: flex;
     gap: 20px;
-
-    &__hero {
-      display: flex;
-      flex-flow: column;
-      justify-self: center;
-      height: 115px;
-      background-image: url(../../../../../../img/building-display/guild-display/guild-assigned_hero_bg.png);
-      background-size: cover;
-      background-repeat: no-repeat;
-
-      &:first-child {
-        grid-column: 2;
-      }
-
-      @each $type in "warrior" "paladin" "thief" "mage" "healer" {
-        &--#{$type} {
-          width: 61px;
-          height: 61px;
-          background-image: url(../../../../../../img/building-display/guild-display/guild-hero_icon_#{$type}.png);
-          background-repeat: no-repeat;
-          background-size: cover;
-        }
-      }
-
-      &-name {
-        font-size: 12px;
-        align-self: center;
-      }
-
-      &-dismiss {
-        align-self: center;
-        width: 30px;
-        height: 30px;
-        background-image: url(../../../../../../img/building-display/guild-display/guild-btn_dismiss_hero.png);
-        background-repeat: no-repeat;
-        background-size: cover;
-        border: none;
-        background-color: transparent;
-        cursor: pointer;
-      }
-    }
   }
 }
