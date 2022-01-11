@@ -118,6 +118,11 @@ export const getQuestCheckpoints = async (progressIds: number[]) => {
 };
 
 const calcCheckpointStatuses = (checkpoints: QuestCheckpointWithProgress[]) => {
+  // Если у чекпоинтов нету линков сразу возвращаемся (это происходит когда чекпонты только что записались в базу перед линковкой)
+  if (checkpoints.every((ch) => !ch.linked)) {
+    return checkpoints;
+  }
+
   // Сразу помечаем пройденные чекпоинты.
   checkpoints.forEach((ch) => {
     if (ch.passed) {

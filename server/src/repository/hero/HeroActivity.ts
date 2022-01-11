@@ -333,7 +333,7 @@ const idleToUpgradingEquipment = async (
     ...heroActivity,
     duration: equipment.buyingTime,
     activityId: equipment.id,
-    description: `Улучшает ${equipment.name} на рембазе`,
+    description: `Улучшает ${equipment.name} в кузне`,
   };
 };
 

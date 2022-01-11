@@ -21,7 +21,8 @@ export const generateCheckpoints = async (quest: Quest, embarkedHeroes: HeroWith
     status: CheckpointStatus.AVAILABLE,
   });
 
-  const stagesCount = 5; //Math.floor(quest.duration * 0.5 * 0.1);
+  // На карте от 3 до 7 стейджев
+  const stagesCount = 3 + Math.floor(Math.random()) * 5;
 
   for (let i = 1; i <= stagesCount; i++) {
     const prevStage: QuestCheckpoint[] = checkpoints.filter((c) => c.stage === i - 1);
@@ -58,12 +59,15 @@ export const generateCheckpoints = async (quest: Quest, embarkedHeroes: HeroWith
     }
   }
 
+  const boss = await getMonsterParty(quest.level, true);
+
   checkpoints.push({
     type: CheckpointType.BOSS,
     stage: stagesCount + 1,
     passed: false,
     treasure: 0,
     status: CheckpointStatus.AVAILABLE,
+    enemies: boss,
   });
 
   return checkpoints;
@@ -73,15 +77,11 @@ export const generateCheckpoints = async (quest: Quest, embarkedHeroes: HeroWith
 export const linkCheckpoints = (checkpoints: QuestCheckpointWithProgress[]): CheckpointLink[] => {
   const links: CheckpointLink[] = [];
 
-  console.log('A');
-
   // Стартовая локация всегда линкуется на все первые локации.
   const start = checkpoints.find((c) => c.type === CheckpointType.START)!;
   links.push({ checkpointId: start.id!, linked: checkpoints.filter((c) => c.stage === 1).map((c) => c.id!) });
 
   const bossStage = checkpoints.find((c) => c.type === CheckpointType.BOSS)!;
-
-  console.log('B');
 
   // Сразу коннектим последние локации к босс-локации.
   checkpoints
@@ -108,6 +108,8 @@ export const linkCheckpoints = (checkpoints: QuestCheckpointWithProgress[]): Che
 
 /** Вместо нормальной логики, перебираем все корнеркейсы */
 const connectStages = (stage: QuestCheckpointWithProgress[], nextStage: QuestCheckpointWithProgress[]) => {
+  console.log('connecting');
+
   const links: CheckpointLink[] = stage.map((ch) => {
     return {
       checkpointId: ch.id!,
@@ -115,12 +117,16 @@ const connectStages = (stage: QuestCheckpointWithProgress[], nextStage: QuestChe
     };
   });
 
+  console.log('connecting A');
+
   // Одинаковое количество чекпоинтов - коннектим напрямую, но лучше придумать поразнообразнее.
   if (stage.length === nextStage.length) {
     for (let i = 0; i < stage.length; i++) {
       addLink(links, stage[i].id!, nextStage[i].id!);
     }
   }
+
+  console.log('connecting B');
 
   // Если на текущем стейдже локаций больше чем на следующем.
   if (stage.length > nextStage.length) {
@@ -141,6 +147,8 @@ const connectStages = (stage: QuestCheckpointWithProgress[], nextStage: QuestChe
       }
     }
 
+    console.log('connecting BB');
+
     for (let stageIdx = 0, nextStageIdx = 0; nextStageIdx < nextStage.length; nextStageIdx++) {
       const nextCheckpoint = nextStage[nextStageIdx];
 
@@ -152,7 +160,11 @@ const connectStages = (stage: QuestCheckpointWithProgress[], nextStage: QuestChe
         linksCount--;
       }
     }
+
+    console.log('connecting BBB');
   }
+
+  console.log('connecting C');
 
   // Если на текущем стейдже локаций меньше чем на следующем.
   if (stage.length < nextStage.length) {
@@ -171,6 +183,8 @@ const connectStages = (stage: QuestCheckpointWithProgress[], nextStage: QuestChe
       }
     }
 
+    console.log('connecting CC');
+
     for (let stageIdx = 0, nextStageIdx = 0; stageIdx < stage.length; stageIdx++, nextStageIdx++) {
       const checkpoint = stage[stageIdx];
       addLink(links, checkpoint.id!, nextStage[nextStageIdx].id!);
@@ -180,7 +194,11 @@ const connectStages = (stage: QuestCheckpointWithProgress[], nextStage: QuestChe
         addLink(links, checkpoint.id!, nextStage[nextStageIdx].id!);
       }
     }
+
+    console.log('connecting CCC');
   }
+
+  console.log('connecting D');
 
   return links;
 };
@@ -189,16 +207,18 @@ const addLink = (links: CheckpointLink[], fromId: number, toId: number) => {
   links.find((c) => c.checkpointId === fromId)!.linked!.push(toId);
 };
 
-const getMonsterParty = async (level: number) => {
+const getMonsterParty = async (level: number, boss?: boolean) => {
   const monsters = await getAllMonsters();
-
-  const partyCount = 1; // Math.floor(Math.random() * 3) + 2;
+  const partyCount = boss ? 1 : 2 + Math.floor(Math.random() * 4);
   //Пока в базе есть только монстры 1 уровня
   const monstersByLevel = [...monsters]; //_monsters.filter((m) => m.level === level);
   const suitable: Monster[] = [];
   for (let i = 0; i < partyCount; i++) {
     const monster: Monster = JSON.parse(JSON.stringify(anyOf(monstersByLevel)));
     monster.actorId = i;
+    if (boss) {
+      monster.health *= 3;
+    }
     suitable.push(monster);
   }
 

@@ -3,6 +3,7 @@
 .battle-process {
   overflow: hidden;
   height: calc(var(--vh, 1vh) * 100 - #{$header_height} - 40px);
+  width: 100%;
   display: flex;
   align-items: flex-end;
 

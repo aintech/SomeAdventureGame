@@ -62,6 +62,7 @@ const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, clos
   if (activeCheckpoint) {
     switch (activeCheckpoint.type) {
       case CheckpointType.BATTLE:
+      case CheckpointType.BOSS:
         process = (
           <BattleProcess
             checkpoint={activeCheckpoint}

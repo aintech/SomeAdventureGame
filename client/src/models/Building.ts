@@ -13,7 +13,11 @@ export enum BuildingType {
 }
 
 export default class Building {
-  constructor(public type: BuildingType, public level: number, public upgrade?: { upgradeStarted?: number; cost: number; duration: number }) {}
+  constructor(
+    public type: BuildingType,
+    public level: number,
+    public upgrade?: { upgradeStarted?: number; cost: number; duration: number }
+  ) {}
 }
 
 export const toDisplay = (type: BuildingType) => {
@@ -21,44 +25,44 @@ export const toDisplay = (type: BuildingType) => {
     case BuildingType.GUILD:
       // return "Гильдия приключений";
       // return "Космогильдия";
-      return "Гильдия";
+      return 'Гильдия';
     case BuildingType.TAVERN:
       // return "Таверна 'Пьяный жук'";
       // return "Хаб 'Гиперкуб'";
-      return "Бар";
+      return 'Бар';
     case BuildingType.DWELLINGS:
       // return "Домики жителей";
       // return "Жилые каюты";
-      return "Жилища";
+      return 'Жилища';
     case BuildingType.STABLES:
       // return "Гнездовье птиц";
       // return "Ангар";
-      return "Гараж";
+      return 'Гараж';
     case BuildingType.HEALER:
       // return "Домик целителя";
       // return "Медцентр";
-      return "Госпиталь";
+      return 'Госпиталь';
     case BuildingType.ELDER:
       // return "Хижина старейшины";
       // return "Администрация";
-      return "Глава лагеря";
+      return 'Глава лагеря';
     case BuildingType.TRAINING_GROUND:
-      return "Тренировочная база";
+      return 'Тренировочная база';
     case BuildingType.ALCHEMIST:
       // return "Лаборатория алхимика";
-      return "Лаборатория";
+      return 'Лаборатория';
     case BuildingType.BLACKSMITH:
-      // return "Каменная кузня";
-      // return "Промзона";
-      return "Рембаза";
+      return 'Каменная кузня';
+    // return "Промзона";
+    // return "Рембаза";
     case BuildingType.MARKET:
       // return "Кибитка торговца";
       // return "Маркетплейс";
-      return "Рынок";
+      return 'Рынок';
     case BuildingType.STORAGE:
       // return "Хранилище пыльцы";
       // return "Энергогенератор";
-      return "Схрон";
+      return 'Схрон';
     default:
       throw new Error(`Unknown building type ${BuildingType[type]}`);
   }

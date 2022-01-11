@@ -125,59 +125,39 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     }
   }
 
-  handleClickMonster = (monster: CheckpointActor) => {
-    if (this.state.processState !== ProcessState.PLAYER_PERFORM) {
-      return;
-    }
-    if (monster.health <= 0) {
-      return;
-    }
+  switchActor = () => {
+    let { heroes, monsters } = this.state;
+    let round = this.state.round;
 
-    const { currentActor } = this.state;
-    if (currentActor && currentActor.isHero) {
-      const hero = currentActor as QuestHero;
-      if (hero.action === HeroAction.ATTACK) {
-        const damage = Math.max(1, hero.stats.power + hero.equipStats.power - monster.stats.defence);
-        monster.health -= damage;
-        monster.hitted = true;
+    monsters.filter((m) => m.health > 0).forEach((m) => (m.hitted = undefined));
+    heroes.filter((h) => isAlive(h)).forEach((h) => (h.hitted = undefined));
 
-        this.setState(
-          (state) => {
-            return {
-              processState: ProcessState.SWITCH_ACTOR,
-              monsters: replace(state.monsters, monster),
-            };
-          },
-          () => setTimeout(this.processRound, 500)
-        );
+    let queueIdx = this.state.currentActorIdx;
+    while (true) {
+      queueIdx++;
+      if (queueIdx === this.state.actorsQueue.length) {
+        queueIdx = 0;
+        round++;
+      }
+      if (this.state.actorsQueue[queueIdx].health > 0) {
+        break;
       }
     }
-  };
 
-  performHeroAction = (action: HeroAction) => {
-    const hero = this.state.currentActor as QuestHero;
-    if (hero) {
-      switch (action) {
-        case HeroAction.DEFENCE:
-          hero.statusEffects.push({ id: Math.random(), type: StatusEffectType.DEFENDED, amount: 0.5, duration: 1 });
-          break;
-        default:
-          throw new Error(`Unknown hero action type ${HeroAction[action]}`);
-      }
+    const currentActor = this.state.actorsQueue[queueIdx];
+    const processState = ProcessState.CHECKING_STATUS_EFFECTS;
 
-      this.setState(
-        (state) => {
-          return {
-            ...state,
-            currentActor: hero,
-            heroes: replace(state.heroes, hero),
-            actorsQueue: replace(state.actorsQueue, hero),
-            processState: ProcessState.SWITCH_ACTOR,
-          };
-        },
-        () => this.processRound()
-      );
-    }
+    this.setState(
+      {
+        round,
+        currentActor,
+        processState,
+        currentActorIdx: queueIdx,
+        heroes,
+        monsters,
+      },
+      () => this.processRound()
+    );
   };
 
   checkStatusEffects = () => {
@@ -243,39 +223,59 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     console.log(effect);
   };
 
-  switchActor = () => {
-    let { heroes, monsters } = this.state;
-    let round = this.state.round;
-
-    monsters.filter((m) => m.health > 0).forEach((m) => (m.hitted = undefined));
-    heroes.filter((h) => isAlive(h)).forEach((h) => (h.hitted = undefined));
-
-    let queueIdx = this.state.currentActorIdx;
-    while (true) {
-      queueIdx++;
-      if (queueIdx === this.state.actorsQueue.length) {
-        queueIdx = 0;
-        round++;
-      }
-      if (this.state.actorsQueue[queueIdx].health > 0) {
-        break;
-      }
+  handleClickMonster = (monster: CheckpointActor) => {
+    if (this.state.processState !== ProcessState.PLAYER_PERFORM) {
+      return;
+    }
+    if (monster.health <= 0) {
+      return;
     }
 
-    const currentActor = this.state.actorsQueue[queueIdx];
-    const processState = ProcessState.CHECKING_STATUS_EFFECTS;
+    const { currentActor } = this.state;
+    if (currentActor && currentActor.isHero) {
+      const hero = currentActor as QuestHero;
+      if (hero.action === HeroAction.ATTACK) {
+        const damage = Math.max(1, hero.stats.power + hero.equipStats.power - monster.stats.defence);
+        monster.health -= damage;
+        monster.hitted = true;
 
-    this.setState(
-      {
-        round,
-        currentActor,
-        processState,
-        currentActorIdx: queueIdx,
-        heroes,
-        monsters,
-      },
-      () => this.processRound()
-    );
+        this.setState(
+          (state) => {
+            return {
+              processState: ProcessState.SWITCH_ACTOR,
+              monsters: replace(state.monsters, monster),
+            };
+          },
+          () => setTimeout(this.processRound, 500)
+        );
+      }
+    }
+  };
+
+  performHeroAction = (action: HeroAction) => {
+    const hero = this.state.currentActor as QuestHero;
+    if (hero) {
+      switch (action) {
+        case HeroAction.DEFENCE:
+          hero.statusEffects.push({ id: Math.random(), type: StatusEffectType.DEFENDED, amount: 0.5, duration: 1 });
+          break;
+        default:
+          throw new Error(`Unknown hero action type ${HeroAction[action]}`);
+      }
+
+      this.setState(
+        (state) => {
+          return {
+            ...state,
+            currentActor: hero,
+            heroes: replace(state.heroes, hero),
+            actorsQueue: replace(state.actorsQueue, hero),
+            processState: ProcessState.SWITCH_ACTOR,
+          };
+        },
+        () => this.processRound()
+      );
+    }
   };
 
   monsterPerform = () => {

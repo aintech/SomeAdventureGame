@@ -7,6 +7,10 @@ type MonsterItemProps = {
   handleClickMonster: (monster: CheckpointActor) => void;
 };
 
+// TODO: Анимация урона противнику сейчас сделана через attack.gif,
+// надо переправить так чтобы анимация не зависела от гифки, т.к. тайминги не совпадают.
+// например играть анимацию через setTimeout
+
 const MonsterItem = ({ monster, idx, handleClickMonster }: MonsterItemProps) => {
   const healthPercent = (monster.health / monster.totalHealth) * 100;
 
@@ -15,7 +19,7 @@ const MonsterItem = ({ monster, idx, handleClickMonster }: MonsterItemProps) => 
     <div>
       <div
         className="monster-item"
-        style={{ zIndex: idx % 2, marginTop: `${(idx % 2) * 40}px`, gridColumn: idx + 1 }}
+        style={{ zIndex: idx % 2, marginTop: `${(idx % 2) * 40}px` }}
         onClick={() => handleClickMonster(monster)}
       >
         {monster.health > 0 ? (
