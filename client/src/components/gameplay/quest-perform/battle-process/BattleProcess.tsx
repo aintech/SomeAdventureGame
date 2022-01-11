@@ -289,7 +289,10 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
     const defendedStatus = victim.statusEffects.find((s) => s.type === StatusEffectType.DEFENDED)?.amount ?? 1;
 
-    const damage = Math.max(1, power * defendedStatus - victim.stats.defence - victim.equipStats.defence);
+    let damage = Math.max(1, power * defendedStatus - victim.stats.defence - victim.equipStats.defence);
+    if (damage > victim.health) {
+      damage = victim.health;
+    }
     victim.health -= damage;
 
     // хитрость чтобы один герой мог отыгрывать анимацию несколько ходов подряд,

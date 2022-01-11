@@ -19,24 +19,28 @@ type QuestHeroItemProps = {
 };
 
 const QuestHeroItem = ({ hero, current, heroClickHandler, reward, seed }: QuestHeroItemProps) => {
-  const style = {
-    opacity: hero.health > 0 ? 1 : 0.5,
-  };
-
   const rewardStyle = {
     display: reward ? 'block' : 'none',
   };
 
-  const mainClass = `quest-hero-item${current ? ' quest-hero-item__current' : ''}${hero.health <= 0 ? ' quest-hero-item__defeated' : ''}`;
+  const mainClass = `quest-hero-item${current ? ' quest-hero-item__current' : ''}`;
 
-  const displayClass = `quest-hero-item__display_${HeroType[hero.type].toLowerCase()}${
-    hero.hitted === undefined ? '' : hero.hitted === false ? ' quest-hero-item__display_hitted-alt' : ' quest-hero-item__display_hitted'
-  }`;
+  const displayClass =
+    hero.health > 0
+      ? `quest-hero-item__display_${HeroType[hero.type].toLowerCase()}
+        ${
+          hero.hitted === undefined
+            ? ''
+            : hero.hitted === false
+            ? ' quest-hero-item__display_hitted-alt'
+            : ' quest-hero-item__display_hitted'
+        }`
+      : 'quest-hero-item__defeated';
 
   const healIconClass = `heal-icon${hero.healed ? ' heal-icon_playing' : ''}`;
 
   return (
-    <div className={mainClass} style={style} onClick={() => heroClickHandler(hero)}>
+    <div className={mainClass} onClick={() => heroClickHandler(hero)}>
       <div className="quest-hero-item__name">{hero.name}</div>
       <div className="quest-hero-item__status-holder">
         {hero.statusEffects.map((eff) => (
@@ -46,7 +50,7 @@ const QuestHeroItem = ({ hero, current, heroClickHandler, reward, seed }: QuestH
 
       <div className={displayClass}></div>
 
-      <div className="quest-hero-item__bars">
+      <div className={`quest-hero-item__bars${hero.health <= 0 ? ' quest-hero-item__bars_hidden' : ''}`}>
         <div className={`quest-hero-item__bar-holder${reward ? '' : ' quest-hero-item__bar_hidden'}`}>
           <div className="quest-hero-item__bar quest-hero-item__bar_exp" style={{ width: `${hero.level.progress * 100}%` }}>
             <div className="quest-hero-item__bar_overlay"></div>

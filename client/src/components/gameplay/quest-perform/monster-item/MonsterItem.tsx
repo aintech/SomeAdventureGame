@@ -13,6 +13,7 @@ type MonsterItemProps = {
 
 const MonsterItem = ({ monster, idx, handleClickMonster }: MonsterItemProps) => {
   const healthPercent = (monster.health / monster.totalHealth) * 100;
+  const barLength = monster.totalHealth * 0.5;
 
   /** верхний пустой div нужен чтобы картинки не перекрывали друг друга и на врага во втором ряду можно было кликнуть */
   return (
@@ -24,7 +25,7 @@ const MonsterItem = ({ monster, idx, handleClickMonster }: MonsterItemProps) => 
       >
         {monster.health > 0 ? (
           <>
-            <div className="monster-item__bar-holder">
+            <div className="monster-item__bar-holder" style={{ width: `${barLength}px` }}>
               <div className="monster-item__bar monster-item__bar_health" style={{ width: `${healthPercent}%` }}>
                 <div className="monster-item__bar_overlay"></div>
               </div>

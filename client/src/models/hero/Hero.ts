@@ -33,6 +33,9 @@ export const isAlive = (hero: Hero) => {
 };
 
 export const calcHealthFraction = (hero: Hero): number => {
+  if (hero.health <= 0) {
+    return 0;
+  }
   return hero.health / maxHealth(hero);
 };
 
