@@ -75,6 +75,7 @@ const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, clos
         break;
       case CheckpointType.TREASURE:
         break;
+
       default:
         throw new Error(`Unknown checkpoint type ${CheckpointType[activeCheckpoint.type]}`);
     }

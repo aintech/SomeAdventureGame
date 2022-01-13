@@ -19,7 +19,7 @@ $actor-width: 256px;
     background-size: cover;
     pointer-events: none;
 
-    @each $type in 'goblin' 'moth' 'snake' 'knight' {
+    @each $type in 'goblin' 'moth' 'snake' 'knight' 'mechanic_bot' {
       &_#{$type} {
         background-image: url(../../../../img/quest-perform/battle-process/actors/#{$type}.png);
         &_hit {
@@ -42,6 +42,7 @@ $actor-width: 256px;
       background-image: url(../../../../img/quest-perform/battle-process/attack.gif);
       background-position: center;
       background-repeat: no-repeat;
+      z-index: 1500;
     }
   }
 

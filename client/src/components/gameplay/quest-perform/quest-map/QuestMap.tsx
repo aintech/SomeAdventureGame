@@ -147,8 +147,8 @@ const markerYPos = (
   asTarget: boolean = false
 ) => {
   // Расстояние между стейждами (количество междустейджевых пространств соответствует ид последнего стейджа).
-  const stagesH = bossStage.stage * MARKER_SIZE;
-  const betweenStageHeight = (dimensions.height - stagesH) / bossStage.stage - 6;
+  const stagesH = (bossStage.stage + 1) * MARKER_SIZE;
+  const betweenStageHeight = (dimensions.height - stagesH) / bossStage.stage;
 
   return dimensions.height - MARKER_SIZE * (checkpoint.stage + 1) - betweenStageHeight * checkpoint.stage + (asTarget ? MARKER_SIZE : 0);
 };

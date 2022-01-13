@@ -63,18 +63,14 @@ export const persistQuestCheckpoints = async (progressId: number, checkpoints: Q
         `select 
           ${progressId},
           '${CheckpointType[checkpoint.type].toLowerCase()}', 
-          ${checkpoint.stage},
-          ${checkpoint.enemies ? `'${JSON.stringify(checkpoint.enemies)}'` : null},
-          ${checkpoint.passed},
-          ${checkpoint.treasure},
-          ${null}`
+          ${checkpoint.stage}`
     )
     .join(' union all ');
 
   await query<void>(
     'persistQuestCheckpoints',
     `insert into public.quest_checkpoint 
-     (quest_progress_id, type, stage, enemies, passed, treasure, linked)
+     (quest_progress_id, type, stage)
      select * from (${checkpointsData}) as vals`
   );
 
@@ -115,6 +111,30 @@ export const getQuestCheckpoints = async (progressIds: number[]) => {
   );
 
   return calcCheckpointStatuses(checkpoints);
+};
+
+export const updateCheckpoints = async (checkpoints: QuestCheckpointWithProgress[]) => {
+  const updates = checkpoints.map((ch) => {
+    return `(
+      ${ch.id},
+      '${CheckpointType[ch.type].toLowerCase()}',
+      ${ch.enemies ? `'${JSON.stringify(ch.enemies)}'` : null},
+      ${ch.treasure}
+    )
+    `;
+  });
+
+  await query(
+    'updateCheckpoints',
+    `update public.quest_checkpoint ch set
+      type = c.type,
+      enemies = c.enemies,
+      treasure = c.treasure
+      from (values
+      ${updates.join(',')}
+      ) as c(id, type, enemies, treasure)
+      where ch.id = c.id`
+  );
 };
 
 const calcCheckpointStatuses = (checkpoints: QuestCheckpointWithProgress[]) => {

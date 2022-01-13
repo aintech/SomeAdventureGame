@@ -1,8 +1,8 @@
-import { generateCheckpoints, linkCheckpoints } from '../../generators/CheckpointGenerator';
+import { defineCheckpoints, generateCheckpoints, linkCheckpoints } from '../../generators/CheckpointGenerator';
 import query, { defaultMapper, single } from '../Db';
 import { HeroWithItems, HeroWithSkills } from '../hero/Hero';
 import { Quest } from '../quest/Quest';
-import { getQuestCheckpoints, persistLinks, persistQuestCheckpoints, QuestCheckpoint } from './QuestCheckpoint';
+import { getQuestCheckpoints, persistLinks, persistQuestCheckpoints, QuestCheckpoint, updateCheckpoints } from './QuestCheckpoint';
 
 type QuestProgress = {
   id: number;
@@ -36,6 +36,10 @@ export const createQuestProgress = async (userId: number, quest: Quest, heroes: 
   const links = linkCheckpoints(persisted);
 
   await persistLinks(links);
+
+  const defined = await defineCheckpoints(quest, await getQuestCheckpoints([progressId]));
+
+  await updateCheckpoints(defined);
 
   return progressId;
 };

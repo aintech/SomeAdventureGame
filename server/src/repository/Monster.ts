@@ -18,10 +18,13 @@ export type Monster = {
 };
 
 let monsters: Monster[] = [];
-export const getAllMonsters = async () => {
+export const prepareMonsters = async () => {
   if (monsters.length === 0) {
     monsters = await query<Monster[]>('fetchMonsters', 'select * from public.monster', [], mapMonster);
   }
+};
+
+export const getAllMonsters = () => {
   return monsters;
 };
 

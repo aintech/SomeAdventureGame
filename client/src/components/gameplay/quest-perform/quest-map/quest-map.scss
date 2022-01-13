@@ -33,7 +33,7 @@
     color: white;
 
     &_type {
-      @each $type in 'start' 'boss' 'battle' {
+      @each $type in 'start' 'boss' 'battle' 'camp' 'treasure' {
         &_#{$type} {
           background-image: url(../../../../img/quest-perform/quest-map/marker/quest-map__marker_#{$type}.png);
         }
