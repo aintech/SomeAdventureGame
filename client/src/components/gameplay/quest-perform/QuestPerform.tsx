@@ -12,6 +12,7 @@ import { shallowCopy } from '../../../utils/Utils';
 import Loader from '../../loader/Loader';
 import BattleProcess from './battle-process/BattleProcess';
 import QuestHero, { HeroAction } from './battle-process/process-helpers/QuestHero';
+import CampProcess from './camp-process/CampProcess';
 import HeroesPanel from './heroes-panel/HeroesPanel';
 import QuestComplete from './quest-complete/QuestComplete';
 import QuestMap from './quest-map/QuestMap';
@@ -71,6 +72,20 @@ const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, clos
             checkpointPassed={checkpointPassed}
             updateHeroesState={(heroes: QuestHero[]) => setHeroActors(heroes)}
           />
+        );
+        break;
+      case CheckpointType.CAMP:
+        process = (
+          <>
+            <CampProcess
+              checkpoint={activeCheckpoint}
+              heroes={heroActors}
+              closeProcess={closeProcess}
+              checkpointPassed={checkpointPassed}
+              updateHeroesState={(heroes: QuestHero[]) => setHeroActors(heroes)}
+            />
+            <HeroesPanel actors={heroActors} />
+          </>
         );
         break;
       case CheckpointType.TREASURE:

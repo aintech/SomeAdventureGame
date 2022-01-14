@@ -1,6 +1,6 @@
 import { CheckpointPassedBody } from '../../routes/QuestRoutes';
 import query, { single } from '../Db';
-import { adjustGoldExperience, adjustHealth, HeroWithSkills } from '../hero/Hero';
+import { adjustGoldExperience, adjustHealth, HeroWithSkills, setHeroHealth } from '../hero/Hero';
 import { adjustItems } from '../Item';
 import { Monster } from '../Monster';
 import { getQuestProgress } from './QuestProgress';
@@ -256,6 +256,12 @@ export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress, 
 
         adjustments.push(adjustHealth(h.id, hpAdjust));
       }
+    });
+  }
+
+  if (checkpoint.type === CheckpointType.CAMP) {
+    heroes.forEach((h) => {
+      adjustments.push(setHeroHealth(h.id, h.vitality * 10));
     });
   }
 

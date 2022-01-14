@@ -96,7 +96,7 @@ export const dismissHero = async (heroId: number) => {
 
 export const setHeroHealth = (heroId: number, amount: number) => {
   return query<void>(
-    'adjustHeroHealth',
+    'setHeroHealth',
     `update public.hero 
      set health = $2
      where id = $1`,

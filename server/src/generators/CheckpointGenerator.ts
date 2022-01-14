@@ -182,16 +182,9 @@ export const defineCheckpoints = async (quest: Quest, checkpoints: QuestCheckpoi
       return;
     }
 
-    let type: number = CheckpointType.BATTLE; // i % 2 == 0 ? CheckpointType.BATTLE : CheckpointType.TREASURE; //Math.random() > 1 ? "treasure" : "battle";
+    let type: number = CheckpointType.BATTLE;
 
     const path = pathToCheckpoint(ch, checkpoints);
-
-    if (checkpoints.find((c) => c.type === CheckpointType.BOSS)?.stage === ch.stage + 1) {
-      console.log('----------------------');
-      console.log('from: ', ch.id);
-      console.log(path.map((chs) => chs.map((c) => c.id)));
-      console.log('----------------------');
-    }
 
     if (ch.stage > 2 && !haveCampsBefore(path) && Math.random() > 0.5) {
       type = CheckpointType.CAMP;

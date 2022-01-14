@@ -1,7 +1,7 @@
-@import '../../../../utils/css/index.scss';
+@import '.././../../../utils/css/index.scss';
 
-.quest-complete {
-  margin-top: 100px;
+.camp-process {
+  margin-top: 80px;
   width: 80%;
   max-width: 600px;
   display: flex;
@@ -9,39 +9,18 @@
   align-items: center;
   color: white;
 
-  &__tribute {
-    display: flex;
-    font-size: 48px;
+  &__message {
     @include strokeText;
-
-    & img {
-      width: 80px;
-      height: 80px;
-      margin-right: 10px;
-    }
-
-    &--text {
-      align-self: center;
-    }
+    padding-bottom: 48px;
+    font-size: 48px;
   }
 
-  &__fame {
-    display: flex;
-    font-size: 48px;
+  &__description {
     @include strokeText;
-
-    & img {
-      width: 80px;
-      height: 80px;
-      margin-right: 10px;
-    }
-
-    &--text {
-      align-self: center;
-    }
+    font-size: 24px;
   }
 
-  &__btn_accept {
+  &__btn-onwards {
     @include strokeText;
     padding: 20px;
     margin-top: 50px;
