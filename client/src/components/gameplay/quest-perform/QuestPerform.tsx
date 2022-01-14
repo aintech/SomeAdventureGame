@@ -11,7 +11,7 @@ import { CheckpointPassedBody } from '../../../services/QuestService';
 import { shallowCopy } from '../../../utils/Utils';
 import Loader from '../../loader/Loader';
 import BattleProcess from './battle-process/BattleProcess';
-import QuestHero, { HeroAction } from './battle-process/process-helpers/QuestHero';
+import QuestHero, { HeroAction } from './battle-process/process-models/QuestHero';
 import CampProcess from './camp-process/CampProcess';
 import HeroesPanel from './heroes-panel/HeroesPanel';
 import QuestComplete from './quest-complete/QuestComplete';

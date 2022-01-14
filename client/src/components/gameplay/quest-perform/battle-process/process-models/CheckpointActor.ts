@@ -1,19 +1,6 @@
 import PersonageStats from '../../../../../models/PersonageStats';
 import { CheckpointEnemy } from '../../../../../models/QuestCheckpoint';
-
-export enum StatusEffectType {
-  DEFENDED,
-}
-
-export type StatusEffect = {
-  id: number;
-  type: StatusEffectType;
-  // Количество "раундов" активности эффекта
-  duration: number;
-  amount: number;
-  // Раунд в котором статус обрабатывался в последний раз, чтобы можно было отыграть несколько статусов в один заход.
-  round?: number;
-};
+import { StatusEffect } from './StatusEffect';
 
 export type CheckpointActor = {
   id: number;
@@ -30,8 +17,8 @@ export type CheckpointActor = {
 
 export const convertToActor = (actor: CheckpointEnemy): CheckpointActor => {
   return {
-    // Превращаем actorId в id чтобы не заморачиваться с разницей с QuestHero,
-    // изначальный id из CheckpointEnemy не использум, т.к. он одинаков для одниого типа противников
+    // Превращаем actorId в id чтобы и у актера и QuestHero было поле id,
+    // изначальный id из CheckpointEnemy не использум, т.к. он одинаков для одного типа противников
     // минусы чтобы айдишники отличались от геройских
     id: -actor.actorId - 1,
     name: actor.name,

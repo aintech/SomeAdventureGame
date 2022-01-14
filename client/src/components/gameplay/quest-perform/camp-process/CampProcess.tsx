@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import QuestCheckpoint from '../../../../models/QuestCheckpoint';
 import { CheckpointPassedBody } from '../../../../services/QuestService';
-import QuestHero from '../battle-process/process-helpers/QuestHero';
+import QuestHero from '../battle-process/process-models/QuestHero';
 import './camp-process.scss';
 
 type CampProcessProps = {

@@ -32,6 +32,15 @@
   }
 }
 
+@keyframes fly-away {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, -50px);
+  }
+}
+
 .quest-hero-item {
   position: relative;
   display: flex;
@@ -64,6 +73,28 @@
       animation: hitted-alt 0.45s;
       animation-iteration-count: 1;
     }
+  }
+
+  &__messages {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin-top: -5px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__message {
+    @include strokeText;
+    position: relative;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 28px;
+    color: red;
+    animation: fly-away 1s;
+    z-index: 2000;
   }
 
   &__bars {

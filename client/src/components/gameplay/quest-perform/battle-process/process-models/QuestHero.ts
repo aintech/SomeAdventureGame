@@ -1,5 +1,5 @@
 import Hero from '../../../../../models/hero/Hero';
-import { StatusEffect } from './CheckpointActor';
+import { StatusEffect } from './StatusEffect';
 
 export enum HeroAction {
   ATTACK,

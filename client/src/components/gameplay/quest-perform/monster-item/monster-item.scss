@@ -4,6 +4,15 @@ $bar-height: 65px;
 $actor-height: 256px;
 $actor-width: 256px;
 
+@keyframes fly-away {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, -50px);
+  }
+}
+
 .monster-item {
   @include strokeText;
   position: relative;
@@ -44,6 +53,28 @@ $actor-width: 256px;
       background-repeat: no-repeat;
       z-index: 1500;
     }
+  }
+
+  &__messages {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin-top: -5px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__message {
+    @include strokeText;
+    position: relative;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 28px;
+    color: red;
+    animation: fly-away 1s;
+    z-index: 2000;
   }
 
   &__bar-holder {

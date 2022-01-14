@@ -1,17 +1,19 @@
 import QuestHeroItem from '../quest-hero-item/QuestHeroItem';
-import QuestHero, { HeroAction } from '../battle-process/process-helpers/QuestHero';
+import QuestHero, { HeroAction } from '../battle-process/process-models/QuestHero';
 import './heroes-panel.scss';
 import { CheckpointReward } from '../../../../models/QuestCheckpoint';
+import { BattleMessage } from '../battle-process/process-models/BattleMessage';
 
 type HeroesPanelProps = {
   actors: QuestHero[];
   current?: QuestHero;
   showActions?: boolean;
   heroRewards?: CheckpointReward;
+  messages?: BattleMessage[];
   performHeroAction?: (action: HeroAction) => void;
 };
 
-const HeroesPanel = ({ actors, current, showActions, heroRewards, performHeroAction }: HeroesPanelProps) => {
+const HeroesPanel = ({ actors, current, showActions, heroRewards, messages, performHeroAction }: HeroesPanelProps) => {
   // seed нужен чтобы насильно запустить ререндер иконок героев, чтобы реагировали на противников
   const seed = new Date().getTime();
 
@@ -25,6 +27,7 @@ const HeroesPanel = ({ actors, current, showActions, heroRewards, performHeroAct
       hero={hero}
       current={current?.id === hero.id}
       reward={heroRewards ? heroRewards.rewards?.find((r) => r.heroId === hero.id) : undefined}
+      messages={messages?.filter((msg) => msg.actorId === hero.id)}
       seed={seed}
     />
   ));

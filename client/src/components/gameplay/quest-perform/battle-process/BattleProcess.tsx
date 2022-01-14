@@ -3,13 +3,16 @@ import { connect } from 'react-redux';
 import { isAlive } from '../../../../models/hero/Hero';
 import QuestCheckpoint, { CheckpointReward } from '../../../../models/QuestCheckpoint';
 import { CheckpointPassedBody } from '../../../../services/QuestService';
-import { replace } from '../../../../utils/arrays';
+import { remove, replace } from '../../../../utils/arrays';
 import Loader from '../../../loader/Loader';
 import HeroesPanel from '../heroes-panel/HeroesPanel';
 import MonsterItem from '../monster-item/MonsterItem';
 import './battle-process.scss';
-import CheckpointActor, { convertToActor, StatusEffect, StatusEffectType } from './process-helpers/CheckpointActor';
-import QuestHero, { HeroAction } from './process-helpers/QuestHero';
+import { BattleMessage, dmgMessage } from './process-models/BattleMessage';
+import CheckpointActor, { convertToActor } from './process-models/CheckpointActor';
+import { HeroEvent } from './process-models/HeroEvent';
+import QuestHero, { HeroAction } from './process-models/QuestHero';
+import { StatusEffect, StatusEffectType } from './process-models/StatusEffect';
 
 enum ProcessState {
   LOADING,
@@ -30,12 +33,6 @@ type BattleProcessProps = {
   closeProcess: () => void;
 };
 
-export type HeroEvent = {
-  time: number;
-  itemId?: number;
-  hpAlter?: number;
-};
-
 type BattleProcessState = {
   round: number;
   actorsQueue: (QuestHero | CheckpointActor)[];
@@ -45,6 +42,7 @@ type BattleProcessState = {
   processState: ProcessState;
   heroes: QuestHero[];
   monsters: CheckpointActor[];
+  messages: BattleMessage[];
   battleEvents: Map<number, HeroEvent[]>; // heroId to events, урон, лечение и использование предметов героем
 };
 
@@ -61,6 +59,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
       processState: ProcessState.LOADING,
       heroes: [],
       monsters: [],
+      messages: [],
       battleEvents: new Map(),
     };
 
@@ -239,11 +238,22 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         monster.health -= damage;
         monster.hitted = true;
 
+        const message = dmgMessage(monster, damage);
+        setTimeout(() => {
+          this.setState((state) => {
+            return {
+              ...state,
+              messages: remove(state.messages, message),
+            };
+          });
+        }, 700);
+
         this.setState(
           (state) => {
             return {
               processState: ProcessState.SWITCH_ACTOR,
               monsters: replace(state.monsters, monster),
+              messages: [...state.messages, message],
             };
           },
           () => setTimeout(this.processRound, 500)
@@ -309,11 +319,25 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     const battleEvents = new Map(this.state.battleEvents);
     battleEvents.set(victim.id, [...battleEvents.get(victim.id)!, { time: new Date().getTime(), hpAlter: -damage }]);
 
+    const message = dmgMessage(victim, damage);
+    setTimeout(() => {
+      this.setState((state) => {
+        return {
+          ...state,
+          messages: remove(state.messages, message),
+        };
+      });
+    }, 700);
+
     this.setState(
-      {
-        processState: ProcessState.SWITCH_ACTOR,
-        heroes: updatedHeroes,
-        battleEvents,
+      (state) => {
+        return {
+          ...state,
+          processState: ProcessState.SWITCH_ACTOR,
+          heroes: updatedHeroes,
+          battleEvents,
+          messages: [...state.messages, message],
+        };
       },
       () => setTimeout(this.processRound, 500)
     );
@@ -344,7 +368,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   }
 
   render() {
-    const { monsters, heroes, currentActor, processState } = this.state;
+    const { monsters, heroes, currentActor, processState, messages } = this.state;
 
     const { checkpoint, checkpointReward } = this.props;
 
@@ -357,7 +381,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         {processState === ProcessState.LOADING ? <Loader message="Loading assets" /> : null}
         {battleEnded ? (
           <div className="battle-process__complete">
-            <p className="battle-process__message">Победа</p>
+            <p className="battle-process__win-message">Победа</p>
 
             <div className="battle-process__reward">
               {checkpointReward?.checkpointId !== checkpoint.id ? <Loader message="Checking rewards" /> : null}
@@ -370,7 +394,13 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         ) : (
           <div className="battle-process__monsters-holder" style={{ gridTemplateColumns: grid }}>
             {monsters.map((m, idx) => (
-              <MonsterItem key={m.id} monster={m} idx={idx} handleClickMonster={this.handleClickMonster} />
+              <MonsterItem
+                key={m.id}
+                monster={m}
+                idx={idx}
+                messages={messages.filter((msg) => msg.actorId === m.id)}
+                handleClickMonster={this.handleClickMonster}
+              />
             ))}
           </div>
         )}
@@ -380,6 +410,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
           current={currentActor?.isHero ? (currentActor as QuestHero) : undefined}
           showActions={!battleEnded}
           heroRewards={checkpointReward?.checkpointId === checkpoint.id ? checkpointReward : undefined}
+          messages={messages}
           performHeroAction={this.performHeroAction}
         />
       </div>

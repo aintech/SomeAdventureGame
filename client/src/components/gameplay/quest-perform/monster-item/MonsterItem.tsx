@@ -1,9 +1,11 @@
-import CheckpointActor from '../battle-process/process-helpers/CheckpointActor';
+import { BattleMessage } from '../battle-process/process-models/BattleMessage';
+import CheckpointActor from '../battle-process/process-models/CheckpointActor';
 import './monster-item.scss';
 
 type MonsterItemProps = {
   monster: CheckpointActor;
   idx: number;
+  messages: BattleMessage[];
   handleClickMonster: (monster: CheckpointActor) => void;
 };
 
@@ -11,7 +13,7 @@ type MonsterItemProps = {
 // надо переправить так чтобы анимация не зависела от гифки, т.к. тайминги не совпадают.
 // например играть анимацию через setTimeout
 
-const MonsterItem = ({ monster, idx, handleClickMonster }: MonsterItemProps) => {
+const MonsterItem = ({ monster, idx, messages, handleClickMonster }: MonsterItemProps) => {
   const healthPercent = (monster.health / monster.totalHealth) * 100;
   const barLength = monster.totalHealth * 0.5;
 
@@ -23,6 +25,13 @@ const MonsterItem = ({ monster, idx, handleClickMonster }: MonsterItemProps) => 
         style={{ zIndex: idx % 2, marginTop: `${(idx % 2) * 40}px` }}
         onClick={() => handleClickMonster(monster)}
       >
+        <div className="monster-item__messages">
+          {messages.map((m) => (
+            <div key={m.id} className="monster-item__message">
+              {m.message}
+            </div>
+          ))}
+        </div>
         {monster.health > 0 ? (
           <>
             <div className="monster-item__bar-holder" style={{ width: `${barLength}px` }}>

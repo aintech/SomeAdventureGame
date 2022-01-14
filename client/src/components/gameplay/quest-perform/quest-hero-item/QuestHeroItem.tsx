@@ -5,8 +5,9 @@ import { heroStatsChoosed } from '../../../../actions/Actions';
 import HealIconImg from '../../../../img/quest-perform/battle-process/heal-icon.png';
 import Hero, { calcHealthFraction } from '../../../../models/hero/Hero';
 import { HeroType } from '../../../../models/hero/HeroType';
-import { StatusEffectType } from '../battle-process/process-helpers/CheckpointActor';
-import QuestHero from '../battle-process/process-helpers/QuestHero';
+import { BattleMessage } from '../battle-process/process-models/BattleMessage';
+import QuestHero from '../battle-process/process-models/QuestHero';
+import { StatusEffectType } from '../battle-process/process-models/StatusEffect';
 import './quest-hero-item.scss';
 
 type QuestHeroItemProps = {
@@ -14,11 +15,12 @@ type QuestHeroItemProps = {
   heroClickHandler: (hero: Hero) => void;
   current?: boolean;
   reward?: { heroId: number; gold: number; experience: number };
+  messages?: BattleMessage[];
   // не используется, но нужен чтобы заставить айтем ререндериться.
   seed: number;
 };
 
-const QuestHeroItem = ({ hero, current, heroClickHandler, reward, seed }: QuestHeroItemProps) => {
+const QuestHeroItem = ({ hero, current, heroClickHandler, reward, messages, seed }: QuestHeroItemProps) => {
   const rewardStyle = {
     display: reward ? 'block' : 'none',
   };
@@ -41,6 +43,15 @@ const QuestHeroItem = ({ hero, current, heroClickHandler, reward, seed }: QuestH
 
   return (
     <div className={mainClass} onClick={() => heroClickHandler(hero)}>
+      <div className="quest-hero-item__messages">
+        {messages
+          ? messages.map((m) => (
+              <div key={m.id} className="quest-hero-item__message">
+                {m.message}
+              </div>
+            ))
+          : null}
+      </div>
       <div className="quest-hero-item__name">{hero.name}</div>
       <div className="quest-hero-item__status-holder">
         {hero.statusEffects.map((eff) => (

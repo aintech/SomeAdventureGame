@@ -1,11 +1,12 @@
 @import '../../../../utils/css/index.scss';
 
 .battle-process {
-  overflow: hidden;
   height: calc(var(--vh, 1vh) * 100 - #{$header_height} - 40px);
   width: 100%;
+  position: relative;
   display: flex;
   align-items: flex-end;
+  overflow: hidden;
 
   &__complete {
     width: 100%;
@@ -16,7 +17,7 @@
     color: white;
   }
 
-  &__message {
+  &__win-message {
     @include strokeText;
     padding-top: 60px;
     margin: 0 auto;
@@ -50,9 +51,10 @@
   }
 
   &__monsters-holder {
-    margin: 0 auto;
-    padding-bottom: 220px;
+    margin: auto;
+    padding-bottom: 170px;
     width: 80%;
     display: grid;
+    z-index: 1000;
   }
 }
