@@ -1,8 +1,11 @@
-import QuestHeroItem from '../quest-hero-item/QuestHeroItem';
-import QuestHero, { HeroAction } from '../battle-process/process-models/QuestHero';
-import './heroes-panel.scss';
+import { useState } from 'react';
+import { HeroItem } from '../../../../models/Item';
 import { CheckpointReward } from '../../../../models/QuestCheckpoint';
-import { BattleMessage } from '../battle-process/process-models/BattleMessage';
+import { BattleAction } from '../process-models/BattleAction';
+import { BattleMessage } from '../process-models/BattleMessage';
+import QuestHero from '../process-models/QuestHero';
+import QuestHeroItem from '../quest-hero-item/QuestHeroItem';
+import './heroes-panel.scss';
 
 type HeroesPanelProps = {
   actors: QuestHero[];
@@ -10,16 +13,36 @@ type HeroesPanelProps = {
   showActions?: boolean;
   heroRewards?: CheckpointReward;
   messages?: BattleMessage[];
-  performHeroAction?: (action: HeroAction) => void;
+  performBattleAction?: (action: BattleAction) => void;
 };
 
-const HeroesPanel = ({ actors, current, showActions, heroRewards, messages, performHeroAction }: HeroesPanelProps) => {
+const HeroesPanel = ({ actors, current, showActions, heroRewards, messages, performBattleAction }: HeroesPanelProps) => {
+  const [items, setItems] = useState<HeroItem[]>([]);
+
   // seed нужен чтобы насильно запустить ререндер иконок героев, чтобы реагировали на противников
   const seed = new Date().getTime();
 
   const showSkills = () => {};
 
-  const showItems = () => {};
+  const toggleItems = () => {
+    if (current) {
+      if (current.items.length === 0) {
+        return;
+      }
+      if (current.action === BattleAction.CHOOSING_SKILL_ITEM) {
+        performBattleAction!(BattleAction.ATTACK);
+        setItems([]);
+      } else {
+        performBattleAction!(BattleAction.CHOOSING_SKILL_ITEM);
+        setItems(current.items);
+      }
+    }
+  };
+
+  const handleDefence = () => {
+    setItems([]);
+    performBattleAction!(BattleAction.DEFENCE);
+  };
 
   const heroItems = actors.map((hero) => (
     <QuestHeroItem
@@ -34,14 +57,23 @@ const HeroesPanel = ({ actors, current, showActions, heroRewards, messages, perf
 
   return (
     <div className="heroes-panel">
+      <div className="heroes-panel__items">
+        {items.map((item) => (
+          <div key={item.id} className="heroes-panel__item">
+            {item.name}
+          </div>
+        ))}
+      </div>
       <div className="heroes-panel__heroes">{heroItems}</div>
       <div className={`heroes-panel__hero-actions ${showActions ? '' : 'heroes-panel__hero-actions_hidden'}`}>
         <div className="heroes-panel__hero-action heroes-panel__hero-action_skill" onClick={() => showSkills()}></div>
-        <div className="heroes-panel__hero-action heroes-panel__hero-action_item" onClick={() => showItems()}></div>
         <div
-          className="heroes-panel__hero-action heroes-panel__hero-action_defence"
-          onClick={() => performHeroAction!(HeroAction.DEFENCE)}
+          className={`heroes-panel__hero-action heroes-panel__hero-action_item${
+            current?.items.length === 0 ? ' heroes-panel__hero-action_disabled' : ''
+          }`}
+          onClick={() => toggleItems()}
         ></div>
+        <div className="heroes-panel__hero-action heroes-panel__hero-action_defence" onClick={handleDefence}></div>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { HeroItemResponse, ItemResponse } from "../services/HeroService";
+import { HeroItemResponse, ItemResponse } from '../services/HeroService';
 
 export enum ItemType {
   POTION,
@@ -24,19 +24,7 @@ export default class Item {
 }
 
 export class HeroItem extends Item {
-  constructor(
-    public id: number,
-    public name: string,
-    public description: string,
-    public price: number,
-    public avatar: string,
-    public type: ItemType,
-    public subtype: ItemSubtype,
-    public buyingTime: number,
-    public amount: number
-  ) {
-    super(id, name, description, price, avatar, type, subtype, buyingTime);
-  }
+  public amount: number = 0;
 }
 
 export const convertItem = (response: ItemResponse): Item => {

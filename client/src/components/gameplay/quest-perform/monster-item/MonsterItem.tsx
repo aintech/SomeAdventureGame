@@ -1,5 +1,5 @@
-import { BattleMessage } from '../battle-process/process-models/BattleMessage';
-import CheckpointActor from '../battle-process/process-models/CheckpointActor';
+import { BattleMessage } from '../process-models/BattleMessage';
+import CheckpointActor from '../process-models/CheckpointActor';
 import './monster-item.scss';
 
 type MonsterItemProps = {

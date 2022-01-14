@@ -5,9 +5,9 @@ import { heroStatsChoosed } from '../../../../actions/Actions';
 import HealIconImg from '../../../../img/quest-perform/battle-process/heal-icon.png';
 import Hero, { calcHealthFraction } from '../../../../models/hero/Hero';
 import { HeroType } from '../../../../models/hero/HeroType';
-import { BattleMessage } from '../battle-process/process-models/BattleMessage';
-import QuestHero from '../battle-process/process-models/QuestHero';
-import { StatusEffectType } from '../battle-process/process-models/StatusEffect';
+import { BattleMessage } from '../process-models/BattleMessage';
+import QuestHero from '../process-models/QuestHero';
+import { StatusEffectType } from '../process-models/StatusEffect';
 import './quest-hero-item.scss';
 
 type QuestHeroItemProps = {

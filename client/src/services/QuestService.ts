@@ -1,4 +1,4 @@
-import { HeroEvent } from '../components/gameplay/quest-perform/battle-process/process-models/HeroEvent';
+import { HeroEvent } from '../components/gameplay/quest-perform/process-models/HeroEvent';
 import { AuthProps } from '../contexts/AuthContext';
 import GameStats from '../models/GameStats';
 import Quest from '../models/Quest';

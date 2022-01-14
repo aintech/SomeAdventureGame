@@ -1,5 +1,5 @@
-import PersonageStats from '../../../../../models/PersonageStats';
-import { CheckpointEnemy } from '../../../../../models/QuestCheckpoint';
+import PersonageStats from '../../../../models/PersonageStats';
+import { CheckpointEnemy } from '../../../../models/QuestCheckpoint';
 import { StatusEffect } from './StatusEffect';
 
 export type CheckpointActor = {

@@ -7,12 +7,13 @@ import { remove, replace } from '../../../../utils/arrays';
 import Loader from '../../../loader/Loader';
 import HeroesPanel from '../heroes-panel/HeroesPanel';
 import MonsterItem from '../monster-item/MonsterItem';
+import { BattleAction, isActive } from '../process-models/BattleAction';
+import { BattleMessage, dmgMessage } from '../process-models/BattleMessage';
+import CheckpointActor, { convertToActor } from '../process-models/CheckpointActor';
+import { HeroEvent } from '../process-models/HeroEvent';
+import QuestHero from '../process-models/QuestHero';
+import { StatusEffect, StatusEffectType } from '../process-models/StatusEffect';
 import './battle-process.scss';
-import { BattleMessage, dmgMessage } from './process-models/BattleMessage';
-import CheckpointActor, { convertToActor } from './process-models/CheckpointActor';
-import { HeroEvent } from './process-models/HeroEvent';
-import QuestHero, { HeroAction } from './process-models/QuestHero';
-import { StatusEffect, StatusEffectType } from './process-models/StatusEffect';
 
 enum ProcessState {
   LOADING,
@@ -233,44 +234,60 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     const { currentActor } = this.state;
     if (currentActor && currentActor.isHero) {
       const hero = currentActor as QuestHero;
-      if (hero.action === HeroAction.ATTACK) {
-        const damage = Math.max(1, hero.stats.power + hero.equipStats.power - monster.stats.defence);
-        monster.health -= damage;
-        monster.hitted = true;
 
-        const message = dmgMessage(monster, damage);
-        setTimeout(() => {
-          this.setState((state) => {
-            return {
-              ...state,
-              messages: remove(state.messages, message),
-            };
-          });
-        }, 700);
+      switch (hero.action) {
+        case BattleAction.ATTACK:
+          const damage = Math.max(1, hero.stats.power + hero.equipStats.power - monster.stats.defence);
+          monster.health -= damage;
+          monster.hitted = true;
 
-        this.setState(
-          (state) => {
-            return {
-              processState: ProcessState.SWITCH_ACTOR,
-              monsters: replace(state.monsters, monster),
-              messages: [...state.messages, message],
-            };
-          },
-          () => setTimeout(this.processRound, 500)
-        );
+          const message = dmgMessage(monster, damage);
+          setTimeout(() => {
+            this.setState((state) => {
+              return {
+                ...state,
+                messages: remove(state.messages, message),
+              };
+            });
+          }, 700);
+
+          this.setState(
+            (state) => {
+              return {
+                processState: ProcessState.SWITCH_ACTOR,
+                monsters: replace(state.monsters, monster),
+                messages: [...state.messages, message],
+              };
+            },
+            () => setTimeout(this.processRound, 500)
+          );
+          break;
       }
     }
   };
 
-  performHeroAction = (action: HeroAction) => {
+  performBattleAction = (action: BattleAction) => {
     const hero = this.state.currentActor as QuestHero;
     if (hero) {
+      hero.action = action;
+      let processState = this.state.processState;
+
       switch (action) {
-        case HeroAction.DEFENCE:
+        case BattleAction.ATTACK:
+        case BattleAction.CHOOSING_SKILL_ITEM:
+          // do nothing
+          break;
+
+        case BattleAction.DEFENCE:
           hero.statusEffects.push({ id: Math.random(), type: StatusEffectType.DEFENDED, amount: 0.5, duration: 1 });
           break;
+
         default:
-          throw new Error(`Unknown hero action type ${HeroAction[action]}`);
+          throw new Error(`Unknown hero action type ${BattleAction[action]}`);
+      }
+
+      if (action === BattleAction.DEFENCE) {
+        processState = ProcessState.SWITCH_ACTOR;
       }
 
       this.setState(
@@ -280,10 +297,14 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
             currentActor: hero,
             heroes: replace(state.heroes, hero),
             actorsQueue: replace(state.actorsQueue, hero),
-            processState: ProcessState.SWITCH_ACTOR,
+            processState,
           };
         },
-        () => this.processRound()
+        () => {
+          if (isActive(action)) {
+            this.processRound();
+          }
+        }
       );
     }
   };
@@ -372,7 +393,9 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
     const { checkpoint, checkpointReward } = this.props;
 
-    const grid = `repeat(${monsters.length}, ${100 / monsters.length}%)`;
+    const cellSize = window.innerWidth * 0.8 > 130 * monsters.length ? '130px' : `${100 / monsters.length}%`;
+
+    const grid = `repeat(${monsters.length}, ${cellSize})`;
 
     const battleEnded = processState === ProcessState.BATTLE_WON || processState === ProcessState.BATTLE_LOST;
 
@@ -411,7 +434,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
           showActions={!battleEnded}
           heroRewards={checkpointReward?.checkpointId === checkpoint.id ? checkpointReward : undefined}
           messages={messages}
-          performHeroAction={this.performHeroAction}
+          performBattleAction={this.performBattleAction}
         />
       </div>
     );

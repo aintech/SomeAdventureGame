@@ -1,15 +1,9 @@
-import Hero from '../../../../../models/hero/Hero';
+import Hero from '../../../../models/hero/Hero';
+import { BattleAction } from './BattleAction';
 import { StatusEffect } from './StatusEffect';
 
-export enum HeroAction {
-  ATTACK,
-  DEFENCE,
-  USE_SKILL,
-  USE_ITEM,
-}
-
 export default class QuestHero extends Hero {
-  public action: HeroAction = HeroAction.ATTACK;
+  public action: BattleAction = BattleAction.ATTACK;
   public statusEffects: StatusEffect[] = [];
   public hitted?: boolean;
   public healed?: boolean;
