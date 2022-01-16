@@ -1,15 +1,15 @@
-import React, { MouseEvent, useEffect, useRef, useState } from "react";
-import { connect, useDispatch } from "react-redux";
-import { bindActionCreators, compose, Dispatch } from "redux";
-import { heroStatsDisplayClosed, showConfirmDialog } from "../../../actions/Actions";
-import { onDismissHero } from "../../../actions/ApiActions";
-import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService";
-import { EquipmentType } from "../../../models/Equipment";
-import Hero, { calcHealthFraction } from "../../../models/hero/Hero";
-import { HeroActivityType } from "../../../models/hero/HeroActivity";
-import { HeroType } from "../../../models/hero/HeroType";
-import { convertDuration, millisToSecs } from "../../../utils/Utils";
-import "./hero-stats-display.scss";
+import React, { MouseEvent, useEffect, useRef, useState } from 'react';
+import { connect, useDispatch } from 'react-redux';
+import { bindActionCreators, compose, Dispatch } from 'redux';
+import { heroStatsDisplayClosed, showConfirmDialog } from '../../../actions/Actions';
+import { onDismissHero } from '../../../actions/ApiActions';
+import withApiService, { WithApiServiceProps } from '../../../hoc/WithApiService';
+import { EquipmentSubtype, EquipmentType } from '../../../models/Equipment';
+import Hero, { calcHealthFraction } from '../../../models/hero/Hero';
+import { HeroActivityType } from '../../../models/hero/HeroActivity';
+import { HeroType } from '../../../models/hero/HeroType';
+import { convertDuration, millisToSecs } from '../../../utils/Utils';
+import './hero-stats-display.scss';
 
 type HeroStatsDisplayProps = {
   hero: Hero;
@@ -21,34 +21,34 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
   const dispatch = useDispatch();
   const healthRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
   const expRef = useRef<HTMLCanvasElement>({} as HTMLCanvasElement);
-  const [activityTime, setActivityTime] = useState("");
+  const [activityTime, setActivityTime] = useState('');
 
   const updateActivityTime = () => {
     if (hero?.activity?.duration) {
       const remained = millisToSecs(hero.activity.startedAt.getTime() + hero.activity.duration * 1000 - new Date().getTime());
       setActivityTime(convertDuration(remained + 1));
     } else {
-      setActivityTime("");
+      setActivityTime('');
     }
   };
 
   useEffect(() => {
     if (hero) {
-      const healthBar = healthRef.current.getContext("2d")!;
+      const healthBar = healthRef.current.getContext('2d')!;
       healthBar.clearRect(0, 0, 124, 21);
-      healthBar.fillStyle = "red";
+      healthBar.fillStyle = 'red';
       healthBar.fillRect(0, 0, 124 * calcHealthFraction(hero), 21);
 
-      const expBar = expRef.current.getContext("2d")!;
+      const expBar = expRef.current.getContext('2d')!;
       expBar.clearRect(0, 0, 124, 21);
-      expBar.fillStyle = "yellow";
+      expBar.fillStyle = 'yellow';
       expBar.fillRect(0, 0, 124 * hero.level.progress, 21);
 
       if (hero?.activity?.duration) {
         const remained = millisToSecs(hero.activity.startedAt.getTime() + hero.activity.duration * 1000 - new Date().getTime());
         setActivityTime(convertDuration(remained + 1));
       } else {
-        setActivityTime("");
+        setActivityTime('');
       }
     }
   }, [hero]);
@@ -76,10 +76,10 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
   const shield = hero.equipment.find((e) => e.type === EquipmentType.SHIELD);
   const accessory = hero.equipment.find((e) => e.type === EquipmentType.ACCESSORY);
 
-  const weaponStyle = `hero-stats__equipment-weapon--${weapon.imgAvatar}`;
-  const armorStyle = `hero-stats__equipment-armor--${armor.imgAvatar}`;
-  const shieldStyle = `hero-stats__equipment-shield${shield ? "--" + shield.imgAvatar : ""}`;
-  const accessoryStyle = `hero-stats__equipment-accessory${accessory ? "--" + accessory.imgAvatar : ""}`;
+  const weaponClass = ` hero-stats__equipment-weapon--${EquipmentSubtype[weapon.subtype].toLowerCase()}`;
+  const armorClass = ` hero-stats__equipment-armor--${EquipmentSubtype[armor.subtype].toLowerCase()}`;
+  const shieldClass = shield ? ` hero-stats__equipment-shield--${EquipmentSubtype[shield.subtype].toLowerCase()}` : '';
+  const accessoryClass = accessory ? ` hero-stats__equipment-accessory--${EquipmentSubtype[accessory.subtype].toLowerCase()}` : '';
 
   const stars = [
     [],
@@ -111,9 +111,9 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
 
   const dismissBtnStyle = hero.activity
     ? hero.activity.type === HeroActivityType.QUEST
-      ? "hero-stats__dismiss-btn__hidden"
-      : ""
-    : "hero-stats__dismiss-btn__hidden";
+      ? 'hero-stats__dismiss-btn__hidden'
+      : ''
+    : 'hero-stats__dismiss-btn__hidden';
 
   return (
     <div className="hero-stats" onClick={heroStatsDisplayClosed}>
@@ -131,8 +131,8 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
           }}
         >
           <span className="hero-stats__dismiss-btn--text">
-            {" "}
-            <span style={{ color: "red" }}>X</span> Отпустить
+            {' '}
+            <span style={{ color: 'red' }}>X</span> Отпустить
           </span>
         </button>
         <div className="hero-stats__activity">
@@ -155,26 +155,26 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
         <div className="hero-stats__initiative">{hero.stats.initiative}</div>
         <div className="hero-stats__initiative-surplus">-{hero.equipStats.initiative}</div>
         <div className="hero-stats__equipment">
-          <div className={weaponStyle}>
+          <div className={`hero-stats__equipment-weapon${weaponClass}`}>
             <div className="hero-stats__equipment--stats">
               <div className="hero-stats__equipment--stats-tier">{stars[weapon.tier]}</div>
-              <div className="hero-stats__equipment--stats-level">lv. {weapon.level}</div>
+              <div className="hero-stats__equipment--stats-level">lvl. {weapon.level}</div>
             </div>
           </div>
-          <div className={armorStyle}>
+          <div className={`hero-stats__equipment-armor${armorClass}`}>
             <div className="hero-stats__equipment--stats">
               <div className="hero-stats__equipment--stats-tier">{stars[armor.tier]}</div>
-              <div className="hero-stats__equipment--stats-level">lv. {armor.level}</div>
+              <div className="hero-stats__equipment--stats-level">lvl. {armor.level}</div>
             </div>
           </div>
-          <div className={shieldStyle}>
+          <div className={`hero-stats__equipment-shield${shieldClass}`}>
             <div className="hero-stats__equipment--stats">
-              <div className="hero-stats__equipment--stats-level">{shield ? `lv. ${shield.level}` : null}</div>
+              <div className="hero-stats__equipment--stats-level">{shield ? `lvl. ${shield.level}` : null}</div>
             </div>
           </div>
-          <div className={accessoryStyle}>
+          <div className={`hero-stats__equipment-accessory${accessoryClass}`}>
             <div className="hero-stats__equipment--stats">
-              <div className="hero-stats__equipment--stats-level">{accessory ? `lv. ${accessory.level}` : null}</div>
+              <div className="hero-stats__equipment--stats-level">{accessory ? `lvl. ${accessory.level}` : null}</div>
             </div>
           </div>
         </div>
@@ -214,10 +214,10 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
             <li>
               {hero.skills.map((skill) => {
                 return (
-                  <ul key={skill.name} className={`${skill.level > hero.level.lvl ? "hero-stats__skills--disabled" : ""}`}>
+                  <ul key={skill.name} className={`${skill.level > hero.level.lvl ? 'hero-stats__skills--disabled' : ''}`}>
                     <span className="hero-stats__skills--name">
                       {skill.name} ({skill.level} ур)
-                    </span>{" "}
+                    </span>{' '}
                     - {skill.description}
                   </ul>
                 );

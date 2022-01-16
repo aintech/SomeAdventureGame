@@ -1,4 +1,4 @@
-@import "../../../utils/css/index.scss";
+@import '../../../utils/css/index.scss';
 
 .hero-stats {
   font-size: 30px;
@@ -126,7 +126,7 @@
       background-size: cover;
     }
 
-    @each $type in "warrior" "paladin" "thief" "mage" "healer" {
+    @each $type in 'warrior' 'paladin' 'thief' 'mage' 'healer' {
       &--#{$type} {
         background-image: url(../../../img/portraits/portrait-#{$type}.png);
       }
@@ -245,18 +245,18 @@
     grid-row: 9;
     grid-column: 2;
 
-    margin-left: 16px;
+    margin-left: 18px;
 
-    grid-template-rows: repeat(4 1fr);
-    grid-template-columns: repeat(4 1fr);
-    gap: 7px;
+    grid-template-rows: repeat(2, 72px);
+    grid-template-columns: repeat(2, 78px);
+    row-gap: 6px;
+    column-gap: 3px;
+
+    justify-items: center;
+    align-items: center;
 
     & > * {
       display: flex;
-      width: 76px;
-      height: 72px;
-      margin-top: -1px;
-      margin-left: 1px;
       background-size: cover;
       background-repeat: no-repeat;
     }
@@ -268,7 +268,7 @@
       &-level {
         grid-row: 2;
         display: block;
-        font-size: 20px;
+        font-size: 18px;
         font-weight: bold;
         align-self: flex-end;
         margin-left: auto;
@@ -277,9 +277,10 @@
       }
 
       &-tier {
+        margin-top: 5px;
         grid-row: 1;
         justify-self: center;
-        margin-top: 5px;
+        font-size: 20px;
         color: yellow;
       }
     }
@@ -287,41 +288,65 @@
     &-weapon {
       grid-row: 1;
       grid-column: 1;
+      width: 64px;
+      height: 64px;
 
       &--rusty_sword {
-        background-image: url(../../../img/equipment/equipment-weapon-rusty_sword.png);
+        background-image: url(../../../img/equipment/rusty_sword.png);
+      }
+
+      &--bronze_sword {
+        background-image: url(../../../img/equipment/bronze_sword.png);
+      }
+
+      &--steel_sword {
+        background-image: url(../../../img/equipment/steel_sword.png);
       }
 
       &--bent_staff {
-        background-image: url(../../../img/equipment/equipment-weapon-bent_staff.png);
+        background-image: url(../../../img/equipment/bent_staff.png);
       }
 
-      &--no_image {
-        background-image: url(../../../img/equipment/equipment-weapon-no_image.png);
+      &--wooden_staff {
+        background-image: url(../../../img/equipment/wooden_staff.png);
+      }
+
+      &--old_dagger {
+        background-image: url(../../../img/equipment/old_dagger.png);
       }
     }
 
     &-armor {
       grid-row: 1;
       grid-column: 2;
+      width: 64px;
+      height: 64px;
 
       &--simple_shirt {
-        background-image: url(../../../img/equipment/equipment-armor-simple_shirt.png);
+        background-image: url(../../../img/equipment/simple_shirt.png);
       }
 
-      &--no_image {
-        background-image: url(../../../img/equipment/equipment-weapon-no_image.png);
+      &--simple_robe {
+        background-image: url(../../../img/equipment/simple_robe.png);
+      }
+
+      &--leather_jacket {
+        background-image: url(../../../img/equipment/leather_jacket.png);
       }
     }
 
     &-shield {
       grid-row: 2;
       grid-column: 1;
+      width: 64px;
+      height: 64px;
     }
 
     &-accessory {
       grid-row: 2;
       grid-column: 2;
+      width: 64px;
+      height: 64px;
     }
   }
 

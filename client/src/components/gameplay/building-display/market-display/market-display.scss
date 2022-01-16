@@ -1,4 +1,4 @@
-@import "../../../../utils/css/index.scss";
+@import '../../../../utils/css/index.scss';
 
 .market-display {
   display: flex;
@@ -22,7 +22,7 @@
     font-size: 20px;
     @include strokeText;
     color: whitesmoke;
-    overflow-y: scroll;
+    // overflow-y: scroll;
 
     & ul {
       list-style: none;

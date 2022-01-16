@@ -1,6 +1,8 @@
-import noimageImg from "../../../../../img/equipment/equipment-weapon-no_image.png";
-import Item, { ItemSubtype } from "../../../../../models/Item";
-import "./alchemist-item.scss";
+import healingElixirImg from '../../../../../img/items/healing_elixir.png';
+import healingPotionImg from '../../../../../img/items/healing_potion.png';
+import maanPotionImg from '../../../../../img/items/mana_potion.png';
+import Item, { ItemSubtype } from '../../../../../models/Item';
+import './alchemist-item.scss';
 
 type AlchemistItemProps = {
   item: Item;
@@ -17,9 +19,17 @@ export const AlchemistItem = ({ item }: AlchemistItemProps) => {
   );
 };
 
-const getImage = (type: ItemSubtype) => {
+export const getImage = (type: ItemSubtype) => {
   switch (type) {
+    case ItemSubtype.HEALTH_POTION:
+      return healingPotionImg;
+    case ItemSubtype.HEALTH_ELIXIR:
+      return healingElixirImg;
+
+    case ItemSubtype.MANA_POTION:
+      return maanPotionImg;
+
     default:
-      return noimageImg;
+      throw new Error(`Unknown item subtype ${ItemSubtype[type]}`);
   }
 };

@@ -1,4 +1,4 @@
-@import "../../../utils/css/index.scss";
+@import '../../../utils/css/index.scss';
 
 .building-display {
   position: absolute;
@@ -37,7 +37,7 @@
 
   &__display-content {
     padding: 0;
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 
   &__msg-upgrade {
