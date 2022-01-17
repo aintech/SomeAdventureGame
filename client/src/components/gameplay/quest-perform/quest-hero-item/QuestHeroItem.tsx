@@ -40,7 +40,7 @@ const QuestHeroItem = ({ hero, current, heroClickHandler, overrideClickHandler, 
         }`
       : 'quest-hero-item__defeated';
 
-  const healIconClass = `heal-icon${hero.healed ? ' heal-icon_playing' : ''}`;
+  const healIconClass = `heal-icon${hero.healed ? ' heal-icon__playing' : ''}`;
 
   return (
     <div

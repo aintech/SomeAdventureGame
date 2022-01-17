@@ -215,17 +215,23 @@
 }
 
 .heal-icon {
+  // top: 30%;
+  // left: 30%;
   opacity: 0;
+  width: 50px;
+  height: 50px;
   position: absolute;
-  top: 30%;
-  left: 30%;
-  width: 64px;
-  height: 64px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  margin: auto;
   transform: scale(1);
   z-index: 1050;
 
   &__playing {
-    animation: heal-playing 0.45s;
+    animation: healed 0.45s;
     animation-iteration-count: 1;
   }
 }
