@@ -1,4 +1,4 @@
-@import "../../utils/css/index.scss";
+@import '../../utils/css/index.scss';
 
 .header {
   position: relative;
@@ -19,9 +19,9 @@
   }
 
   &__btn-logout {
-    width: 30px;
+    padding: 0 5px;
     font-family: inherit;
-    font-size: 18px;
+    font-size: 14px;
     display: flex;
     justify-content: center;
     cursor: pointer;
@@ -29,6 +29,7 @@
     background-color: brown;
     border: none;
     outline: none;
+    align-items: center;
 
     &:hover {
       background-color: chocolate;

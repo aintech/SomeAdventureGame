@@ -1,12 +1,12 @@
-import React, { useContext, useEffect } from "react";
-import { connect, useStore } from "react-redux";
-import { bindActionCreators, compose, Dispatch, Store } from "redux";
-import { fetchGameStats } from "../../actions/ApiActions";
-import AuthContext from "../../contexts/AuthContext";
-import withApiService, { WithApiServiceProps } from "../../hoc/WithApiService";
-import { useDisplayMessage } from "../../hooks/UseDisplayMessages";
-import GameStats from "../../models/GameStats";
-import "./header.scss";
+import React, { useContext, useEffect } from 'react';
+import { connect, useStore } from 'react-redux';
+import { bindActionCreators, compose, Dispatch, Store } from 'redux';
+import { fetchGameStats } from '../../actions/ApiActions';
+import AuthContext from '../../contexts/AuthContext';
+import withApiService, { WithApiServiceProps } from '../../hoc/WithApiService';
+import { useDisplayMessage } from '../../hooks/UseDisplayMessages';
+import GameStats from '../../models/GameStats';
+import './header.scss';
 
 type HeaderProps = {
   stats: GameStats;
@@ -46,7 +46,7 @@ const Header = ({ stats, fetchGameStats, isAuthenticated, logout }: HeaderProps)
     <header className="header">
       {isAuthenticated ? (
         <button className="header__btn-logout" onClick={onLogout}>
-          &lt; ]
+          logout
         </button>
       ) : null}
       <div className="header__title">Post SAG</div>

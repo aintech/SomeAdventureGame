@@ -1,6 +1,9 @@
-import healingElixirImg from '../../../../../img/items/healing_elixir.png';
-import healingPotionImg from '../../../../../img/items/healing_potion.png';
-import maanPotionImg from '../../../../../img/items/mana_potion.png';
+import healthElixirImg from '../../../../../img/items/health_elixir.png';
+import healthPotionImg from '../../../../../img/items/health_potion.png';
+import manaElixirImg from '../../../../../img/items/mana_elixir.png';
+import manaPotionImg from '../../../../../img/items/mana_potion.png';
+import wandFireballImg from '../../../../../img/items/wand_fireball.png';
+import wandStunImg from '../../../../../img/items/wand_stun.png';
 import Item, { ItemSubtype } from '../../../../../models/Item';
 import './alchemist-item.scss';
 
@@ -22,12 +25,19 @@ export const AlchemistItem = ({ item }: AlchemistItemProps) => {
 export const getImage = (type: ItemSubtype) => {
   switch (type) {
     case ItemSubtype.HEALTH_POTION:
-      return healingPotionImg;
+      return healthPotionImg;
     case ItemSubtype.HEALTH_ELIXIR:
-      return healingElixirImg;
+      return healthElixirImg;
 
     case ItemSubtype.MANA_POTION:
-      return maanPotionImg;
+      return manaPotionImg;
+    case ItemSubtype.MANA_ELIXIR:
+      return manaElixirImg;
+
+    case ItemSubtype.WAND_FIREBALL:
+      return wandFireballImg;
+    case ItemSubtype.WAND_STUN:
+      return wandStunImg;
 
     default:
       throw new Error(`Unknown item subtype ${ItemSubtype[type]}`);

@@ -1,3 +1,5 @@
+@import '../../../../utils/css/index.scss';
+
 .heroes-panel {
   position: fixed;
   left: 0;
@@ -14,18 +16,47 @@
     gap: 8px;
   }
 
-  &__items {
+  &__backpack {
     margin: 0 auto;
+    height: 340px;
+    max-height: 340px;
     width: 340px;
     max-width: 340px;
+    background-image: url(../../../../img/quest-perform/backpack.png);
+    background-size: cover;
+  }
+
+  &__backpack_content {
+    padding: 70px 0 0 40px;
     display: flex;
-    gap: 8px;
+    gap: 6px;
+    flex-wrap: wrap;
   }
 
   &__item {
-    width: 64px;
-    height: 64px;
-    border: 2px solid black;
+    @include strokeText;
+    width: 60px;
+    height: 60px;
+    position: relative;
+    display: flex;
+    border: 1px solid #777;
+    border-radius: 10px;
+    cursor: pointer;
+
+    &_amount {
+      position: absolute;
+      right: 6px;
+      bottom: 6px;
+      font-size: 18px;
+      color: bisque;
+    }
+
+    @each $type in 'health_potion' 'health_elixir' 'mana_potion' 'mana_elixir' 'wand_fireball' 'wand_stun' {
+      &--#{$type} {
+        background-image: url(../../../../img/items/#{$type}.png);
+        background-size: contain;
+      }
+    }
   }
 
   &__hero-actions {

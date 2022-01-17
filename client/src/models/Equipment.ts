@@ -1,6 +1,6 @@
-import { EquipmentResponse } from "../services/HeroService";
-import { HeroType } from "./hero/HeroType";
-import PersonageStats from "./PersonageStats";
+import { EquipmentResponse } from '../services/HeroService';
+import { HeroType } from './hero/HeroType';
+import PersonageStats from './PersonageStats';
 
 export enum EquipmentType {
   WEAPON,
@@ -34,7 +34,6 @@ export default class Equipment {
     public price: number,
     public stats: PersonageStats,
     public availableTypes: HeroType[],
-    public imgAvatar: string,
     public tier: number
   ) {}
 }
@@ -88,7 +87,6 @@ export const convert = (response: EquipmentResponse): Equipment => {
     response.price,
     new PersonageStats(+response.power, +response.defence, +response.vitality, +response.wizdom, +response.initiative),
     collectAvailableHeroTypes(response),
-    response.avatar,
     response.tier ?? 0
   );
 };

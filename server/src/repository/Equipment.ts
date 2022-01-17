@@ -1,5 +1,5 @@
-import query, { single } from "./Db";
-import { HeroWithEquipment, Hero } from "./hero/Hero";
+import query, { single } from './Db';
+import { HeroWithEquipment, Hero } from './hero/Hero';
 
 export enum EquipmentType {
   WEAPON,
@@ -43,7 +43,6 @@ export type Equipment = EquipmentStats & {
   paladin: boolean;
   mage: boolean;
   healer: boolean;
-  avatar: string;
   buyingTime: number;
   tier: number;
 };
@@ -76,7 +75,7 @@ export const getEquipmentStats = (equipment: Equipment[]): EquipmentStats => {
 
 export const fetchEquipment = (tier: number = 0) => {
   return query<Equipment[]>(
-    "fetchEquipment",
+    'fetchEquipment',
     `select * from public.equipment equip 
      left join public.equipment_tier tier on equip.id = tier.equipment_id and tier.tier = $1`,
     [tier],
@@ -86,7 +85,7 @@ export const fetchEquipment = (tier: number = 0) => {
 
 export const getHeroEquipmentLink = (heroid: number, equipmentId: number) => {
   return query<HeroEquipmentLink>(
-    "getEquipment",
+    'getEquipment',
     `select * from public.hero_equipment where hero_id = $1 and equipment_id = $2`,
     [heroid, equipmentId],
     (row: { hero_id: string; equipment_id: string; tier: string }) => {
@@ -106,11 +105,11 @@ export const withEquipment = async (heroes: Hero[]) => {
   }
 
   const equipment = await query<HeroEquipment[]>(
-    "withEquipment",
+    'withEquipment',
     `select * from public.hero_equipment he
      left join public.equipment e on e.id = he.equipment_id
      left join public.equipment_tier tier on he.equipment_id = tier.equipment_id and tier.tier = he.tier
-     where he.hero_id in (${heroes.map((h) => h.id).join(",")})`,
+     where he.hero_id in (${heroes.map((h) => h.id).join(',')})`,
     [],
     mapHeroEquipment
   );
@@ -129,15 +128,15 @@ export const withEquipment = async (heroes: Hero[]) => {
 export const replaceHeroEquipment = async (heroId: number, prevEquipment: Equipment, equipment: Equipment) => {
   return Promise.all([
     query<void>(
-      "replaceHeroEquipment - equip",
-      "update public.hero_equipment set equipment_id = $3, tier = $4 where hero_id = $1 and equipment_id = $2",
+      'replaceHeroEquipment - equip',
+      'update public.hero_equipment set equipment_id = $3, tier = $4 where hero_id = $1 and equipment_id = $2',
       [heroId, prevEquipment.id, equipment.id, equipment.tier]
     ),
   ]);
 };
 
 export const changeHeroEquipmentTier = async (heroId: number, equipmentId: number, tier: number) => {
-  return query<void>("changeHeroEquipmentTier", `update public.hero_equipment set tier = $3 where hero_id = $1 and equipment_id = $2`, [
+  return query<void>('changeHeroEquipmentTier', `update public.hero_equipment set tier = $3 where hero_id = $1 and equipment_id = $2`, [
     heroId,
     equipmentId,
     tier,
@@ -156,7 +155,6 @@ export type EquipmentRow = {
   paladin: boolean;
   mage: boolean;
   healer: boolean;
-  avatar: string;
   buying_time: string;
   tier: string;
   power: string;
@@ -182,7 +180,6 @@ const mapEquipment = (row: EquipmentRow): Equipment => {
     paladin: row.paladin,
     mage: row.mage,
     healer: row.healer,
-    avatar: row.avatar,
     buyingTime: +row.buying_time,
     tier: +row.tier,
     power: +row.power,

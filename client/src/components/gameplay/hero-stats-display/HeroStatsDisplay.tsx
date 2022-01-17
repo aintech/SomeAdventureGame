@@ -81,33 +81,17 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
   const shieldClass = shield ? ` hero-stats__equipment-shield--${EquipmentSubtype[shield.subtype].toLowerCase()}` : '';
   const accessoryClass = accessory ? ` hero-stats__equipment-accessory--${EquipmentSubtype[accessory.subtype].toLowerCase()}` : '';
 
-  const stars = [
-    [],
-    [
-      <i key={0} className="material-icons guild-display__btn--show-unabled-icon">
-        star_rate
-      </i>,
-    ],
-    [
-      <i key={0} className="material-icons guild-display__btn--show-unabled-icon">
-        star_rate
-      </i>,
-      <i key={1} className="material-icons guild-display__btn--show-unabled-icon">
-        star_rate
-      </i>,
-    ],
-    [
-      <i key={0} className="material-icons guild-display__btn--show-unabled-icon">
-        star_rate
-      </i>,
-      <i key={1} className="material-icons guild-display__btn--show-unabled-icon">
-        star_rate
-      </i>,
-      <i key={2} className="material-icons guild-display__btn--show-unabled-icon">
-        star_rate
-      </i>,
-    ],
-  ];
+  const stars: JSX.Element[][] = [];
+  for (let i = 0; i <= 3; i++) {
+    stars[i] = [];
+    for (let j = 0; j < i; j++) {
+      stars[i].push(
+        <i key={j} className="material-icons" style={{ fontSize: '20px' }}>
+          star_rate
+        </i>
+      );
+    }
+  }
 
   const dismissBtnStyle = hero.activity
     ? hero.activity.type === HeroActivityType.QUEST
@@ -169,11 +153,13 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
           </div>
           <div className={`hero-stats__equipment-shield${shieldClass}`}>
             <div className="hero-stats__equipment--stats">
+              <div className="hero-stats__equipment--stats-tier">{shield ? stars[shield.tier] : null}</div>
               <div className="hero-stats__equipment--stats-level">{shield ? `lvl. ${shield.level}` : null}</div>
             </div>
           </div>
           <div className={`hero-stats__equipment-accessory${accessoryClass}`}>
             <div className="hero-stats__equipment--stats">
+              <div className="hero-stats__equipment--stats-tier">{accessory ? stars[accessory.tier] : null}</div>
               <div className="hero-stats__equipment--stats-level">{accessory ? `lvl. ${accessory.level}` : null}</div>
             </div>
           </div>

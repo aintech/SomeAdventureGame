@@ -1,14 +1,19 @@
-import query from "./Db";
-import { HeroWithEquipment, HeroWithItems } from "./hero/Hero";
+import query from './Db';
+import { HeroWithEquipment, HeroWithItems } from './hero/Hero';
 
 export enum ItemType {
   POTION,
+  WAND,
 }
 
 export enum ItemSubtype {
   HEALTH_POTION,
   HEALTH_ELIXIR,
   MANA_POTION,
+  MANA_ELIXIR,
+
+  WAND_FIREBALL,
+  WAND_STUN,
 }
 
 export type Item = {
@@ -16,7 +21,6 @@ export type Item = {
   name: string;
   description: string;
   price: number;
-  avatar: string;
   type: ItemType;
   subtype: ItemSubtype;
   buyingTime: number;
@@ -28,7 +32,7 @@ export type HeroItem = Item & {
 };
 
 export const fetchItems = async () => {
-  return query<Item[]>("fetchItems", `select * from public.item`, [], mapItem);
+  return query<Item[]>('fetchItems', `select * from public.item`, [], mapItem);
 };
 
 export const withItems = async (heroes: HeroWithEquipment[]) => {
@@ -36,10 +40,10 @@ export const withItems = async (heroes: HeroWithEquipment[]) => {
     return [];
   }
   const items = await query<HeroItem[]>(
-    "withItems",
+    'withItems',
     `select * from public.hero_item hi
      left join public.item i on i.id = hi.item_id
-     where hi.hero_id in (${heroes.map((h) => h.id).join(",")})`,
+     where hi.hero_id in (${heroes.map((h) => h.id).join(',')})`,
     [],
     mapHeroItem
   );
@@ -52,7 +56,7 @@ export const withItems = async (heroes: HeroWithEquipment[]) => {
 
 export const adjustItems = (heroId: number, itemId: number, amount: number) => {
   return query<void>(
-    "adjustItems",
+    'adjustItems',
     `insert into public.hero_item as hi
      (hero_id, item_id, amount)
      values ($1, $2, $3)
@@ -67,7 +71,6 @@ type ItemRow = {
   name: string;
   description: string;
   price: string;
-  avatar: string;
   type: string;
   subtype: string;
   buying_time: string;
@@ -84,7 +87,6 @@ const mapItem = (row: ItemRow): Item => {
     name: row.name,
     description: row.description,
     price: +row.price,
-    avatar: row.avatar,
     type: +row.type,
     subtype: +row.subtype,
     buyingTime: +row.buying_time,

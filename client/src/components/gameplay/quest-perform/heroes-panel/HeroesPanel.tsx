@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { HeroItem } from '../../../../models/Item';
+import { MouseEvent, useState } from 'react';
+import Item, { HeroItem, ItemSubtype } from '../../../../models/Item';
 import { CheckpointReward } from '../../../../models/QuestCheckpoint';
 import { BattleAction } from '../process-models/BattleAction';
 import { BattleMessage } from '../process-models/BattleMessage';
@@ -39,6 +39,10 @@ const HeroesPanel = ({ actors, current, showActions, heroRewards, messages, perf
     }
   };
 
+  const handleItemClick = (e: MouseEvent, item: Item) => {
+    e.stopPropagation();
+  };
+
   const handleDefence = () => {
     setItems([]);
     performBattleAction!(BattleAction.DEFENCE);
@@ -57,13 +61,21 @@ const HeroesPanel = ({ actors, current, showActions, heroRewards, messages, perf
 
   return (
     <div className="heroes-panel">
-      <div className="heroes-panel__items">
-        {items.map((item) => (
-          <div key={item.id} className="heroes-panel__item">
-            {item.name}
+      {items.length > 0 ? (
+        <div className="heroes-panel__backpack">
+          <div className="heroes-panel__backpack_content">
+            {items.map((item) => (
+              <div
+                key={item.id}
+                className={`heroes-panel__item heroes-panel__item--${ItemSubtype[item.subtype].toLowerCase()}`}
+                onClick={(e) => handleItemClick(e, item)}
+              >
+                <p className="heroes-panel__item_amount">{item.amount}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      ) : null}
       <div className="heroes-panel__heroes">{heroItems}</div>
       <div className={`heroes-panel__hero-actions ${showActions ? '' : 'heroes-panel__hero-actions_hidden'}`}>
         <div className="heroes-panel__hero-action heroes-panel__hero-action_skill" onClick={() => showSkills()}></div>

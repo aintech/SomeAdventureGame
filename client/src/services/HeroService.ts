@@ -1,13 +1,13 @@
-import { AuthProps } from "../contexts/AuthContext";
-import { EquipmentType } from "../models/Equipment";
-import GameStats from "../models/GameStats";
-import Hero from "../models/hero/Hero";
-import { HeroActivityType } from "../models/hero/HeroActivity";
-import { HeroType } from "../models/hero/HeroType";
-import { ItemSubtype, ItemType } from "../models/Item";
-import sendHttp from "./SendHttp";
+import { AuthProps } from '../contexts/AuthContext';
+import { EquipmentType } from '../models/Equipment';
+import GameStats from '../models/GameStats';
+import Hero from '../models/hero/Hero';
+import { HeroActivityType } from '../models/hero/HeroActivity';
+import { HeroType } from '../models/hero/HeroType';
+import { ItemSubtype, ItemType } from '../models/Item';
+import sendHttp from './SendHttp';
 
-const baseUrl = "/api/hero";
+const baseUrl = '/api/hero';
 
 export interface StatsHolderResponse {
   power: number;
@@ -29,7 +29,6 @@ export interface EquipmentResponse extends StatsHolderResponse {
   mage: boolean;
   healer: boolean;
   price: number;
-  avatar: string;
   tier?: number;
 }
 
@@ -60,7 +59,6 @@ export interface ItemResponse {
   name: string;
   description: string;
   price: number;
-  avatar: string;
   type: ItemType;
   subtype: ItemSubtype;
   buyingTime: number;
@@ -108,13 +106,13 @@ export const getTavernPatrons = async (auth: AuthProps) => {
 };
 
 export const hireHero = async (auth: AuthProps, hero: Hero) => {
-  return await sendHttp<HireHeroResponse>(`${baseUrl}/hire`, auth, [`hero_id=${hero.id}`], "PUT");
+  return await sendHttp<HireHeroResponse>(`${baseUrl}/hire`, auth, [`hero_id=${hero.id}`], 'PUT');
 };
 
 export const dismissHero = async (auth: AuthProps, hero: Hero) => {
-  return await sendHttp<{ heroId: number }>(`${baseUrl}/dismiss`, auth, [`hero_id=${hero.id}`], "PUT");
+  return await sendHttp<{ heroId: number }>(`${baseUrl}/dismiss`, auth, [`hero_id=${hero.id}`], 'PUT');
 };
 
 export const updateHeroActivities = async (auth: AuthProps, activities: { heroId: number; type: HeroActivityType }[]) => {
-  return await sendHttp<HeroResponse[]>(`${baseUrl}/activity`, auth, [], "PUT", activities);
+  return await sendHttp<HeroResponse[]>(`${baseUrl}/activity`, auth, [], 'PUT', activities);
 };

@@ -291,28 +291,10 @@
       width: 64px;
       height: 64px;
 
-      &--rusty_sword {
-        background-image: url(../../../img/equipment/rusty_sword.png);
-      }
-
-      &--bronze_sword {
-        background-image: url(../../../img/equipment/bronze_sword.png);
-      }
-
-      &--steel_sword {
-        background-image: url(../../../img/equipment/steel_sword.png);
-      }
-
-      &--bent_staff {
-        background-image: url(../../../img/equipment/bent_staff.png);
-      }
-
-      &--wooden_staff {
-        background-image: url(../../../img/equipment/wooden_staff.png);
-      }
-
-      &--old_dagger {
-        background-image: url(../../../img/equipment/old_dagger.png);
+      @each $type in 'rusty_sword' 'bronze_sword' 'steel_sword' 'bent_staff' 'wooden_staff' 'old_dagger' {
+        &--#{$type} {
+          background-image: url(../../../img/equipment/#{$type}.png);
+        }
       }
     }
 
@@ -322,16 +304,10 @@
       width: 64px;
       height: 64px;
 
-      &--simple_shirt {
-        background-image: url(../../../img/equipment/simple_shirt.png);
-      }
-
-      &--simple_robe {
-        background-image: url(../../../img/equipment/simple_robe.png);
-      }
-
-      &--leather_jacket {
-        background-image: url(../../../img/equipment/leather_jacket.png);
+      @each $type in 'simple_shirt' 'simple_robe' 'leather_jacket' {
+        &--#{$type} {
+          background-image: url(../../../img/equipment/#{$type}.png);
+        }
       }
     }
 
