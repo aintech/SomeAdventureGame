@@ -11,13 +11,13 @@ import { CheckpointPassedBody } from '../../../services/QuestService';
 import { shallowCopy } from '../../../utils/Utils';
 import Loader from '../../loader/Loader';
 import BattleProcess from './battle-process/BattleProcess';
-import QuestHero from './process-models/QuestHero';
 import CampProcess from './camp-process/CampProcess';
 import HeroesPanel from './heroes-panel/HeroesPanel';
+import { BattleActionType } from './process-models/BattleAction';
+import QuestHero from './process-models/QuestHero';
 import QuestComplete from './quest-complete/QuestComplete';
 import QuestMap from './quest-map/QuestMap';
 import './quest-perform.scss';
-import { BattleAction } from './process-models/BattleAction';
 
 export type QuestPerformData = {
   quest: Quest;
@@ -40,7 +40,7 @@ const QuestPerform = ({ quest, heroes, onCheckpointPassed, onCompleteQuest, clos
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setHeroActors(heroes.map((h) => shallowCopy({ ...h, action: BattleAction.ATTACK, statusEffects: [] })));
+    setHeroActors(heroes.map((h) => shallowCopy({ ...h, action: { type: BattleActionType.ATTACK }, statusEffects: [] })));
   }, [heroes, setHeroActors]);
 
   const checkpointActivated = (checkpoint: QuestCheckpoint) => {

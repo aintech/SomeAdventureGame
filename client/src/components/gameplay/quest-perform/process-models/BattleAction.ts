@@ -1,24 +1,33 @@
-export enum BattleAction {
+import { HeroItem } from '../../../../models/Item';
+
+export enum BattleActionType {
   ATTACK,
   DEFENCE,
-  CHOOSING_SKILL_ITEM,
+  OPEN_BACKPACK,
   USE_ITEM,
   USE_SKILL,
 }
 
+export type BattleAction = {
+  type: BattleActionType;
+  item?: HeroItem;
+};
+
 /**
  * Активное действие подразумевает что при его выборе переключается следующий раунд.
  */
-export const isActive = (action: BattleAction) => {
-  switch (action) {
-    case BattleAction.DEFENCE:
+export const isActive = (type: BattleActionType) => {
+  switch (type) {
+    case BattleActionType.DEFENCE:
       return true;
 
-    case BattleAction.ATTACK:
-    case BattleAction.CHOOSING_SKILL_ITEM:
+    case BattleActionType.ATTACK:
+    case BattleActionType.OPEN_BACKPACK:
+    case BattleActionType.USE_ITEM:
+    case BattleActionType.USE_SKILL:
       return false;
 
     default:
-      throw new Error(`Unknown action type ${BattleAction[action]}`);
+      throw new Error(`Unknown action type ${BattleActionType[type]}`);
   }
 };

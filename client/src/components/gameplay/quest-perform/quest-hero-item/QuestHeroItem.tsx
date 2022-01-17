@@ -13,6 +13,7 @@ import './quest-hero-item.scss';
 type QuestHeroItemProps = {
   hero: QuestHero;
   heroClickHandler: (hero: Hero) => void;
+  overrideClickHandler?: (hero: Hero | QuestHero) => boolean;
   current?: boolean;
   reward?: { heroId: number; gold: number; experience: number };
   messages?: BattleMessage[];
@@ -20,7 +21,7 @@ type QuestHeroItemProps = {
   seed: number;
 };
 
-const QuestHeroItem = ({ hero, current, heroClickHandler, reward, messages, seed }: QuestHeroItemProps) => {
+const QuestHeroItem = ({ hero, current, heroClickHandler, overrideClickHandler, reward, messages, seed }: QuestHeroItemProps) => {
   const rewardStyle = {
     display: reward ? 'block' : 'none',
   };
@@ -42,7 +43,12 @@ const QuestHeroItem = ({ hero, current, heroClickHandler, reward, messages, seed
   const healIconClass = `heal-icon${hero.healed ? ' heal-icon_playing' : ''}`;
 
   return (
-    <div className={mainClass} onClick={() => heroClickHandler(hero)}>
+    <div
+      className={mainClass}
+      onClick={() => {
+        if (!(overrideClickHandler && overrideClickHandler(hero))) heroClickHandler(hero);
+      }}
+    >
       <div className="quest-hero-item__messages">
         {messages
           ? messages.map((m) => (

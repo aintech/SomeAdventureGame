@@ -65,10 +65,6 @@
     max-width: 400px;
     display: flex;
     justify-content: space-evenly;
-
-    &_hidden {
-      display: none;
-    }
   }
 
   &__hero-action {
@@ -93,5 +89,42 @@
     &_disabled {
       opacity: 0.5;
     }
+  }
+
+  &__action-msg {
+    @include strokeText;
+    margin: 0 auto;
+    height: 82px;
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    justify-content: space-between;
+    background-color: bisque;
+    border: 1px solid gray;
+    border-radius: 10px;
+    box-shadow: 0px 5px 5px black;
+
+    &_message {
+      padding: 15px;
+      font-size: 24px;
+      color: white;
+    }
+
+    &_close-btn {
+      @include strokeText;
+      width: 60px;
+      min-width: 60px;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: bold;
+      font-size: 70px;
+      color: lightsalmon;
+      background-color: #777;
+      border: 1px solid black;
+      border-radius: 10px;
+    }
+  }
+
+  &_hidden {
+    display: none;
   }
 }

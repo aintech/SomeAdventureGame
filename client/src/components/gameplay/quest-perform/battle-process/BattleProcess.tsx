@@ -1,13 +1,14 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isAlive } from '../../../../models/hero/Hero';
+import { isAlive, maxHealth } from '../../../../models/hero/Hero';
+import { HeroItem, ItemSubtype } from '../../../../models/Item';
 import QuestCheckpoint, { CheckpointReward } from '../../../../models/QuestCheckpoint';
 import { CheckpointPassedBody } from '../../../../services/QuestService';
 import { remove, replace } from '../../../../utils/arrays';
 import Loader from '../../../loader/Loader';
 import HeroesPanel from '../heroes-panel/HeroesPanel';
 import MonsterItem from '../monster-item/MonsterItem';
-import { BattleAction, isActive } from '../process-models/BattleAction';
+import { BattleAction, BattleActionType, isActive } from '../process-models/BattleAction';
 import { BattleMessage, dmgMessage } from '../process-models/BattleMessage';
 import CheckpointActor, { convertToActor } from '../process-models/CheckpointActor';
 import { HeroEvent } from '../process-models/HeroEvent';
@@ -130,7 +131,13 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     let round = this.state.round;
 
     monsters.filter((m) => m.health > 0).forEach((m) => (m.hitted = undefined));
-    heroes.filter((h) => isAlive(h)).forEach((h) => (h.hitted = undefined));
+    heroes
+      .filter((h) => isAlive(h))
+      .forEach((h) => {
+        h.hitted = undefined;
+        h.healed = undefined;
+        h.action = { type: BattleActionType.ATTACK };
+      });
 
     let queueIdx = this.state.currentActorIdx;
     while (true) {
@@ -235,8 +242,8 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     if (currentActor && currentActor.isHero) {
       const hero = currentActor as QuestHero;
 
-      switch (hero.action) {
-        case BattleAction.ATTACK:
+      switch (hero.action.type) {
+        case BattleActionType.ATTACK:
           const damage = Math.max(1, hero.stats.power + hero.equipStats.power - monster.stats.defence);
           monster.health -= damage;
           monster.hitted = true;
@@ -266,27 +273,22 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     }
   };
 
-  performBattleAction = (action: BattleAction) => {
+  actionChanged = (action: BattleAction) => {
     const hero = this.state.currentActor as QuestHero;
     if (hero) {
       hero.action = action;
       let processState = this.state.processState;
 
-      switch (action) {
-        case BattleAction.ATTACK:
-        case BattleAction.CHOOSING_SKILL_ITEM:
-          // do nothing
-          break;
+      if (isActive(action.type)) {
+        switch (action.type) {
+          case BattleActionType.DEFENCE:
+            hero.statusEffects.push({ id: Math.random(), type: StatusEffectType.DEFENDED, amount: 0.5, duration: 1 });
+            break;
 
-        case BattleAction.DEFENCE:
-          hero.statusEffects.push({ id: Math.random(), type: StatusEffectType.DEFENDED, amount: 0.5, duration: 1 });
-          break;
+          default:
+            throw new Error(`Unknown hero action type ${BattleActionType[action.type]}`);
+        }
 
-        default:
-          throw new Error(`Unknown hero action type ${BattleAction[action]}`);
-      }
-
-      if (action === BattleAction.DEFENCE) {
         processState = ProcessState.SWITCH_ACTOR;
       }
 
@@ -301,12 +303,54 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
           };
         },
         () => {
-          if (isActive(action)) {
+          if (isActive(action.type)) {
             this.processRound();
           }
         }
       );
     }
+  };
+
+  itemUsed = (initiator: QuestHero, target: QuestHero | CheckpointActor, item: HeroItem) => {
+    const battleEvents = new Map(this.state.battleEvents);
+    battleEvents.set(initiator.id, [...battleEvents.get(initiator.id)!, { time: new Date().getTime(), itemId: item.id }]);
+
+    let currentActor = this.state.currentActor! as QuestHero;
+    let heroes = this.state.heroes;
+
+    item.amount--;
+
+    switch (item.subtype) {
+      case ItemSubtype.HEALTH_POTION:
+        const healed = target as QuestHero;
+        const healAmount = Math.min(maxHealth(healed) - healed.health, maxHealth(healed) * 0.5);
+        battleEvents.set(healed.id, [...battleEvents.get(healed.id)!, { time: new Date().getTime(), hpAlter: healAmount }]);
+
+        if (currentActor?.id !== initiator.id) {
+          throw new Error(`Current actor is not initiator`);
+        }
+
+        currentActor.items = replace(currentActor.items, currentActor.items.find((i) => i.id === item.id)!);
+        healed.health += healAmount;
+        healed.healed = true;
+
+        heroes = replace(heroes, currentActor);
+
+        break;
+
+      default:
+        throw new Error(`Unknown item type ${ItemSubtype[item.subtype]}`);
+    }
+
+    this.setState(
+      {
+        currentActor,
+        heroes,
+        battleEvents,
+        processState: ProcessState.SWITCH_ACTOR,
+      },
+      () => setTimeout(this.processRound, 500)
+    );
   };
 
   monsterPerform = () => {
@@ -434,7 +478,8 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
           showActions={!battleEnded}
           heroRewards={checkpointReward?.checkpointId === checkpoint.id ? checkpointReward : undefined}
           messages={messages}
-          performBattleAction={this.performBattleAction}
+          actionChanged={this.actionChanged}
+          itemUsed={this.itemUsed}
         />
       </div>
     );
