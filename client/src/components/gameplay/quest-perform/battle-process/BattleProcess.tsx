@@ -322,8 +322,12 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
     switch (item.subtype) {
       case ItemSubtype.HEALTH_POTION:
+      case ItemSubtype.HEALTH_ELIXIR:
         const healed = target as QuestHero;
-        const healAmount = Math.min(maxHealth(healed) - healed.health, maxHealth(healed) * 0.5);
+        const healAmount =
+          item.subtype === ItemSubtype.HEALTH_ELIXIR
+            ? maxHealth(healed) - healed.health
+            : Math.min(maxHealth(healed) - healed.health, maxHealth(healed) * 0.5);
         battleEvents.set(healed.id, [...battleEvents.get(healed.id)!, { time: new Date().getTime(), hpAlter: healAmount }]);
 
         if (currentActor?.id !== initiator.id) {

@@ -49,7 +49,10 @@ const HeroesPanel = ({ actors, current, showActions, heroRewards, messages, acti
 
     switch (item.subtype) {
       case ItemSubtype.HEALTH_POTION:
-        setActionMessage('Восстановить 50% HP выбранному герою');
+        setActionMessage('Восстанавливает 50% HP выбранному герою');
+        break;
+      case ItemSubtype.HEALTH_ELIXIR:
+        setActionMessage('Полностью восстановить HP выбранному герою');
         break;
       default:
         throw new Error(`Unknown item subtype ${ItemSubtype[item.subtype]}`);
