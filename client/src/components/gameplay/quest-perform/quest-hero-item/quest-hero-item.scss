@@ -55,7 +55,7 @@
   cursor: default;
 
   &__display {
-    @each $type in 'warrior' 'mage' 'thief' 'healer' 'paladin' {
+    @each $type in 'warrior' 'mage' 'thief' 'healer' {
       &_#{$type} {
         height: 100px;
         background-image: url(../../../../img/portraits/portrait-#{$type}.png);

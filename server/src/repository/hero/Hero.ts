@@ -12,7 +12,6 @@ export enum HeroType {
   MAGE,
   THIEF,
   HEALER,
-  PALADIN,
 }
 
 //TODO: Добавить аттрибут Luck, чаще выпадают паверапы критов

@@ -61,9 +61,6 @@ const collectAvailableHeroTypes = (response: EquipmentResponse): HeroType[] => {
   if (response.warrior) {
     types.push(HeroType.WARRIOR);
   }
-  if (response.paladin) {
-    types.push(HeroType.PALADIN);
-  }
   if (response.thief) {
     types.push(HeroType.THIEF);
   }

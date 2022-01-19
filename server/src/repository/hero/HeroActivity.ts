@@ -237,7 +237,6 @@ const appropriateEquipment = (hero: HeroWithPerks, type: EquipmentType, equipmen
     equipment.type === type &&
     ((equipment.warrior && hero.type === HeroType.WARRIOR) ||
       (equipment.thief && hero.type === HeroType.THIEF) ||
-      (equipment.paladin && hero.type === HeroType.PALADIN) ||
       (equipment.mage && hero.type === HeroType.MAGE) ||
       (equipment.healer && hero.type === HeroType.HEALER))
   );

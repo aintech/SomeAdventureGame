@@ -40,7 +40,6 @@ export type Equipment = EquipmentStats & {
   price: number;
   warrior: boolean;
   thief: boolean;
-  paladin: boolean;
   mage: boolean;
   healer: boolean;
   buyingTime: number;
@@ -152,7 +151,6 @@ export type EquipmentRow = {
   price: string;
   warrior: boolean;
   thief: boolean;
-  paladin: boolean;
   mage: boolean;
   healer: boolean;
   buying_time: string;
@@ -177,7 +175,6 @@ const mapEquipment = (row: EquipmentRow): Equipment => {
     price: +row.price,
     warrior: row.warrior,
     thief: row.thief,
-    paladin: row.paladin,
     mage: row.mage,
     healer: row.healer,
     buyingTime: +row.buying_time,

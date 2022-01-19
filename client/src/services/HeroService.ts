@@ -25,7 +25,6 @@ export interface EquipmentResponse extends StatsHolderResponse {
   level: number;
   warrior: boolean;
   thief: boolean;
-  paladin: boolean;
   mage: boolean;
   healer: boolean;
   price: number;
