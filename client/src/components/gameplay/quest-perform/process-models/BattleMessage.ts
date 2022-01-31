@@ -7,6 +7,6 @@ export type BattleMessage = {
   message: string;
 };
 
-export const dmgMessage = (actor: CheckpointActor | QuestHero, damage: number) => {
+export const dmgMessage = (actor: CheckpointActor | QuestHero, damage: number): BattleMessage => {
   return { id: Math.random(), actorId: actor.id, message: `-${damage}` };
 };

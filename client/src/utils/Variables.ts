@@ -4,6 +4,8 @@ export const gameplayScale = 1.5;
 
 export const HEALTH_PER_VITALITY = 10;
 
+export const MANA_PER_VITALITY = 10;
+
 export const CURE_COST_PER_HP = 1;
 
 export const GUILD_SHARE = 0.4;

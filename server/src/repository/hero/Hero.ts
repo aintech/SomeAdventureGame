@@ -22,6 +22,7 @@ export type Hero = {
   type: HeroType;
   level: HeroLevel;
   health: number;
+  mana: number;
   power: number;
   defence: number;
   wizdom: number;
@@ -103,6 +104,16 @@ export const setHeroHealth = (heroId: number, amount: number) => {
   );
 };
 
+export const setHeroMana = (heroId: number, amount: number) => {
+  return query<void>(
+    'setHeroHealth',
+    `update public.hero 
+     set mana = $2
+     where id = $1`,
+    [heroId, amount]
+  );
+};
+
 type HeroHP = {
   id: number;
   health: number;
@@ -127,6 +138,10 @@ export const getHeroesHP = async (questId: number) => {
 
 export const adjustHealth = (heroId: number, amount: number) => {
   return query<void>('adjustHealth', `update public.hero set health = (health + $2) where id = $1`, [heroId, amount]);
+};
+
+export const adjustMana = (heroId: number, amount: number) => {
+  return query<void>('adjustMana', `update public.hero set mana = (mana + $2) where id = $1`, [heroId, amount]);
 };
 
 export const adjustGold = (heroId: number, amount: number) => {
@@ -182,6 +197,7 @@ type HeroRow = {
   power: string;
   defence: string;
   health: string;
+  mana: string;
   experience: string;
   gold: string;
   vitality: string;
@@ -206,6 +222,7 @@ const mapHero = (row: HeroRow): Hero => {
     power: +row.power,
     defence: +row.defence,
     health: +row.health,
+    mana: +row.mana,
     gold: +row.gold,
     vitality: +row.vitality,
     wizdom: +row.wizdom,

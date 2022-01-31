@@ -1,9 +1,13 @@
+import HeroSkill from '../../../../models/hero/HeroSkill';
 import { HeroItem } from '../../../../models/Item';
 
 export enum BattleActionType {
   ATTACK,
   DEFENCE,
+
   OPEN_BACKPACK,
+  OPEN_SKILLS,
+
   USE_ITEM,
   USE_SKILL,
 }
@@ -11,6 +15,7 @@ export enum BattleActionType {
 export type BattleAction = {
   type: BattleActionType;
   item?: HeroItem;
+  skill?: HeroSkill;
 };
 
 /**
@@ -23,6 +28,7 @@ export const isActive = (type: BattleActionType) => {
 
     case BattleActionType.ATTACK:
     case BattleActionType.OPEN_BACKPACK:
+    case BattleActionType.OPEN_SKILLS:
     case BattleActionType.USE_ITEM:
     case BattleActionType.USE_SKILL:
       return false;

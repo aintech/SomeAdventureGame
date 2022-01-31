@@ -1,5 +1,5 @@
 import { HeroResponse } from '../../services/HeroService';
-import { HEALTH_PER_VITALITY } from '../../utils/Variables';
+import { HEALTH_PER_VITALITY, MANA_PER_VITALITY } from '../../utils/Variables';
 import Equipment, { convert as convertEquipment, getEquipmentStats } from '../Equipment';
 import { convertHeroItem, HeroItem } from '../Item';
 import PersonageStats from '../PersonageStats';
@@ -18,6 +18,7 @@ export default class Hero {
     public stats: PersonageStats,
     public equipStats: PersonageStats, // aggregation of equipment stats surpluses
     public health: number,
+    public mana: number,
     public gold: number,
     public equipment: Equipment[],
     public items: HeroItem[],
@@ -39,8 +40,19 @@ export const calcHealthFraction = (hero: Hero): number => {
   return hero.health / maxHealth(hero);
 };
 
+export const calcManaFraction = (hero: Hero): number => {
+  if (hero.mana <= 0) {
+    return 0;
+  }
+  return hero.mana / maxMana(hero);
+};
+
 export const maxHealth = (hero: Hero): number => {
   return (hero.stats.vitality + hero.equipStats.vitality) * HEALTH_PER_VITALITY;
+};
+
+export const maxMana = (hero: Hero): number => {
+  return (hero.stats.wizdom + hero.equipStats.wizdom) * MANA_PER_VITALITY;
 };
 
 export const convert = (response: HeroResponse): Hero => {
@@ -54,6 +66,7 @@ export const convert = (response: HeroResponse): Hero => {
     new PersonageStats(response.power, response.defence, response.vitality, response.wizdom, response.initiative),
     equipStats,
     response.health,
+    response.mana,
     response.gold,
     equipment,
     response.items.map((i) => convertHeroItem(i)),

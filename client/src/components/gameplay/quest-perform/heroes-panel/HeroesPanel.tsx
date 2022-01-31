@@ -1,5 +1,6 @@
 import { MouseEvent, useState } from 'react';
 import Hero from '../../../../models/hero/Hero';
+import HeroSkill, { HeroSkillType, TargetType } from '../../../../models/hero/HeroSkill';
 import { HeroItem, ItemSubtype } from '../../../../models/Item';
 import { CheckpointReward } from '../../../../models/QuestCheckpoint';
 import { BattleAction, BattleActionType } from '../process-models/BattleAction';
@@ -17,16 +18,40 @@ type HeroesPanelProps = {
   messages?: BattleMessage[];
   actionChanged?: (action: BattleAction) => void;
   itemUsed?: (initiator: QuestHero, target: QuestHero | CheckpointActor, item: HeroItem) => void;
+  skillUsed?: (initiator: QuestHero, target: QuestHero | CheckpointActor, skill: HeroSkill) => void;
+  setActionDecription?: (description?: string) => void;
+  actionDescription?: string;
 };
 
-const HeroesPanel = ({ actors, current, showActions, heroRewards, messages, actionChanged, itemUsed }: HeroesPanelProps) => {
+const HeroesPanel = ({
+  actors,
+  current,
+  showActions,
+  heroRewards,
+  messages,
+  actionChanged,
+  itemUsed,
+  skillUsed,
+  setActionDecription,
+  actionDescription,
+}: HeroesPanelProps) => {
   const [items, setItems] = useState<HeroItem[]>([]);
-  const [actionMsg, setActionMessage] = useState<string>();
+  const [skills, setSkills] = useState<HeroSkill[]>([]);
 
   // seed нужен чтобы насильно запустить ререндер иконок героев, чтобы реагировали на противников
   const seed = new Date().getTime();
 
-  const showSkills = () => {};
+  const toggleSkills = () => {
+    if (current) {
+      if (current.action.type === BattleActionType.OPEN_SKILLS) {
+        actionChanged!({ type: BattleActionType.ATTACK });
+        setSkills([]);
+      } else {
+        actionChanged!({ type: BattleActionType.OPEN_SKILLS });
+        setSkills(current.skills.sort((a, b) => a.type - b.type));
+      }
+    }
+  };
 
   const toggleItems = () => {
     if (current) {
@@ -49,16 +74,32 @@ const HeroesPanel = ({ actors, current, showActions, heroRewards, messages, acti
 
     switch (item.subtype) {
       case ItemSubtype.HEALTH_POTION:
-        setActionMessage('Восстанавливает 50% HP выбранному герою');
+        setActionDecription!('Восстанавливает 50% HP выбранному герою');
         break;
       case ItemSubtype.HEALTH_ELIXIR:
-        setActionMessage('Полностью восстановить HP выбранному герою');
+        setActionDecription!('Полностью восстановить HP выбранному герою');
         break;
       default:
         throw new Error(`Unknown item subtype ${ItemSubtype[item.subtype]}`);
     }
 
     actionChanged!({ type: BattleActionType.USE_ITEM, item });
+  };
+
+  const handleSkillClick = (e: MouseEvent, skill: HeroSkill) => {
+    e.stopPropagation();
+
+    if ((current?.mana ?? Number.MAX_SAFE_INTEGER) < skill.mana) {
+      return;
+    }
+
+    setSkills([]);
+
+    if (skill.target === TargetType.ENEMY || skill.target === TargetType.HERO) {
+      setActionDecription!(skill.description);
+    }
+
+    actionChanged!({ type: BattleActionType.USE_SKILL, skill });
   };
 
   const handleDefence = () => {
@@ -68,10 +109,21 @@ const HeroesPanel = ({ actors, current, showActions, heroRewards, messages, acti
 
   const handleHeroClick = (hero: Hero | QuestHero) => {
     if (current?.action?.type === BattleActionType.USE_ITEM) {
-      itemUsed!(current!, hero as QuestHero, current.action.item!);
-      setActionMessage(undefined);
-      return true;
+      if (current.action.item?.target === TargetType.HERO) {
+        itemUsed!(current, hero as QuestHero, current.action.item!);
+        setActionDecription!(undefined);
+        return true;
+      }
     }
+
+    if (current?.action?.type === BattleActionType.USE_SKILL) {
+      if (current.action.skill?.target === TargetType.HERO) {
+        skillUsed!(current, hero as QuestHero, current.action.skill!);
+        setActionDecription!(undefined);
+        return true;
+      }
+    }
+
     return false;
   };
 
@@ -86,6 +138,10 @@ const HeroesPanel = ({ actors, current, showActions, heroRewards, messages, acti
       overrideClickHandler={handleHeroClick}
     />
   ));
+
+  console.log(current?.mana);
+
+  console.log(skills);
 
   return (
     <div className="heroes-panel">
@@ -106,21 +162,27 @@ const HeroesPanel = ({ actors, current, showActions, heroRewards, messages, acti
           </div>
         </div>
       ) : null}
+
+      {skills.length > 0 ? (
+        <div className="heroes-panel__skills">
+          {skills.map((skill) => (
+            <div
+              key={skill.type}
+              className={`heroes-panel__skill heroes-panel__skill--${HeroSkillType[skill.type].toLowerCase()}
+              ${(current?.mana ?? 0) >= skill.mana ? '' : ' heroes-panel__skill_disabled'}`}
+              onClick={(e) => handleSkillClick(e, skill)}
+            ></div>
+          ))}
+        </div>
+      ) : null}
+
       <div className="heroes-panel__heroes">{heroItems}</div>
-      <div className={`heroes-panel__action-msg${actionMsg ? '' : ' heroes-panel_hidden'}`}>
-        <div className="heroes-panel__action-msg_message">{actionMsg}</div>
-        <button
-          className="heroes-panel__action-msg_close-btn"
-          onClick={() => {
-            setActionMessage(undefined);
-            actionChanged!({ type: BattleActionType.ATTACK });
-          }}
-        >
-          x
-        </button>
-      </div>
-      <div className={`heroes-panel__hero-actions${showActions && !actionMsg ? '' : ' heroes-panel_hidden'}`}>
-        <div className="heroes-panel__hero-action heroes-panel__hero-action_skill" onClick={() => showSkills()}></div>
+      <div
+        className={`heroes-panel__hero-actions
+          ${!actionDescription ? '' : ' heroes-panel--hidden'}
+          ${showActions ? '' : ' heroes-panel--disabled'}`}
+      >
+        <div className="heroes-panel__hero-action heroes-panel__hero-action_skill" onClick={() => toggleSkills()}></div>
         <div
           className={`heroes-panel__hero-action heroes-panel__hero-action_item${
             current?.items.length === 0 ? ' heroes-panel__hero-action_disabled' : ''

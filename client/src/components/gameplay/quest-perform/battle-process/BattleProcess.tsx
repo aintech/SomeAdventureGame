@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { isAlive, maxHealth } from '../../../../models/hero/Hero';
+import HeroSkill, { HeroSkillType, TargetType } from '../../../../models/hero/HeroSkill';
 import { HeroItem, ItemSubtype } from '../../../../models/Item';
 import QuestCheckpoint, { CheckpointReward } from '../../../../models/QuestCheckpoint';
 import { CheckpointPassedBody } from '../../../../services/QuestService';
@@ -46,6 +47,7 @@ type BattleProcessState = {
   monsters: CheckpointActor[];
   messages: BattleMessage[];
   battleEvents: Map<number, HeroEvent[]>; // heroId to events, урон, лечение и использование предметов героем
+  actionDescription?: string;
 };
 
 class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
@@ -230,6 +232,24 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     console.log(effect);
   };
 
+  hitEnemy = (hero: QuestHero, enemy: CheckpointActor, multiplier = 1) => {
+    const damage = Math.max(1, (hero.stats.power + hero.equipStats.power) * multiplier - enemy.stats.defence);
+    enemy.health -= damage;
+    enemy.hitted = true;
+
+    const message = dmgMessage(enemy, damage);
+    setTimeout(() => {
+      this.setState((state) => {
+        return {
+          ...state,
+          messages: remove(state.messages, message),
+        };
+      });
+    }, 700);
+
+    return message;
+  };
+
   handleClickMonster = (monster: CheckpointActor) => {
     if (this.state.processState !== ProcessState.PLAYER_PERFORM) {
       return;
@@ -244,20 +264,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
       switch (hero.action.type) {
         case BattleActionType.ATTACK:
-          const damage = Math.max(1, hero.stats.power + hero.equipStats.power - monster.stats.defence);
-          monster.health -= damage;
-          monster.hitted = true;
-
-          const message = dmgMessage(monster, damage);
-          setTimeout(() => {
-            this.setState((state) => {
-              return {
-                ...state,
-                messages: remove(state.messages, message),
-              };
-            });
-          }, 700);
-
+          const message = this.hitEnemy(hero, monster);
           this.setState(
             (state) => {
               return {
@@ -268,6 +275,12 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
             },
             () => setTimeout(this.processRound, 500)
           );
+          break;
+
+        case BattleActionType.USE_SKILL:
+          if (hero.action.skill!.target === TargetType.ENEMY) {
+            this.skillUsed(hero, monster, hero.action.skill!);
+          }
           break;
       }
     }
@@ -357,6 +370,74 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     );
   };
 
+  skillUsed = (initiator: QuestHero, target: QuestHero | CheckpointActor, skill: HeroSkill) => {
+    const battleEvents = new Map(this.state.battleEvents);
+    battleEvents.set(initiator.id, [...battleEvents.get(initiator.id)!, { time: new Date().getTime(), manaAlter: -skill.mana }]);
+
+    let currentActor = this.state.currentActor! as QuestHero;
+    let heroes = this.state.heroes;
+
+    currentActor.mana -= skill.mana;
+
+    let messages: BattleMessage[] = [];
+    switch (skill.type) {
+      case HeroSkillType.BIG_SWING:
+      case HeroSkillType.FIREBALL:
+        const enemy = target as CheckpointActor;
+
+        messages.push(this.hitEnemy(currentActor, enemy));
+
+        const enemiesAround = this.targetsAround(enemy);
+        console.log(enemiesAround);
+
+        enemiesAround.forEach((e) => messages.push(this.hitEnemy(currentActor, e)));
+        break;
+
+      case HeroSkillType.BACKSTAB:
+        messages.push(this.hitEnemy(currentActor, target as CheckpointActor, 3));
+        break;
+
+      case HeroSkillType.WORD_OF_HEALING:
+        const companion = target as QuestHero;
+        const healAmount = Math.min(maxHealth(companion) - companion.health, currentActor.stats.power + currentActor.equipStats.power);
+        battleEvents.set(companion.id, [...battleEvents.get(companion.id)!, { time: new Date().getTime(), hpAlter: healAmount }]);
+        companion.health += healAmount;
+        companion.healed = true;
+        break;
+
+      default:
+        throw new Error(`Unknown skill type ${HeroSkillType[skill.type]}`);
+    }
+
+    heroes = replace(heroes, currentActor);
+
+    if (target.isHero && target !== currentActor) {
+      heroes = replace(heroes, target);
+    }
+
+    this.setState(
+      (state) => {
+        return {
+          ...state,
+          currentActor,
+          heroes,
+          battleEvents,
+          messages: [...state.messages, ...messages],
+          processState: ProcessState.SWITCH_ACTOR,
+          actionDescription: undefined,
+        };
+      },
+      () => setTimeout(this.processRound, 500)
+    );
+  };
+
+  // Враги находящиеся слева и справа от целевого противника.
+  targetsAround = (enemy: CheckpointActor) => {
+    const sorted = this.state.monsters.sort((a, b) => a.id - b.id);
+    const idx = sorted.findIndex((e) => e.id === enemy.id);
+    return [sorted[idx - 1], sorted[idx + 1]].filter((e) => e?.health > 0);
+  };
+
   monsterPerform = () => {
     let { heroes } = this.state;
 
@@ -412,6 +493,10 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     );
   };
 
+  setActionDecription = (description?: string) => {
+    this.setState({ actionDescription: description });
+  };
+
   checkBattleComplete() {
     const won = this.state.monsters.every((m) => m.health <= 0);
     const lost = this.state.heroes.every((h) => h.health <= 0);
@@ -464,15 +549,17 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
           </div>
         ) : (
           <div className="battle-process__monsters-holder" style={{ gridTemplateColumns: grid }}>
-            {monsters.map((m, idx) => (
-              <MonsterItem
-                key={m.id}
-                monster={m}
-                idx={idx}
-                messages={messages.filter((msg) => msg.actorId === m.id)}
-                handleClickMonster={this.handleClickMonster}
-              />
-            ))}
+            {monsters
+              .sort((a, b) => a.id - b.id)
+              .map((m, idx) => (
+                <MonsterItem
+                  key={m.id}
+                  monster={m}
+                  idx={idx}
+                  messages={messages.filter((msg) => msg.actorId === m.id)}
+                  handleClickMonster={this.handleClickMonster}
+                />
+              ))}
           </div>
         )}
 
@@ -484,7 +571,23 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
           messages={messages}
           actionChanged={this.actionChanged}
           itemUsed={this.itemUsed}
+          skillUsed={this.skillUsed}
+          setActionDecription={this.setActionDecription}
+          actionDescription={this.state.actionDescription}
         />
+
+        <div className={`battle-process__action-msg${this.state.actionDescription ? '' : '--hidden'}`}>
+          <div className="battle-process__action-msg_message">{this.state.actionDescription}</div>
+          <button
+            className="battle-process__action-msg_close-btn"
+            onClick={() => {
+              this.setActionDecription(undefined);
+              this.actionChanged({ type: BattleActionType.ATTACK });
+            }}
+          >
+            x
+          </button>
+        </div>
       </div>
     );
   }

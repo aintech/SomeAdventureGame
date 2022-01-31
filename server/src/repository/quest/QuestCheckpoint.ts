@@ -1,6 +1,6 @@
 import { CheckpointPassedBody } from '../../routes/QuestRoutes';
 import query, { single } from '../Db';
-import { adjustGoldExperience, adjustHealth, HeroWithSkills, setHeroHealth } from '../hero/Hero';
+import { adjustGoldExperience, adjustHealth, adjustMana, HeroWithSkills, setHeroHealth, setHeroMana } from '../hero/Hero';
 import { adjustItems } from '../Item';
 import { Monster } from '../Monster';
 import { getQuestProgress } from './QuestProgress';
@@ -237,10 +237,12 @@ export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress, 
       const events = result.events!.find((e) => e.heroId === h.id)?.events;
       if (events) {
         let hpAdjust = 0;
+        let manaAdjust = 0;
         events
           .sort((a, b) => a.time - b.time)
           .forEach((e) => {
             hpAdjust += e.hpAlter ?? 0;
+            manaAdjust += e.manaAlter ?? 0;
           });
 
         const usedItems: Map<number, number> = new Map();
@@ -255,6 +257,7 @@ export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress, 
         });
 
         adjustments.push(adjustHealth(h.id, hpAdjust));
+        adjustments.push(adjustMana(h.id, manaAdjust));
       }
     });
   }
@@ -262,6 +265,7 @@ export const checkpointPassed = async (checkpoint: QuestCheckpointWithProgress, 
   if (checkpoint.type === CheckpointType.CAMP) {
     heroes.forEach((h) => {
       adjustments.push(setHeroHealth(h.id, h.vitality * 10));
+      adjustments.push(setHeroMana(h.id, h.wizdom * 10));
     });
   }
 

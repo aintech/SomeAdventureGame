@@ -24,13 +24,13 @@
     max-width: 340px;
     background-image: url(../../../../img/quest-perform/backpack.png);
     background-size: cover;
-  }
 
-  &__backpack_content {
-    padding: 70px 0 0 40px;
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
+    &_content {
+      padding: 70px 0 0 40px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
   }
 
   &__item {
@@ -41,6 +41,7 @@
     display: flex;
     border: 1px solid #777;
     border-radius: 10px;
+    background-size: contain;
     cursor: pointer;
 
     &_amount {
@@ -54,8 +55,52 @@
     @each $type in 'health_potion' 'health_elixir' 'mana_potion' 'mana_elixir' 'wand_fireball' 'wand_stun' {
       &--#{$type} {
         background-image: url(../../../../img/items/#{$type}.png);
-        background-size: contain;
       }
+    }
+  }
+
+  &__skills {
+    padding: 70px 0 0;
+    margin: 0 auto;
+    width: 340px;
+    max-width: 340px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  &__skill {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    border: solid 1px yellowgreen;
+    box-shadow: 0px 5px 5px black;
+    border-radius: 10px;
+    cursor: pointer;
+    background-size: contain;
+
+    @each $type
+      in 'big_swing'
+      'stunning_blow'
+      'armor_crash'
+      'fireball'
+      'freeze'
+      'time_forward'
+      'backstab'
+      'poison_hit'
+      'dodge'
+      'word_of_healing'
+      'common_good'
+      'inspiration'
+    {
+      &--#{$type} {
+        background-image: url(../../../../img/skill/#{$type}.png);
+      }
+    }
+
+    &_disabled {
+      opacity: 0.5;
+      box-shadow: none;
     }
   }
 
@@ -91,40 +136,12 @@
     }
   }
 
-  &__action-msg {
-    @include strokeText;
-    margin: 0 auto;
-    height: 82px;
-    width: 90%;
-    max-width: 400px;
-    display: flex;
-    justify-content: space-between;
-    background-color: bisque;
-    border: 1px solid gray;
-    border-radius: 10px;
-    box-shadow: 0px 5px 5px black;
-
-    &_message {
-      padding: 10px;
-      font-size: 20px;
-      color: white;
-    }
-
-    &_close-btn {
-      @include strokeText;
-      width: 60px;
-      min-width: 60px;
-      font-family: 'Courier New', Courier, monospace;
-      font-weight: bold;
-      font-size: 70px;
-      color: lightsalmon;
-      background-color: #777;
-      border: 1px solid black;
-      border-radius: 10px;
-    }
+  &--hidden {
+    opacity: 0;
+    visibility: hidden;
   }
 
-  &_hidden {
+  &--disabled {
     display: none;
   }
 }

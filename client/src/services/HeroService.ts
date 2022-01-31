@@ -37,6 +37,7 @@ export interface HeroResponse extends StatsHolderResponse {
   type: HeroType;
   level: HeroLevelResponse;
   health: number;
+  mana: number;
   gold: number;
   equipment: EquipmentResponse[];
   items: HeroItemResponse[];
@@ -91,9 +92,10 @@ export interface HeroPerkResponse {
 }
 
 export interface HeroSkillResponse {
-  level: number;
+  type: number;
   name: string;
   description: string;
+  mana: number;
 }
 
 export const getHeroes = async (auth: AuthProps) => {

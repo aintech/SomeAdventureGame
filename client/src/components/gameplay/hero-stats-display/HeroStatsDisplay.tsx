@@ -200,11 +200,8 @@ const HeroStatsDisplay = ({ hero, heroStatsDisplayClosed, onDismissHero }: HeroS
             <li>
               {hero.skills.map((skill) => {
                 return (
-                  <ul key={skill.name} className={`${skill.level > hero.level.lvl ? 'hero-stats__skills--disabled' : ''}`}>
-                    <span className="hero-stats__skills--name">
-                      {skill.name} ({skill.level} ур)
-                    </span>{' '}
-                    - {skill.description}
+                  <ul key={skill.name}>
+                    <span className="hero-stats__skills--name">{skill.name}</span> - {skill.description}
                   </ul>
                 );
               })}

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { heroStatsChoosed } from '../../../../actions/Actions';
 import HealIconImg from '../../../../img/quest-perform/battle-process/heal-icon.png';
-import Hero, { calcHealthFraction } from '../../../../models/hero/Hero';
+import Hero, { calcHealthFraction, calcManaFraction } from '../../../../models/hero/Hero';
 import { HeroType } from '../../../../models/hero/HeroType';
 import { BattleMessage } from '../process-models/BattleMessage';
 import QuestHero from '../process-models/QuestHero';
@@ -79,7 +79,7 @@ const QuestHeroItem = ({ hero, current, heroClickHandler, overrideClickHandler, 
           </div>
         </div>
         <div className="quest-hero-item__bar-holder">
-          <div className="quest-hero-item__bar quest-hero-item__bar_psy" style={{ width: `100%` }}>
+          <div className="quest-hero-item__bar quest-hero-item__bar_psy" style={{ width: `${calcManaFraction(hero) * 100}%` }}>
             <div className="quest-hero-item__bar_overlay"></div>
           </div>
         </div>

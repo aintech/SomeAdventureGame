@@ -46,8 +46,8 @@ const persistPatrons = async (userId: number, heroes: GeneratedHero[]) => {
       (hero) =>
         `select 
             ${userId}, '${hero.name}', ${hero.type}, 
-            ${hero.power}, ${hero.defence}, ${hero.vitality}, ${hero.initiative},
-            ${hero.health}, ${hero.experience}, ${hero.gold}, 
+            ${hero.power}, ${hero.defence}, ${hero.vitality}, ${hero.initiative}, ${hero.wizdom},
+            ${hero.health}, ${hero.mana}, ${hero.experience}, ${hero.gold}, 
             (now() + interval '${hero.index} seconds')`
     )
     .join(' union all ');
@@ -55,7 +55,7 @@ const persistPatrons = async (userId: number, heroes: GeneratedHero[]) => {
   return query(
     'persistPastrons',
     `insert into public.hero 
-     (user_id, name, type, power, defence, vitality, initiative, health, experience, gold, appear_at)
+     (user_id, name, type, power, defence, vitality, initiative, wizdom, health, mana, experience, gold, appear_at)
      select * from (${heroesData}) as vals`
   );
 };

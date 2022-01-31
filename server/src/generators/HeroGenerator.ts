@@ -1,26 +1,26 @@
-import { HeroType } from "../repository/hero/Hero";
-import { anyOf } from "../utils/Arrays";
+import { HeroType } from '../repository/hero/Hero';
+import { anyOf } from '../utils/Arrays';
 
 const names = [
-  "Аркада",
-  "Мира",
-  "Полана",
-  "Остера",
-  "Саргона",
-  "Клевер",
-  "Плея",
-  "Сарина",
-  "Патока",
-  "Каппи",
-  "Олива",
-  "Троя",
-  "Луна",
-  "Тэрра",
-  "Цветик",
-  "Белянка",
-  "Март",
-  "Сола",
-  "Капля",
+  'Аркада',
+  'Мира',
+  'Полана',
+  'Остера',
+  'Саргона',
+  'Клевер',
+  'Плея',
+  'Сарина',
+  'Патока',
+  'Каппи',
+  'Олива',
+  'Троя',
+  'Луна',
+  'Тэрра',
+  'Цветик',
+  'Белянка',
+  'Март',
+  'Сола',
+  'Капля',
 ];
 
 export type GeneratedHero = {
@@ -30,7 +30,9 @@ export type GeneratedHero = {
   defence: number;
   vitality: number;
   initiative: number;
+  wizdom: number;
   health: number;
+  mana: number;
   experience: number;
   gold: number;
   index: number;
@@ -39,9 +41,12 @@ export type GeneratedHero = {
 const generateHeroes = () => {
   const heroes: GeneratedHero[] = [];
   const poolSize = Math.floor(Math.random() * 4) + 10;
+
   for (let i = 0; i < poolSize; i++) {
     const power = Math.floor(Math.random() * 6) + 5;
     const vit = Math.floor(Math.random() * 5) + 10;
+    const wizdom = Math.floor(Math.random() * 10) + 7;
+
     heroes.push({
       name: anyOf(names),
       type: randomType(),
@@ -49,9 +54,11 @@ const generateHeroes = () => {
       defence: 0,
       vitality: vit,
       initiative: 2,
+      wizdom,
       health: vit * 10,
+      mana: wizdom * 10,
       experience: 0,
-      gold: power * 10 + vit * 10,
+      gold: power * 10 + vit * 10 + wizdom * 10,
       index: i,
     });
   }
