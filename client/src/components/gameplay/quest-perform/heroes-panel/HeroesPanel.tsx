@@ -72,15 +72,8 @@ const HeroesPanel = ({
     e.stopPropagation();
     setItems([]);
 
-    switch (item.subtype) {
-      case ItemSubtype.HEALTH_POTION:
-        setActionDecription!('Восстанавливает 50% HP выбранному герою');
-        break;
-      case ItemSubtype.HEALTH_ELIXIR:
-        setActionDecription!('Полностью восстановить HP выбранному герою');
-        break;
-      default:
-        throw new Error(`Unknown item subtype ${ItemSubtype[item.subtype]}`);
+    if (item.target === TargetType.ENEMY || item.target === TargetType.HERO) {
+      setActionDecription!(item.description);
     }
 
     actionChanged!({ type: BattleActionType.USE_ITEM, item });
@@ -103,8 +96,10 @@ const HeroesPanel = ({
   };
 
   const handleDefence = () => {
-    setItems([]);
-    actionChanged!({ type: BattleActionType.DEFENCE });
+    if (current) {
+      setItems([]);
+      actionChanged!({ type: BattleActionType.DEFENCE });
+    }
   };
 
   const handleHeroClick = (hero: Hero | QuestHero) => {
@@ -138,10 +133,6 @@ const HeroesPanel = ({
       overrideClickHandler={handleHeroClick}
     />
   ));
-
-  console.log(current?.mana);
-
-  console.log(skills);
 
   return (
     <div className="heroes-panel">

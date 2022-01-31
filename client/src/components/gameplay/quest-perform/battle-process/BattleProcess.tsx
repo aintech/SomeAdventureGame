@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isAlive, maxHealth } from '../../../../models/hero/Hero';
+import { isAlive, maxHealth, maxMana } from '../../../../models/hero/Hero';
 import HeroSkill, { HeroSkillType, TargetType } from '../../../../models/hero/HeroSkill';
 import { HeroItem, ItemSubtype } from '../../../../models/Item';
 import QuestCheckpoint, { CheckpointReward } from '../../../../models/QuestCheckpoint';
@@ -355,6 +355,28 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
         break;
 
+      case ItemSubtype.MANA_POTION:
+      case ItemSubtype.MANA_ELIXIR:
+        const restored = target as QuestHero;
+        const restoreAmount =
+          item.subtype === ItemSubtype.MANA_ELIXIR
+            ? maxMana(restored) - restored.mana
+            : Math.min(maxMana(restored) - restored.mana, maxMana(restored) * 0.5);
+        battleEvents.set(restored.id, [...battleEvents.get(restored.id)!, { time: new Date().getTime(), manaAlter: restoreAmount }]);
+
+        if (currentActor?.id !== initiator.id) {
+          throw new Error(`Current actor is not initiator`);
+        }
+
+        currentActor.items = replace(currentActor.items, currentActor.items.find((i) => i.id === item.id)!);
+        restored.mana += restoreAmount;
+        // TODO: для восстановления маны отдельная анимация.
+        restored.healed = true;
+
+        heroes = replace(heroes, currentActor);
+
+        break;
+
       default:
         throw new Error(`Unknown item type ${ItemSubtype[item.subtype]}`);
     }
@@ -388,9 +410,8 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         messages.push(this.hitEnemy(currentActor, enemy));
 
         const enemiesAround = this.targetsAround(enemy);
-        console.log(enemiesAround);
-
         enemiesAround.forEach((e) => messages.push(this.hitEnemy(currentActor, e)));
+
         break;
 
       case HeroSkillType.BACKSTAB:
