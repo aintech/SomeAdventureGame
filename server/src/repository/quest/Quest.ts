@@ -1,6 +1,6 @@
 import { GUILD_SHARE } from '../../utils/Variables';
 import query, { single } from '../Db';
-import { getHeroesByIds, getHeroesOnQuest, rewardHeroesForQuest } from '../hero/Hero';
+import { getHeroesByIds, getHeroesOnQuest, maximizeMana, rewardHeroesForQuest, setHeroMana } from '../hero/Hero';
 import { HeroActivityType, updateHeroActivities } from '../hero/HeroActivity';
 import { deleteCheckpoints, getQuestCheckpoints, QuestCheckpointWithProgress } from './QuestCheckpoint';
 import { completeProgress, createQuestProgress, deleteProgress } from './QuestProgress';
@@ -144,6 +144,7 @@ export const completeQuest = async (userId: number, questId: number, canceled = 
       })
     )
   );
+  heroIds.forEach((id) => queries.push(maximizeMana(id)));
 
   await Promise.all(queries);
 

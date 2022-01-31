@@ -144,6 +144,10 @@ export const adjustMana = (heroId: number, amount: number) => {
   return query<void>('adjustMana', `update public.hero set mana = (mana + $2) where id = $1`, [heroId, amount]);
 };
 
+export const maximizeMana = (heroId: number) => {
+  return query<void>('maximizeMana', 'update public.hero set mana = wizdom * 10 where id = $1', [heroId]);
+};
+
 export const adjustGold = (heroId: number, amount: number) => {
   return query<void>('adjustGold', `update public.hero set gold = (gold + $2) where id = $1`, [heroId, amount]);
 };
