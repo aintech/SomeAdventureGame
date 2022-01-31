@@ -242,6 +242,7 @@ const appropriateEquipment = (hero: HeroWithPerks, type: EquipmentType, equipmen
   );
 };
 
+/** Same check in ActivityChecker.buyPotion */
 const idleToPurchasingPotions = async (
   userId: number,
   hero: HeroWithPerks,
@@ -254,6 +255,7 @@ const idleToPurchasingPotions = async (
   const healingPotion = assortment.find((i) => i.subtype === ItemSubtype.HEALTH_POTION)!;
   const healingElixir = assortment.find((i) => i.subtype === ItemSubtype.HEALTH_ELIXIR)!;
   const manaPotion = assortment.find((i) => i.subtype === ItemSubtype.MANA_POTION)!;
+  const manaElixir = assortment.find((i) => i.subtype === ItemSubtype.MANA_ELIXIR)!;
 
   let possiblePotion = hero.items.find((i) => i.subtype === ItemSubtype.HEALTH_POTION);
 
@@ -278,6 +280,12 @@ const idleToPurchasingPotions = async (
           potion = manaPotion;
         }
       }
+
+      if (!potion && manaElixir.price <= hero.gold) {
+        if (hero.items.find((i) => i.subtype === ItemSubtype.MANA_ELIXIR)?.amount ?? 0 < 3) {
+          potion = manaElixir;
+        }
+      }
     } else {
       possiblePotion = hero.items.find((i) => i.subtype === ItemSubtype.HEALTH_ELIXIR);
       if (!possiblePotion && healingElixir.price <= hero.gold) {
@@ -286,6 +294,12 @@ const idleToPurchasingPotions = async (
       if (!potion && possiblePotion) {
         if (possiblePotion.amount < 3 && healingElixir.price <= hero.gold) {
           potion = healingElixir;
+        }
+      }
+
+      if (!potion && manaPotion.price <= hero.gold) {
+        if (hero.items.find((i) => i.subtype === ItemSubtype.MANA_POTION)?.amount ?? 0 < 2) {
+          potion = manaPotion;
         }
       }
     }

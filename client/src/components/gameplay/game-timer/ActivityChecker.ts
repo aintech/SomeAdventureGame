@@ -1,15 +1,15 @@
-import Equipment, { EquipmentType } from "../../../models/Equipment";
-import Hero from "../../../models/hero/Hero";
-import { HeroActivityType } from "../../../models/hero/HeroActivity";
-import { HeroType } from "../../../models/hero/HeroType";
-import Item, { ItemSubtype } from "../../../models/Item";
+import Equipment, { EquipmentType } from '../../../models/Equipment';
+import Hero from '../../../models/hero/Hero';
+import { HeroActivityType } from '../../../models/hero/HeroActivity';
+import { HeroType } from '../../../models/hero/HeroType';
+import Item, { ItemSubtype } from '../../../models/Item';
 import {
   CURE_COST_PER_HP,
   EQUIPMENT_MAX_TIER,
   EQUIPMENT_UPGRADE_COST_FRACTION,
   HEALTH_PER_VITALITY,
   MAX_HEROES_SAME_ACTIVITIES,
-} from "../../../utils/Variables";
+} from '../../../utils/Variables';
 
 const checkHeroActivity = (
   hero: Hero,
@@ -57,17 +57,13 @@ const readyToLevelUp = (hero: Hero) => {
 
 const buyEquipment = (hero: Hero, market: Equipment[]) => {
   const weapon = hero.equipment.find((e) => e.type === EquipmentType.WEAPON)!;
-  const newWeapon = market.find(
-    (e) => appropriateEquipment(hero, EquipmentType.WEAPON, e) && e.level === weapon.level + 1
-  );
+  const newWeapon = market.find((e) => appropriateEquipment(hero, EquipmentType.WEAPON, e) && e.level === weapon.level + 1);
   if ((newWeapon?.price ?? Number.MAX_SAFE_INTEGER) <= hero.gold) {
     return true;
   }
 
   const armor = hero.equipment.find((e) => e.type === EquipmentType.ARMOR)!;
-  const newArmor = market.find(
-    (e) => appropriateEquipment(hero, EquipmentType.ARMOR, e) && e.level === armor.level + 1
-  );
+  const newArmor = market.find((e) => appropriateEquipment(hero, EquipmentType.ARMOR, e) && e.level === armor.level + 1);
   if ((newArmor?.price ?? Number.MAX_SAFE_INTEGER) <= hero.gold) {
     return true;
   }
@@ -89,6 +85,7 @@ const upgradingEquipment = (hero: Hero) => {
   return readyToUpdate;
 };
 
+/** Same check in HeroActivity.idleToPurchasingPotions */
 const buyPotions = (hero: Hero, alchemist: Item[]) => {
   if (alchemist.length === 0) {
     return false;
@@ -97,6 +94,7 @@ const buyPotions = (hero: Hero, alchemist: Item[]) => {
   const healingPotion = alchemist.find((i) => i.subtype === ItemSubtype.HEALTH_POTION)!;
   const healingElixir = alchemist.find((i) => i.subtype === ItemSubtype.HEALTH_ELIXIR)!;
   const manaPotion = alchemist.find((i) => i.subtype === ItemSubtype.MANA_POTION)!;
+  const manaElixir = alchemist.find((i) => i.subtype === ItemSubtype.MANA_ELIXIR)!;
 
   let heroPotions = hero.items.find((i) => i.subtype === ItemSubtype.HEALTH_POTION);
 
@@ -120,6 +118,16 @@ const buyPotions = (hero: Hero, alchemist: Item[]) => {
         return manaPotion.price <= hero.gold;
       }
     }
+
+    heroPotions = hero.items.find((i) => i.subtype === ItemSubtype.MANA_ELIXIR);
+    if (!heroPotions && manaElixir.price <= hero.gold) {
+      return true;
+    }
+    if (heroPotions) {
+      if (heroPotions.amount < 3) {
+        return manaElixir.price <= hero.gold;
+      }
+    }
   } else {
     heroPotions = hero.items.find((i) => i.subtype === ItemSubtype.HEALTH_ELIXIR);
     if (!heroPotions && healingElixir.price <= hero.gold) {
@@ -128,6 +136,16 @@ const buyPotions = (hero: Hero, alchemist: Item[]) => {
     if (heroPotions) {
       if (heroPotions.amount < 3) {
         return healingElixir.price <= hero.gold;
+      }
+    }
+
+    heroPotions = hero.items.find((i) => i.subtype === ItemSubtype.MANA_POTION);
+    if (!heroPotions && manaPotion.price <= hero.gold) {
+      return true;
+    }
+    if (heroPotions) {
+      if (heroPotions.amount < 2) {
+        return manaPotion.price <= hero.gold;
       }
     }
   }
