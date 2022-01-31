@@ -167,9 +167,9 @@
     background-size: contain;
     border-radius: 5px;
 
-    @each $type in 'defended' {
+    @each $type in 'defended' 'burn' 'stunned' 'bleeding' {
       &_#{$type} {
-        background-image: url(../../../../img/quest-perform/quest-hero/status-effect__#{$type}.jpg);
+        background-image: url(../../../../img/quest-perform/status-effect/status-effect__#{$type}.png);
       }
     }
   }

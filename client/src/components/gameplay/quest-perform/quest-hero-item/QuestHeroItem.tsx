@@ -69,7 +69,7 @@ const QuestHeroItem = ({ hero, current, heroClickHandler, overrideClickHandler, 
 
       <div className={`quest-hero-item__bars${hero.health <= 0 ? ' quest-hero-item__bars_hidden' : ''}`}>
         <div className={`quest-hero-item__bar-holder${reward ? '' : ' quest-hero-item__bar_hidden'}`}>
-          <div className="quest-hero-item__bar quest-hero-item__bar_exp" style={{ width: `${hero.level.progress * 100}%` }}>
+          <div className="quest-hero-item__bar quest-hero-item__bar_exp" style={{ width: `${Math.min(1, hero.level.progress) * 100}%` }}>
             <div className="quest-hero-item__bar_overlay"></div>
           </div>
         </div>

@@ -10,7 +10,7 @@ import Loader from '../../../loader/Loader';
 import HeroesPanel from '../heroes-panel/HeroesPanel';
 import MonsterItem from '../monster-item/MonsterItem';
 import { BattleAction, BattleActionType, isActive } from '../process-models/BattleAction';
-import { BattleMessage, dmgMessage } from '../process-models/BattleMessage';
+import { BattleMessage, dmgMessage, strMessage } from '../process-models/BattleMessage';
 import CheckpointActor, { convertToActor } from '../process-models/CheckpointActor';
 import { HeroEvent } from '../process-models/HeroEvent';
 import QuestHero from '../process-models/QuestHero';
@@ -171,6 +171,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
   checkStatusEffects = () => {
     const actor = this.state.currentActor;
+    const messages: BattleMessage[] = [];
     if (actor) {
       let statusPlaytime = 0;
       let effects = actor.statusEffects;
@@ -195,6 +196,17 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
         this.playEffect(statusEffect);
 
+        switch (statusEffect.type) {
+          case StatusEffectType.BLEEDING:
+          case StatusEffectType.BURN:
+            if (actor.isHero) {
+              throw new Error(`Not implemented for heroes`);
+            } else {
+              messages.push(this.hitEnemyByAmount(actor as CheckpointActor, statusEffect.amount!));
+            }
+            break;
+        }
+
         if (statusEffect.duration === 0) {
           const idx = effects.findIndex((s) => s.id === statusEffect!.id);
           effects = [...actor.statusEffects.slice(0, idx), ...actor.statusEffects.slice(idx + 1)];
@@ -206,11 +218,15 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         let actorsQueue = replace(this.state.actorsQueue, actor);
 
         this.setState(
-          {
-            currentActor: actor,
-            heroes,
-            monsters,
-            actorsQueue,
+          (state) => {
+            return {
+              ...state,
+              currentActor: actor,
+              heroes,
+              monsters,
+              actorsQueue,
+              messages: [...state.messages, ...messages],
+            };
           },
           // Эффект запустилии после того как он отыграет перейдём к следующему эффекту.
           () => setTimeout(() => this.processRound(), statusPlaytime)
@@ -238,14 +254,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     enemy.hitted = true;
 
     const message = dmgMessage(enemy, damage);
-    setTimeout(() => {
-      this.setState((state) => {
-        return {
-          ...state,
-          messages: remove(state.messages, message),
-        };
-      });
-    }, 700);
+    this.timeoutMessage(message);
 
     return message;
   };
@@ -256,14 +265,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     enemy.hitted = true;
 
     const message = dmgMessage(enemy, damage);
-    setTimeout(() => {
-      this.setState((state) => {
-        return {
-          ...state,
-          messages: remove(state.messages, message),
-        };
-      });
-    }, 700);
+    this.timeoutMessage(message);
 
     return message;
   };
@@ -399,9 +401,23 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
         messages.push(this.hitEnemyByAmount(enemy, 50));
 
-        const enemiesAround = this.targetsAround(enemy);
-        enemiesAround.forEach((e) => messages.push(this.hitEnemyByAmount(e, 50)));
+        if (Math.random() < 0.5) {
+          enemy.statusEffects.push({ id: Math.random(), type: StatusEffectType.BURN, amount: 10, duration: 3 });
+        }
 
+        const enemiesAround = this.targetsAround(enemy);
+        enemiesAround.forEach((e) => {
+          messages.push(this.hitEnemyByAmount(e, 50));
+          if (Math.random() < 0.5) {
+            e.statusEffects.push({ id: Math.random(), type: StatusEffectType.BURN, amount: 10, duration: 3 });
+          }
+        });
+
+        break;
+
+      case ItemSubtype.WAND_STUN:
+        const enm = target as CheckpointActor;
+        enm.statusEffects.push({ id: Math.random(), type: StatusEffectType.STUNNED, duration: 3 });
         break;
 
       default:
@@ -447,14 +463,54 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         const enemy = target as CheckpointActor;
 
         messages.push(this.hitEnemyByHero(currentActor, enemy));
+        if (Math.random() < 0.5) {
+          let type: StatusEffectType;
+          switch (skill.type) {
+            case HeroSkillType.BIG_SWING:
+              type = StatusEffectType.BLEEDING;
+              break;
+
+            case HeroSkillType.FIREBALL:
+              type = StatusEffectType.BURN;
+              break;
+
+            default:
+              throw new Error(`Unknown skill type ${HeroSkillType[skill.type]}`);
+          }
+          enemy.statusEffects.push({ id: Math.random(), type, amount: 10, duration: 3 });
+        }
 
         const enemiesAround = this.targetsAround(enemy);
-        enemiesAround.forEach((e) => messages.push(this.hitEnemyByHero(currentActor, e)));
+        enemiesAround.forEach((enm) => {
+          messages.push(this.hitEnemyByHero(currentActor, enm));
+          if (Math.random() < 0.5) {
+            let type: StatusEffectType;
+            switch (skill.type) {
+              case HeroSkillType.BIG_SWING:
+                type = StatusEffectType.BLEEDING;
+                break;
+
+              case HeroSkillType.FIREBALL:
+                type = StatusEffectType.BURN;
+                break;
+
+              default:
+                throw new Error(`Unknown skill type ${HeroSkillType[skill.type]}`);
+            }
+            enm.statusEffects.push({ id: Math.random(), type, amount: 10, duration: 3 });
+          }
+        });
 
         break;
 
       case HeroSkillType.BACKSTAB:
-        messages.push(this.hitEnemyByHero(currentActor, target as CheckpointActor, 3));
+        const enm = target as CheckpointActor;
+        messages.push(this.hitEnemyByHero(currentActor, enm, 3));
+
+        if (Math.random() < 0.5) {
+          enm.statusEffects.push({ id: Math.random(), type: StatusEffectType.BLEEDING, amount: 10, duration: 3 });
+        }
+
         break;
 
       case HeroSkillType.WORD_OF_HEALING:
@@ -499,9 +555,22 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   };
 
   monsterPerform = () => {
+    const monster = this.state.currentActor as CheckpointActor;
+
+    if (monster.statusEffects.find((eff) => eff.type === StatusEffectType.STUNNED)) {
+      const message: BattleMessage = strMessage(monster, 'skip');
+      this.timeoutMessage(message);
+      this.setState(
+        (state) => {
+          return { processState: ProcessState.SWITCH_ACTOR, messages: [...state.messages, message] };
+        },
+        () => setTimeout(() => this.processRound(), 300)
+      );
+      return;
+    }
+
     let { heroes } = this.state;
 
-    const monster = this.state.currentActor as CheckpointActor;
     const aliveHeroes = heroes.filter((h) => isAlive(h));
     const victim = aliveHeroes[Math.floor(Math.random() * aliveHeroes.length)];
 
@@ -530,14 +599,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     battleEvents.set(victim.id, [...battleEvents.get(victim.id)!, { time: new Date().getTime(), hpAlter: -damage }]);
 
     const message = dmgMessage(victim, damage);
-    setTimeout(() => {
-      this.setState((state) => {
-        return {
-          ...state,
-          messages: remove(state.messages, message),
-        };
-      });
-    }, 700);
+    this.timeoutMessage(message);
 
     this.setState(
       (state) => {
@@ -551,6 +613,17 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
       },
       () => setTimeout(this.processRound, 500)
     );
+  };
+
+  timeoutMessage = (message: BattleMessage) => {
+    setTimeout(() => {
+      this.setState((state) => {
+        return {
+          ...state,
+          messages: remove(state.messages, message),
+        };
+      });
+    }, 700);
   };
 
   setActionDecription = (description?: string) => {

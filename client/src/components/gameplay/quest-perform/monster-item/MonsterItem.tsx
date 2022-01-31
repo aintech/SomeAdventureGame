@@ -1,5 +1,6 @@
 import { BattleMessage } from '../process-models/BattleMessage';
 import CheckpointActor from '../process-models/CheckpointActor';
+import { StatusEffectType } from '../process-models/StatusEffect';
 import './monster-item.scss';
 
 type MonsterItemProps = {
@@ -38,6 +39,11 @@ const MonsterItem = ({ monster, idx, messages, handleClickMonster }: MonsterItem
               <div className="monster-item__bar monster-item__bar_health" style={{ width: `${healthPercent}%` }}>
                 <div className="monster-item__bar_overlay"></div>
               </div>
+            </div>
+            <div className="monster-item__status-holder">
+              {monster.statusEffects.map((eff) => (
+                <div key={eff.id} className={`monster-item__status monster-item__status_${StatusEffectType[eff.type].toLowerCase()}`}></div>
+              ))}
             </div>
             <div
               className={`monster-item__display monster-item__display_${monster.name}${monster.hitted ? '_hit' : ''}

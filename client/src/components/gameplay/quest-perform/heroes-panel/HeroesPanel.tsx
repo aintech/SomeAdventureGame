@@ -49,6 +49,7 @@ const HeroesPanel = ({
       } else {
         actionChanged!({ type: BattleActionType.OPEN_SKILLS });
         setSkills(current.skills.sort((a, b) => a.type - b.type));
+        setItems([]);
       }
     }
   };
@@ -64,6 +65,7 @@ const HeroesPanel = ({
       } else {
         actionChanged!({ type: BattleActionType.OPEN_BACKPACK });
         setItems(current.items.sort((a, b) => a.id - b.id));
+        setSkills([]);
       }
     }
   };

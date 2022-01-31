@@ -1,5 +1,8 @@
 export enum StatusEffectType {
   DEFENDED,
+  BURN,
+  STUNNED,
+  BLEEDING,
 }
 
 export type StatusEffect = {
@@ -7,7 +10,7 @@ export type StatusEffect = {
   type: StatusEffectType;
   // Количество "раундов" активности эффекта
   duration: number;
-  amount: number;
+  amount?: number;
   // Раунд в котором статус обрабатывался в последний раз, чтобы можно было отыграть несколько статусов в один заход.
   round?: number;
 };
