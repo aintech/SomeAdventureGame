@@ -232,8 +232,26 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     console.log(effect);
   };
 
-  hitEnemy = (hero: QuestHero, enemy: CheckpointActor, multiplier = 1) => {
+  hitEnemyByHero = (hero: QuestHero, enemy: CheckpointActor, multiplier = 1) => {
     const damage = Math.max(1, (hero.stats.power + hero.equipStats.power) * multiplier - enemy.stats.defence);
+    enemy.health -= damage;
+    enemy.hitted = true;
+
+    const message = dmgMessage(enemy, damage);
+    setTimeout(() => {
+      this.setState((state) => {
+        return {
+          ...state,
+          messages: remove(state.messages, message),
+        };
+      });
+    }, 700);
+
+    return message;
+  };
+
+  hitEnemyByAmount = (enemy: CheckpointActor, amount: number) => {
+    const damage = Math.max(1, amount - enemy.stats.defence);
     enemy.health -= damage;
     enemy.hitted = true;
 
@@ -264,7 +282,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
       switch (hero.action.type) {
         case BattleActionType.ATTACK:
-          const message = this.hitEnemy(hero, monster);
+          const message = this.hitEnemyByHero(hero, monster);
           this.setState(
             (state) => {
               return {
@@ -275,6 +293,12 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
             },
             () => setTimeout(this.processRound, 500)
           );
+          break;
+
+        case BattleActionType.USE_ITEM:
+          if (hero.action.item!.target === TargetType.ENEMY) {
+            this.itemUsed(hero, monster, hero.action.item!);
+          }
           break;
 
         case BattleActionType.USE_SKILL:
@@ -333,6 +357,13 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
 
     item.amount--;
 
+    if (currentActor?.id !== initiator.id) {
+      throw new Error(`Current actor is not initiator`);
+    }
+
+    currentActor.items = replace(currentActor.items, currentActor.items.find((i) => i.id === item.id)!);
+
+    let messages: BattleMessage[] = [];
     switch (item.subtype) {
       case ItemSubtype.HEALTH_POTION:
       case ItemSubtype.HEALTH_ELIXIR:
@@ -343,15 +374,8 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
             : Math.min(maxHealth(healed) - healed.health, maxHealth(healed) * 0.5);
         battleEvents.set(healed.id, [...battleEvents.get(healed.id)!, { time: new Date().getTime(), hpAlter: healAmount }]);
 
-        if (currentActor?.id !== initiator.id) {
-          throw new Error(`Current actor is not initiator`);
-        }
-
-        currentActor.items = replace(currentActor.items, currentActor.items.find((i) => i.id === item.id)!);
         healed.health += healAmount;
         healed.healed = true;
-
-        heroes = replace(heroes, currentActor);
 
         break;
 
@@ -364,16 +388,19 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
             : Math.min(maxMana(restored) - restored.mana, maxMana(restored) * 0.5);
         battleEvents.set(restored.id, [...battleEvents.get(restored.id)!, { time: new Date().getTime(), manaAlter: restoreAmount }]);
 
-        if (currentActor?.id !== initiator.id) {
-          throw new Error(`Current actor is not initiator`);
-        }
-
-        currentActor.items = replace(currentActor.items, currentActor.items.find((i) => i.id === item.id)!);
         restored.mana += restoreAmount;
         // TODO: для восстановления маны отдельная анимация.
         restored.healed = true;
 
-        heroes = replace(heroes, currentActor);
+        break;
+
+      case ItemSubtype.WAND_FIREBALL:
+        const enemy = target as CheckpointActor;
+
+        messages.push(this.hitEnemyByAmount(enemy, 50));
+
+        const enemiesAround = this.targetsAround(enemy);
+        enemiesAround.forEach((e) => messages.push(this.hitEnemyByAmount(e, 50)));
 
         break;
 
@@ -381,12 +408,24 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
         throw new Error(`Unknown item type ${ItemSubtype[item.subtype]}`);
     }
 
+    heroes = replace(heroes, currentActor);
+
+    if (target.isHero && target !== currentActor) {
+      heroes = replace(heroes, target);
+    }
+
+    this.setActionDecription(undefined);
+
     this.setState(
-      {
-        currentActor,
-        heroes,
-        battleEvents,
-        processState: ProcessState.SWITCH_ACTOR,
+      (state) => {
+        return {
+          ...state,
+          currentActor,
+          heroes,
+          battleEvents,
+          processState: ProcessState.SWITCH_ACTOR,
+          messages: [...state.messages, ...messages],
+        };
       },
       () => setTimeout(this.processRound, 500)
     );
@@ -407,15 +446,15 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
       case HeroSkillType.FIREBALL:
         const enemy = target as CheckpointActor;
 
-        messages.push(this.hitEnemy(currentActor, enemy));
+        messages.push(this.hitEnemyByHero(currentActor, enemy));
 
         const enemiesAround = this.targetsAround(enemy);
-        enemiesAround.forEach((e) => messages.push(this.hitEnemy(currentActor, e)));
+        enemiesAround.forEach((e) => messages.push(this.hitEnemyByHero(currentActor, e)));
 
         break;
 
       case HeroSkillType.BACKSTAB:
-        messages.push(this.hitEnemy(currentActor, target as CheckpointActor, 3));
+        messages.push(this.hitEnemyByHero(currentActor, target as CheckpointActor, 3));
         break;
 
       case HeroSkillType.WORD_OF_HEALING:
