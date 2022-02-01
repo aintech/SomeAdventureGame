@@ -79,6 +79,10 @@
 
     z-index: 2000;
 
+    &_name {
+      color: yellow;
+    }
+
     &_message {
       padding: 10px;
       font-size: 20px;

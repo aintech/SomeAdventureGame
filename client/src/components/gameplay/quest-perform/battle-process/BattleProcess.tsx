@@ -655,7 +655,7 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
   }
 
   render() {
-    const { monsters, heroes, currentActor, processState, messages } = this.state;
+    const { monsters, heroes, currentActor, processState, messages, actionDescription } = this.state;
 
     const { checkpoint, checkpointReward } = this.props;
 
@@ -664,6 +664,13 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
     const grid = `repeat(${monsters.length}, ${cellSize})`;
 
     const battleEnded = processState === ProcessState.BATTLE_WON || processState === ProcessState.BATTLE_LOST;
+
+    let battleActionName: string | undefined = undefined;
+
+    if (actionDescription) {
+      const action = (currentActor as QuestHero).action;
+      battleActionName = (action.item ?? action.skill)?.name;
+    }
 
     return (
       <div className="battle-process">
@@ -706,11 +713,13 @@ class BattleProcess extends Component<BattleProcessProps, BattleProcessState> {
           itemUsed={this.itemUsed}
           skillUsed={this.skillUsed}
           setActionDecription={this.setActionDecription}
-          actionDescription={this.state.actionDescription}
+          actionDescription={actionDescription}
         />
 
-        <div className={`battle-process__action-msg${this.state.actionDescription ? '' : '--hidden'}`}>
-          <div className="battle-process__action-msg_message">{this.state.actionDescription}</div>
+        <div className={`battle-process__action-msg${actionDescription ? '' : '--hidden'}`}>
+          <div className="battle-process__action-msg_message">
+            <span className="battle-process__action-msg_name">{battleActionName}:</span> {actionDescription}
+          </div>
           <button
             className="battle-process__action-msg_close-btn"
             onClick={() => {
