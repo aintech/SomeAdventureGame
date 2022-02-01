@@ -1,13 +1,13 @@
 export enum BuildingType {
   GUILD,
-  TAVERN, // MERCENARY_HUB,
-  DWELLINGS, // CABINS,
-  STABLES, // HANGAR,
-  HEALER, // MEDBAY,
-  ELDER, // COMMAND_CENTER,
+  TAVERN,
+  DWELLINGS,
+  STABLES,
+  HEALER,
+  ELDER,
   TRAINING_GROUND,
-  ALCHEMIST, // LABORATORY,
-  BLACKSMITH, // PRODUCTION_COMPLEX,
+  ALCHEMIST,
+  BLACKSMITH,
   MARKET,
   STORAGE,
 }
@@ -23,46 +23,27 @@ export default class Building {
 export const toDisplay = (type: BuildingType) => {
   switch (type) {
     case BuildingType.GUILD:
-      // return "Гильдия приключений";
-      // return "Космогильдия";
       return 'Гильдия';
     case BuildingType.TAVERN:
-      // return "Таверна 'Пьяный жук'";
-      // return "Хаб 'Гиперкуб'";
-      return 'Бар';
+      return 'Таверна';
     case BuildingType.DWELLINGS:
-      // return "Домики жителей";
-      // return "Жилые каюты";
       return 'Жилища';
     case BuildingType.STABLES:
-      // return "Гнездовье птиц";
-      // return "Ангар";
-      return 'Гараж';
+      return 'Стойла';
     case BuildingType.HEALER:
-      // return "Домик целителя";
-      // return "Медцентр";
       return 'Госпиталь';
     case BuildingType.ELDER:
-      // return "Хижина старейшины";
-      // return "Администрация";
-      return 'Глава лагеря';
+      return 'Старейшина';
     case BuildingType.TRAINING_GROUND:
-      return 'Тренировочная база';
+      return 'Тренировочная';
     case BuildingType.ALCHEMIST:
-      // return "Лаборатория алхимика";
-      return 'Лаборатория';
+      return 'Алхимик';
     case BuildingType.BLACKSMITH:
-      return 'Каменная кузня';
-    // return "Промзона";
-    // return "Рембаза";
+      return 'Кузница';
     case BuildingType.MARKET:
-      // return "Кибитка торговца";
-      // return "Маркетплейс";
       return 'Рынок';
     case BuildingType.STORAGE:
-      // return "Хранилище пыльцы";
-      // return "Энергогенератор";
-      return 'Схрон';
+      return 'Сокровищница';
     default:
       throw new Error(`Unknown building type ${BuildingType[type]}`);
   }
