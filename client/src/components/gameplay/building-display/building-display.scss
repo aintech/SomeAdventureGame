@@ -60,6 +60,9 @@
   }
 
   &__btn-upgrade {
+    //TODO: реализовать возможность апргейда построек.
+    display: none;
+
     position: absolute;
     left: 5px;
     top: 5px;

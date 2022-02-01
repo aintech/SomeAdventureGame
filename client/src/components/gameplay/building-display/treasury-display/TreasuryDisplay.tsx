@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import GameStats from "../../../../models/GameStats";
-import Loader from "../../../loader/Loader";
-import "./treasury-display.scss";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import GameStats from '../../../../models/GameStats';
+import Loader from '../../../loader/Loader';
+import './treasury-display.scss';
 
 type TreasuryDisplayProps = {
   stats: GameStats;
@@ -12,7 +12,7 @@ const TreasuryDisplay = ({ stats }: TreasuryDisplayProps) => {
   return (
     <div className="treasury-display">
       <div>
-        Хабара в хранилище <span className="treasury-display__count">{stats.gold}</span>
+        Ценностей в хранилище <span className="treasury-display__count">{stats.gold}</span>
       </div>
     </div>
   );
@@ -27,7 +27,7 @@ class TreasuryDisplayContainer extends Component<TreasuryDisplayContainerProps> 
     const { stats } = this.props;
 
     if (!stats) {
-      return <Loader message={"Fetching for stats..."} />;
+      return <Loader message={'Fetching for stats...'} />;
     }
 
     return <TreasuryDisplay stats={stats} />;
