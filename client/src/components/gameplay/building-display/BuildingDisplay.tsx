@@ -1,30 +1,29 @@
-import React, { Component, MouseEvent } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators, compose, Dispatch } from "redux";
-import { buildingClicked, showConfirmDialog } from "../../../actions/Actions";
-import { onCompleteBuildingUpgrade, onStartBuildingUpgrade } from "../../../actions/ApiActions";
-import withApiService, { WithApiServiceProps } from "../../../hoc/WithApiService";
-import Building, { BuildingType, toDisplay } from "../../../models/Building";
-import GameStats from "../../../models/GameStats";
-import { convertDuration } from "../../../utils/Utils";
-import AlchemistDisplay from "./alchemist-display/AlchemistDisplay";
-import BlacksmithDisplay from "./blacksmith-display/BlacksmithDisplay";
-import "./building-display.scss";
-import DwellingsDisplay from "./dwellings-display/DwellingsDisplay";
-import ElderDisplay from "./elder-display/ElderDisplay";
-import GuildDisplay from "./guild-display/GuildDisplay";
-import HealerDisplay from "./healer-display/HealerDisplay";
-import MarketDisplay from "./market-display/MarketDisplay";
-import StablesDisplay from "./stables-display/StablesDisplay";
-import TavernDisplay from "./tavern-display/TavernDisplay";
-import TrainingGroundDisplay from "./training-ground-display/TrainingGroundDisplay";
-import TreasuryDisplay from "./treasury-display/TreasuryDisplay";
+import React, { Component, MouseEvent } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators, compose, Dispatch } from 'redux';
+import { buildingClicked, showConfirmDialog } from '../../../actions/Actions';
+import { onCompleteBuildingUpgrade, onStartBuildingUpgrade } from '../../../actions/ApiActions';
+import withApiService, { WithApiServiceProps } from '../../../hoc/WithApiService';
+import Building, { BuildingType, description, toDisplay } from '../../../models/Building';
+import GameStats from '../../../models/GameStats';
+import { convertDuration } from '../../../utils/Utils';
+import AlchemistDisplay from './alchemist-display/AlchemistDisplay';
+import BlacksmithDisplay from './blacksmith-display/BlacksmithDisplay';
+import './building-display.scss';
+import DwellingsDisplay from './dwellings-display/DwellingsDisplay';
+import ElderDisplay from './elder-display/ElderDisplay';
+import GuildDisplay from './guild-display/GuildDisplay';
+import HealerDisplay from './healer-display/HealerDisplay';
+import MarketDisplay from './market-display/MarketDisplay';
+import StablesDisplay from './stables-display/StablesDisplay';
+import TavernDisplay from './tavern-display/TavernDisplay';
+import TrainingGroundDisplay from './training-ground-display/TrainingGroundDisplay';
 
 type BuildingDisplayProps = {
   stats: GameStats;
   chosenBuilding?: Building;
   hideBuildingDisplay: () => void;
-  showConfirmDialog: (message: string, callback: (e: MouseEvent) => void) => void;
+  showConfirmDialog: (message: string, callback?: (e: MouseEvent) => void) => void;
   onStartBuildingUpgrade: (type: BuildingType) => void;
   completeBuildingUpgrade: (type: BuildingType) => void;
 };
@@ -73,7 +72,8 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
     const { chosenBuilding } = this.props;
 
     if (chosenBuilding?.upgrade?.upgradeStarted) {
-      let upgradeSecs: number | undefined = chosenBuilding.upgrade.duration! - (new Date().getTime() - chosenBuilding.upgrade.upgradeStarted) * 0.001;
+      let upgradeSecs: number | undefined =
+        chosenBuilding.upgrade.duration! - (new Date().getTime() - chosenBuilding.upgrade.upgradeStarted) * 0.001;
       if (upgradeSecs <= 0) {
         upgradeSecs = undefined;
         if (this.secondsTimer) {
@@ -91,6 +91,11 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
   upgradeBuilding() {
     this.props.onStartBuildingUpgrade(this.props.chosenBuilding!.type);
     this.startTimers();
+  }
+
+  showBuildingInfo(e: MouseEvent) {
+    e.stopPropagation();
+    this.props.showConfirmDialog(description(this.props.chosenBuilding!.type));
   }
 
   showUpgradeConfirm(e: MouseEvent) {
@@ -111,7 +116,7 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
       return null;
     }
 
-    if (typeof chosenBuilding.type !== "number") {
+    if (typeof chosenBuilding.type !== 'number') {
       return null;
     }
 
@@ -120,7 +125,7 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
     const upgradeBtn =
       chosenBuilding.upgrade && !chosenBuilding.upgrade?.upgradeStarted ? (
         <button
-          className={`building-display__btn-upgrade${upgradeDisabled ? " btn-upgrade_disabled" : ""}`}
+          className={`building-display__btn-upgrade${upgradeDisabled ? ' btn-upgrade_disabled' : ''}`}
           onClick={this.showUpgradeConfirm.bind(this)}
           disabled={upgradeDisabled}
         >
@@ -139,10 +144,17 @@ class BuildingDisplay extends Component<BuildingDisplayProps, BuildingDisplaySta
     return (
       <div className="building-display" onClick={(e) => e.stopPropagation()}>
         <div className="building-display__title">
+          <button className="building-display__btn-info" onClick={this.showBuildingInfo.bind(this)}>
+            ?
+          </button>
+
           {upgradeBtn}
+
           <div className="building-display__title_name">{toDisplay(chosenBuilding.type)}</div>
+
           <button className="building-display__btn-close" onClick={this.props.hideBuildingDisplay}></button>
         </div>
+
         <div className="building-display__display-content">{displayByType(chosenBuilding.type)}</div>
         {upgradeMsg}
       </div>
@@ -162,8 +174,6 @@ const displayByType = (type: BuildingType) => {
       return <StablesDisplay />;
     case BuildingType.HEALER:
       return <HealerDisplay />;
-    case BuildingType.STORAGE:
-      return <TreasuryDisplay />;
     case BuildingType.TRAINING_GROUND:
       return <TrainingGroundDisplay />;
     case BuildingType.ALCHEMIST:
@@ -187,7 +197,7 @@ class BuildingDisplayContainer extends Component<BuildingDisplayProps> {
       return null;
     }
 
-    if (typeof chosenBuilding.type !== "number") {
+    if (typeof chosenBuilding.type !== 'number') {
       return null;
     }
 

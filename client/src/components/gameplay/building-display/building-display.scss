@@ -59,12 +59,29 @@
     }
   }
 
+  &__btn-info {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    width: 32px;
+    height: 32px;
+    font-family: inherit;
+    font-size: 24px;
+    border: solid 2px lightblue;
+    border-radius: 50%;
+    outline: none;
+    background-color: transparent;
+    color: lightblue;
+    z-index: 2000;
+    cursor: pointer;
+  }
+
   &__btn-upgrade {
     //TODO: реализовать возможность апргейда построек.
     display: none;
 
     position: absolute;
-    left: 5px;
+    left: 50px;
     top: 5px;
     width: 32px;
     height: 32px;

@@ -1,19 +1,6 @@
-@import "../../../../utils/css/index.scss";
+@import '../../../../utils/css/index.scss';
 
 .game-world__building {
-  &-STORAGE {
-    position: absolute;
-    top: 8px;
-    left: 18px;
-    width: 75px;
-    height: 70px;
-    cursor: pointer;
-
-    &:hover {
-      border: 1px solid yellow;
-    }
-  }
-
   &-GUILD {
     position: absolute;
     top: 0px;

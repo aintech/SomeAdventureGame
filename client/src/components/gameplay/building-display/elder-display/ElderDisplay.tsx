@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import GameStats from "../../../../models/GameStats";
-import { GUILD_SHARE } from "../../../../utils/Variables";
-import Loader from "../../../loader/Loader";
-import "./elder-display.scss";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import GameStats from '../../../../models/GameStats';
+import { GUILD_SHARE } from '../../../../utils/Variables';
+import Loader from '../../../loader/Loader';
+import './elder-display.scss';
 
 type ElderDisplayProps = {
   stats: GameStats;
@@ -13,10 +13,13 @@ const ElderDisplay = ({ stats }: ElderDisplayProps) => {
   return (
     <div className="elder-display">
       <div>
-        Известность городка <span className="elder-display__count">{stats.fame}</span>
+        Казна поселения <span className="elder-display__count">{stats.gold}</span>
       </div>
       <div>
-        Доля городка в квестах <span className="elder-display__count">{GUILD_SHARE * 100}%</span>
+        Известность поселения <span className="elder-display__count">{stats.fame}</span>
+      </div>
+      <div>
+        Доля поселения в квестах <span className="elder-display__count">{GUILD_SHARE * 100}%</span>
       </div>
     </div>
   );
@@ -31,7 +34,7 @@ class ElderDisplayContainer extends Component<ElderDisplayContainerProps> {
     const { stats } = this.props;
 
     if (!stats) {
-      return <Loader message={"Fetching for stats..."} />;
+      return <Loader message={'Fetching for stats...'} />;
     }
 
     return <ElderDisplay stats={stats} />;
