@@ -2,6 +2,12 @@ import Quest from '../../../../models/Quest';
 import QuestCheckpoint, { CheckpointStatus, CheckpointType } from '../../../../models/QuestCheckpoint';
 import './quest-map.scss';
 
+/*
+  Хитрый набор оффсетов, который подразумевает под собой разные отступы для верхнего и нижнего меню.
+  Мимикрирует под строчку в scss -> height: calc(var(--vh, 1vh) * 100 - #{$header_height} - 40px - 80px - 80px);
+*/
+const MAGICK_OFFSET = -30 - 40 - 80 - 80;
+
 const MARKER_SIZE = 32;
 const MARKER_GAP = 32;
 
@@ -89,9 +95,11 @@ type Link = {
 
 // Опираемся на то что карта отцентрированна и занимает 70% высоты и 90% ширины экрана, а иконки 32x32.
 const prepareLinks = (checkpoints: QuestCheckpoint[]) => {
+  const heightRatio = window.innerHeight + MAGICK_OFFSET;
+
   const links: Link[] = [];
 
-  const dimensions = { height: window.innerHeight * 0.7, width: window.innerWidth * 0.9 };
+  const dimensions = { height: heightRatio, width: window.innerWidth * 0.9 };
   const bossStage = checkpoints.find((c) => c.type === CheckpointType.BOSS)!;
 
   checkpoints.forEach((ch) => {

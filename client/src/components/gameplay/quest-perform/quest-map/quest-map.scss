@@ -3,7 +3,7 @@
 .quest-map {
   padding: 5vh 0;
   width: 90%;
-  height: 70vh;
+  height: calc(var(--vh, 1vh) * 100 - #{$header_height} - 40px - 80px - 80px);
   position: relative;
   background-image: url(../../../../img/quest-perform/quest-map/quest-map.png);
   background-size: contain;
